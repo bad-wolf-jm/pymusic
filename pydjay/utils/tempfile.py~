@@ -1,0 +1,9 @@
+
+import os
+
+_tmp_dir = "/Users/jihemme/DJFOO/tmp"
+
+if not os.path.exists(_tmp_dir):
+    os.makedirs(_tmp_dir)
+
+
