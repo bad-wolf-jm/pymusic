@@ -40,7 +40,7 @@ from pydjay.utils.protocol import MAGIC
 #from pydjay.uix import clickable_area
 #from pydjay.uix import long_press_button
 from pydjay.uix.slider import XSlider
-from pydjay.gui.swipe_behaviour import SwipeBehavior
+#from pydjay.gui.swipe_behaviour import SwipeBehavior
 #from pydjay.gui.files_screen import file_browser, location_browser
 #from mediacentre.skins.default.theme import get_path
 

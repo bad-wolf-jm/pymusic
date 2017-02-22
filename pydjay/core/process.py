@@ -53,9 +53,6 @@ class BackgroundProcess(Process, MethodDispatcher):
                     break
                 try:
                     self.call_method(command, args, kwargs)
-                    #time.sleep(.01)
-                #except AttributeError, details:
-                #    pass 
                 except Exception, details:
                     print 'ERROR CALLING', details
                     break
@@ -93,13 +90,3 @@ class ForegroundProcess(EventDispatcher, MethodDispatcher):
                 pass
         
     
-buffer = []
-if __name__ == '__main__':
-
-    path = os.path.abspath(os.path.expanduser(sys.argv[1]))
-    player = AudioPlayer("TestPlayer", 2)
-    player.connect_outputs(output_1 = "system:playback_1",
-                           output_2 = "system:playback_2")
-    player.play(path)
-    #time.sleep(45)
-    #player.stop()

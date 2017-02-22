@@ -1,13 +1,13 @@
 import os
 import threading
-import time
-import sys
-from os.path import getsize
-from datetime import datetime
+#import time
+#import sys
+#from os.path import getsize
+#from datetime import datetime
 from decoder import GstAudioFile
 from output_jack import JackOutput
 
-from kivy.properties import ObjectProperty, StringProperty, BooleanProperty, NumericProperty, AliasProperty
+from kivy.properties import StringProperty, NumericProperty, AliasProperty
 from kivy.event import EventDispatcher
 from kivy.clock import mainthread, Clock
 
@@ -264,13 +264,13 @@ class AudioPlayer(EventDispatcher):
         self._foo.join()
 
     
-buffer = []
-if __name__ == '__main__':
-
-    path = os.path.abspath(os.path.expanduser(sys.argv[1]))
-    player = AudioPlayer("TestPlayer", 2)
-    player.connect_outputs(output_1 = "system:playback_1",
-                           output_2 = "system:playback_2")
-    player.play(path)
-    #time.sleep(45)
-    #player.stop()
+#buffer = []
+#if __name__ == '__main__':#
+#
+#    path = os.path.abspath(os.path.expanduser(sys.argv[1]))
+#    player = AudioPlayer("TestPlayer", 2)
+#    player.connect_outputs(output_1 = "system:playback_1",
+#                           output_2 = "system:playback_2")
+#    player.play(path)
+#    #time.sleep(45)
+#    #player.stop()
