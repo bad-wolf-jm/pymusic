@@ -10,7 +10,7 @@ volume_control_o = VolumeController("VolumeControl", num_channels = 6)
 #preview_volume_control = VolumeController("PrecuePlayerVolume")
 
 preview_player_o.connect_outputs(output_1 = "VolumeControl:input_5",
-                               output_2 = "VolumeControl:input_6")
+                                 output_2 = "VolumeControl:input_6")
 
 #preview_volume_control.connect_outputs(output_1 = "system:playback_5",
 #                                       output_2 = "system:playback_6")
