@@ -387,7 +387,8 @@ class Track:
             if self.metadata.rating is not None:
                 self._index.append('@rat=%s'%self.metadata.rating)
             if self.metadata.loved:
-                self._index.append('@loved')    
+                self._index.append('@loved')
+            self._index.extend(['@bpm~', '@bpm<', '@bpm>'])    
             #for w in list_of_words:
             #    if w not in bar:
             #        break
@@ -402,18 +403,29 @@ class Track:
                   'comments', 'mood', 'style',
                   'vocal', 'speed_feel']
         list_of_words = [x.lower() for x in list_of_words]
-        """
-        for f in self._index:
-            #bar = unicode(getattr(self.metadata, f)).lower()
-            for w in list_of_words:
-                if w in f:
-                    break
-            else:
-                return False
-        return True
-        """
         ret_val = False
         for w in list_of_words:
+
+            if w.startswith('@bpm'):
+                x = w[4:]
+                if len(x) >= 2:
+                    comp = x[0]
+                    try:
+                        bpm = int(x[1:])
+                    except:
+                        bpm = None
+                    if bpm is not None:
+                        t_bpm = self.metadata.bpm
+                        if t_bpm is not None:
+                            if comp == '<':
+                                if t_bpm < bpm:
+                                    return True
+                            elif comp == '>':
+                                if t_bpm > bpm:
+                                    return True
+                            elif comp == '~':
+                                if t_bpm > bpm * 0.8 and t_bpm < bpm * 1.2:
+                                    return True
             for f in self._index:
                 if w in f:
                     break
@@ -427,7 +439,6 @@ class Track:
             return False
 
         for key in ['title', 'artist', 'album']:
-            #print getattr(self.metadata, key), getattr(other.metadata, key), getattr(self.metadata, key) < getattr(other.metadata, key)
             if getattr(self.metadata, key) < getattr(other.metadata, key):
                 return True
             elif getattr(self.metadata, key) > getattr(other.metadata, key):

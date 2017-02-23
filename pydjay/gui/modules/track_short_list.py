@@ -171,6 +171,7 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
         self.short_list.adapter.bind(data = self._update_sl_track_count)
         self.short_list.bind(adapter = self._update_sl_track_count)
         self.queue.queue_view.adapter.bind(data = self._update_availability)
+        self.queue.bind(on_queue_changed = self._update_availability)
         self.main_player.bind(on_unavailable_added = self._update_availability)
         self.preview_player.window = self.window
         self.preview_player.player = self.window._preview_player

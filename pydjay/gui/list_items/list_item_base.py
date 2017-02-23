@@ -343,6 +343,8 @@ class ListItemBase(LongPressButtonBehaviour, RelativeLayout,
         self._preview_player_button = None
         self.is_selected = is_selected
         self.bind(on_long_press = self._start_dragging)
+        #if self._item_data is not None:
+        #    self._item_data.bind(is_available = self._update_background)
 
         
 

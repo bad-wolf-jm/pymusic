@@ -113,8 +113,14 @@ class TrackListBehaviour(EventDispatcher):
         is_available = True
         if self.queue is not None:
             is_available = is_available and not self.queue.contains(track.location)
+        else:
+            print "queue is None"
         if self.main_player is not None:
             is_available = is_available and not self.main_player.has_played(track.location)
+        else:
+            print "player is None"
+
+        #print track, is_available
         return is_available
 
 

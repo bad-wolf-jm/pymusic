@@ -43,7 +43,7 @@ from pydjay.uix import waveform_seekbar#screen, paged_grid, paged_display
 from pydjay.uix import widgets
 
 #from track_upload import UploadTrack
-from sound_volumes import VolumeControls
+#from sound_volumes import VolumeControls
 from pydjay.gui.utils import seconds_to_human_readable
 #from pydjay.utils.protocol import MAGIC
 #from pydjay.uix import clickable_area
@@ -58,12 +58,11 @@ import pydjay.bootstrap
 
 kv_string = """
 <MainPlayerDeck>:
-    #turntable:            turntable
     deck:                 deck
     wait_toggle: wait_toggle
     wait_time_input: wait_time
     start_queue_button:   start_queue_button
-    stopping_message: stopping_message #queue_stop_options:  queue_stop_options
+    stopping_message: stopping_message
     orientation: 'horizontal'
     size_hint: 1, 1
     RelativeLayout:
@@ -75,28 +74,6 @@ kv_string = """
         ColoredRectangle:
             rect_color: .1,.1,.1,1
 
-       ## Turntable:
-       #     id: turntable
-       #     pos: 25,5
-#        VerticalBox:
-#            #orientation: 'vertical'
-#            spacing: 3
-#            size_hint: None, None
-#            size: 125,45
-#            pos_hint: {'right': 1, 'top': 1}
-#            padding: [2,2,2,2]
-#
-#            #Label:
-#            #    #id:artist_label
-#            #    text: root.connected_host
-##            #    color: .5,.5,.5,.8
-#            #    text_size: self.size
-#            #    halign: 'center'
-#            #    valign: 'middle'
-#            #    font_size: 12
-#            #    size_hint: 1, None
-#            #    height: 13
-#            #    #height:50
         VerticalBox:
             HorizontalBox:
                 size_hint: 1,1
@@ -125,23 +102,6 @@ kv_string = """
 
                 Widget:
                     size_hint: .5, None
-                #ImageButton:
-                #    canvas.before:
-                #        Color:
-                #            rgba: .05, .05, .05, 1
-                #        Rectangle:
-                #            size: self.size
-                 #           pos:  self.pos
-
-                 #   size_hint: 1, 1
-                 #   #size: 30,30
-                 #   pos_hint: {'center_x': .5}
-                 #   image_width: self.height
-                 #   image_height: self.height
-                 #   allow_stretch: True
-                 #   keep_ratio: True
-                 #   image: 'atlas://pydjay/gui/images/resources/volume' 
-                 #   on_press: root._connect_remote()
             HorizontalBox:
                 size_hint: 1, 0.8
                 padding: [0,0,0,0]
@@ -161,7 +121,6 @@ kv_string = """
                     disabled: not wait_toggle.active
                     padding: [0,0,0,0]
                     Label:
-                        #id: stopping_message
                         size_hint: None, 1
                         pos_hint: {'center_y': .5}
                         halign: 'center'
@@ -175,8 +134,6 @@ kv_string = """
                         orientation: 'horizontal'
                         size_hint: None, None
                         pos_hint: {'center_y': .5}
-                        #height: 30
-                        #size_hint: None,None
                         width: 30
                         height: 30
                         spacing: 0
@@ -188,13 +145,6 @@ kv_string = """
                                 size: self.size
 
                         TextInput:
-                            #canvas.before:
-                            #    Color:
-                            #        rgba: .3,.6,.3,1
-                            #    Rectangle:
-                            #        pos:  self.pos
-                            #        size: self.size
-
                             id: wait_time
                             size_hint: 1,1
                             font_size: 15
@@ -204,14 +154,11 @@ kv_string = """
                             valign: 'middle'
                             text_size: self.width, self.height
                             text: '5'
-                            #hint_text: "Filter list..."
                             foreground_color: 1,1,1,.8
                             background_color: 0,0,0,0
                             on_text_validate: root.set_wait_time(*args)
                             on_focus: root.set_wait_time_by_focus(*args)
-                            #on_text: root.do_filter(*args)
                     Label:
-                        #id: stopping_message
                         size_hint: 1, None
                         height: 20
                         pos_hint: {'center_y': .5}
@@ -266,17 +213,6 @@ class MainPlayerDeck(BoxLayout):
         self._player.bind(on_end_of_stream = self._on_eos,
                           track_duration   = self._forward_track_duration,
                           track_position   = self._forward_track_position)
-                          #is_connected     = self._update_is_connected,
-                          #connected_host   = self._update_is_connected_to
-        #self._player.bind(on_end_of_stream = self._on_eos,
-        #                  track_duration   = self._forward_track_duration,
-        #                  track_position   = self._forward_track_position
-        #                  #is_connected     = self._update_is_connected,
-        #                  #connected_host   = self._update_is_connected_to
-        #)
-        # FOR NOW
-        #self._player.connect_outputs(output_1 = "system:playback_1",
-        #                             output_2 = "system:playback_2")
         self._duration = None
         self._queue_playing = False
         self._stop_counter = None
@@ -303,7 +239,6 @@ class MainPlayerDeck(BoxLayout):
 
 
     def _post_init(self, *args):
-        #pass #self.turntable.player = self._player
         self.wait_time_input.text = "%s"%self.wait_time
         self.wait_time_input.bind(focus = self._toggle_keyboard_shortcuts)
 
@@ -325,19 +260,11 @@ class MainPlayerDeck(BoxLayout):
     def on_unavailable_added(self, *args):
         pass
 
-
     def _toggle_keyboard_shortcuts(self, *a):
-        #print self.search_filter.focus
         if not self.wait_time_input.focus:
             self.window.restore_focus()
-            #if self.has_focus:
-            #    self.focus()
-            #pydjay.core.keyboard.enable_keyboard_shortcuts()
         else:
             self.window.suspend_focus()
-            pass
-            #pydjay.core.keyboard.disable_keyboard_shortcuts()
-
     
     def _forward_track_position(self, *a):
         self.track_position = self._player.track_position
@@ -346,7 +273,8 @@ class MainPlayerDeck(BoxLayout):
         self.track_duration = self._player.track_duration
 
     def set_current_session(self, session):
-        self._current_session = set(session)
+        self._current_session = set([x.location for x in session])
+        self.dispatch("on_unavailable_added")
 
     def has_played(self, location):
         if self.track is not None and (location == self._track.track.location):
@@ -364,19 +292,16 @@ class MainPlayerDeck(BoxLayout):
         except:
             pass
         
-    def _connect_remote(self):
-        #if not self._is_connected:
-        if self._volume_control is not None:
-            popup = VolumeControls(self, self._volume_control)
-            popup.open()
-
+    #def _connect_remote(self):
+    #    #if not self._is_connected:
+    #    if self._volume_control is not None:
+    #        popup = VolumeControls(self, self._volume_control)
+    #        popup.open()
 
     def set_volume_control(self, volume_control):
         self._volume_control = volume_control
 
-
     def set_wait_time(self, *args):
-        #self.wait_time_input.focus
         try:
             t = int(self.wait_time_input.text)
             self.wait_time = t
@@ -430,6 +355,7 @@ class MainPlayerDeck(BoxLayout):
                 save_to_current_session(self._track.track)
                 self._current_session.add(self._track.track.location)
                 self.current_session_list.add_track(self._track.track)
+                self.dispatch("on_unavailable_added")
                 if self._current_time is not None:
                     self._track.track.metadata.add_play_time(self._current_time)
                     self._current_time = None
@@ -470,21 +396,7 @@ class MainPlayerDeck(BoxLayout):
             if self._volume_restore is not None:
                 if self._volume_control is not None:
                     self._volume_control.set_volume('main_player', self._volume_restore)
-            #if not self._stop_counter:
-            #    if self.queue is not None and self.queue.is_empty:
-            #        self._queue_playing = False
-            #        self.dispatch('on_queue_stopped')
-            #        self._watch_queue_data()
-            #    else:
-            #        if self.queue is not None and not self.queue.is_empty:
-            #            if not self._stop_counter:
             Clock.schedule_once(self._load_next, time)
-            #                
-            #                #self.display_countdown(5)
-            #else:
-            #    self._queue_playing = False
-            #    self.dispatch('on_queue_stopped')
-            #    self._watch_queue_data()
 
         Logger.info('MainPlayer: End of stream %s', self._track)
         self.immediate_stop(fade = fade, continuation = _do_play_next_track_in)
@@ -505,8 +417,6 @@ class MainPlayerDeck(BoxLayout):
                     if not self._stop_counter:
                         self.play_next_track_in(self.wait_time)
                         self.dispatch("on_end_of_stream")
-                        #Clock.schedule_once(self._load_next, time)
-
         else:
             self._queue_playing = False
             self.immediate_stop()
@@ -524,7 +434,7 @@ class MainPlayerDeck(BoxLayout):
         Logger.info('MainPlayer: Loading next track')
         if self.queue is not None and not self.queue.is_empty:
             if not self._stop_counter:
-                track = self.queue.dequeue()#incomplete = _do_play_track)
+                track = self.queue.dequeue()
                 self._track = track
                 self.track = self._track
                 self.finish_set_track(track.track)
@@ -601,99 +511,3 @@ class MainPlayerDeck(BoxLayout):
 
 Builder.load_string(kv_string)
 Factory.register('MainPlayerDeck', MainPlayerDeck)
-
-
-buffer = []
-if __name__ == '__main__':
-    from kivy.base import runTouchApp
-    #from mediacentre.database.TVShows import database_pickle
-    from kivy.core.window import Window
-    from kivy.clock import Clock
-    from kivy.uix.button import Button
-    ## red background color
-    #from jmc.gui import config
-
-
-    import gi
-    import pprint
-    import sys
-    import urllib
-    gi.require_version("Gst", "1.0")
-    #gi.require_version('Gtk', '3.0')
-    from gi.repository import Gst, GObject as gobject, GLib
-    
-    from struct import unpack_from
-
-
-    from pydjay.library.track import load_file
-    
-  
-
-
-    Window.clearcolor = (0.0,0,0, 1)
-    #Window.width = 350
-    #Window.height = 475
-    Window.size = (1448, 350)
-    #index = 0
-    #def add_item(*a):
-    #    global index
-    #    index += 1
-    #    #print index
-    #    item = Button(text= '%s'%index)
-    #    bar.add_page(item)
-    
-    #foo = WaveformGenerator("/Users/jihemme/Python/DJ/pydjay/audio/test.mp3", 35000)
-
-
-
-
-   
-
-    
-    #def add_point(total_time, timestamp, value):
-    #    global buffer
-    #    bar.seekbar.waveform.x_max = total_time
-    #    buffer.append((timestamp, value))
-    #    if len(buffer) == 150:
-    #        bar.seekbar.waveform.points.extend(buffer)
-    #        buffer = []
-
-            
-    #def done_points(points):
-    #    bar.seekbar.waveform.points = points
-    #    #x = open('ttt.txt','w')
-    #    #x.write(str(points))
-    #    #x.close()
-    #foo.set_data_point_callback(add_point)
-    #foo.set_process_done_callback(done_points)
-    #def _foo(*a):
-    #    Clock.schedule_interval(add_item, 1)
-    #db = database_pickle.Database('/Users/jihemme/mediaserver_data')
-    #from kivy.clock import Clock
-    #foo = AnchorLayout(size_hint = (1,1), anchor_x = 'center', anchor_y = 'center')
-    #init_gui()
-    
-    bar = MainPlayerDeck()#Builder.load_string(kv_string)#FilesScreen(size_hint = (1,1))#size = (450,550))
-    tra = load_file("/Users/jihemme/Python/DJ/Algiers Hoodooo Woman - Dr. Michael White (Dancing in the Sky) .mp3")
-    bar.set_track(tra)
-    bar.play()
-    #bar.location_browser.set_default_locations()
-    #bar.set_list(locations)
-    #add_item()
-    #add_item()
-    
-    #add_item()
-    
-    #add_item()
-    
-    #add_item()
-    #Clock.schedule_once(add_item, 5)
-    #button = Button(test="FOO",size_hint = (1,1))
-    #bar.set_seasons(12)
-    #bar.set_episodes(123, 45)
-    #foo.add_widget(bar)
-    #foo.add_widget(button)
-    #button.bind(on_press = lambda *x: 
-    #bar.set_show(db.get_tv_show('stargate-sg-1'))#db.get_tv_shows())
-    runTouchApp(bar)#size=(400,200)))#, size_hint = (None, None)))
-    bar.unload()

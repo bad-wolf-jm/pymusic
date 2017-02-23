@@ -40,26 +40,7 @@ from track_short_list import TrackShortList
 
 
 kv_string = """
-#
-#<HDivider@Widget>
-#    size_hint: 1, None
-#    height: 1
-#    canvas.after:
-#        Color:
-#            rgba: 1, 1, 1, .8
-#        Line:
-#            points: [self.pos[0],self.pos[1], self.pos[0] + self.width, self.pos[1]]
-#
-#<VDivider@Widget>
-#    size_hint: None, 1
-#    width: 1
-#    canvas.after:
-#        Color:
-#            rgba: 1, 1, 1, .8
-#        Line:
-#            points: [self.pos[0], self.pos[1], self.pos[0], self.pos[1]+self.height]
-
-<MainScreen>: #MainWindow:
+<MainScreen>:
     master_queue: master_queue
     master_list: master_list
     short_list: short_list
@@ -149,16 +130,8 @@ kv_string = """
 
         BoxLayout:
             orientation: 'horizontal'
-            #BoxLayout:
             BoxLayout:
                 orientation: 'horizontal'
-                #MainPlayerDisplay:
-                #    id: main_player
-                #    queue: master_queue
-                #    #text: "Player goes here"
-                #    size_hint: 1, None
-                #    height:150
-                #HDivider:
                 MainTrackList:
                     id: master_list
                     window: root
@@ -189,26 +162,6 @@ kv_string = """
                 size_hint: (.32, 1.0)
                 #text: "Queue goes here"
        
-#        HDivider:#
-#
-#        BoxLayout:
-#            orientation: 'horizontal'
-#            size_hint: 1, None
-#            height: 30 #total_play_time.height+total_displayed_tracks.height
-#
-#            Button:
-#                size_hint: None, 1
-#                width: self.height
-#                text: "Quit"
-#
-#            ImageButton:
-#                size_hint: None, 1
-#                width: self.height
-#                image: '/Users/jihemme/Python/DJ/pydjay/gui/settings.png'
-#                #text: "Settings"
-
-
-
 """
 
 from pydjay.core.keyboard import key_map

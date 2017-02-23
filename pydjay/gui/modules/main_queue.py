@@ -111,11 +111,9 @@ kv_string = """
         item_convert: root._convert
 
         on_touch_down: root._on_touch_down(*args)
-        #height:self.minimum_height
     HDivider:
     CurrentSessionList:
         id: current_session
-        #item_class: DefaultTrackItemView
         size_hint: 1, .75
 """
 
@@ -126,13 +124,7 @@ class DragContext:
 
         
 class MasterQueue(BoxLayout, TrackListBehaviour):
-    #has_focus         =  BooleanProperty(False)
-    ###is_connected_to   = StringProperty("")
-    #connected_ip      = StringProperty("")
-    #connected_host    = StringProperty("")
-    #connected_port    = NumericProperty(0) 
     queue_view         = ObjectProperty(None)
-    #window            = ObjectProperty(None)
     track_list        = ListProperty()
     card_list         = ListProperty()
     queue_time        = StringProperty()
@@ -144,25 +136,10 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
     player            = ObjectProperty(None)
     deck              = ObjectProperty(None)
     preview_player    = ObjectProperty(None)
-    
 
     def __init__(self, *args, **kwargs):
         super(MasterQueue, self).__init__(*args, **kwargs)
         self._queued_tracks = set([])
-        #self.adapter = ListAdapter(
-        #    cls = MasterQueueTrackCard,
-        #    data = [],
-        #    selection_mode = 'none',
-        #    allow_empty_selection = False,
-        #    args_converter = self._convert
-        #)
-        #self._control_client   = None
-        #self._files_port       = None
-        #self._uploading_track  = None
-        #self._uploading_thread = None
-        #self._uploading        = False
-        #self._is_connected     = False
-        
         self.drag_context = DragContext(self._start_drag, self._drop)
         self._play_time        = 0
         self._total_queue_time = 0
@@ -172,113 +149,55 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
                                     'shift+down': self._move_selection_down,
                                     'shift+t': self._move_selection_to_top,
                                     'shift+backspace': self._delete_selection})
+        self.register_event_type('on_queue_changed')
+        self.register_event_type('on_current_session_changed')
+
         Clock.schedule_once(self._post_init,0)
 
+
+    def on_queue_changed(self, *a):
+        pass
+
+    def on_current_session_changed(self, *a):
+        pass
+
+    
     def show_preview_player(self, track, pos, size):
-        #self.preview_player.set_track(track)
         self.preview_player.play(track)
 
-#    def focus(self):
-#        self.has_focus = True
-#        self._keyboard = Window.request_keyboard(self._keyboard_closed, self, 'text')
-#        self._keyboard.bind(on_key_down = self._on_keyboard_down)
-#        if self._current_selection is not None:
-#            row = self._current_selection
-#            row = max(min(row, len(self.adapter.data) - 1), 0)
-#            try:
-#                v = self.adapter.get_view(self._current_selection)
-#                if v is not None:
-#                    v._update_background()
-#                #self.adapter.get_view(self._current_selection)._update_background()
-#                self._current_selection = row
-#            except IndexError:
-#                self._current_selection = None
- #           
- #   def unfocus(self):
- #       self.has_focus = False
- #       if self._keyboard is not None:
- #           self._keyboard.release()
- #       if self._current_selection is not None:
- #           row = self._current_selection
- #           row = max(min(row, len(self.adapter.data) - 1), 0)
- #           try:
- #               v = self.adapter.get_view(self._current_selection)
- #               if v is not None:
- #                   v._update_background()
- #               self._current_selection = row
- #           except IndexError:
- #               self._current_selection = None
-                
- #   def _keyboard_closed(self):
- #       #print('My keyboard have been closed!')
- #       self._keyboard.unbind(on_key_down = self._on_keyboard_down)
- #       self._keyboard = None
-
- #   @property
- #   def current_selection(self):
- #       if self._current_selection is not None:
- #           try:
- #               return self.adapter.data[self._current_selection]
- #           except:
- #               return None
- #       return None
-
-
     def _move_selection_up(self):
-        #print self._current_selection
-        #if self._current_selection is not None:
-        item = self.current_selection #short_list.adapter.data[self._current_selection]
+        item = self.current_selection 
         if item is not None:
             self.queue_view.remove_track(item['item'])
             self.add_track(item['item'].track, self._current_selection - 1)
             self.select(self._current_selection - 1)
 
     def _move_selection_down(self):
-        #print self._current_selection
-        #if self._current_selection is not None:
-        item = self.current_selection #short_list.adapter.data[self._current_selection]
+        item = self.current_selection
         if item is not None:
             self.queue_view.remove_track(item['item'])
             self.add_track(item['item'].track, self._current_selection + 1)
             self.select(self._current_selection + 1)
 
-            #        elif key_seq == 'shift+t':
     def _move_selection_to_top(self):
-        #print self._current_selection
-        #if self._current_selection is not None:
-        item = self.current_selection #short_list.adapter.data[self._current_selection]
+        item = self.current_selection
         if item is not None:
             self.queue_view.remove_track(item['item'])
             self.add_track(item['item'].track, 0)
             self.select(self._current_selection)
 
-            #        elif key_seq == 'shift+backspace':
     def _delete_selection(self):
-        #if self._current_selection is not None:
-        item = self.current_selection #short_list.adapter.data[self._current_selection]
+        item = self.current_selection
         if item is not None:
-            self.queue_view.remove_track(item['item'])
+            self.remove_track(item['item'])
             self.short_list.add_shortlist_track(item['item'].track, 0)
-            #self.add_shortlist_track(item.track, 0)
             self.select(self._current_selection)
-
-            #        elif key_seq == 'shift+q':
-    #def _add_selection_to_queue(self):
-    #    #if self._current_selection is not None:
-    #    item = self.current_selection #short_list.adapter.data[self._current_selection]
-    #    if item is not None:
-    #        self.short_list.remove_track(item['item'])
-    #        self.queue.add_track(item['item'].track)
-
-    #def _start_drag(self, coords, item):
-    #    self.window.start_drag(coords, item.trac
-
 
     def _start_drag(self, coords, item):
         if self.window is not None:
             try:
                 self.window.start_drag(coords, item.track)
-                self.queue_view.remove_track(item)
+                self.remove_track(item)
             except Exception, details:
                 print details
 
@@ -287,136 +206,11 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
             self.add_track(self.window._drag_payload, row)
             self.window.drop()
 
-#    def _on_keyboard_down_FOO(self, keyboard, keycode, text, modifiers):
-#        #print('The key', keycode, 'have been pressed')
-#        #print(' - text is %r' % text)
-#        #print(' - modifiers are %r' % modifiers)
-#        key_seq = "+".join(modifiers+[keycode[1]])
-#        if key_seq == 'down':
-#            if self._current_selection is not None:
-#                #if self._current_selection < len(self.adapter.data) - 1:
-#                self.select(self._current_selection + 1)
-#            else:
-#                self.select(0)
-#        elif key_seq == 'up':
-#            if self._current_selection is not None:
-#                #if self._current_selection > 0:
-#                self.select(self._current_selection - 1)
-#                #else:
-#                #    self.select(None)
-#            else:
-#                self.select(0)
-#
-#
-#        elif key_seq == 'shift+up':
-#            #print self._current_selection
-#            #if self._current_selection is not None:
-#            item = self.current_selection #adapter.data[self._current_selection]
-#            if item is not None:
-#                self.remove_track(item)
-#                self.add_track(item.track, self._current_selection - 1)
-#                self.select(self._current_selection - 1)
-#
-#        elif key_seq == 'shift+down':
- #           #print self._current_selection
-##            if self._current_selection is not None:
-##                item = self.adapter.data[self._current_selection]
-#            item = self.current_selection #adapter.data[self._current_selection]
-#            if item is not None:
-#
-#                self.remove_track(item)
-#                self.add_track(item.track, self._current_selection + 1)
-#                self.select(self._current_selection + 1)#
-#
-#
- #       elif key_seq == 'shift+t':
- #           #print self._current_selection
- #           item = self.current_selection #adapter.data[self._current_selection]
- #           if item is not None:
-##            if self._current_selection is not None:
-#                #item = self.adapter.data[self._current_selection]
-#                self.remove_track(item)
-#                self.add_track(item.track, 0)
-#                self.select(self._current_selection)
-#
-#        elif key_seq == 'shift+backspace':
-#            item = self.current_selection #adapter.data[self._current_selection]
-#            if item is not None:
-##            if self._current_selection is not None:
-#                #item = self.adapter.data[self._current_selection]
-#                self.remove_track(item)
-#                self.short_list.add_shortlist_track(item.track, 0)
-#                self.select(self._current_selection)
-#
-#        #elif key_seq == 'shift+q':
-#        #    if self._current_selection is not None:
-#        #        self.queue.add_track(self.short_list.adapter.data[self._current_selection].track)##
-##
-#
-#        elif key_seq == 'enter':
-#            item = self.current_selection #adapter.data[self._current_selection]
-#            if item is not None:
-##            if self._current_selection is not None:
-##                item = self.adapter.data[self._current_selection]
-#                self.preview_player.play(item.track)
-#        else:
-#            pydjay.core_logic.keyboard.key_map.key_pressed(keycode, modifiers)
-#        pass
-#
-#        # Keycode is composed of an integer + a string
-#        # If we hit escape, release the keyboard
-#        #if keycode[1] == 'escape':
-#        #    keyboard.release()#
-#
-#        # Return True to accept the key. Otherwise, it will be used by
-#        # the system.
-#        return True
-
-
-        
-  #  def _toggle_keyboard_shortcuts(self, *a):
-  #      #print self.search_filter.focus
-  #      if not self.search_filter.focus:
-  #          if self.has_focus:
-  #              self.focus()
-  #          #pydjay.core.keyboard.enable_keyboard_shortcuts()
-  #      else:
-  #          pass
-            #pydjay.core.keyboard.disable_keyboard_shortcuts()
-
-
-
-    #def select(self, row):
-    ##    #print self._current_selection#
-#
-#        if len(self.adapter.data) == 0:
-#            self._current_selection = None
-#            return 
- #       
- #       row = max(min(row, len(self.adapter.data) - 1), 0)
- #       if self._current_selection is not None:
- #           try:
- #               item = self.adapter.data[self._current_selection]
- #               item.is_selected = False
- #           except IndexError:
- #               pass
- #           #self.master_list.adapter.get_view(self._current_selection)._update_background()
- #       try:
- #           item = self.adapter.data[row]
- #           #self.short_list.list_view.layout_manager.show_index_view(row)
- #           item.is_selected = True
- #           #self.master_list.adapter.get_view(row)._update_background()
- #           self._current_selection = row
- #           self.window.request_focus(self)
- #       except IndexError:
- #           self._current_selection = None
-
         
     def contains(self, location):
         return location in self._queued_tracks
         
     def _post_init(self, *args):
-        #self.list_view.adapter = self.adapter
         self.play_time = "[color=#bbbbbb]Play time:[/color] " + \
                          "[color=#ffffff]" + \
                          seconds_to_human_readable(self._play_time) + \
@@ -447,13 +241,13 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         self.update_labels()
         self._queued_tracks.discard(self.adapter.data[0]['item'].track.location)
         t_track = self.adapter.data.pop(0)
+        self.dispatch('on_queue_changed')
         return t_track['item']
 
     def remove_track(self, track):
         self._queued_tracks.discard(track.track.location)
         self.queue_view.remove_track(track)
-        #idx = self.adapter.data.index(track)
-        #self.adapter.data.remove(track)
+        self.dispatch('on_queue_changed')
         self.update_labels()
     
     def top(self):
@@ -470,23 +264,17 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
     
     def add_track(self, track, index = None):
         self.queue_view.add_track(track, index)
-        #new_track = TrackData(track)
-        #self._queued_tracks.add(track.location)
-        #if index is None:
-        #    self.adapter.data.append(new_track)
-        #else:
-        #    self.adapter.data.insert(index, new_track)
+        self._queued_tracks.add(track.location)
         self.update_labels()
+        self.dispatch('on_queue_changed')
 
     enqueue = add_track
 
     def set_track_list(self, list):
         self.queue_view.set_track_list(list, False)
-        #ll = [TrackData(track) for track in list]
-        #for t in ll:
-        #    self.list_view.adapter.data.append(t)
         self._queued_tracks = set([track.location for track in list])
         self.update_labels()
+        self.dispatch('on_queue_changed')
 
 
     def _update_queue_times(self, *a):
@@ -534,75 +322,9 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
 
     def _on_touch_down(self, window, event):
         pass
-        #if self.list_view.collide_point(*event.pos):
-        #    if not event.is_mouse_scrolling:
-        #        for data in self.adapter.data:
-        #            data.is_selected = False
 
     def shutdown(self):
         self.deck.shutdown()
 
 Builder.load_string(kv_string)
 Factory.register('MasterQueue', MasterQueue)
-
-
-
-
-if __name__ == '__main__':
-    from kivy.base import runTouchApp
-    #from mediacentre.database.TVShows import database_pickle
-    from kivy.core.window import Window
-    from kivy.uix.button import Button
-    ## red background color
-    #from jmc.gui import config
-
-    Window.clearcolor = (0.1,0.1,0.1, 1)
-    #Window.width = 350
-    #Window.height = 475
-    #index = 0
-    #def add_item(*a):
-    #    global index
-    #    index += 1
-    #    #print index
-    #    item = Button(text= '%s'%index)
-    #    bar.add_page(item)
-        
-    #def _foo(*a):
-    #    Clock.schedule_interval(add_item, 1)
-    #db = database_pickle.Database('/Users/jihemme/mediaserver_data')
-    #from kivy.clock import Clock
-    #foo = AnchorLayout(size_hint = (1,1), anchor_x = 'center', anchor_y = 'center')
-    #init_gui()
-        
-    
-    bar = MasterQueue()
-
-    #fol = '/Users/jihemme/Python/DJ/test_audio'
-    #for f in os.listdir(fol):
-    #    f_n = os.path.join(fol, f)
-    #    t_c = load_file(f_n)
-    #    bar.add_track(t_c)
-
-
-
-    bar.size = 300, 600#Builder.load_string(kv_string)#FilesScreen(size_hint = (1,1))#size = (450,550))
-    #bar.location_browser.set_default_locations()
-    #bar.set_list(locations)
-    #add_item()
-    #add_item()
-    
-    #add_item()
-    
-    #add_item()
-    
-    #add_item()
-    #Clock.schedule_once(add_item, 5)
-    #button = Button(test="FOO",size_hint = (1,1))
-    #bar.set_seasons(12)
-    #bar.set_episodes(123, 45)
-    #foo.add_widget(bar)
-    #foo.add_widget(button)
-    #button.bind(on_press = lambda *x: 
-    #bar.set_show(db.get_tv_show('stargate-sg-1'))#db.get_tv_shows())
-    runTouchApp(bar)#size=(400,200)))#, size_hint = (None, None)))
-    bar.unload()
