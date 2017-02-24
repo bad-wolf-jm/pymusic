@@ -61,14 +61,12 @@ class VolumeControl(EventDispatcher):
 
     main_player_monitor = AliasProperty(lambda self: self.get_volume('main_player_monitor'),
                                         lambda self, value: self.set_volume('main_player_monitor', value))
-
     
 volume_control = VolumeControl()
 volume_control.set_volume('main_player', 1.0)
 volume_control.set_volume('main_player_monitor', 1.0)
 volume_control.set_volume('preview_player', 1.0)
 volume_control.set_volume('main_player_monitor_mute', .07)
-
 
 def set_volume(channel, volume):
     volume_control.set_volume(channel, volume)
@@ -149,10 +147,19 @@ key_map.bind(on_play_pause_preview = _preview_pause)
     
 def close_keyboard():
     pass
-    """key_map.unbind(on_main_volume_up      = _increase_main_volume,
-                   on_main_volume_down    = _decrease_main_volume,
-                   on_monitor_volume_up   = _increase_monitor_volume,
-                   on_monitor_volume_down = _decrease_monitor_volume,
-                   on_preview_volume_up   = _increase_preview_volume,
-                   on_preview_volume_down = _decrease_preview_volume)
-"""
+
+import os
+from pydjay.core.playback_manager import PlaybackManager
+from pydjay.core.queue import PlayQueue
+from pydjay.core.session import SessionManager
+
+
+HOME         = os.path.expanduser('~')
+PYDJAY_CACHE = os.path.join(HOME, '.pydjay')
+STATE        = os.path.join(PYDJAY_CACHE, 'state')
+SESSIONS     = os.path.join(PYDJAY_CACHE, 'sessions')
+PLAYLISTS    = os.path.join(PYDJAY_CACHE, 'playlists')
+
+#session_manager  = SessionManager(os.path.join(PYDJAY_CACHE, "Current Session.m3u"))
+#play_queue       = PlayQueue()
+#playback_manager = PlaybackManager(main_player, play_queue, session_manager)

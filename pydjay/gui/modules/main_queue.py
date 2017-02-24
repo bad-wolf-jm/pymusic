@@ -145,9 +145,9 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         self._total_queue_time = 0
         self.has_focus         = False
         self._current_selection = None
-        self.set_keyboard_handlers({'shift+up': self._move_selection_up,
-                                    'shift+down': self._move_selection_down,
-                                    'shift+t': self._move_selection_to_top,
+        self.set_keyboard_handlers({'shift+up':        self._move_selection_up,
+                                    'shift+down':      self._move_selection_down,
+                                    'shift+t':         self._move_selection_to_top,
                                     'shift+backspace': self._delete_selection})
         self.register_event_type('on_queue_changed')
         self.register_event_type('on_current_session_changed')

@@ -2,6 +2,7 @@ import os
 import time
 from kivy.properties import ObjectProperty, StringProperty, BooleanProperty, NumericProperty
 from kivy.logger import Logger
+from kivy.event import EventDispatcher
         
 
 class PlaybackManager(EventDispatcher):
@@ -18,7 +19,7 @@ class PlaybackManager(EventDispatcher):
     
     
     def __init__(self, player, queue, session_manager, *args, **kw):
-        super(MainPlayerDeck, self).__init__(*args, **kw)
+        super(PlaybackManager, self).__init__(*args, **kw)
         self.player          = player 
         self.queue           = queue
         self.session_manager = session_manager
@@ -51,17 +52,17 @@ class PlaybackManager(EventDispatcher):
         pass
 
     def _forward_track_position(self, *a):
-        self.track_position = self._player.track_position
+        self.track_position = self.player.track_position
 
     def _forward_track_duration(self, *a):
-        self.track_duration = self._player.track_duration
+        self.track_duration = self.player.track_duration
 
     def shutdown(self):
         pass
 
     def immediate_stop(self, queue_stop = False): #, fade = False, continuation = None):
         Logger.info('MainPlayer: Stopping player')
-        self._player.stop()
+        self.player.stop()
         if self.track is not None:
             save_to_current_session(self.track)
             self._current_session.add(self.track.location)
@@ -116,7 +117,7 @@ class PlaybackManager(EventDispatcher):
     def start_queue(self):
         if not self.queue_is_playing and not self.queue.is_empty:
             Logger.info('MainPlayer: Starting queue')
-            self.queue_is_playing = True
+            self.queue_is_playing   = True
             self.queue_stop_request = False
             self._start_play()
 
@@ -129,6 +130,6 @@ class PlaybackManager(EventDispatcher):
         if self.track is not None:
             Logger.info('MainPlayer: Starting playback of %s', self.track)
             self._current_time = time.time()
-            self._player.play(self.track.location, self.track.info.start_time, self.track.info.end_time)
+            self.player.play(self.track.location, self.track.info.start_time, self.track.info.end_time)
             self.dispatch('on_playback_started')
 
