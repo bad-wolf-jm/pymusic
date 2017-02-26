@@ -42,6 +42,7 @@ class PlayQueue(EventDispatcher):
         self.dispatch("on_queue_content_change", self.track_list)
 
     def move_track(self, track, to_index):
+        to_index = max(min(len(self), to_index), 0)
         try:
             item = self._track_list.index(track)
         except:

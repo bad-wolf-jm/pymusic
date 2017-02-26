@@ -132,16 +132,18 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
     def _move_selection_up(self):
         item = self.current_selection 
         if item is not None:
+            index = max(min(self._current_selection - 1, len(self.adapter.data)), 0)
             self.short_list.remove_track(item['item'])
-            self.add_shortlist_track(item['item'].track, self._current_selection - 1)
-            self.select(self._current_selection - 1)
+            self.add_shortlist_track(item['item'].track, index)
+            self.select(index)
 
     def _move_selection_down(self):
         item = self.current_selection 
         if item is not None:
+            index = max(min(self._current_selection + 1, len(self.adapter.data)), 0)
             self.short_list.remove_track(item['item'])
-            self.add_shortlist_track(item['item'].track, self._current_selection + 1)
-            self.select(self._current_selection + 1)
+            self.add_shortlist_track(item['item'].track, index)
+            self.select(index)
 
     def _move_selection_to_top(self):
         item = self.current_selection

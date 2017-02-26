@@ -65,8 +65,6 @@ class JackOutputDriver(object):
         self._buffer_not_full = threading.Lock() 
         self._max_buffer_size = self.block_size * 30
         self._buffer_size     = 0
-        #for i in range(self.num_channels):
-            
         
         self._jack_client.set_process_callback(self._process)
         self._jack_client.set_blocksize_callback(self._blocksize_changed)
@@ -86,7 +84,10 @@ class JackOutputDriver(object):
             self._jack_client.disconnect(port, kwargs[key])
     
     def flush_buffer(self):
-        pass
+        #pass
+        self._buffer_size = 0
+        for channel_index in range(self.num_channels):
+            self._input_buffers[channel_index] = [] #append(data[offset+channel_index])
 
     def reset_timer(self, timestamp = 0):
         self.stream_time = timestamp
@@ -125,10 +126,8 @@ class JackOutputDriver(object):
         self.closed = True
         
     def send(self, data):
-        #print self.client_name, 'send', len(data)
         if self._buffer_size >= self._max_buffer_size:
             self._buffer_not_full.acquire()
-        #data = data[1]
         for offset in range(0, len(data), self.num_channels):
             for channel_index in range(self.num_channels):
                 self._input_buffers[channel_index].append(data[offset+channel_index])
@@ -217,7 +216,7 @@ class JackOutput(object):
         self.out_queue.put(('disconnect_outputs', (), kwargs))
 
     def flush_buffer(self):
-        pass
+        self.out_queue.put(('flush_buffer', (), {}))
 
     def reset_timer(self, timestamp = 0):
         self.out_queue.put(('reset_timer', (), {'timestamp': timestamp}))
