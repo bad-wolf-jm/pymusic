@@ -15,14 +15,15 @@ class SessionManager(EventDispatcher):
         pass
 
     def is_available(self, track):
-        return (track.location in self._unavailable_tracks)
+        return not (track.location in self._unavailable_tracks)
 
         
     def add(self, track, played = True):
         self._unavailable_tracks.add(track.location)
-        self.dispatch("current_session_changed")
+        
         
         if not played:
+            self.dispatch("on_current_session_changed", self.played_tracks)
             return None
         
         current_session = self._session_filename
@@ -35,20 +36,22 @@ class SessionManager(EventDispatcher):
                 foo.write(track.location+'\n')
                 self._played_tracks_list.append(track)
                 self._played_tracks.add(track.location)
+                self.dispatch("on_current_session_changed", self.played_tracks)
         finally:
             foo.close()
+        
 
     def remove(self, track):
         try:
             if track.location not in self._played_tracks:
                 self._unavailable_tracks.remove(track.location)
-                self.dispatch("on_current_session_changed")
+                self.dispatch("on_current_session_changed", self.played_tracks)
         except:
             pass
 
     @property
     def played_tracks(self):
-        return [x for x in self._played_tracks]
+        return [x for x in self._played_tracks_list]
             
     def save_current_session(self, folder, file_name_prefix):
         current_session = self._session_filename
@@ -73,4 +76,10 @@ class SessionManager(EventDispatcher):
             session.close()
             os.unlink(current_session)
             self._played_tracks = set([])
-            self.dispatch("on_current_session_changed")
+            self.dispatch("on_current_session_changed", self.played_tracks)
+
+    def set_current_session(self, session):
+        self._played_tracks = set([x.location for x in session])
+        self._unavailable_tracks = set([x.location for x in session])
+        self._played_tracks_list = [x for x in session]
+        self.dispatch("on_current_session_changed", self.played_tracks)

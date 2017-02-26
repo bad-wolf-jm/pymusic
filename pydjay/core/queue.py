@@ -1,6 +1,7 @@
 from kivy.clock import mainthread, Clock
 from kivy.logger import Logger
 from kivy.event import EventDispatcher
+from kivy.properties import NumericProperty
 
         
 class PlayQueue(EventDispatcher):
@@ -27,7 +28,7 @@ class PlayQueue(EventDispatcher):
 
     def add_track(self, track, index = None):
         if index is not None:
-            self._track_list.insert(track, index)
+            self._track_list.insert(index, track)
         else:
             self._track_list.append(track)
         self._queued_tracks.add(track.location)
@@ -39,6 +40,18 @@ class PlayQueue(EventDispatcher):
         self._track_list.remove(track)
         self._update_queue_length()
         self.dispatch("on_queue_content_change", self.track_list)
+
+    def move_track(self, track, to_index):
+        try:
+            item = self._track_list.index(track)
+        except:
+            item = None
+
+        if item is not None:
+            item = self._track_list[item]
+            self._track_list.remove(item)
+            self.add_track(item, to_index)
+            #self.select(self._current_selection - 1)
     
     def top(self):
         t_track = self._track_list[0]

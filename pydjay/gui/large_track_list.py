@@ -55,7 +55,7 @@ class LargeTrackList(BoxLayout):
     item_class   = ObjectProperty(None)
     item_convert = ObjectProperty(None)
     list_header  = ObjectProperty(None)
-    player       = ObjectProperty(None, allownone = True)
+    #player       = ObjectProperty(None, allownone = True)
     
     def __init__(self, *args, **kwargs):
         super(LargeTrackList, self).__init__(*args, **kwargs)
@@ -75,14 +75,10 @@ class LargeTrackList(BoxLayout):
         Clock.schedule_once(self._post_init,0)
         self.bind(item_class = self._update_adapter)
         self.bind(item_convert = self._update_adapter)
-        self.bind(player = self._update_player)
 
     def _post_init(self, *args):
         self.list_view.adapter = self.adapter
         self.list_view.layout_manager = ListLayoutManager()
-
-    def _update_player(self, i, value):
-        self.player.bind(track = self._update_filter)
 
     def _update_filter(self, *a):
         self.do_filter(self._filter_text)

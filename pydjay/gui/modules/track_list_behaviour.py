@@ -3,6 +3,7 @@ from kivy.event import EventDispatcher
 from kivy.properties import ObjectProperty, StringProperty, BooleanProperty
 from kivy.core.window import Window
 import pydjay.core.keyboard
+from pydjay.bootstrap import play_queue, session_manager, playback_manager
 
 class TrackListBehaviour(EventDispatcher):
     has_focus = BooleanProperty(False)
@@ -111,14 +112,18 @@ class TrackListBehaviour(EventDispatcher):
 
     def _track_is_available(self, track):
         is_available = True
-        if self.queue is not None:
-            is_available = is_available and not self.queue.contains(track.location)
-        else:
-            print "queue is None"
-        if self.main_player is not None:
-            is_available = is_available and not self.main_player.has_played(track.location)
-        else:
-            print "player is None"
+        is_available = is_available and not play_queue.contains(track.location)
+        is_available = is_available and session_manager.is_available(track)
+        if playback_manager.track is not None:
+            return is_available and playback_manager.track.location != track.location
+        return is_available
+        
+        #else:
+        #    print "queue is None"
+        #if self.main_player is not None:
+        #    is_available = is_available and not self.main_player.has_played(track.location)
+        #else:
+        #    print "player is None"
 
         #print track, is_available
         return is_available
@@ -145,12 +150,14 @@ class TrackListBehaviour(EventDispatcher):
     def _make_selection_unavailable(self):
         item = self.current_selection 
         if item is not None:
-            self.main_player.add_unavailable(item['item'].track.location)
+            #self.main_player.add_unavailable(item['item'].track.location)
+            session_manager.add(item['item'].track, False)
 
     def _make_selection_available(self):
         item = self.current_selection 
         if item is not None:
-            self.main_player.remove_unavailable(item['item'].track.location)
+            #self.main_player.remove_unavailable(item['item'].track.location)
+            session_manager.remove(item['item'].track)
 
     def _preview_current_selection(self):
         item = self.current_selection

@@ -19,21 +19,16 @@ from kivy.factory import Factory
 from kivy.uix.popup import Popup
 
 import main_queue
-#import master_list
 import player_display
+import player_deck
 import pydjay.uix.clickable_area
 
 
-#from pydjay.uix import screen, paged_grid, paged_display
-#from pydjay.uix import clickable_area
-#from pydjay.uix import long_press_button
-#from pydjay.uix import screen
 from kivy.animation import Animation
 
-from pydjay.gui.main_window import MainWindow #file_browser, location_browser
+from pydjay.gui.main_window import MainWindow
 from pydjay.gui.modules.track_editor import TrackEditor
 from pydjay.gui.modules.preview_player import PreviewPlayer
-#from mediacentre.skins.default.theme import get_path
 
 from main_track_list import MainTrackList
 from track_short_list import TrackShortList
@@ -137,7 +132,7 @@ kv_string = """
                     window: root
                     queue: master_queue
                     short_list: short_list
-                    main_player: deck
+                    #main_player: deck
                     preview_player: preview_player
                     size_hint: (1.0, 1.0)
                     #text: "Browser goes here"
@@ -170,9 +165,6 @@ class MainScreen(MainWindow):
     def __init__(self, main_player, preview_player, volume_control, *args, **kwargs):
         super(MainScreen, self).__init__(*args, **kwargs)
         self.m_p = main_player
-        #self.preview_player = PreviewPlayer(preview_player, volume_control,  self)
-        #self.preview_player.size_hint = (None, None)
-        #self.preview_player.size = (950, 375)
         Clock.schedule_once(self._post_init, -1)
         Clock.schedule_interval(self._update_time, 1)
         self._preview_player_visible = False
@@ -186,10 +178,6 @@ class MainScreen(MainWindow):
 
         
     def _post_init(self, *args):
-        #self.preview_player.queue = self.master_queue
-        #self.preview_player.short_list = self.master_list.short_list
-        #self.preview_player.window = self
-        self.master_queue.deck.connect_player(self.m_p)
         self.master_queue.deck.set_volume_control(self._volume_control)
         popup = TrackEditor(self._preview_player, self._volume_control, self)
         popup.bind(on_dismiss = self.restore_focus)
@@ -198,8 +186,6 @@ class MainScreen(MainWindow):
         popup.queue = self.master_queue
         popup.short_list = self.short_list
         popup.window = self
-        #popup.set_track(track)
-        #popup.open()
         self.preview_popup = popup
         self._focus = 0
         self._focusable_elements = [self.master_list,
@@ -244,100 +230,19 @@ class MainScreen(MainWindow):
             self.show_preview_player(t, 0,0)
         
     def show_preview_player(self, track, pos, size, rel = 'right'):
-        """
-        x,y      = pos
-        w, h     = size
-        player_w, player_h = self.preview_player.size
-        window_w, window_h = self.size
-
-
-        if rel == 'right':
-            # check the left
-            if x+w+player_w <= window_w-5:
-                player_x = x+w+5
-            else:
-                # check the right
-                if x-player_w-5 >= 0:
-                    player_x = x-player_w-5
-                else:
-                    # check the middle
-                    if x + w/2 + (player_w / 2) <= window_w:
-                        player_x = x + w/2 + (player_w / 2)
-                    else:
-                        player_x = max(x,0)
-
-            # try to center the y coordinate
-            if (y + h/2 + player_h / 2 <= window_h) and (y + h/2 - player_h/2 >= 0):
-                player_y = y + w/2 - player_h / 2
-            else:
-                #if :
-                #    player_y = y+h - player_h / 2
-                #else:
-                player_y = max(y, 0)
-        elif rel == 'left':
-            if x-player_w-5 >= 0:
-                player_x = x-player_w-5
-
-            else:
-                # check the right
-                if x+w+player_w <= window_w-5:
-                    player_x = x+w+5
-                else:
-                    # check the middle
-                    if x + w/2 + (player_w / 2) <= window_w:
-                        player_x = x + w/2 + (player_w / 2)
-                    else:
-                        player_x = max(x,0)
-
-            # try to center the y coordinate
-            if (y + h/2 + player_h / 2 <= window_h) and (y + h/2 - player_h/2 >= 0):
-                player_y = y + w/2 - player_h / 2
-            else:
-                #if :
-                #    player_y = y+h - player_h / 2
-                #else:
-                player_y = max(y, 0)
-
-            pass
-        
-
-        
-        self.preview_player.set_track(track)
-        if not self._preview_player_visible:
-            self.add_widget(self.preview_player)
-            self._preview_player_visible = True
-            self.preview_player.pos = (player_x, player_y)
-        else:
-            if self._anim is not None:
-                self._anim.cancel(self.preview_player)
-            self._anim = Animation(pos=(player_x,player_y), duration=.2)
-            self._anim.start(self.preview_player)
-            self._anim.bind(on_complete = self._completed_animation)
-            #self.preview_player.pos =
-"""
-
         def _foo(*a):
-            #popup = PreviewPlayer(self._preview_player, self._volume_control, self)
-            #popup.size_hint = (None, None)
-            #popup.size = [1300,650]
-            #popup.queue = self.master_queue
-            #popup.short_list = self.master_list.short_list
-            #popup.window = self
             self.preview_popup.set_track(track)
             self.preview_popup.open()
-            #self.cancel_drag()
         Clock.schedule_once(_foo, 0)
 
     def _completed_animation(self, *args):
-        #self._anim.unbind(self._completed_animation)
         self._anim = None
 
-    def dismiss_preview_player(self):
-        if self._preview_player_visible:
-            self.remove_widget(self.preview_player)
-            self._preview_player_visible = False
-            self.preview_player.stop()
-            #self.preview_player.pos = (x,y)
+#    def dismiss_preview_player(self):
+#        if self._preview_player_visible:
+#            self.remove_widget(self.preview_player)
+#            self._preview_player_visible = False
+#            self.preview_player.stop()
 
         
     

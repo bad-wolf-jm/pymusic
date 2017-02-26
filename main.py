@@ -41,11 +41,13 @@ if __name__ == '__main__':
         return queue
 
     queue = read_state(pydjay.bootstrap.STATE, 'queue.txt')
-    bar.master_queue.set_track_list(queue)
+    pydjay.bootstrap.play_queue.set_track_list(queue)
+    #bar.master_queue.set_track_list(queue)
 
     queue = read_state(pydjay.bootstrap.SESSIONS, 'Current Session.m3u')
-    bar.master_queue.deck.set_current_session(queue)
-    bar.master_queue.deck.current_session_list.set_track_list(queue)
+    pydjay.bootstrap.session_manager.set_current_session(queue)
+    #bar.master_queue.deck.set_current_session(queue)
+    #bar.master_queue.deck.current_session_list.set_track_list(queue)
     
     bar.master_list.set_playlist_title('TRACKS')
     bar.master_list.set_track_list(get_tracks())

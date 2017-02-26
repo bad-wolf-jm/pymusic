@@ -4,6 +4,7 @@ from kivy.properties import ObjectProperty, StringProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.factory import Factory
 from pydjay.gui.utils import seconds_to_human_readable
+from pydjay.gui.track_list import TrackList
 
 kv_string = """
 #:import label kivy.uix.label
@@ -107,7 +108,7 @@ class CurrentSessionList(BoxLayout):
         return True
 
     def set_track_list(self, list, sort = True):
-        self.short_list.set_track_list(list, sort)
+        self.short_list.set_track_list(list, False)
         self._update_sl_track_count()
         num = len(self.short_list.adapter.data)
         time = 0

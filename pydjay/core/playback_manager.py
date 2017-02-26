@@ -1,5 +1,6 @@
 import os
 import time
+from kivy.clock import mainthread, Clock
 from kivy.properties import ObjectProperty, StringProperty, BooleanProperty, NumericProperty
 from kivy.logger import Logger
 from kivy.event import EventDispatcher
@@ -14,8 +15,9 @@ class PlaybackManager(EventDispatcher):
     queue_end_time     = NumericProperty(0)
     queue_is_playing   = BooleanProperty(False)
     queue_stop_request = BooleanProperty(False)
-    track_position     = NumericProperty(None, allownone = True)
+    track_position     = NumericProperty(0, allownone = True)
     track_duration     = NumericProperty(None, allownone = True)
+    remaining_time     = NumericProperty(None, allownone = True)
     
     
     def __init__(self, player, queue, session_manager, *args, **kw):
@@ -25,7 +27,10 @@ class PlaybackManager(EventDispatcher):
         self.session_manager = session_manager
         self.player.bind(on_end_of_stream = self._on_eos,
                          track_duration   = self._forward_track_duration,
-                         track_position   = self._forward_track_position)
+                         track_position   = self._forward_track_position,
+                         remaining_time   = self._forward_remaining_time)
+        self.queue.bind(queue_length = self._update_queue_length)
+        self.bind(wait_time = self._update_queue_length)
 
         self.queue_is_playing = False
         self._current_time  = None
@@ -57,16 +62,17 @@ class PlaybackManager(EventDispatcher):
     def _forward_track_duration(self, *a):
         self.track_duration = self.player.track_duration
 
+    def _forward_remaining_time(self, *a):
+        self.remaining_time = self.player.remaining_time
+
     def shutdown(self):
         pass
 
-    def immediate_stop(self, queue_stop = False): #, fade = False, continuation = None):
+    def immediate_stop(self, queue_stop = False):
         Logger.info('MainPlayer: Stopping player')
         self.player.stop()
         if self.track is not None:
-            save_to_current_session(self.track)
-            self._current_session.add(self.track.location)
-            self.current_session_list.add_track(self.track)
+            self.session_manager.add(self.track, True)
             if self._current_time is not None:
                 self.track.metadata.add_play_time(self._current_time)
                 self._current_time = None
@@ -133,3 +139,14 @@ class PlaybackManager(EventDispatcher):
             self.player.play(self.track.location, self.track.info.start_time, self.track.info.end_time)
             self.dispatch('on_playback_started')
 
+
+    def _update_queue_length(self, *a):
+        l = self.queue.queue_length
+        num = len(self.queue)
+        if num > 0:
+            self.queue_length = l + self.wait_time * (num - 1)
+
+        current_time = time.time()
+        r_t = self.remaining_time if self.remaining_time is not None else 0
+        self.queue_end_time = current_time + (r_t + self.queue_length) / 1000000000
+            
