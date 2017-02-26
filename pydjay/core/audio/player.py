@@ -18,9 +18,13 @@ try:
 except ImportError:
     import Queue as queue
 
-class AudioPlayerDriver(Process):
+class AudioPlayer(EventDispatcher):
+    state                = StringProperty(None, allownone = True)
+    track_duration       = NumericProperty(None, allownone = True)
+    track_position       = NumericProperty(None, allownone = True)
+#(Process):
     def __init__(self, player_name, num_channels = 2, in_queue = None, out_queue = None, *args, **kw):
-        super(AudioPlayerDriver, self).__init__(*args, **kw)
+        super(AudioPlayer, self).__init__(*args, **kw)
         self._track_promise = None
         self._current_time  = None
         self.player_name = player_name
@@ -32,16 +36,27 @@ class AudioPlayerDriver(Process):
         self._tr_dur  = None
         self._state   = 'stopped'
         self._eos_callbacks = []
+        self._output        = JackOutput(self.player_name, self.num_channels)
 
         self.state = None
         self.track_duration = None
         self.track_position = None
         self.in_queue  = in_queue
         self.out_queue = out_queue
+        self.register_event_type("on_end_of_stream")
+
         
     def on_end_of_stream(self, *args):
        pass
 
+
+    def _get_remaining_time(self, *a):
+        if self.track_duration is not None and self.track_position is not None:
+            return self.track_duration - self.track_position
+        return 0
+
+    remaining_time  = AliasProperty(_get_remaining_time, bind = ['track_duration', 'track_position'])
+   
     def connect_outputs(self, **kwargs):
         self._output.connect_outputs(**kwargs)
 
@@ -50,24 +65,34 @@ class AudioPlayerDriver(Process):
 
     def _player_loop(self):
         eos = False
-        if self._decoder is not None:
-            while self._is_playing:
-                #if self.state == 'paused':
+        #if self._decoder is not None:
+        has_duration = False
+        iteration = 0
+        while self._is_playing:
+            #if self.state == 'paused':
 
-                try:
-                    timestamp, samples = self._decoder.next()
-                    if self._decoder.duration is not None:
-                        self.out_queue.put(('signal_stream_duration', (self._decoder.duration,), {}))
-                    self.out_queue.put(('signal_stream_time', (self._output.stream_time,), {}))
-                    self._output.send(samples)
-                except StopIteration:
-                    eos = True
-                    break
-            self._decoder.close()
-            self._is_playing = False
-            self._player_thread = None
-            if eos:
-                self.out_queue.put(('signal_end_of_stream', (), {}))
+            try:
+                timestamp, samples = self._decoder.next()
+                if self._decoder.duration is not None and not has_duration:
+                    has_duration = True
+                    self.track_duration = self._decoder.duration
+                    #self.out_queue.put(('signal_stream_duration', (self._decoder.duration,), {}))
+                if iteration == 20:
+                    self.track_position = self._output.stream_time
+                    iteration = 0
+                else:
+                    iteration += 1
+                    #self.out_queue.put(('signal_stream_time', (self._output.stream_time,), {}))
+                self._output.send(samples)
+            except StopIteration:
+                eos = True
+                break
+        self._decoder.close()
+        self._is_playing = False
+        self._player_thread = None
+        if eos:
+            self.dispatch('on_end_of_stream')
+            #self.out_queue.put(('signal_end_of_stream', (), {}))
 
     def play(self, filename, start_time = None, end_time = None):
         self.stop()
@@ -118,7 +143,13 @@ class AudioPlayerDriver(Process):
         return self.state == 'playing'
 
     #def shutdown(self):
-
+    def shutdown(self):
+        #self.out_queue.put(('close', (), {}))
+        #self.out_queue.cancel_join_thread()
+        #self.in_queue.cancel_join_thread()
+        #self._running = False
+        #self._foo.join()
+        pass
 
     def run(self):
         self._output        = JackOutput(self.player_name, self.num_channels)
@@ -143,7 +174,7 @@ class AudioPlayerDriver(Process):
                 pass
         print "Closing Queue"
         
-class AudioPlayer(EventDispatcher):
+class AudioPlayer_XXX(EventDispatcher):
     state                = StringProperty(None, allownone = True)
     track_duration       = NumericProperty(None, allownone = True)
     track_position       = NumericProperty(None, allownone = True)
@@ -250,7 +281,7 @@ class AudioPlayer(EventDispatcher):
         self.out_queue.put(('seek', (timestamp,), {}))
 
     def seek_relative(self, time):
-        self.out_queue.put('seek_relative', (time,), {})
+        self.out_queue.put(('seek_relative', (time,), {}))
 
     @property
     def is_playing(self):
