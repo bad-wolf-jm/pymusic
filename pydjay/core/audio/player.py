@@ -73,11 +73,11 @@ class AudioPlayer(EventDispatcher):
                 if self._decoder.duration is not None and not has_duration:
                     has_duration = True
                     self.track_duration = self._decoder.duration
-                if iteration == 20:
-                    self.track_position = self._output.stream_time
-                    iteration = 0
-                else:
-                    iteration += 1
+                #if iteration == 10:
+                self.track_position = self._output.stream_time
+                #    iteration = 0
+                #else:
+                #    iteration += 1
                 self._output.send(samples)
             except StopIteration:
                 eos = True
