@@ -50,6 +50,10 @@ class AudioPlayer(EventDispatcher):
        pass
 
 
+    @mainthread
+    def set_time(self, type_, value):
+       setattr(self, type_, value)
+
     def _get_remaining_time(self, *a):
         if self.track_duration is not None and self.track_position is not None:
             return self.track_duration - self.track_position
@@ -72,12 +76,13 @@ class AudioPlayer(EventDispatcher):
                 timestamp, samples = self._decoder.next()
                 if self._decoder.duration is not None and not has_duration:
                     has_duration = True
-                    self.track_duration = self._decoder.duration
-                #if iteration == 10:
-                self.track_position = self._output.stream_time
-                #    iteration = 0
-                #else:
-                #    iteration += 1
+                    self.set_time('track_duration', self._decoder.duration)
+                    #self.track_duration = self._decoder.duration
+                if iteration == 5:
+                    self.set_time('track_position', self._output.stream_time)
+                    iteration = 0
+                else:
+                    iteration += 1
                 self._output.send(samples)
             except StopIteration:
                 eos = True
