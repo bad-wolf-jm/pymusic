@@ -715,7 +715,7 @@ class TrackEditor(ModalView):
         self._player.play(self._track)
 
     def stop(self):
-        self._player.stop(flush = True)
+        self._player.stop()
 
     def _do_seek(self, window, event):
         if self.seekbar.collide_point(*event.pos):
