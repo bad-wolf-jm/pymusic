@@ -86,7 +86,7 @@ class AudioPlayer(EventDispatcher):
             self.signal_end_of_stream()
 
     def play(self, filename, start_time = None, end_time = None):
-        self.stop()
+        self.stop(flush = True)
         self._file          = filename
         self._decoder       = GstAudioFile(self._file, self._output.num_channels, self._output.samplerate, 'F32LE', None, start_time, end_time)
         if start_time is not None:
@@ -120,6 +120,7 @@ class AudioPlayer(EventDispatcher):
         if self._decoder is not None:
             self._decoder.seek(timestamp)
             self._output.reset_timer(timestamp)
+            self._output.flush_buffer()
 
     def seek_relative(self, time):
         if self._is_playing:
