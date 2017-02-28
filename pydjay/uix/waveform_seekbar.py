@@ -20,7 +20,6 @@ from kivy.graphics import Mesh, Color, Rectangle, Line
 
 from kivy.clock import mainthread
 from kivy.lang import Builder
-#from kivy.properties import ObjectProperty#, IntProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
 from kivy.uix.stencilview import StencilView
@@ -30,8 +29,6 @@ from kivy.factory import Factory
 from kivy.graphics import Line, RenderContext
 
 from kivy.uix.relativelayout import RelativeLayout
-
-#from pydjay.uix.waveform_visualize import WaveformVisualize
 
 
 electric_blue = [44.0/255, 117.0/255, 255.0/255, .7]
@@ -60,24 +57,13 @@ class WaveformVisualize(StencilView):
                   points = self.ask_redraw,
                   height = self.ask_redraw)
 
-        #with self.canvas:
-        #    self._gcolor = Color(*self.color)
-        #    self._gline = Line(points=[], cap='none', width=1, joint='round')
-
-
     def draw_waveform(self, *args):
-        #super(LinePlot, self).draw(*args)
-        # flatten the list
         points = []
         self.canvas.clear()
         with self.canvas:
             Color(*self.color)
             for x, y in self.iterate_points():
                 Line(points = [x, y[0], x, y[1]], width = 1, joints = 'round')
-                #print 'POINT', x, y
-            #points += [x, y]
-        #self._gline.points = points       
-
 
     def iterate_points(self):
         '''Iterate on all the points adjusted to the graph settings
@@ -104,8 +90,6 @@ class WaveformVisualize(StencilView):
                     sample_min_y = y
 
 
-            #print sample_min_x, sample_min_y, sample_max_x, sample_max_y 
-
             zero_y      = self.height / 2 + self.y
             y_amplitude = sample_max_y - sample_min_y
             y_factor    = float(self.height) / y_amplitude
@@ -114,14 +98,11 @@ class WaveformVisualize(StencilView):
             x_amplitude = sample_max_x - sample_min_x
             x_factor    = float(self.width) / x_amplitude
 
-            #print 'X DATA', zero_x, x_amplitude, x_factor, sample_max_x, sample_min_x, x, x * x_factor + zero_x
-            #pp = [p for p in self.points if p[0] <= sample_max_x]
             scaled = {}
             c_p = 0
             for x, y in self.points:
                 v_x = int(x * x_factor + zero_x)
                 v_y = y * y_factor + zero_y
-                #print v_x
                 if v_x not in scaled:
                     scaled[v_x] = [v_y, v_y]
                 else:
@@ -131,16 +112,6 @@ class WaveformVisualize(StencilView):
                     if v_y > ll[1]:
                         ll[1] = v_y
 
-                    #scaled[v_x].append(v_y)
-                #if v_x != c_p:
-                    #scaled.append((x * x_factor + zero_x, y * y_factor + zero_y))#+self.height / 2)
-                    #scaled.append((v_x, v_y))#+self.height / 2)
-                    #c_p = v_x
-
-            #for x in scaled:
-            #    print x
-
-            #print len(scaled.keys())
             return [(p, scaled[p]) for p in sorted(scaled.keys())]
         else:
             return []
@@ -192,9 +163,6 @@ class WaveformSeekbar(RelativeLayout):
     min_value  = NumericProperty(0)
     max_value  = NumericProperty(100)
     value      = NumericProperty(0)
-#    track_length = NumericProperty(0)
-#    track_start  = NumericProperty(0, allownone = True)
-#    track_end    = NumericProperty(0, allownone = True)
 
     def __init__(self, *args, **kwargs):
         super(WaveformSeekbar, self).__init__(*args, **kwargs)

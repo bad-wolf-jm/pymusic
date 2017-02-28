@@ -58,7 +58,6 @@ import sys
 import threading
 import os
 import array
-#from . import DecodeError
 from kivy.utils import platform
 
 try:
@@ -151,10 +150,7 @@ class MainLoopThread(threading.Thread):
         self.daemon = True
 
     def run(self):
-        #try:
         self.loop.run()
-        #except:
-        #    sys.exit(1)
 
 # The decoder.
 
@@ -176,19 +172,17 @@ class GstAudioFile(object):
     manager, as shown above.
     """
     def __init__(self, path, num_channels = 2, samplerate = 44100, format = "F32LE", timeout = None, start_time = None, end_time = None):
-        self.duration = None
-        self.running = False
-        self.finished = False
-        self._num_channels = num_channels
-        self._samplerate   = samplerate
-        self._format       = format
+        self.duration       = None
+        self.track_length   = None
+        self.running        = False
+        self.finished       = False
+        self._num_channels  = num_channels
+        self._samplerate    = samplerate
+        self._format        = format
         self._queue_timeout = timeout
-        self._start_time = start_time
-        self._end_time = end_time
-        #print self._format
-        #print "XXX"
-        # Set up the Gstreamer pipeline.
-        self.pipeline = Gst.Pipeline()
+        self._start_time    = start_time
+        self._end_time      = end_time
+        self.pipeline       = Gst.Pipeline()
 
         self.src      = Gst.ElementFactory.make("filesrc", None)
         self.dec      = Gst.ElementFactory.make("decodebin", None)
@@ -212,16 +206,9 @@ class GstAudioFile(object):
         bus.connect("message::error", self._message)
 
         # Configure the input.
-        #print platform
-        #if platform == 'win':
-        #    uri = 'file:/' + quote(os.path.abspath(path))
-        #else:
-        #    uri = 'file://' + quote(os.path.abspath(path))
         uri = os.path.abspath(path)
             
-        #print uri
         self.src.set_property("location", uri)
-        #self.dec.set_property("uri", uri)
         # The callback to connect the input.
         self.dec.connect("pad-added", self._pad_added)
         self.dec.connect("no-more-pads", self._no_more_pads)
@@ -235,7 +222,6 @@ class GstAudioFile(object):
             Gst.Caps.from_string('audio/x-raw, format=(string)F32LE, rate=(int)%s, channels=(int)%s'%(self._samplerate, self._num_channels)),
         )
         
-        #print 'YYY'
         # TODO set endianness?
         # Set up the characteristics of the output. We don't want to
         # drop any data (nothing is real-time here); we should bound
@@ -275,7 +261,6 @@ class GstAudioFile(object):
         self.queue = queue.Queue(QUEUE_SIZE)
         self.thread = get_loop_thread()
 
-        #print 'QQQ'
         # This wil get filled with an exception if opening fails.
         self.read_exc = None
 
@@ -283,16 +268,12 @@ class GstAudioFile(object):
         self.running  = True
         self.got_caps = False
         self.pipeline.set_state(Gst.State.PLAYING)
-        #print 'QQQ'
         self.ready_sem.acquire()
         
-        #print 'ZZZ'
         if self.read_exc:
             # An error occurred before the stream became ready.
             self.close(True)
             raise self.read_exc
-        #if self._start_time is not None:
-        #    self.seek(self._start_time)
 
     # Gstreamer callbacks.
 
@@ -312,10 +293,20 @@ class GstAudioFile(object):
         # Query duration.
         success, length = pad.get_peer().query_duration(Gst.Format.TIME)
         if success:
-            self.duration = length #/ 1000000000
+            self.track_length = length #/ 1000000000
+            if self._end_time is not None:
+                if self._start_time is not None:
+                    self.duration = self._end_time - self._start_time
+                else:
+                    self.duration = self._end_time
+            else:
+                if self._start_time is not None:
+                    self.duration = length - self._start_time
+                else:
+                    self.duration = length
+
         else:
             self.duration = None
-            #self.read_exc = MetadataMissingError('duration not available')
 
         # Allow constructor to complete.
         self.ready_sem.release()
@@ -350,33 +341,20 @@ class GstAudioFile(object):
         if self.running:
             # New data is available from the pipeline! Dump it into our
             # queue (or possibly block if we're full).
-            if self.duration is None:
-                success, length = self.pipeline.query_duration(Gst.Format.TIME)
-                if success:
-                    self.duration = length #/ 1000000000
-                else:
-                    self.duration = None
-                    #self.read_exc = MetadataMissingError('duration not available')
-
             success, position = self.pipeline.query_position(Gst.Format.TIME)
             if not success:
                 position = 0
             
             buf = sink.emit('pull-sample').get_buffer()
             if self.duration is not None and (position >= self.duration):
-                #print "RUNNING OUT OF STREAM"
                 self.queue.put(SENTINEL)
             else:
                 result, data = buf.map(Gst.MapFlags.READ)
                 if result:
-                    buffer_bytes  = array.array('f', data.data)#.tolist()
+                    buffer_bytes  = array.array('f', data.data)
                     buf.unmap(data)
-                    #num_samples   = int(len(buffer_bytes) / 2)
-                    #left_channel  = [buffer_bytes[2*i] for i in range(num_samples)]
-                    #right_channel = [buffer_bytes[2*i+1] for i in range(num_samples)]
-                    #print len(left_channel), len(right_channel)
                 
-                self.queue.put((position, buffer_bytes))#left_channel, right_channel))#(position, buf)) #buf.extract_dup(0, buf.get_size())))
+                self.queue.put((position, buffer_bytes))
         return Gst.FlowReturn.OK
 
     def _unkown_type(self, uridecodebin, decodebin, caps):
@@ -395,12 +373,10 @@ class GstAudioFile(object):
         """The callback for GstBus's "message" signal (for two kinds of
         messages).
         """
-        #print message
         if not self.finished:
             if message.type == Gst.MessageType.EOS:
                 # The file is done. Tell the consumer thread.
                 self.queue.put(SENTINEL)
-                #print 'EOS DETECTED'
                 if not self.got_caps:
                     # If the stream ends before _notify_caps was called, this
                     # is an invalid file.
@@ -423,22 +399,12 @@ class GstAudioFile(object):
         # Wait for data from the Gstreamer callbacks.
         try:
             val = self.queue.get(True, self._queue_timeout)
-            #print self._end_time
             if self._end_time is not None and val[0] >= self._end_time:
-                #print "END OF STREAM"
                 raise StopIteration
-            #print val[0]
         except queue.Empty:
-            print 'EMPTY'
             raise StopIteration
         if val == SENTINEL:
-            # End of stream.
             raise StopIteration
-        try:
-            if self.duration is not None and (self.duration - val[0]) <= 0:
-                print self.duration - val[0]
-        except:
-            pass
         if (self.duration is not None and (val[0] >= self.duration)):
             raise StopIteration
         return val
@@ -449,8 +415,11 @@ class GstAudioFile(object):
     def __iter__(self):
         return self
 
+    def set_start_time(self, timestamp):
+        self._start_time = timestamp
+        self.seek(self._start_time)
+
     def seek(self, timestamp):
-        #print timestamp
         self.pipeline.seek_simple(Gst.Format.TIME,
                                   Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
                                   timestamp)
@@ -506,29 +475,3 @@ class GstAudioFile(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
         return False
-
-
-# Smoke test.
-if __name__ == '__main__':
-    
-    #for path in sys.argv[1:]:
-    path = os.path.abspath(os.path.expanduser(sys.argv[1]))
-    #for f in os.listdir(path):
-    #    pp = os.path.join(path, f)
-    #    p, ext = os.path.splitext(pp)
-    #    if ext in ['.mp3', '.mp4']:
-    with GstAudioFile(path) as decoded:
-        #print pp
-        print decoded.channels, decoded.samplerate,
-        #print(decoded.duration)
-        i =0
-        for s in decoded:
-            #if decoded.duration is not None:
-            #    print decoded.duration
-                #break
-            i += 1
-            print i, s[0]
-                    #if decoded.duration is not None:
-                    #    print decoded.duration, s[0]
-                    #    break
-                    #print (f.duration, s[0], len(s[1]), ord(s[1][0]))

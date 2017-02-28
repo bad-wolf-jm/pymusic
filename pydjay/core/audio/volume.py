@@ -214,8 +214,6 @@ class VolumeController(object):
         self.stream_time = time
         
     def set_volumes(self, *data, **kw):
-        #print 'sending'
-        #print data
         self.out_queue.put(('set_volumes', data, kw))
         
     def close(self):

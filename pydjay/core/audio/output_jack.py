@@ -46,13 +46,12 @@ class JackOutputDriver(object):
         self.block_size     = self._jack_client.blocksize
         self._output_ports  = []
         self._outputs       = {}
-        self._input_buffers = [] #array.array('f')
+        self._input_buffers = []
         self.stream_time    = 0
+        self.buffer_time    = 0
         self.closed          = False
-
         self._buffer_time   = int(self.block_size * 1.0 / self.samplerate * 1000000000)
  
-    
         for i in range(num_channels):
             port_name = "output_%s"%(i+1)
             self._output_ports.append(self._jack_client.outports.register(port_name))
@@ -86,8 +85,9 @@ class JackOutputDriver(object):
     def flush_buffer(self):
         #pass
         self._buffer_size = 0
+        self.buffer_time  = 0
         for channel_index in range(self.num_channels):
-            self._input_buffers[channel_index] = [] #append(data[offset+channel_index])
+            self._input_buffers[channel_index] = []
 
     def reset_timer(self, timestamp = 0):
         self.stream_time = timestamp
@@ -132,6 +132,7 @@ class JackOutputDriver(object):
             for channel_index in range(self.num_channels):
                 self._input_buffers[channel_index].append(data[offset+channel_index])
         self._buffer_size += int(len(data) / 2)
+        self.buffer_time = int(self._buffer_size * 1.0 / self.samplerate * 1000000000)
 
 
 
@@ -164,8 +165,9 @@ class JackOutputProcess(Process):
                     print 'y', details
             except queue.Empty, details:
                 pass
-            self.out_queue.put(('set_stream_time', (self.output_driver.stream_time,), {}))
+            self.out_queue.put(('set_stream_time', (self.output_driver.stream_time,self.output_driver.buffer_time), {}))
 
+            
 class JackOutput(object):
     def __init__(self, client_name = "PYDjayJackClient", num_channels = 2, *args, **kw):
         super(JackOutput, self).__init__()
@@ -221,8 +223,9 @@ class JackOutput(object):
     def reset_timer(self, timestamp = 0):
         self.out_queue.put(('reset_timer', (), {'timestamp': timestamp}))
 
-    def set_stream_time(self, time):
+    def set_stream_time(self, time, b_time):
         self.stream_time = time
+        self.buffer_time = b_time
             
     def send(self, data):
         #print 'sending'

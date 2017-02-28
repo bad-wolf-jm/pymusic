@@ -17,6 +17,7 @@ class PlaybackManager(EventDispatcher):
     queue_stop_request = BooleanProperty(False)
     track_position     = NumericProperty(0, allownone = True)
     track_duration     = NumericProperty(None, allownone = True)
+    track_length       = NumericProperty(None, allownone = True)
     remaining_time     = NumericProperty(None, allownone = True)
     
     
@@ -26,6 +27,7 @@ class PlaybackManager(EventDispatcher):
         self.queue           = queue
         self.session_manager = session_manager
         self.player.bind(on_end_of_stream = self._on_eos,
+                         track_length     = self._forward_track_length,
                          track_duration   = self._forward_track_duration,
                          track_position   = self._forward_track_position,
                          remaining_time   = self._forward_remaining_time)
@@ -65,6 +67,12 @@ class PlaybackManager(EventDispatcher):
     def _forward_remaining_time(self, *a):
         self.remaining_time = self.player.remaining_time
 
+
+    def _forward_track_length(self, *a):
+        self.track_length = self.player.track_length
+
+
+        
     def shutdown(self):
         pass
 
