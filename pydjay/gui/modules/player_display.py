@@ -398,8 +398,8 @@ class MainPlayerDisplay(BoxLayout):
         if self._duration is not None:
             t_l =  pydjay.bootstrap.playback_manager.track_length
             t_l = t_l if t_l is not None else self._duration
-            self.seekbar.max_value      = t_l #pydjay.bootstrap.playback_manager.track_length
-            self.seekbar.waveform.x_max = t_l #pydjay.bootstrap.playback_manager.track_length
+            self.seekbar.max_value      = t_l 
+            self.seekbar.waveform.x_max = t_l 
         else:
             self.seekbar.max_value = 1
         position = pydjay.bootstrap.playback_manager.track_position or 0

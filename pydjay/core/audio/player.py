@@ -88,16 +88,20 @@ class AudioPlayer(EventDispatcher):
     def play(self, filename, start_time = None, end_time = None):
         self.stop(flush = True)
         self._file          = filename
-        self._decoder       = GstAudioFile(self._file, self._output.num_channels, self._output.samplerate, 'F32LE', None, start_time, end_time)
-        if start_time is not None:
-            self._decoder.set_start_time(start_time)
-            self._output.reset_timer(start_time)
-        else:
-            self._output.reset_timer(0)
-        self._player_thread = threading.Thread(target = self._player_loop)
-        self._is_playing    = True
-        self._player_thread.start()
-        self.state = "playing"
+        try:
+            self._decoder       = GstAudioFile(self._file, self._output.num_channels, self._output.samplerate, 'F32LE', None, start_time, end_time)
+            if start_time is not None:
+                self._decoder.set_start_time(start_time)
+                self._output.reset_timer(start_time)
+            else:
+                self._output.reset_timer(0)
+            self._player_thread = threading.Thread(target = self._player_loop)
+            self._is_playing    = True
+            self._player_thread.start()
+            self.state = "playing"
+        except IOError:
+            self.state = 'stopped'
+        #    raise
 
     def stop(self, flush = False):
         self._is_playing = False

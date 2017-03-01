@@ -31,7 +31,7 @@ from pydjay.gui.utils import seconds_to_human_readable
 from pydjay.uix.clickable_area import ImageButton
 from pydjay.uix.long_press_button import LongPressButtonBehaviour
 
-from pydjay.gui.preview_player import PreviewPlayer
+#from pydjay.gui.preview_player import PreviewPlayer
 
 from kivy.graphics import *
 
@@ -49,7 +49,7 @@ from kivy.graphics import *
 from pydjay.gui.main_window import MainWindow
 from pydjay.gui.list_items.drag_item import DragItem
 
-from pydjay.uix.side_panel import NavigationDrawer
+#from pydjay.uix.side_panel import NavigationDrawer
 
 from pydjay.gui.utils import seconds_to_human_readable
 

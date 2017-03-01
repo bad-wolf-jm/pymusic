@@ -10,7 +10,7 @@ class PlaybackManager(EventDispatcher):
     track              = ObjectProperty(None)
     queue              = ObjectProperty(None)
     session_manager    = ObjectProperty(None)
-    wait_time          = NumericProperty(0)
+    wait_time          = NumericProperty(5)
     queue_length       = NumericProperty(0)
     queue_end_time     = NumericProperty(0)
     queue_is_playing   = BooleanProperty(False)
