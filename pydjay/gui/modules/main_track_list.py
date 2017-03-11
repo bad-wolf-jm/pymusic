@@ -51,7 +51,7 @@ kv_string = """
                     BoxLayout:
                         orientation: 'horizontal'
                         size_hint: 1, 1
-                        padding:[0,0,10,0]
+                        padding:[10,0,10,0]
                         spacing: 10
                         canvas.before:
                             Color: 
@@ -60,12 +60,12 @@ kv_string = """
                                 pos: self.pos
                                 size: self.size
 
-                        ImageButton:
-                            size_hint: None, None
-                            size: root.button_size,root.button_size
-                            pos_hint: {'center_y':.5}
-                            #on_press: root.show_side_view()
-                            image: 'atlas://pydjay/gui/images/resources/show-list'
+                        #ImageButton:
+                        #    size_hint: None, None
+                        #    size: root.button_size,root.button_size
+                        #    pos_hint: {'center_y':.5}
+                        #    #on_press: root.show_side_view()
+                        #    image: 'atlas://pydjay/gui/images/resources/show-list'
                         BoxLayout:
                             orientation: 'vertical'
                             size_hint: .75, 1
@@ -210,9 +210,7 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
             pass
 
     def _update_availability(self, *args):
-        print "UPDATE_AVAILBILITY"
         self.master_list.update_availability(self._track_is_available)
-
 
     def show_preview_player(self, track, pos, size):
         self.preview_player.play(track)

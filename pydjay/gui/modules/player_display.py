@@ -28,134 +28,117 @@ import pydjay.bootstrap
 kv_string = """
 <MainPlayerDisplay>:
     seekbar:              seekbar
-    #turntable:           turntable
     display_window:       display_window
     album_art:            album_art
     artist_label:         artist_label
     title_label:          title_label
     time_remaining_label: time_remaining
     player_stopped:       player_stopped.__self__
-    main_player_volume:   main_player_volume
+    #main_player_volume:   main_player_volume
     orientation: 'horizontal'
     size_hint: 1, 1
     skip_to_next_overlay: skip_to_next_overlay.__self__
     countdown: countdown.__self__
     size_hint: 1, 1
 
-
-    BoxLayout:
-        orientation: 'vertical'
-        size_hint: None, 1
-        width: 70
-        padding: [10,10,10,10]
-        spacing: 10
-
-        VolumeSlider:
-            id: main_player_volume
-            size_hint: None, 1
-            pos_hint: {'center_x': .5}
-            width: 50
-        Label:
-            text: "Volume"
-            font_size: 11
-            text_size: self.size
-            halign: 'center'
-            valign: 'middle'
-            size_hint: 1, None
-            height: 11
-    VDivider:
     StencilView:
         size_hint: 1,None
-        height: 150
+        height: 125
         RelativeLayout:
             size_hint: (None,None)
             size: self.parent.size
             pos: self.parent.pos
             id: display_window
 
+
+          
             BoxLayout:
-                orientation: 'vertical'
+                orientation: 'horizontal'
+                Image:
+                    id: album_art
+                    size_hint: None, 1
+                    width: self.height
+                    source: 'atlas://pydjay/gui/images/resources/default_album_cover'
+                    allow_stretch: True
+                    keep_ratio: True
+                VDivider:
+
+
                 BoxLayout:
-                    orientation: 'horizontal'
-                    size_hint: 1,1
-                    Image:
-                        id: album_art
-                        size_hint: None, 1
-                        width: self.height
-                        source: 'atlas://pydjay/gui/images/resources/default_album_cover'
-                        allow_stretch: True
-                        keep_ratio: True
-                    VDivider:
+                    orientation: 'vertical'
                     BoxLayout:
-                        orientation: 'vertical'
+                        orientation: 'horizontal'
                         size_hint: 1,1
                         BoxLayout:
                             orientation: 'vertical'
-                            size_hint: 1,1 
-                            padding: [10,7,5,7]
+                            size_hint: 1,1
                             BoxLayout:
-                                orientation: 'horizontal'
-                                size_hint: 1,1
-                                #height:35
-                                spacing: 15
-                                Label:
+                                orientation: 'vertical'
+                                size_hint: 1,1 
+                                padding: [10,7,5,7]
+                                BoxLayout:
+                                    orientation: 'horizontal'
                                     size_hint: 1,1
-                                    id: title_label
-                                    font_size:'15sp'
-                                    bold: True
-                                    #color: 0,0,0,1
-                                    text: '' 
-                                    text_size: self.size
-                                    halign: 'left'
-                                    valign: 'middle'
-                                    shorten: True
-                                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-
-
-                                Label:
-                                    size_hint: None,1
-                                    id: time_remaining
-                                    font_size:'15sp'
-                                    width: 50
-                                    bold: True
-                                    #color: 0.8,0.8,0.8,1
-                                    text: ""
-                                    text_size: self.size
-                                    halign: 'left'
-                                    valign:'middle'
-                                    shorten: True
-                                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-                            BoxLayout:
-                                orientation: 'horizontal'
-                                size_hint: 1,1
-                                #height:35
-                                spacing: 15
-           
-                                Label:
-                                    size_hint: 1,1
-                                    id:artist_label
-                                    text: '' #asdfasdfasdf'#root.track.artist #"Artist"
-                                    color: .6,.6,.6,1
-                                    text_size: self.size
-                                    halign: 'left'
-                                    valign:'middle'
-                                    font_size: 15
-                                    #size_hint: 1, None
                                     #height:35
+                                    spacing: 15
+                                    Label:
+                                        size_hint: 1,1
+                                        id: title_label
+                                        font_size:'15sp'
+                                        bold: True
+                                        #color: 0,0,0,1
+                                        text: '' 
+                                        text_size: self.size
+                                        halign: 'left'
+                                        valign: 'middle'
+                                        shorten: True
+                                        ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
 
-                                ImageButton:
-                                    size_hint: None, None
-                                    size: 25,25
-                                    pos_hint: {'top': 1}
-                                    #text: 'SL'
-                                    image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
-                                    on_press: root.show_eject_panel()
-                                    #    root.stop() 
 
-                HDivider:
-                WaveformSeekbar:
-                    size_hint: 1, 1
-                    id: seekbar
+                                    Label:
+                                        size_hint: None,1
+                                        id: time_remaining
+                                        font_size:'15sp'
+                                        width: 50
+                                        bold: True
+                                        #color: 0.8,0.8,0.8,1
+                                        text: ""
+                                        text_size: self.size
+                                        halign: 'left'
+                                        valign:'middle'
+                                        shorten: True
+                                        ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+                                BoxLayout:
+                                    orientation: 'horizontal'
+                                    size_hint: 1,1
+                                    #height:35
+                                    spacing: 15
+
+                                    Label:
+                                        size_hint: 1,1
+                                        id:artist_label
+                                        text: '' #asdfasdfasdf'#root.track.artist #"Artist"
+                                        color: .6,.6,.6,1
+                                        text_size: self.size
+                                        halign: 'left'
+                                        valign:'middle'
+                                        font_size: 15
+                                        #size_hint: 1, None
+                                        #height:35
+
+                                    ImageButton:
+                                        size_hint: None, None
+                                        size: 25,25
+                                        pos_hint: {'top': 1}
+                                        #text: 'SL'
+                                        image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
+                                        on_press: root.show_eject_panel()
+                                        #    root.stop() 
+
+                    HDivider:
+                    WaveformSeekbar:
+                        size_hint: 1, 1
+                        id: seekbar
 
             RelativeLayout:
                 size_hint: 1,1
@@ -284,14 +267,12 @@ class MainPlayerDisplay(BoxLayout):
                                                on_queue_stopped    = self.display_stopped_state,
                                                on_playback_started = self._on_playback_started)
 
-        pydjay.bootstrap.volume_control.bind(main_player = self._update_volume)
         Clock.schedule_once(self._post_init, -1)
 
     def _post_init(self, *args):
         self.display_window.remove_widget(self.skip_to_next_overlay)
         self.display_window.remove_widget(self.countdown)
         self.player_stopped.pos = 0,0
-        self.main_player_volume.bind(volume = self._set_volume)
 
     def show_eject_panel(self, *a):
         self.display_window.add_widget(self.skip_to_next_overlay)
@@ -301,9 +282,6 @@ class MainPlayerDisplay(BoxLayout):
 
     def _update_volume(self, *args):
         self.main_player_volume.volume = pydjay.bootstrap.volume_control.main_player
-
-    def _set_volume(self, *args):
-        pydjay.bootstrap.volume_control.main_player = self.main_player_volume.volume
 
     def shutdown(self):
         try:
@@ -356,12 +334,14 @@ class MainPlayerDisplay(BoxLayout):
     def set_track(self, i, track):
         Logger.info('MainPlayer: Setting track')
         self._track = track
-        #self.track = track
         if self._track is not None:
             self.artist_label.text = self._track.metadata.artist
             self.title_label.text = self._track.metadata.title
             if self._track.metadata.album_cover is not None:
-                self.album_art.source = self._track.metadata.album_cover['medium']
+                try:
+                    self.album_art.source = self._track.metadata.album_cover['medium']
+                except:
+                    self.album_art.source = 'atlas://pydjay/gui/images/resources/default_album_cover'
             else:
                 self.album_art.source = 'atlas://pydjay/gui/images/resources/default_album_cover'
 
@@ -385,8 +365,9 @@ class MainPlayerDisplay(BoxLayout):
                 points = [ll[offset:offset+2] for offset in range(0, len(ll) - 1, 2)]
                 points = sorted(points, cmp = lambda x,y: cmp(x[0], y[0]))
                 self.seekbar.waveform.points =  points                    
-            except Exception:
-                 self.seekbar.waveform.points = []
+            except Exception, details:
+                print details
+                self.seekbar.waveform.points = []
             finally:
                 try:
                     f.close()

@@ -29,6 +29,7 @@ from kivy.animation import Animation
 from pydjay.gui.main_window import MainWindow
 from pydjay.gui.modules.track_editor import TrackEditor
 from pydjay.gui.modules.preview_player import PreviewPlayer
+from pydjay.gui.modules.mixer import Mixer
 
 from main_track_list import MainTrackList
 from track_short_list import TrackShortList
@@ -63,7 +64,7 @@ kv_string = """
         BoxLayout:
             orientation: 'horizontal'
             size_hint: 1, None
-            height: 150 #time_label.height+date_label.height
+            height: 125 #time_label.height+date_label.height
             padding: [0,0,0,0]
             MainPlayerDisplay:
                 id: display
@@ -75,7 +76,7 @@ kv_string = """
             VDivider:
             BoxLayout:
                 orientation: 'vertical'
-                size_hint: .5,1
+                size_hint: .25,1
 
                 BoxLayout:
                     orientation: 'horizontal'
@@ -109,7 +110,6 @@ kv_string = """
 
                 MainPlayerDeck:
                     id: deck
-                    #current_session_list: current_session
                     size_hint: (1, 1)
                     queue: master_queue
                     window: root
@@ -117,45 +117,64 @@ kv_string = """
                     height: 150
 
             VDivider:
-            PreviewPlayer:
-                id: preview_player
-                size_hint: 1, 1
-                height: 150 
         HDivider:
 
         BoxLayout:
             orientation: 'horizontal'
-            BoxLayout:
-                orientation: 'horizontal'
-                MainTrackList:
-                    id: master_list
-                    window: root
-                    queue: master_queue
-                    short_list: short_list
-                    #main_player: deck
-                    preview_player: preview_player
-                    size_hint: (1.0, 1.0)
-                    #text: "Browser goes here"
-                VDivider:
-                TrackShortList:
-                    #orientation: 'vertical'
-                    size_hint: .5, 1
-                    id: short_list
-                    window:root
-                    queue: master_queue
-                    preview_player: preview_player
-                    main_player: deck
+            MainTrackList:
+                id: master_list
+                window: root
+                queue: master_queue
+                short_list: short_list
+                #main_player: deck
+                preview_player: preview_player
+                size_hint: (1.0, 1.0)
+                #text: "Browser goes here"
 
             VDivider:
-            MasterQueue:
-                window:root
-                preview_player: master_list.short_list.preview_player
-                id: master_queue
-                short_list: short_list
-                preview_player: preview_player
-                deck: deck
-                size_hint: (.32, 1.0)
-                #text: "Queue goes here"
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: 1,1
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint: 1,1
+                    TrackShortList:
+                        #orientation: 'vertical'
+                        size_hint: .5, 1
+                        id: short_list
+                        window:root
+                        queue: master_queue
+                        preview_player: preview_player
+                        main_player: deck
+
+                    VDivider:
+                    MasterQueue:
+                        window:root
+                        preview_player: master_list.short_list.preview_player
+                        id: master_queue
+                        short_list: short_list
+                        preview_player: preview_player
+                        deck: deck
+                        size_hint: (.5, 1.0)
+                        #text: "Queue goes here"
+                HDivider:
+                BoxLayout
+                    orientation: 'vertical'
+                    size_hint: 1, None
+                    height: 150 
+
+                    PreviewPlayer:
+                        id: preview_player
+                        size_hint: 1, 1
+
+                        #height: 225 
+                    HDivider:
+                    Mixer:
+                        id: mixer 
+                        size_hint: 1, None
+                        #width: 220
+                        height: 40 
+
        
 """
 

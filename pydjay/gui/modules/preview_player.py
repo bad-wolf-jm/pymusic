@@ -48,204 +48,129 @@ kv_string = """
     album_label:  album_label
     length_label:  length_label
     position_label:  position_label
-    preview_volume: preview_volume
-    monitor_volume: monitor_volume
+    #preview_volume: preview_volume
+    #monitor_volume: monitor_volume
     title: "PREVIEW"
-    BoxLayout:
-        orientation: 'horizontal'
 
+    BoxLayout:
+        orientation: 'vertical'
+
+        padding: [7,7,7,7]
+        spacing: 0
         size_hint: 1, 1
 
         BoxLayout:
             orientation: 'horizontal'
-            size_hint: None, 1
-            width: 140
-            padding: [10,10,10,10]
+            size_hint: 1, 1
+            #height: 100
             spacing: 20
-
-            BoxLayout:
-                orientation: 'vertical'
+            RelativeLayout:
                 size_hint: None, 1
-                width: 50
-                spacing: 10
-                VolumeSlider:
-                    id: preview_volume
+                width: self.height
+
+                Image:
+                    id: album_art
                     size_hint: 1, 1
-                Label:
-                    text: "Preview"
-                    font_size: 11
-                    text_size: self.size
-                    halign: 'center'
-                    valign: 'middle'
-                    size_hint: 1, None
-                    height: 11
-
-            BoxLayout:
+                    #width: self.height
+                    source: 'atlas://pydjay/gui/images/resources/default_album_cover'
+                    allow_stretch: True
+                    keep_ratio: True
+            BoxLayout: 
                 orientation: 'vertical'
-                size_hint: None, 1
-                width: 50
-                spacing: 10
-                VolumeSlider:
-                    id: monitor_volume
-                    size_hint: None, 1
-                    width: 50
+                size_hint: 1,1
+                spacing: 6
                 Label:
-                    text: "Monitor"
-                    font_size: 11
+                    id: title_label
+                    size_hint: 1,1
+                    #shorten: True
+                    text: "<No track being previewed>"
                     text_size: self.size
-                    halign: 'center'
+                    font_size: 15
+                    bold: True
+                    halign: 'left'
                     valign: 'middle'
-                    size_hint: 1, None
-                    height: 11
+                    shorten: True
+                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
 
-        VDivider:
+                Label:
+                    id: artist_label
+                    size_hint: 1,1
+                    text: ""
+                    color: .7,.7,.7,1
+                    text_size: self.size
+                    font_size: 15
+                    halign: 'left'
+                    valign: 'middle'
+                    shorten: True
+                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+
+                Label:
+                    id: album_label
+                    size_hint: 1,1
+                    text_size: self.size
+                    text: ""
+                    color: .7,.7,.7,1
+                    halign: 'left'
+                    valign: 'middle'
+                    shorten: True
+                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+                    text: ""
+                    font_size: 15
+            ImageButton:
+                size_hint: None, None
+                size: 50,50
+                pos_hint: {'top': 1}
+                image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
+                on_press:
+                    root.stop() 
+                    root.window.show_preview_player(root._track, None, None, None)  #short_list.add_shortlist_track(root._track) if root._track is not None else None
+                Widget:
+                    size_hint: 1,.5
 
         BoxLayout:
             orientation: 'vertical'
-
-            padding: [7,7,7,7]
-            spacing: 0
-            size_hint: 1, 1
-
-            BoxLayout:
-                orientation: 'horizontal'
-                size_hint: 1, 1
-                #height: 100
-                spacing: 20
-                RelativeLayout:
-                    size_hint: None, 1
-                    width: self.height
-
-                    Image:
-                        id: album_art
-                        size_hint: 1, 1
-                        #width: self.height
-                        source: 'atlas://pydjay/gui/images/resources/default_album_cover'
-                        allow_stretch: True
-                        keep_ratio: True
-                BoxLayout: 
-                    orientation: 'vertical'
-                    size_hint: 1,1
-                    spacing: 6
-                    Label:
-                        id: title_label
-                        size_hint: 1,1
-                        #shorten: True
-                        text: "<No track being previewed>"
-                        text_size: self.size
-                        font_size: 15
-                        bold: True
-                        halign: 'left'
-                        valign: 'middle'
-                        shorten: True
-                        ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-
-                    Label:
-                        id: artist_label
-                        size_hint: 1,1
-                        text: ""
-                        color: .7,.7,.7,1
-                        text_size: self.size
-                        font_size: 15
-                        halign: 'left'
-                        valign: 'middle'
-                        shorten: True
-                        ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-
-                    Label:
-                        id: album_label
-                        size_hint: 1,1
-                        text_size: self.size
-                        text: ""
-                        color: .7,.7,.7,1
-                        halign: 'left'
-                        valign: 'middle'
-                        shorten: True
-                        ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-                        text: ""
-                        font_size: 15
-                ImageButton:
-                    size_hint: None, None
-                    size: 50,50
-                    pos_hint: {'top': 1}
-                    image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
-                    on_press:
-                        root.stop() 
-                        root.window.show_preview_player(root._track, None, None, None)  #short_list.add_shortlist_track(root._track) if root._track is not None else None
-                    Widget:
-                        size_hint: 1,.5
-
-            BoxLayout:
-                orientation: 'vertical'
+            size_hint: 1,None
+            height: 30
+            padding:[0,0,0,0]
+            ProgressBar:
+                id: seekbar
+                pos_hint: {'center_y': 0.5}
                 size_hint: 1,None
-                height: 30
-                padding:[0,0,0,0]
-                ProgressBar:
-                    id: seekbar
-                    pos_hint: {'center_y': 0.5}
-                    size_hint: 1,None
-                    height: 10
-                    on_touch_down: root._do_seek(*args)
-
-                BoxLayout:
-                    orientation: 'horizontal'
-                    size_hint: 1, None
-                    height: 15
-                    Label:
-                        id: position_label
-                        size_hint: None, 1
-                        width: 40
-                        text_size: self.size
-                        text: "0:00"
-                        color: .9,.9,.9,1
-                        halign: 'left'
-                        valign: 'middle'
-                        shorten: True
-                        ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-                        font_size: 13
-
-                    Widget:
-                        size_hint: 1,None
-
-                    Label:
-                        id: length_label
-                        size_hint: None, 1
-                        width: 40
-                        text_size: self.size
-                        text: "0:00"
-                        color: .9,.9,.9,1
-                        halign: 'right'
-                        valign: 'middle'
-                        shorten: True
-                        ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-                        font_size: 13
-
+                height: 10
+                on_touch_down: root._do_seek(*args)
 
             BoxLayout:
                 orientation: 'horizontal'
-                spacing: 5
                 size_hint: 1, None
-                height: 30
+                height: 15
+                Label:
+                    id: position_label
+                    size_hint: None, 1
+                    width: 40
+                    text_size: self.size
+                    text: "0:00"
+                    color: .9,.9,.9,1
+                    halign: 'left'
+                    valign: 'middle'
+                    shorten: True
+                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+                    font_size: 13
+
                 Widget:
-                    size_hint: 1,1
-                ImageButton:
-                    size_hint: None, None
-                    size: 30,30
-                    image_height: 30
-                    image_width: 30
-                    pos_hint: {'top': 1}
-                    image:'atlas://pydjay/gui/images/resources/pause'
-                    on_press: root.stop() #short_list.add_shortlist_track(root._track) if root._track is not None else None
-                ImageButton:
-                    size_hint: None, None
-                    size: 30,30
-                    image_height: 30
-                    image_width: 30
-                    pos_hint: {'top': 1}
-                    image:'atlas://pydjay/gui/images/resources/play'
-                    on_press: root.play(root._track) #short_list.add_shortlist_track(root._track) if root._track is not None else None
-                Widget:
-                    size_hint: 1,1
+                    size_hint: 1,None
+
+                Label:
+                    id: length_label
+                    size_hint: None, 1
+                    width: 40
+                    text_size: self.size
+                    text: "0:00"
+                    color: .9,.9,.9,1
+                    halign: 'right'
+                    valign: 'middle'
+                    shorten: True
+                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+                    font_size: 13
 
 """
 
@@ -260,13 +185,11 @@ class PreviewPlayer(RelativeLayout):
     title_label      = ObjectProperty(None)
     artist_label     = ObjectProperty(None)
     queue            = ObjectProperty(None)
-    monitor_volume   = ObjectProperty(None)
-    preview_volume   = ObjectProperty(None)
     short_list       = ObjectProperty(None)
     window           = ObjectProperty(None)
     volume           = NumericProperty(1.0)
     volume_controls  = ObjectProperty(None)
-    player           = ObjectProperty(None)#NumericProperty(1.0)
+    player           = ObjectProperty(None)
     
     def __init__(self, *args, **kwargs): 
         super(PreviewPlayer, self).__init__(*args, **kwargs)
@@ -277,27 +200,11 @@ class PreviewPlayer(RelativeLayout):
                                 track_position   = self._update)
         self.volume_controls     = None
         self._save_monitor_volume = 1.0
-        pydjay.bootstrap.volume_control.bind(main_player_monitor = self._update_monitor_volume,
-                                        preview_player = self._update_preview_volume)
-        self.bind(volume = self._set_volume)
         self._duration = None
         Clock.schedule_once(self._post_init, -1)
 
-    def _update_monitor_volume(self, *args):
-        self.monitor_volume.volume = pydjay.bootstrap.volume_control.main_player_monitor
-        
-    def _update_preview_volume(self, *args):
-        self.preview_volume.volume = pydjay.bootstrap.volume_control.preview_player
-
-    def _set_monitor_volume(self, *args):
-        pydjay.bootstrap.volume_control.main_player_monitor = self.monitor_volume.volume
-        
-    def _set_preview_volume(self, *args):
-        pydjay.bootstrap.volume_control.preview_player = self.preview_volume.volume 
-        
     def _post_init(self, *a):
-        self.preview_volume.bind(volume = self._set_preview_volume)
-        self.monitor_volume.bind(volume = self._set_monitor_volume)
+        pass
 
     def _update_track_labels(self, *a):
         if self._track is not None:
@@ -332,14 +239,10 @@ class PreviewPlayer(RelativeLayout):
     def _on_eos(self, *a):
         pass
         
-    def _set_volume(self, i, value):
-        self.volume_controls.set_volume('main_player_monitor', self.volume)
-
     def play(self, track):
         self.set_track(track)
         if self._track is not None:
             self.player.play(track)
-
 
     def pause(self):
         self.player.pause()
@@ -355,8 +258,7 @@ class PreviewPlayer(RelativeLayout):
             self.player.seek(int(val))
             return False
         return True
-        
-            
+                    
     def set_track(self, track):
         self.player.stop()
         self._track = track

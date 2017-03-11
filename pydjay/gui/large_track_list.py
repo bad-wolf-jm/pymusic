@@ -24,19 +24,11 @@ kv_string = """
     orientation: 'horizontal'
     size_hint: 1,1
     list_view: list
-    list_header: header
-    BoxLayout:
-        orientation: 'vertical'
-        RelativeLayout:
-            id: header
-            size_hint: 1, None
-            height: 35
-        HDivider:
 
-        RecycleView:
-            id: list
-            size_hint: 1,1
-            #on_touch_down: root._on_list_touch_down(*args)
+    RecycleView:
+        id: list
+        size_hint: 1,1
+        #on_touch_down: root._on_list_touch_down(*args)
 """
 
 
@@ -55,7 +47,6 @@ class LargeTrackList(BoxLayout):
     item_class   = ObjectProperty(None)
     item_convert = ObjectProperty(None)
     list_header  = ObjectProperty(None)
-    #player       = ObjectProperty(None, allownone = True)
     
     def __init__(self, *args, **kwargs):
         super(LargeTrackList, self).__init__(*args, **kwargs)
@@ -119,16 +110,6 @@ class LargeTrackList(BoxLayout):
         )
         self.adapter.data = data
         self.list_view.adapter = self.adapter
-        try:
-            header = self.item_class.get_header()
-        except:
-            header = None
-        if header is not None:
-            self.list_header.add_widget(header)
-            self.list_header.height = 35
-        else:
-            self.list_header.height = 0
-
 
     def update_availability(self, available = None):
         for track in self._unfiltered_list:

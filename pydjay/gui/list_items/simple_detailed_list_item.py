@@ -17,29 +17,16 @@ from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.selectableview import SelectableView
 from kivy.uix.button import Button
 from kivy.uix.treeview import TreeViewNode
-#from kivy.adapters.simplelistadapter import SimpleListAdapter
-#from kivy.adapters.listadapter import ListAdapter
-
-#from kivy.core.image import Image as CoreImage
 
 
 from kivy.properties import ObjectProperty
 from kivy.factory import Factory
 
-#from pydjay.library.track import load_file
-#from pydjay.library import get_folders, get_master_playlist, get_playlists, get_sessions, get_session_by_name
-
 from pydjay.gui.utils import seconds_to_human_readable
-#from pydjay.gui.hover_switch import HoverSwitch
 from pydjay.uix.clickable_area import ImageButton
 from pydjay.uix.long_press_button import LongPressButtonBehaviour
 
-#from pydjay.gui.preview_player import PreviewPlayer
-
 from kivy.graphics import *
-#import pydjay.gui.hover_switch
-
-#from pydjay.uix import recycleview
 
 from list_item_base import ListItemBase
 

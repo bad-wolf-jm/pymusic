@@ -78,7 +78,7 @@ class PlaybackManager(EventDispatcher):
 
     def immediate_stop(self, queue_stop = False):
         Logger.info('MainPlayer: Stopping player')
-        self.player.stop()
+        self.player.stop(flush = True)
         if self.track is not None:
             self.session_manager.add(self.track, True)
             if self._current_time is not None:

@@ -101,6 +101,9 @@ class AudioPlayer(EventDispatcher):
             self.state = "playing"
         except IOError:
             self.state = 'stopped'
+        except Exception, details:
+            print details
+            self.state = 'stopped'
         #    raise
 
     def stop(self, flush = False):

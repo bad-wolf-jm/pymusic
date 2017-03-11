@@ -43,242 +43,10 @@ from pydjay.uix import list_view
 
 
 
-#kv_string_item = """
-#<SimpleDetailedListItem>:
-#    album_art: album_art
-#    album_art_file:'atlas://pydjay/gui/images/resources/transparent_image'
-#    bg: bg
-#    size_hint: 1, None
-#    height:60
-#    bold: False
-#    color: 1,1,1,1
-#
-#    #canvas.before:
-#    #    Color:
-#    #        rgba: 1, .3, .8, .7
-#    #    Rectangle:
-#    #        pos:  self.pos
-#    #        size: self.size
-#
-#
-#    on_touch_down: self._on_touch_down(*args)
-#    #on_long_press: self._start_dragging()
-#
-#    #on_pos:  self.update_bg()
-#    #on_size: self.update_bg()
-#
-#    Widget:
- #       id: bg
-#        size_hint: 1,1
-#        on_pos:  root._update_background()
-#        on_size: root._update_background()#self.pos, self.size)
- #       
- #       #canvas.before:
- #       #    Color:
- #       #        rgba: 1, .3, .8, .7
- #       #    Rectangle:
- #       #        pos:  self.pos
- #       #        size: self.size
-#
-#
-#    BoxLayout:
-#        orientation: 'horizontal'
-#        size_hint: 1, 1
-#        #size_hint: 1,1 
-#        padding:[10,3,10,3]
-#        spacing: 10
-##height:35
-#
-#        RelativeLayout:
-#            size_hint: None, 1
-#            width: 20
-#            Image:
-#                #id: album_art
-#                bold: root.bold
-#                color: root.color
-#                size_hint: (None, None)
-#                size: 12,12
-#                pos_hint: {'center_x':.5, 'center_y':.5}
-#                #width: self.height
-#                keep_ratio: True
-#                allow_stretch: True
-#                #on_size: root.update_album_art(*self.size)
-#                source: 'atlas://pydjay/gui/images/resources/love-focus' if root.favorite else 'atlas://pydjay/gui/images/resources/love'
-#                opacity: 0.2 if (root.dimmed or not root.favorite) else 1
-#
-#        RelativeLayout:
-#            size_hint: None, 1
-#            width: self.height
- #
- #           ImageButton:
- #               id: album_art
- #               #bold: root.bold
- #               #color: root.color
- #               #size_hint: 1,1
- #               size_hint: (None, .6)
- #               #pos_hint: {'center_y': .5}
- #               pos_hint: {'center_x':.5, 'center_y':.5}
- #               width: self.height
- #               keep_ratio: True
- #               allow_stretch: True
- #               image: 'atlas://pydjay/gui/images/resources/precue'
- #               opacity: 0.2 if root.dimmed else 1
- #               #on_touch_down: root._drag_context.show_preview_player(root._item, self.to_window(*self.pos), self.size)
- #               on_press: root._view.show_preview_player(root._item, self.to_window(*self.pos), self.size)# \
- #                             # if self.collide_point(*args[1].pos) else "") if root._view is not None else None
-#
-#            #Button:
-#            #    size_hint: 1,1
-#
-#        ListItemLabel:
-#            id:    title
-#            bold:  root.bold
-#            color: root.color
-#            #font_size:15
-#            text: root.title
-#            #text_size: self.size
-#            #halign: 'left'
-#            #valign: 'middle'
-#            #size_hint: 1, 1
-#            #shorten: True
-#            #ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-#            opacity: 0.2 if root.dimmed else 1
-###
-#
-#        ListItemLabel:
-#            id: artist
-#            bold: root.bold
-#            color: root.color
-#            text: root.artist
-#            #text_size: self.size
-#            #halign: 'left'
-#            #valign: 'middle'
-#            #font_size: 15
-#            #size_hint: 1, 1
-#            #height:15
-#            #shorten: True
-#            #ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-#            opacity: 0.2 if root.dimmed else 1
-
-#        #ListItemLabel:
-#        #    id: album
-#        #    text: root.album
-#        #    bold: root.bold
-#        #    color: root.color
-#        #    #text_size: self.size
-#        #    #halign: 'left'
-#        #    #valign: 'middle'
-#        #    #font_size: 15
-#        #    #size_hint: 1, 1
-#        #    #height:15
-#        #    #shorten: True
-#        #    #ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-#        #    opacity: 0.2 if root.dimmed else 1
-##
-#
- #       RelativeLayout:
- #           size_hint: None, 1
- #           width: 60 #self.height
- #
- #           Image:
- #               id: rating
- #               bold: root.bold
- #               color: root.color
- #               #size_hint: 1,1
- #               size_hint: (None, .6)
- #               #pos_hint: {'center_y': .5}
- #               pos_hint: {'center_x':.5, 'center_y':.5}
- #               width: 60
- #               keep_ratio: True
- #               allow_stretch: True
- #               source: 'atlas://pydjay/gui/images/resources/rating%s'%root.rating 
- #               opacity: 0.2 if root.dimmed else 1
- #               #on_touch_down: root._drag_context.show_preview_player(root._item, self.to_window(*self.pos), self.size)
- #               #on_press: root._view.show_preview_player(root._item, self.to_window(*self.pos), self.size)# \
- #               #               #if self.collide_point(*args[1].pos) else "") if root._view is not None else None
-#
-#            #Button:
-#            #    size_hint: 1,1
-#
-#
-#
-#        #ListItemLabel:
-#        #    id: genre
-#        #    text: root.genre if root.genre is not None else ""
-#        #    bold: root.bold
-#        #    color: root.color
-#        #    #text_size: self.size
-#        #    #halign: 'left'
-#        #    #valign: 'middle'
-#        #    #font_size: 15
-#        #    size_hint: .4, 1
-#        #    #height:15
-#        #    #shorten: True
-#        #    #ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-#        #    opacity: 0.2 if root.dimmed else 1
-#
-#        #ListItemLabel:
-#        #    id: style
-#        #    text: root.style if root.style is not None else ""
-#        #    bold: root.bold
-#        #    color: root.color
-#        #    #text_size: self.size
-#        #    #halign: 'left'
-#        #    #valign: 'middle'
-#        #    #font_size: 15
-#        #    size_hint: .3, 1
-#        #    #height:15
-#        #    #shorten: True
-#         #   #ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-#         #   opacity: 0.2 if root.dimmed else 1
-#
-#
-#        ListItemLabel:
-#            id: bpm
-#            text: root.bpm
-#            bold: root.bold
-#            color: root.color
-#            #text_size: self.size
-#            halign: 'right'
-#            #valign: 'middle'
-#            #font_size: 15
-#            size_hint: None, 1
-#            width:40
-#            #shorten: True
-#            #ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-#            opacity: 0.2 if root.dimmed else 1
-#
-#
- #       ListItemLabel:
- #           id: length
- #           bold: root.bold
- #           color: root.color
- #           text: root.length
- #           #text_size: self.texture_size
- #           halign: 'right'
- #           #font_size: 15
- #           size_hint: None, 1
- #           width: 60    #self.texture_size[0]+10 #, self.texture_size[1]
-  #          opacity: 0.2 if root.dimmed else 1
-#"""
-
-
-
-
-
-#import io
-
-#data = io.BytesIO(open("image.png", "rb").read())
-#im = CoreImage(data, ext="png", filename="image.png")
-
-
-    
 
 class ListItemBase(LongPressButtonBehaviour, RelativeLayout,
-                   list_view.RecycleViewMixin):#,
-                             #recycleview.LayoutSelectionMixIn):
+                   list_view.RecycleViewMixin):
     album_art      = ObjectProperty(None)
-    #album_art_file = ObjectProperty(None)
     favorite       = BooleanProperty(False)
     has_waveform   = BooleanProperty(False)
     title          = StringProperty("")
@@ -292,23 +60,6 @@ class ListItemBase(LongPressButtonBehaviour, RelativeLayout,
     bg             = ObjectProperty(None)
     dimmed         = BooleanProperty(True)
     is_selected    = BooleanProperty(False)
-
-    #@classmethod
-    #def get_header(cls):
-    #    foo = cls()
-    #    #print foo
-    #    foo.size_hint = (1,1)
-    #    foo.bold   = True
-    #    foo.album_art.disabled = True
-    #    foo.title  = "TITLE"#unicode(item.metadata.title)
-    #    foo.artist = "ARTIST"#unicode(item.metadata.artist)
-    #    foo.album  = "ALBUM"#unicode(item.metadata.album)
-    #    foo.bpm    = "BPM"#str(item.metadata.bpm)
-    #    foo.genre  = "GENRE"#str(item.metadata.bpm)
-    #    foo.style  = "STYLE"#str(item.metadata.bpm)
-    #    foo.rating = 0#str(item.metadata.bpm)
-    #    foo.length = "TIME"#seconds_to_human_readable(int(item.info.length /1000))
-    #    return foo#
 
     def __init__(self, row = None, item = None, view = None, drag_context = None, *args, **kwargs):
         super(ListItemBase, self).__init__(*args, **kwargs)
@@ -324,44 +75,31 @@ class ListItemBase(LongPressButtonBehaviour, RelativeLayout,
                 The data dict used to populate this view.
         '''
         
-        #for key, value in data.items():
-        #    setattr(self, key, value)
         self.__initialize__(data['row'], data['item'], data['view'], data['drag_context'], data['is_selected'])
         
 
         
     def __initialize__(self, row = None, item = None, view = None, drag_context = None, is_selected = False, *args, **kwargs):
-        
-        #self.album_art = 'pydjay/gui/default_album_cover.png'
         self.row = row
         self._album_art = None
         self._item_data = item
         self._view = view
         self._item = self._item_data.track if self._item_data is not None else None
         self._drag_context = drag_context
-        self._long_press_threshold = .25
+        #self._long_press_threshold = .25
         self._preview_player_button = None
         self.is_selected = is_selected
         self.bind(on_long_press = self._start_dragging)
-        #if self._item_data is not None:
-        #    self._item_data.bind(is_available = self._update_background)
 
-        
-
-        
         if self._item_data is not None:
-            self._update_background()#None, self._item_data.is_selected)
-            #self._update_availability()#None, self._item_data.is_available)
-            self._item_data.bind(#is_selected  = self._update_background,
-                                 is_available = self._update_background)
+            self._update_background()
+            self._item_data.bind(is_available = self._update_background)
             
         if self._item is not None:
             self.title  = unicode(self._item.metadata.title)
             self.artist = unicode(self._item.metadata.artist)
             self.album  = unicode(self._item.metadata.album)
-            #self.genre  = unicode(self._item.metadata.genre) if self._item.metadata.genre is not None else ""
-            self.rating = self._item.metadata.rating if self._item.metadata.rating is not None else 0
-            
+            self.rating = self._item.metadata.rating if self._item.metadata.rating is not None else 0            
             self.genre  = unicode(self._item.metadata.genre) if self._item.metadata.genre is not None else ""
             self.style  = unicode(self._item.metadata.style) if self._item.metadata.style is not None else ""
             self.bpm    = str(self._item.metadata.bpm) if self._item.metadata.bpm is not None else ""
@@ -376,44 +114,17 @@ class ListItemBase(LongPressButtonBehaviour, RelativeLayout,
             except:
                 pass
         else:
-            self.title    = ""#unicode(item.metadata.title)
-            self.artist   = ""#unicode(item.metadata.artist)
-            self.album    = ""#unicode(item.metadata.album)
-            self.bpm      = ""#str(item.metadata.bpm)
-            self.genre    = ""#str(item.metadata.bpm)
-            self.style    = ""#str(item.metadata.bpm)
-            self.length   = ""#seconds_to_human_readable(int(item.info.length /1000))
+            self.title    = ""
+            self.artist   = ""
+            self.album    = ""
+            self.bpm      = ""
+            self.genre    = ""
+            self.style    = ""
+            self.length   = ""
             self.favorite = False
-            #self.album_art.source = 'pydjay/gui/default_album_cover.png'
-
-
-                #self.update_bg()
-
-    #def _update_availability(self, *args):#win, value):
-    #    pass
-
-    #def on_motion_catch(self, *args):
-    #    print args
-
-#    def show_preview_player_button(self, window, event):
-#        #print event
-#        if self.collide_point(*event.pos):
-#            if self._preview_player_button is None:
-#                self._preview_player_button = Button(size = self.album_art.size,
-#                                                     pos = self.album_art.pos)
-#                self.add_widget(self._preview_player_button)
-#        else:
-#            if self._preview_player_button is not None:
-#                self.remove_widget(self._preview_player_button)
-#                self._preview_player_button = None
-                
     
     def _update_background(self, *value):
-        #print "UPDATE BACKGROUND AVAILABILITY"
-        #value = self._item_data.is_selected if self._item_data is not None else False
         value = self._item_data.is_selected if self._item_data is not None else False
-        
-        #self.bold = value
         self.bg.canvas.clear()
         if value:
             with self.bg.canvas:
@@ -436,34 +147,14 @@ class ListItemBase(LongPressButtonBehaviour, RelativeLayout,
             self.dimmed = True
         else:
             self.dimmed = False
-        #self.update_album_art(33,33)
         
     def _start_dragging(self, foo, x, y):
-        #print 'start_drag', self._drag_context
         if self._drag_context is not None:
             try:
                 self._drag_context.drag(self.to_window(x,y), self._item_data)
             except Exception, details:
                 print 'BAR', details
                 
-#    def update_bg(self, *args):
-#        if self.row is not None:
-#            self.bg.canvas.clear()
-#            with self.bg.canvas:
-#                if self.row % 2 == 0:
-#                    Color(0,0,0,0.8)
-#                else:
-#                    Color(.1,.1,.1,.8)
-#                Rectangle(pos=self.bg.pos, size=self.bg.size)
-        
-        
-    #def update_album_art(self, w, h):
-    #    if self._album_art is not None:
-    #        self.album_art.texture = self._album_art.texture
-
-    #def select(self, *args):
-    #    print "SELECT"
-
     def _on_touch_down(self, window, event):
         if self.collide_point(*event.pos):
             try:
@@ -473,29 +164,7 @@ class ListItemBase(LongPressButtonBehaviour, RelativeLayout,
                 
     def _on_touch_up(self, window, event):
         if self.collide_point(*event.pos) and self._drag_context.drop is not None:
-            #if self._window is not None and self._window._drag_payload is not None:
             if event.pos[1] - self.pos[1] < self.height / 2:
-                #self._add_item(self._window._drag_payload, self.row + 1)
                 self._drag_context.drop(self.row + 1)
-
-                #self._view.add_shortlist_track(self._window._drag_payload, )
             else:
-                #self._add_item(self._window._drag_payload, self.row + 1)
                 self._drag_context.drop(self.row)
-#Builder.load_string(kv_string_item)
-#Factory.register('SimpleDetailedListItem', SimpleDetailedListItem)
-
-#_item_pool = []
-#for x in range(100):
-#    print x
-#    _item_pool.append(SimpleDetailedListItem_internal())
-
-
-#def SimpleDetailedListItem(row = None, item = None, view = None, drag_context = None, *args, **kwargs):
-#    global _item_pool
-#    if len(_item_pool) > 0:
-#        item = _item_pool.pop()
-#        item.__initialize__(row, item, view, drag_context)
-#    else:
-#        item = SimpleDetailedListItem_internal(row, item, view, drag_context, *args, **kwargs)
-#    return item

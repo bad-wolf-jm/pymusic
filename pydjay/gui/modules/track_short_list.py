@@ -71,6 +71,8 @@ kv_string = """
                 #size_hint: None, None
                 #size: self.texture_size
                 height:30#
+
+        HDivider:
         LargeTrackList:
             id: short_list
             size_hint: 1,1
@@ -211,7 +213,7 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
         #else:
         for t in self.short_list.adapter.data:
             try:
-                time += t.track.info.length
+                time += t['item'].track.info.length
             except:
                 pass
         track_count_text += "[color=#ffffff]" + str(num) + " tracks " + "[/color]" + \
@@ -233,7 +235,7 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
         else:
             for t in self.short_list.adapter.data:
                 try:
-                    time += t.track.info.length
+                    time += t['item'].track.info.length
                 except:
                     pass
             self.total_track_count = "[color=#ffffff]" + str(num) + " tracks " + "[/color]" + \
