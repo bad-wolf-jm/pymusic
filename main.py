@@ -12,9 +12,9 @@ if __name__ == '__main__':
     from kivy.base import runTouchApp
     from kivy.core.window import Window
     from kivy.clock import Clock
-    from pydjay.library import init, save, get_track_by_name, get_tracks
+    from pydjay.core.library import init, save, get_track_by_name, get_tracks
 
-    from pydjay.gui.modules.main_screen import MainScreen
+    from pydjay.ui.main_screen import MainScreen
 
     Window.clearcolor = (0.1,0.1,0.1, 1)
     Window.size = (1728,1152)
