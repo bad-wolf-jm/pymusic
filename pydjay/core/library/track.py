@@ -498,7 +498,7 @@ class Track:
 
 
 def load_mp4_file(filename):
-    #print filename
+    #print 'LOADING MO$ FILE:',  filename
     try:
         if not (filename.endswith('.mp4') or filename.endswith('.m4a')):
             print "NOT THE RIGHT EXTENSION"
@@ -616,13 +616,16 @@ def load_mp4_file(filename):
         
         foo = bar.tags.get('covr')
         metadata['album_art'] = None
+        #print 'cover'
         if foo is not None and len(foo) > 0:
             #com = ''
+            #print foo
             for image in foo:
                 formats = {mutagen.mp4.AtomDataType.JPEG : "image/jpeg",
                            mutagen.mp4.AtomDataType.PNG  : "image/png"}
                 #if image.imageformat in [0, 3]:
                 metadata['album_art'] = (formats[image.imageformat], str(image))
+                #print image.imageformat, formats[image.imageformat]
                     #break
         return Track(filename, info, metadata)
     except Exception, details:
@@ -915,6 +918,8 @@ def load_mp3_file(filename):
                 if image.type in [0, 3]:
                     metadata['album_art'] = (image.mime, image.data)
                     break
+                else:
+                    print image.type
         #try:
         #    del bar.tags['APIC:']
         #except:
@@ -1087,7 +1092,7 @@ def save_mp3_file(track):
         #    pass
         #print bar
         #return Track(filename, info, metadata)
-        print track.location
+        #print track.location
         bar.tags.save(track.location)
         #bar = mutagen.mp3.MP3(track.location)
         #print bar.pprint()
