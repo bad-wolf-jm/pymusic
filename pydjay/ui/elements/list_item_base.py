@@ -44,7 +44,7 @@ from pydjay.ui.elements import list_view
 
 
 
-class ListItemBase(LongPressButtonBehaviour, RelativeLayout,
+class ListItemBase(RelativeLayout,
                    list_view.RecycleViewMixin):
     album_art      = ObjectProperty(None)
     favorite       = BooleanProperty(False)

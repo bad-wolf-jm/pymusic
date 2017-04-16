@@ -161,7 +161,7 @@ kv_string = """
                 BoxLayout
                     orientation: 'vertical'
                     size_hint: 1, None
-                    height: 150 
+                    height: 160 
 
                     PreviewPlayer:
                         id: preview_player
@@ -201,7 +201,7 @@ class MainScreen(MainWindow):
         popup = TrackEditor(self._preview_player, self._volume_control, self)
         popup.bind(on_dismiss = self.restore_focus)
         popup.size_hint = (None, None)
-        popup.size = [1300,650]
+        popup.size = [950,400]
         popup.queue = self.master_queue
         popup.short_list = self.short_list
         popup.window = self

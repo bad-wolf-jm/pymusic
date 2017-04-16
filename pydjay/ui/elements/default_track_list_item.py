@@ -108,7 +108,7 @@ kv_string_item = """
             #opacity: 0.2 if root.dimmed else 1
 """
 
-class DefaultTrackItemView(LongPressButtonBehaviour, RelativeLayout):
+class DefaultTrackItemView(RelativeLayout):
     idx            = StringProperty("")
     album_art_file = ObjectProperty(None)
     favorite       = BooleanProperty(False)

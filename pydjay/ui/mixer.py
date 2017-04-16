@@ -51,11 +51,11 @@ kv_string = """
             BoxLayout:
                 orientation: 'vertical'
                 size_hint: None, 1
-                width: 50
+                width: 75
                 spacing: 3
                 Label:
                     text: "Preview"
-                    font_size: 11
+                    font_size: 13
                     text_size: self.size
                     halign: 'center'
                     valign: 'middle'
@@ -64,7 +64,9 @@ kv_string = """
                 VolumeLevel:
                     id: preview_volume
                     size_hint: 1, 1
-                    font_size: 13
+                    font_size: 15
+                    width: 75
+                    bold: True
 
             Widget:
                 size_hint: 1,1
@@ -72,11 +74,11 @@ kv_string = """
             BoxLayout:
                 orientation: 'vertical'
                 size_hint: None, 1
-                width: 50
+                width: 75
                 spacing: 3
                 Label:
                     text: "Monitor"
-                    font_size: 11
+                    font_size: 13
                     text_size: self.size
                     halign: 'center'
                     valign: 'middle'
@@ -85,19 +87,20 @@ kv_string = """
                 VolumeLevel:
                     id: monitor_volume
                     size_hint: None, 1
-                    font_size: 13
-                    width: 50
+                    font_size: 15
+                    width: 75
+                    bold: True
             Widget:
                 size_hint: 1,1
 
             BoxLayout:
                 orientation: 'vertical'
                 size_hint: None, 1
-                width: 50
+                width: 75
                 spacing: 3
                 Label:
                     text: "Main"
-                    font_size: 11
+                    font_size: 13
                     text_size: self.size
                     halign: 'center'
                     valign: 'middle'
@@ -106,8 +109,9 @@ kv_string = """
                 VolumeLevel:
                     id:  main_player_volume
                     size_hint: None, 1
-                    font_size: 13
-                    width: 50
+                    font_size: 15
+                    width: 75
+                    bold: True
 
 """
 

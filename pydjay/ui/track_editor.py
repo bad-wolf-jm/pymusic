@@ -76,8 +76,8 @@ kv_string = """
         padding: [15,0,15,7]
         Label:
             size_hint: 1, None
-            height: 80
-            font_size: 30
+            height: 50
+            font_size: 20
             text: 'Track edit'
             text_size: self.size
             valign: 'middle'
@@ -92,7 +92,7 @@ kv_string = """
         BoxLayout:
             orientation: 'horizontal'
             size_hint: 1, None
-            height: 200
+            height: 85
             spacing: 20
             RelativeLayout:
                 size_hint: None, 1
@@ -121,8 +121,8 @@ kv_string = """
                         #shorten: True
                         text: "3 Little Monkeys"
                         text_size: self.size
-                        font_size: 18
-                        height: 18
+                        font_size: 15
+                        height: 15
                         bold: True
                         halign: 'left'
                         valign: 'middle'
@@ -132,11 +132,11 @@ kv_string = """
                     Label:
                         id: artist_label
                         size_hint: 1,None
-                        height: 15
+                        height: 12
                         text: ""
                         color: .7,.7,.7,1
                         text_size: self.size
-                        font_size: 15
+                        font_size: 12
                         halign: 'left'
                         valign: 'middle'
                         shorten: True
@@ -145,7 +145,7 @@ kv_string = """
                     Label:
                         id: album_label
                         size_hint: 1,None
-                        height: 15
+                        height: 12
                         text_size: self.size
                         text: ""
                         color: .7,.7,.7,1
@@ -154,7 +154,7 @@ kv_string = """
                         shorten: True
                         ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
                         text: ""
-                        font_size: 15
+                        font_size: 12
                 ImageButton:
                     size_hint: None, None
                     size: 75,75
@@ -176,7 +176,7 @@ kv_string = """
             orientation: 'vertical'
             spacing: 10
             size_hint: 1, None
-            height: 300
+            height: 200
             padding:[10,10,10,10]
 
             RelativeLayout:
@@ -190,14 +190,14 @@ kv_string = """
                             size: self.size
 
                     size_hint: 1, None
-                    height: 200
+                    height: 100
                     pos:0,0
                     id: waveform
 
                 TrackCutWindow:
                     id: cut_window
                     size_hint: 1,None
-                    height: 200
+                    height: 100
                     pos:0,0
 
                 TrackCuePointWindow:
