@@ -109,7 +109,7 @@ kv_string = """
                 orientation: 'horizontal'
                 size_hint: 1,1
                 size_hint_min_y: 100
-                BoxLayout: 
+                BoxLayout:
                     orientation: 'vertical'
                     size_hint: 1,None
                     spacing: 10
@@ -248,7 +248,7 @@ class TrackCutWindow(Widget):
         if foo + 7000000000 <= self.track_end:
             self.track_start = foo if foo > 0 else 0
         pass
-    
+
     def _move_end_time(self, x, y):
         x_factor = float(self.width) / self.track_length if self.track_length is not 0 else 1
         if x > self.width - 10:
@@ -261,7 +261,7 @@ class TrackCutWindow(Widget):
         x_factor    = float(self.width) / self.track_length if self.track_length is not 0 else 1
         track_start = self.track_start if self.track_start is not None else 0
         track_end   = self.track_end if self.track_end is not None else self.track_length
-        
+
         if self.collide_point(*event.pos):
             x, y = event.pos
             if x < track_start * x_factor + 10 and x > track_start * x_factor - 10:
@@ -271,8 +271,8 @@ class TrackCutWindow(Widget):
             if x < track_end * x_factor + 10 and x > track_end * x_factor - 10:
                 if y < self.height / 2 + 10 and y > self.height / 2 - 10:
                     self._move_func = self._move_end_time #print "MOVE END"
-            
-        
+
+
         pass
 
     def _on_touch_up(self, window, event):
@@ -283,15 +283,15 @@ class TrackCutWindow(Widget):
         if self.collide_point(*event.pos):
             if self._move_func is not None:
                 self._move_func(*event.pos)
-    
-        
+
+
     def draw_window(self, *args):
         self.canvas.clear()
-        zero_x      = self.x 
+        zero_x      = self.x
         x_factor    = float(self.width) / self.track_length if self.track_length is not 0 else 1
         track_start = self.track_start if self.track_start is not None else 0
         track_end   = self.track_end if self.track_end is not None else self.track_length
-        
+
         with self.canvas:
             Color(.2,.2,.2,.8)
             Rectangle(size = (track_start * x_factor,
@@ -309,7 +309,7 @@ class TrackCutWindow(Widget):
                     pos = [track_start * x_factor + self.x - 8, self.y+self.height / 2 - 8])
             Ellipse(size = [16,16],
                     pos = [track_end * x_factor + self.x - 8, self.y+self.height / 2 - 8])
-            
+
 Factory.register('TrackCutWindow', TrackCutWindow)
 
 
@@ -327,7 +327,7 @@ class TrackCuePointWindow(Widget):
                   pos          = self._redraw)
 
         self.bind(track_length = self._update_label_positions)
-        
+
         self.bind(on_touch_down = self._on_touch_down,
                   on_touch_up   = self._on_touch_up,
                   on_touch_move = self._on_touch_move)
@@ -358,12 +358,11 @@ class TrackCuePointWindow(Widget):
                 self.previous_cue_point()
         except ValueError:
             pass
-        
+
     def clear_cue_points(self):
         self._cue_points = [0, self.track_end] #sorted(self._cue_points)
         self._active_cue_point = None
         self.draw_window()
-
 
     def next_cue_point(self, timestamp = None):
         #if timestamp is not None:
@@ -397,7 +396,7 @@ class TrackCuePointWindow(Widget):
 
     def get_cue_point_before(self, timestamp):
         i = 0
-        #print 'before', 
+        #print 'before',
         for j in range(len(self._cue_points)):
             if self._cue_points[j] >= timestamp:
                 if j > 0:
@@ -405,11 +404,11 @@ class TrackCuePointWindow(Widget):
                     return self._cue_points[j-1]
                 else:
                     return self._cue_points[j]
-                    
+
         else:
             return self._cue_points[0]
 
-        
+
     def current_cue_point(self):
         if self._active_cue_point is not None:
             return self._cue_points[self._active_cue_point]
@@ -419,16 +418,16 @@ class TrackCuePointWindow(Widget):
             try:
                 t = self._cue_points[self._active_cue_point]
             except IndexError:
-                return 
+                return
             t += amount
             if t > 0 and t < self.track_end:
                 self._cue_points[self._active_cue_point] = t
                 self._cue_points = sorted(self._cue_points)
                 self.draw_window()
-            
+
     def update_label_positions(self, *args):
         #self.canvas.clear()
-        zero_x      = self.x 
+        zero_x      = self.x
         x_factor    = float(self.width) / self.track_length if self.track_length is not 0 else 1
         #track_start = self.track_start if self.track_start is not None else 0
         #track_end   = self.track_end if self.track_end is not None else self.track_length
@@ -460,10 +459,10 @@ class TrackCuePointWindow(Widget):
                 l.font_size = 11
                 l.center_x = self.x + x
                 l.y = y + 17
-        
+
     def draw_window(self, *args):
         self.canvas.before.clear()
-        zero_x      = self.x 
+        zero_x      = self.x
         x_factor    = float(self.width) / self.track_length if self.track_length is not 0 else 1
         track_start = self.track_start if self.track_start is not None else 0
         track_end   = self.track_end if self.track_end is not None else self.track_length
@@ -476,7 +475,7 @@ class TrackCuePointWindow(Widget):
             Line(points = [self.x,y,self.width+self.x,y])
 
             seconds = int(round(self.track_length / 1000000000))
-            
+
             if seconds == 0:
                 seconds = 300
             tick_space = (float(self.width) / seconds) * 3
@@ -486,7 +485,7 @@ class TrackCuePointWindow(Widget):
             #    tick_space += 1
 
             overshoot = self.width - tick_space * seconds / 3
-                
+
             #print seconds, self.width, overshoot
             x = 0
             for i in range(seconds / 3):
@@ -501,7 +500,7 @@ class TrackCuePointWindow(Widget):
                                    y,
                                    self.x + x,
                                    y+10])
-                    
+
             i = 0
             for cue_point in self._cue_points:
                 if i == self._active_cue_point:
@@ -515,7 +514,7 @@ class TrackCuePointWindow(Widget):
                                    cue_point * x_factor - 5, self.y + self.height - 32,
                                    cue_point * x_factor + 5, self.y + self.height - 32])
                 i += 1
-            
+
 Factory.register('TrackCuePointWindow', TrackCuePointWindow)
 
 
@@ -540,7 +539,7 @@ class TrackEditor(ModalView):
 
 
 
-    
+
     def __init__(self, player, volume_control = None, window = None, queue = None, short_list = None, *args, **kw):
         super(TrackEditor, self).__init__(*args, **kw)
         self._track              = None
@@ -582,7 +581,7 @@ class TrackEditor(ModalView):
         Window.release_keyboard(self)
         super(TrackEditor, self).dismiss()
 
-        
+
     def _keyboard_closed(self):
         print('My keyboard have been closed!')
         self._keyboard.unbind(on_key_down = self._on_keyboard_down)
@@ -596,7 +595,7 @@ class TrackEditor(ModalView):
 
         key_seq = "+".join(modifiers+[keycode[1]])
         #print key_seq
-        
+
         if key_seq == 'left': #activate previous cue point
             self.cue_point_window.previous_cue_point()
             pass
@@ -606,7 +605,7 @@ class TrackEditor(ModalView):
         elif key_seq == 'shift+left': #move start to previous cue point
             t = self.cue_point_window.get_cue_point_before(self.cut_window.track_start)
             self.cut_window.track_start = t
-        
+
             #self.cut_window
             pass
         elif key_seq == 'shift+right': #move start to next cue point
@@ -627,7 +626,7 @@ class TrackEditor(ModalView):
             t = self.cue_point_window.current_cue_point()
             if t is not None:
                 self.cue_point_window.remove_cue_point(t)
-            
+
         elif key_seq == 'k': #move cue point to the left
             self.cue_point_window.modify_current_cue_point(-100000000)
             pass
@@ -656,13 +655,13 @@ class TrackEditor(ModalView):
             self.dismiss()
             #else:
             #    self.select(0)
-            
+
         elif key_seq == 'shift+q':
             #if self._current_selection is not None:
             self.queue.add_track(self._track)
             self.dismiss()
 
-            
+
         elif key_seq == 'enter': # start playback from current cue point
             t = self.cue_point_window.current_cue_point()
             self._player.play(self._track, t)
@@ -704,7 +703,7 @@ class TrackEditor(ModalView):
                                            t = 'in_out_sine', duration = 0.65)
         self._duck_main_player.start(self)
 
-        
+
     def _set_volume(self, i, value):
         self.volume_controls.set_volume('main_player_monitor', self.volume)
 
@@ -725,8 +724,8 @@ class TrackEditor(ModalView):
             self._player.seek(int(val))
             return False
         return True
-        
-            
+
+
     def set_track(self, track):
         self._player.stop()
         self._track = track
@@ -745,7 +744,7 @@ class TrackEditor(ModalView):
 
 
             if self._track.info.length is not None:
-                self.waveform.max_value      = self._track.info.stream_length    
+                self.waveform.max_value      = self._track.info.stream_length
                 self.waveform.waveform.x_max = self._track.info.stream_length
                 self.cut_window.track_length = self.cue_point_window.track_length = self._track.info.stream_length
                 self.cut_window.track_start  = self.cue_point_window.track_start = self._track.info.start_time if self._track.info.start_time is not None else 0
@@ -766,7 +765,7 @@ class TrackEditor(ModalView):
                 offset = 0
                 points = [ll[offset:offset+2] for offset in range(0, len(ll) - 1, 2)]
                 points = sorted(points, cmp = lambda x,y: cmp(x[0], y[0]))
-                self.waveform.waveform.points =  points#self._track.metadata.waveform                        
+                self.waveform.waveform.points =  points#self._track.metadata.waveform
             except Exception, details:
                 print details
                 self.waveform.waveform.points = []
@@ -775,14 +774,14 @@ class TrackEditor(ModalView):
                     f.close()
                 except:
                     pass
-                
+
 
     def _update(self, *a):
         if self._duration is None:
             self._duration = self._player.track_duration
             if self._duration is not None:
-                self.waveform.max_value      = self._duration 
-                self.waveform.waveform.x_max = self._duration 
+                self.waveform.max_value      = self._duration
+                self.waveform.waveform.x_max = self._duration
             else:
                 self.waveform.max_value = 1
         position = self._player.track_position or 0
@@ -795,4 +794,3 @@ class TrackEditor(ModalView):
 
 Builder.load_string(kv_string)
 Factory.register('TrackEditor', TrackEditor)
-

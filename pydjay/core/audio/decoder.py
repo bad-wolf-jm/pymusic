@@ -207,7 +207,7 @@ class GstAudioFile(object):
 
         # Configure the input.
         uri = os.path.abspath(path)
-            
+
         self.src.set_property("location", uri)
         # The callback to connect the input.
         self.dec.connect("pad-added", self._pad_added)
@@ -221,7 +221,7 @@ class GstAudioFile(object):
             'caps',
             Gst.Caps.from_string('audio/x-raw, format=(string)F32LE, rate=(int)%s, channels=(int)%s'%(self._samplerate, self._num_channels)),
         )
-        
+
         # TODO set endianness?
         # Set up the characteristics of the output. We don't want to
         # drop any data (nothing is real-time here); we should bound
@@ -269,7 +269,7 @@ class GstAudioFile(object):
         self.got_caps = False
         self.pipeline.set_state(Gst.State.PLAYING)
         self.ready_sem.acquire()
-        
+
         if self.read_exc:
             # An error occurred before the stream became ready.
             self.close(True)
@@ -337,23 +337,23 @@ class GstAudioFile(object):
     def _new_sample(self, sink):
         """The callback for appsink's "new-sample" signal.
         """
-        
+
         if self.running:
             # New data is available from the pipeline! Dump it into our
             # queue (or possibly block if we're full).
             success, position = self.pipeline.query_position(Gst.Format.TIME)
             if not success:
                 position = 0
-            
+
             buf = sink.emit('pull-sample').get_buffer()
-            if self.duration is not None and (position >= self.duration):
+            if self._end_time is not None and (position >= self._end_time):
                 self.queue.put(SENTINEL)
             else:
                 result, data = buf.map(Gst.MapFlags.READ)
                 if result:
                     buffer_bytes  = array.array('f', data.data)
                     buf.unmap(data)
-                
+
                 self.queue.put((position, buffer_bytes))
         return Gst.FlowReturn.OK
 
@@ -405,7 +405,7 @@ class GstAudioFile(object):
             raise StopIteration
         if val == SENTINEL:
             raise StopIteration
-        if (self.duration is not None and (val[0] >= self.duration)):
+        if (self._end_time is not None and (val[0] >= self._end_time)):
             raise StopIteration
         return val
 

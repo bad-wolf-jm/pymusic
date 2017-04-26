@@ -11,8 +11,7 @@ class AudioPlayer(EventDispatcher):
     state                = StringProperty(None, allownone = True)
     track_duration       = NumericProperty(None, allownone = True)
     track_position       = NumericProperty(None, allownone = True)
-    track_length       = NumericProperty(None, allownone = True)
-
+    track_length         = NumericProperty(None, allownone = True)
 
     def __init__(self, player_name, num_channels = 2, *args, **kw):
         super(AudioPlayer, self).__init__(*args, **kw)
@@ -28,7 +27,7 @@ class AudioPlayer(EventDispatcher):
         self.track_position = None
         self.register_event_type("on_end_of_stream")
 
-        
+
     def on_end_of_stream(self, *args):
        pass
 
@@ -45,14 +44,14 @@ class AudioPlayer(EventDispatcher):
             self.track_position = self._output.stream_time
         Clock.schedule_interval(_keep_setting_time, .1)
         Clock.schedule_once(_do, float(self._output.buffer_time) / 1000000000)
-        
+
     def _get_remaining_time(self, *a):
         if self.track_duration is not None and self.track_position is not None:
             return self.track_duration - self.track_position
         return 0
 
     remaining_time  = AliasProperty(_get_remaining_time, bind = ['track_duration', 'track_position'])
-   
+
     def connect_outputs(self, **kwargs):
         self._output.connect_outputs(**kwargs)
 
@@ -119,7 +118,7 @@ class AudioPlayer(EventDispatcher):
         self.track_length   = None
         self.track_position = None
         self.state          = "stopped"
-        
+
     def pause(self):
         self.state = "paused"
 
@@ -146,4 +145,3 @@ class AudioPlayer(EventDispatcher):
     def shutdown(self):
         self.stop()
         self._output.close()
-

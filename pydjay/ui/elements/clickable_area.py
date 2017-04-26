@@ -17,14 +17,14 @@ kv_string = """
     #    id: content_area
     #    pos: self.parent.pos
     #    size: self.parent.size
-        
+
 <ImageButton@ClickableArea>:
     id: _b
-    image: 'atlas://pydjay/gui/images/resources/transparent_image' 
+    image: 'atlas://pydjay/gui/images/resources/transparent_image'
     image_width: 32#self.width - 5
     image_height: 32#self.height - 5
-    background_normal: 'atlas://pydjay/gui/images/resources/transparent_image'  
-    
+    background_normal: 'atlas://pydjay/gui/images/resources/transparent_image'
+
     Image:
         size: self.parent.image_width, self.parent.image_height
         pos:self.parent.x + self.parent.width/2 - self.parent.image_width / 2, self.parent.y + self.parent.height/2 - self.parent.image_height / 2
@@ -32,8 +32,8 @@ kv_string = """
         keep_ratio: True
         allow_stretch: True
         source: self.parent.image
-        
-        
+
+
 <TextButton@Button>:
     text: ""
     font_size:20
@@ -43,18 +43,18 @@ kv_string = """
     split_str:""
     background_normal: ""    #get_path('transparent_image')
     size: self.texture_size
-    
+
     Label:
         id: size_label
         opacity: 0
-        text: root.text 
+        text: root.text
         font_size: root.font_size
 
-        
+
 <TagButton@ClickableArea>:
     id: _b
-    image: 'atlas://pydjay/gui/images/resources/transparent_image'  
-    background_normal: 'atlas://pydjay/gui/images/resources/transparent_image' 
+    image: 'atlas://pydjay/gui/images/resources/transparent_image'
+    background_normal: 'atlas://pydjay/gui/images/resources/transparent_image'
     label_text: ""
     font_size: 12
     anchor_y: 'center'
@@ -67,16 +67,19 @@ kv_string = """
         keep_ratio: True
         allow_stretch: True
         source: self.parent.image
-        
+
     BoxLayout:
         id: tag_area
         orientation: 'vertical'
 """
 
+
+
+
 class ClickableArea(Button):
     def __init__(self, **args):
         super(ClickableArea, self).__init__(**args)
- 
+
 class ImageButton(ClickableArea):
     def __init__(self, **args):
         super(ImageButton, self).__init__(**args)
@@ -87,12 +90,12 @@ class TextButton(Button):
     label_text = StringProperty(None)
     def __init__(self, **args):
         super(TextButton, self).__init__(**args)
-        
+
 class TagButton(ClickableArea):
     tag_area = ObjectProperty(None)
     def __init__(self, **args):
         super(TagButton, self).__init__(**args)
-        
+
 from kivy.lang import Builder
 from kivy.factory import Factory
 
