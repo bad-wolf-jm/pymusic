@@ -38,6 +38,18 @@ class AudioPlayer(CallbackDispatcher):
     def disconnect_outputs(self, **kwargs):
         self._output.disconnect_outputs(**kwargs)
 
+    def on_track_length(self, length):
+        pass
+
+    def on_track_duration(self, duration):
+        pass
+
+    def on_track_position(self, position):
+        pass
+
+    def on_track_remaining_time(self, position):
+        pass
+
     def _player_loop(self):
         eos = False
         has_duration = False
@@ -47,16 +59,18 @@ class AudioPlayer(CallbackDispatcher):
                 timestamp, samples = self._decoder.next()
                 if self._decoder.duration is not None and not has_duration:
                     has_duration = True
-                    self.dispatch('track_duration', self._decoder.duration)
-                    self.dispatch('track_length', self._decoder.track_length)
+                    self.on_track_duration(self._decoder.duration)
+                    self.on_track_length(self._decoder.track_length)
+                    #self.dispatch('track_duration', self._decoder.duration)
+                    #self.dispatch('track_length', self._decoder.track_length)
                     #self.dispatch('remaining_time', self._decoder.track_length)
-                if iteration == 5:
-                    self.dispatch('track_position', self._output.stream_time)
-                    if self.track_duration is not None and self.track_position is not None:
-                        self.dispatch('track_remaining_time', self.track_duration - self.track_position)
-                    iteration = 0
-                else:
-                    iteration += 1
+                #if iteration == 5:
+                self.on_track_position(self._output.stream_time)
+                #if self.track_duration is not None and self.track_position is not None:
+                #    self.on_track_remaining_time(self.track_duration - self.track_position)
+#                    iteration = 0
+#                else:
+#                    iteration += 1
                 self._output.send(samples)
             except StopIteration:
                 eos = True
@@ -65,7 +79,7 @@ class AudioPlayer(CallbackDispatcher):
         self._is_playing = False
         self._player_thread = None
         if eos:
-            self.dispatch('end_of_stream')
+            self.on_end_of_stream()
 
     def play(self, filename, start_time = None, end_time = None):
         self.stop(flush = True)

@@ -37,7 +37,7 @@ class RPCServer(object):
             except Exception, details:
                 print 'ERROR CALLING', details
                 continue
-                time.sleep(.25)
+                time.sleep(.05)
 
     def start(self, threaded = True):
         if threaded:
@@ -78,7 +78,7 @@ class PushServer(object):
                 event = self._message_queue.pop(0)
                 print event
                 self._server_socket.send_json(event)
-                time.sleep(.1)
+                time.sleep(.05)
 
     def start(self, threaded = True):
         print 'starting push server',
