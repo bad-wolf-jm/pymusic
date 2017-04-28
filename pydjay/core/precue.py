@@ -13,8 +13,8 @@ class PreviewPlayer(EventDispatcher):
     track_duration   = NumericProperty(None, allownone = True)
     track_position   = NumericProperty(None, allownone = True)
     track_length   = NumericProperty(None, allownone = True)
-    
-    def __init__(self, player, volume, *args, **kwargs): 
+
+    def __init__(self, player, volume, *args, **kwargs):
         super(PreviewPlayer, self).__init__(*args, **kwargs)
         self._track  = None
         self.player  = player
@@ -25,12 +25,10 @@ class PreviewPlayer(EventDispatcher):
         self.volume_controls      = volume
         self._save_monitor_volume = 1.0
         self._is_playing          = False
-        
-        self._pause_track_timestamp = None 
-        self._pause_track = None 
+
+        self._pause_track_timestamp = None
+        self._pause_track = None
         self.bind(volume = self._set_volume)
-
-
 
     def _forward_track_duration(self, *a):
         self.track_duration = self.player.track_duration
@@ -41,14 +39,13 @@ class PreviewPlayer(EventDispatcher):
 
     def _forward_track_length(self, *a):
         self.track_length = self.player.track_length
-
         
     def _on_eos(self, *a):
         self._duck_main_player = Animation(volume = self._save_monitor_volume,
                                            t = 'in_out_sine', duration = 0.5)
         self._duck_main_player.start(self)
 
-        
+
     def _set_volume(self, i, value):
         self.volume_controls.main_player_monitor = self.volume
 
@@ -92,7 +89,7 @@ class PreviewPlayer(EventDispatcher):
                 self.play(self._track, self._start_time, self._end_time)
 
     def _do_play(self, *a):
-        self.player.play(self._track.location, self._start_time, self._end_time) 
+        self.player.play(self._track.location, self._start_time, self._end_time)
         self._is_playing = True
         self._duck_main_player = None
         self._fade_state = 'idle'
@@ -111,7 +108,6 @@ class PreviewPlayer(EventDispatcher):
 
     def seek(self, timestamp):
         self.player.seek(timestamp)
-        
+
     def shutdown(self):
         self.player.shutdown()
-

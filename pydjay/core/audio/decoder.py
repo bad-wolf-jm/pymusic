@@ -58,7 +58,7 @@ import sys
 import threading
 import os
 import array
-from kivy.utils import platform
+#from kivy.utils import platform
 
 try:
     import queue

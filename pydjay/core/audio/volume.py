@@ -55,8 +55,8 @@ class VolumeControllerDriver(object):
         self.closed          = False
 
         self._buffer_time   = int(self.block_size * 1.0 / self.samplerate * 1000000000)
- 
-    
+
+
         for i in range(self.num_channels):
             self._volumes.append(1.0)
             port_name = "input_%s"%(i+1)
@@ -65,7 +65,7 @@ class VolumeControllerDriver(object):
             port_name = "output_%s"%(i+1)
             self._output_ports.append(self._jack_client.outports.register(port_name))
             self._outputs[port_name] = self._output_ports[i]
-        
+
         self._jack_client.set_process_callback(self._process)
         self._jack_client.set_blocksize_callback(self._blocksize_changed)
         self._jack_client.set_shutdown_callback(self._on_server_shutdown)
@@ -76,13 +76,13 @@ class VolumeControllerDriver(object):
         for key in kwargs:
             port = self._outputs[key]
             self._jack_client.connect(port, kwargs[key])
-        
+
 
     def disconnect_outputs(self, **kwargs):
         for key in kwargs:
             port = self._outputs[key]
             self._jack_client.disconnect(port, kwargs[key])
-    
+
     def flush_buffer(self):
         pass
 
@@ -96,20 +96,20 @@ class VolumeControllerDriver(object):
             elif self._volumes[channel_index] == 0:
                 out.fill(0)
             else:
-                out[:] = self._volumes[channel_index] * in_ 
-  
+                out[:] = self._volumes[channel_index] * in_
+
     def _blocksize_changed(self, block_size):
         self.block_size = block_size
         self._max_buffer_size = self.block_size * 30
-        
+
     def _on_server_shutdown(self, *a):
         pass
-    
+
     def close(self):
         self._jack_client.deactivate()
         self._jack_client.close()
         self.closed = True
-        
+
     def set_volumes(self, value = 1.0, channels = None):
         if channels is not None:
             if isinstance(channels, list):
@@ -121,8 +121,8 @@ class VolumeControllerDriver(object):
             else:
                 if not isinstance(value, list):
                     self._volumes[channels - 1] = value
-                        
-                               
+
+
 
 class VolumeControllerProcess(Process):
     def __init__(self, name = "", num_channels = 2, in_queue = None, out_queue = None):
@@ -149,7 +149,7 @@ class VolumeControllerProcess(Process):
                 try:
                     getattr(self.output_driver, command)(*args, **kwargs)
                 except AttributeError, details:
-                    pass 
+                    pass
                 except Exception, details:
                     print 'y', details
             except queue.Empty, details:
@@ -158,7 +158,10 @@ class VolumeControllerProcess(Process):
 
 class VolumeController(object):
     def __init__(self, client_name = "PYDjayJackClient", num_channels = 2, *args, **kw):
-        super(VolumeController, self).__init__()
+        print 'GGGG'
+        #super(VolumeController, self).__init__()
+        object.__init__(self)
+        print 'FFFF'
         self.out_queue  = Queue(maxsize = 10)
         self.in_queue   = Queue(maxsize = 1000)
         self.ready_sem = threading.Semaphore(0)
@@ -171,7 +174,7 @@ class VolumeController(object):
         self._foo.start()
         self.stream_time = 0
         self.ready_sem.acquire()
-    
+
 
     def _init(self, block_size = 0, samplerate = 0, client_name = "", num_channels = 0):
         self.block_size   = block_size
@@ -190,14 +193,14 @@ class VolumeController(object):
                     getattr(self, command)(*args, **kwargs)
                 except AttributeError, details:
                     print details
-                    pass 
+                    pass
                 except Exception, details:
                     print 'y', details
             except queue.Empty, details:
                 pass
             finally:
                 pass
- 
+
     def connect_outputs(self, **kwargs):
         self.out_queue.put(('connect_outputs', (), kwargs))
 
@@ -212,10 +215,10 @@ class VolumeController(object):
 
     def set_stream_time(self, time):
         self.stream_time = time
-        
+
     def set_volumes(self, *data, **kw):
         self.out_queue.put(('set_volumes', data, kw))
-        
+
     def close(self):
         self.out_queue.put(('close', (), {}))
         self.out_queue.cancel_join_thread()
@@ -224,5 +227,3 @@ class VolumeController(object):
         self._foo.join()
         self.out_queue.close()
         self.in_queue.close()
-
-

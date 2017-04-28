@@ -6,7 +6,9 @@ import time
 class RPCServer(object):
     """docstring for RPCServer."""
     def __init__(self, name = None, port = 9999, **kw):
-        super(RPCServer, self).__init__()
+        #super(RPCServer, self).__init__()
+        object.__init__(self)
+        print name, port
         self._name           = name
         self._port           = port
         self._command_thread = None
@@ -17,11 +19,11 @@ class RPCServer(object):
 
 
     def _command_loop(self):
-        print "Listening...", self._port
+        #print "Listening...", self._port
         while self._running:
             command = self._server_socket.recv()
             try:
-                print command
+                #print command
                 command = json.loads(command)
             except Exception, details:
                 print details
@@ -29,11 +31,12 @@ class RPCServer(object):
             command_name = command['name']
             command_args = command.get('args', None) or tuple()
             command_kw   = command.get('kwargs', None) or {}
-            method       = getattr(self, command_name, None) or self._default_method
+            method       = getattr(self, command_name, None)
             try:
-                value = method(*command_args, **command_kw)
-                value = json.dumps(value)
-                self._server_socket.send(value)
+                if method is not None:
+                    value = method(*command_args, **command_kw)
+                    value = json.dumps(value)
+                    self._server_socket.send(value)
             except Exception, details:
                 print 'ERROR CALLING', details
                 continue
@@ -72,7 +75,6 @@ class PushServer(object):
         print 'FOOBAR', self._port
 
     def _command_loop(self):
-        print "PUSH ON...", self._port, self._running
         while self._running:
             while len(self._message_queue) > 0:
                 event = self._message_queue.pop(0)
@@ -81,7 +83,7 @@ class PushServer(object):
                 time.sleep(.05)
 
     def start(self, threaded = True):
-        print 'starting push server',
+        #print 'starting push server',
         if threaded:
             if self._command_thread is None:
                 self._command_thread = threading.Thread(target = self._command_loop)
