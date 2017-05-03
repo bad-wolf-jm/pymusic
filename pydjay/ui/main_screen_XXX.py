@@ -58,127 +58,122 @@ kv_string = """
         #keep_ratio: False
 
     BoxLayout:
-        orientation: 'horizontal'
+        orientation: 'vertical'
         size_hint: 1,1
-        MainTrackList:
-            id: master_list
-            window: root
-            queue: master_queue
-            short_list: short_list
-            #main_player: deck
-            preview_player: preview_player
-            size_hint: (1.0, 1.0)
-            #text: "Browser goes here"
-        VDivider:
+
         BoxLayout:
-            orientation: 'vertical'
-            size_hint: 1, 1
-            #height: 125 #time_label.height+date_label.height
+            orientation: 'horizontal'
+            size_hint: 1, None
+            height: 125 #time_label.height+date_label.height
+            padding: [0,0,0,0]
+            MainPlayerDisplay:
+                id: display
+                size_hint: 1, 1
+                height: 150
+                queue: master_queue
+                deck: deck
 
+            VDivider:
             BoxLayout:
-                orientation: 'horizontal'
-                size_hint: 1, None
-                height: 125 #time_label.height+date_label.height
-                padding: [0,0,0,0]
-                MainPlayerDisplay:
-                    id: display
-                    size_hint: 1, 1
-                    height: 150
+                orientation: 'vertical'
+                size_hint: .25,1
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint: 1, None
+                    height: 30 #time_label.height+date_label.height
+                    padding: [10,0,10,0]
+                    Label:
+                        id: time_label
+                        text: root.current_date #"Monday, November 23"
+                        halign: 'left'
+                        valign:"middle"
+                        font_size: 15
+                        size_hint: 1, 1
+                        width: self.texture_size[0]
+                        #size: self.texture_size
+                        text_size: self.size
+                    Label:
+                        id:date_label
+                        color: .6,.6,.6,1
+                        text: root.current_time
+                        halign: 'right'
+                        valign: "middle"
+                        font_size: 15
+                        size_hint: 1, 1
+                        #width:200
+                        size: self.texture_size
+                        text_size: self.size
+                        #height:15#
+
+                HDivider:
+
+                MainPlayerDeck:
+                    id: deck
+                    size_hint: (1, 1)
                     queue: master_queue
-                    deck: deck
+                    window: root
+                    current_session_list: master_queue.current_session
+                    height: 150
 
-                VDivider:
-                BoxLayout:
-                    orientation: 'vertical'
-                    size_hint: .25,1
+            VDivider:
+        HDivider:
 
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        size_hint: 1, None
-                        height: 30 #time_label.height+date_label.height
-                        padding: [10,0,10,0]
-                        Label:
-                            id: time_label
-                            text: root.current_date #"Monday, November 23"
-                            halign: 'left'
-                            valign:"middle"
-                            font_size: 15
-                            size_hint: 1, 1
-                            width: self.texture_size[0]
-                            #size: self.texture_size
-                            text_size: self.size
-                        Label:
-                            id:date_label
-                            color: .6,.6,.6,1
-                            text: root.current_time
-                            halign: 'right'
-                            valign: "middle"
-                            font_size: 15
-                            size_hint: 1, 1
-                            #width:200
-                            size: self.texture_size
-                            text_size: self.size
-                            #height:15#
+        BoxLayout:
+            orientation: 'horizontal'
+            MainTrackList:
+                id: master_list
+                window: root
+                queue: master_queue
+                short_list: short_list
+                #main_player: deck
+                preview_player: preview_player
+                size_hint: (1.0, 1.0)
+                #text: "Browser goes here"
 
-                    HDivider:
-
-                    MainPlayerDeck:
-                        id: deck
-                        size_hint: (1, 1)
-                        queue: master_queue
-                        window: root
-                        current_session_list: master_queue.current_session
-                        height: 150
-
-            HDivider:
-        #HDivider:
-
+            VDivider:
             BoxLayout:
-                orientation: 'horizontal'
+                orientation: 'vertical'
                 size_hint: 1,1
-                #VDivider:
                 BoxLayout:
-                    orientation: 'vertical'
+                    orientation: 'horizontal'
                     size_hint: 1,1
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        size_hint: 1,1
-                        TrackShortList:
-                            #orientation: 'vertical'
-                            size_hint: .5, 1
-                            id: short_list
-                            window:root
-                            queue: master_queue
-                            preview_player: preview_player
-                            main_player: deck
+                    TrackShortList:
+                        #orientation: 'vertical'
+                        size_hint: .5, 1
+                        id: short_list
+                        window:root
+                        queue: master_queue
+                        preview_player: preview_player
+                        main_player: deck
 
-                        VDivider:
-                        MasterQueue:
-                            window:root
-                            preview_player: master_list.short_list.preview_player
-                            id: master_queue
-                            short_list: short_list
-                            preview_player: preview_player
-                            deck: deck
-                            size_hint: (.5, 1.0)
-                            #text: "Queue goes here"
+                    VDivider:
+                    MasterQueue:
+                        window:root
+                        preview_player: master_list.short_list.preview_player
+                        id: master_queue
+                        short_list: short_list
+                        preview_player: preview_player
+                        deck: deck
+                        size_hint: (.5, 1.0)
+                        #text: "Queue goes here"
+                HDivider:
+                BoxLayout
+                    orientation: 'vertical'
+                    size_hint: 1, None
+                    height: 160
+
+                    PreviewPlayer:
+                        id: preview_player
+                        size_hint: 1, 1
+
+                        #height: 225
                     HDivider:
-                    BoxLayout
-                        orientation: 'vertical'
+                    Mixer:
+                        id: mixer
                         size_hint: 1, None
-                        height: 160
-
-                        PreviewPlayer:
-                            id: preview_player
-                            size_hint: 1, 1
-
-                            #height: 225
-                        HDivider:
-                        Mixer:
-                            id: mixer
-                            size_hint: 1, None
-                            #width: 220
-                            height: 40
+                        #width: 220
+                        height: 40
 
 
 """

@@ -2,20 +2,10 @@ import os
 import threading
 from decoder import GstAudioFile
 from output_jack import JackOutput
-from pydjay.core.callback_dispatch import CallbackDispatcher
 
-#from kivy.properties import StringProperty, NumericProperty, AliasProperty
-#from kivy.event import EventDispatcher
-#from kivy.clock import mainthread, Clock
-
-class AudioPlayer(CallbackDispatcher):
-    #state                = StringProperty(None, allownone = True)
-    #track_duration       = NumericProperty(None, allownone = True)
-    #track_position       = NumericProperty(None, allownone = True)
-    #track_length         = NumericProperty(None, allownone = True)
-
+class AudioPlayer(object):
     def __init__(self, player_name = None, num_channels = 2, **kw):
-        super(AudioPlayer, self).__init__(**kw)
+        object.__init__(self)
         self._current_time  = None
         self.player_name    = player_name
         self.num_channels   = num_channels
@@ -26,11 +16,6 @@ class AudioPlayer(CallbackDispatcher):
         self.state          = None
         self.track_duration = None
         self.track_position = None
-        self.register_callback("on_end_of_stream")
-        self.register_callback("playback_state")
-        self.register_callback("track_duration")
-        self.register_callback("track_length")
-        self.register_callback("track_position")
 
     def connect_outputs(self, **kwargs):
         self._output.connect_outputs(**kwargs)
@@ -50,6 +35,9 @@ class AudioPlayer(CallbackDispatcher):
     def on_track_remaining_time(self, position):
         pass
 
+    def on_end_of_stream(self):
+        pass
+
     def _player_loop(self):
         eos = False
         has_duration = False
@@ -61,16 +49,7 @@ class AudioPlayer(CallbackDispatcher):
                     has_duration = True
                     self.on_track_duration(self._decoder.duration)
                     self.on_track_length(self._decoder.track_length)
-                    #self.dispatch('track_duration', self._decoder.duration)
-                    #self.dispatch('track_length', self._decoder.track_length)
-                    #self.dispatch('remaining_time', self._decoder.track_length)
-                #if iteration == 5:
                 self.on_track_position(self._output.stream_time)
-                #if self.track_duration is not None and self.track_position is not None:
-                #    self.on_track_remaining_time(self.track_duration - self.track_position)
-#                    iteration = 0
-#                else:
-#                    iteration += 1
                 self._output.send(samples)
             except StopIteration:
                 eos = True
@@ -100,7 +79,6 @@ class AudioPlayer(CallbackDispatcher):
         except Exception, details:
             print details
             self.state = 'stopped'
-        #    raise
 
     def stop(self, flush = False):
         self._is_playing = False
@@ -111,9 +89,9 @@ class AudioPlayer(CallbackDispatcher):
             self._player_thread.join()
         self._player_thread = None
         self._decoder       = None
-        self.track_duration = None
-        self.track_length   = None
-        self.track_position = None
+        self.on_track_length(None)
+        self.on_track_duration(None)
+        self.on_track_position(None)
         self.state          = "stopped"
 
     def pause(self):

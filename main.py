@@ -24,7 +24,7 @@ if __name__ == '__main__':
     bar = MainScreen(pydjay.bootstrap.main_player,
                      pydjay.bootstrap.preview_player,
                      pydjay.bootstrap.volume_control)
-    
+
     if not os.path.exists(pydjay.bootstrap.STATE):
         os.makedirs(pydjay.bootstrap.STATE)
 
@@ -48,13 +48,13 @@ if __name__ == '__main__':
     pydjay.bootstrap.session_manager.set_current_session(queue)
     #bar.master_queue.deck.set_current_session(queue)
     #bar.master_queue.deck.current_session_list.set_track_list(queue)
-    
+
     bar.master_list.set_playlist_title('TRACKS')
     bar.master_list.set_track_list(get_tracks())
 
     queue = read_state(pydjay.bootstrap.STATE, 'shortlist.txt')
     bar.short_list.set_track_list(queue)
-    
+
     try:
         key_map.bind(on_cycle_focus = bar.cycle_focus)
         runTouchApp(bar)
@@ -64,11 +64,11 @@ if __name__ == '__main__':
         traceback.print_exc(file=sys.stdout)
         print '-'*60
         print details
-        
+
     finally:
         pydjay.bootstrap.main_player.stop()
         pydjay.bootstrap.preview_player.stop()
-        
+
         foo = open(os.path.join(pydjay.bootstrap.STATE, 'queue.txt'), 'w')
         for track in bar.master_queue.queue_view.adapter.data:
             if track['item'].track.location is not None:
@@ -83,7 +83,11 @@ if __name__ == '__main__':
         foo.close()
         save()
         bar.shutdown()
+        #print 'FOOBAR 1'
         pydjay.bootstrap.close_keyboard()
+        #print 'FOOBAR 2'
         pydjay.bootstrap.main_player.shutdown()
+        #print 'FOOBAR 3'
         pydjay.bootstrap.preview_player.shutdown()
-        pydjay.bootstrap.volume_control_o.close()
+        #print 'FOOBAR 4'
+        pydjay.bootstrap.volume_control.shutdown()

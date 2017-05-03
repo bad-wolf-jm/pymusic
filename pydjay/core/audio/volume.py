@@ -158,10 +158,10 @@ class VolumeControllerProcess(Process):
 
 class VolumeController(object):
     def __init__(self, client_name = "PYDjayJackClient", num_channels = 2, *args, **kw):
-        print 'GGGG'
+        #print 'GGGG'
         #super(VolumeController, self).__init__()
         object.__init__(self)
-        print 'FFFF'
+        #print 'FFFF'
         self.out_queue  = Queue(maxsize = 10)
         self.in_queue   = Queue(maxsize = 1000)
         self.ready_sem = threading.Semaphore(0)

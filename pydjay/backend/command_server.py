@@ -3,31 +3,25 @@ import json
 import threading
 import time
 
-class RPCServer(object):
+class RPCServer(threading.Thread):
     """docstring for RPCServer."""
     def __init__(self, name = None, port = 9999, **kw):
-        #super(RPCServer, self).__init__()
-        object.__init__(self)
-        print name, port
-        self._name           = name
-        self._port           = port
-        self._command_thread = None
-        self._running        = False
-        self._context        = zmq.Context()
-        self._server_socket  = self._context.socket(zmq.REP)
-        self._server_socket.bind("tcp://127.0.0.1:%s" % self._port)
+        threading.Thread.__init__(self)
+        self.__name    = name
+        self.__port    = port
+        self.__running = False
+        self.__context = zmq.Context()
+        self.__socket  = self.__context.socket(zmq.REP)
+        self.__socket.bind("tcp://127.0.0.1:%s" % self.__port)
 
-
-    def _command_loop(self):
-        #print "Listening...", self._port
-        while self._running:
-            command = self._server_socket.recv()
+    def __run(self):
+        while self.__running:
             try:
-                #print command
+                command = self.__socket.recv()
                 command = json.loads(command)
             except Exception, details:
                 print details
-                continue
+                break
             command_name = command['name']
             command_args = command.get('args', None) or tuple()
             command_kw   = command.get('kwargs', None) or {}
@@ -36,115 +30,40 @@ class RPCServer(object):
                 if method is not None:
                     value = method(*command_args, **command_kw)
                     value = json.dumps(value)
-                    self._server_socket.send(value)
+                    self.__socket.send(value)
             except Exception, details:
-                print 'ERROR CALLING', details
+                print 'ERROR CALLING', details, value
                 continue
                 time.sleep(.05)
+        self.__socket.close()
 
     def start(self, threaded = True):
+        self.__running = True
         if threaded:
-            if self._command_thread is not None:
-                self._command_thread = threading.Thread(target = self._command_loop)
-                self._running = True
-                self._command_thread.start()
+            threading.Thread.start(self)
         else:
-            #self.shutdown()
-            if self._command_thread is None:
-                self._running = True
-                self._command_loop()
+            self.__run()
 
-    def shutdown(self):
-        if self._command_thread is not None:
-            self._running = False
-            self._command_thread.join()
-
-
-class PushServer(object):
-    """docstring for RPCServer."""
-    def __init__(self, name = None, port = 9999, **kw):
-        super(PushServer, self).__init__()
-        self._name           = name
-        self._port           = port
-        self._command_thread = None
-        self._running        = False
-        self._context        = zmq.Context()
-        self._server_socket  = self._context.socket(zmq.PUSH)
-        self._server_socket.bind("tcp://127.0.0.1:%s" % self._port)
-        self._message_queue = []
-        print 'FOOBAR', self._port
-
-    def _command_loop(self):
-        while self._running:
-            while len(self._message_queue) > 0:
-                event = self._message_queue.pop(0)
-                print event
-                self._server_socket.send_json(event)
-                time.sleep(.05)
-
-    def start(self, threaded = True):
-        #print 'starting push server',
-        if threaded:
-            if self._command_thread is None:
-                self._command_thread = threading.Thread(target = self._command_loop)
-                self._running = True
-                self._command_thread.start()
-        else:
-            if self._command_thread is None:
-                self._running = True
-                self._command_loop()
-
-    def shutdown(self):
-        if self._command_thread is not None:
-            self._running = False
-            self._command_thread.join()
-
-    def push(self, event):
-        self._message_queue.append(event)
-
+    def stop(self):
+        self.__running = False
 
 class RPCClient(object):
-    """docstring for RPCServer."""
+    """docstring for RPCClient."""
     def __init__(self, name = None, port = 9999, **kw):
-        super(RPCServer, self).__init__()
-        self._name           = name
-        self._port           = port
-        self._command_thread = None
-        self._running        = False
-        self._context        = zmq.Context()
-        self._server_socket  = self._context.socket(zmq.REQ)
-        self._server_socket.connect("tcp://127.0.0.1:%s" % self._port)
+        object.__init__(self)
+        self.__name    = name
+        self.__port    = port
+        self.__context = zmq.Context()
+        self.__socket  = self.__context.socket(zmq.REQ)
+        self.__socket.connect("tcp://127.0.0.1:%s" % self.__port)
 
-    def _command_loop(self):
-        while self._running:
-            command = self._socket.recv()
-            try:
-                command = json.loads(command)
-            except:
-                continue
-            command_name = command['name']
-            command_args = command.get('args', None) or tuple()
-            command_kw   = command.get('kwargs', None) or {}
-            method       = getattr(self, command_name, None) or self._default_method
-            try:
-                value = method(*command_args, **command_kw)
-                value = json.dumps(value)
-                self._socket.send(value)
-            except Exception, details:
-                print 'ERROR CALLING', details
-                continue
+    def remote_call(self, f_name, *args, **kwargs):
+        comm = {'name': f_name, 'args': args, 'kwargs': kwargs}
+        try:
+            self.__socket.send(json.dumps(comm))
+            return json.loads(self.__socket.recv())
+        except:
+            print comm
 
-    def start(self, threaded = True):
-        if threaded:
-            if self._command_thread is not None:
-                self._command_thread = threading.Thread(target = self._command_loop)
-                self._running = True
-                self._command_thread.start()
-        else:
-            self.shutdown()
-            self._command_loop()
-
-    def shutdown(self):
-        if self._command_thread is not None:
-            self._running = False
-            self._command_thread.join()
+    def stop():
+        self.__socket.close()
