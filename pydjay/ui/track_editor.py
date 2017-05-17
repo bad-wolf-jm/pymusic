@@ -51,6 +51,7 @@ kv_string = """
     image: self.play if self.media_state == 'pause' else self.pause
 
 <TrackEditor>:
+    size_hint: .6,.4
     #seekbar: seekbar
     waveform: waveform
     cut_window: cut_window
@@ -70,154 +71,217 @@ kv_string = """
     #orientation: 'horizontal'
     #size_hint: 1, 1
     #height:75
+
+    canvas:
+        Color:
+            rgba: .7,0.7,0.7,.98
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+
     BoxLayout:
         orientation: 'vertical'
 
-        padding: [15,0,15,7]
+        #padding: [15,0,15,7]
+        #Label:
+        #    size_hint: 1, None
+        #    height: 50
+        #    font_size: 20
+        #    text: 'Track edit'
+        #    text_size: self.size
+        #    valign: 'middle'
+        #    halign: 'center'
+
         Label:
-            size_hint: 1, None
+            canvas.before:
+                Color:
+                    rgba: .3,0.3,0.3,.98
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            size_hint: 1,None
             height: 50
-            font_size: 20
-            text: 'Track edit'
-            text_size: self.size
-            valign: 'middle'
+            font_size: 25
+            markup: True
             halign: 'center'
+            valign: 'middle'
+            text_size: self.size
+            text: "TRACK EDITOR"
 
-        HDivider:
 
-        Widget:
-            size_hint: None, None
-            height: 20
+        #HDivider:
 
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint: 1, None
-            height: 85
-            spacing: 20
-            RelativeLayout:
-                size_hint: None, 1
-                width: self.height
 
-                Image:
-                    id: album_art
-                    size_hint: 1, 1
-                    #width: self.height
-                    source: 'atlas://pydjay/gui/images/resources/default_album_cover'
-                    allow_stretch: True
-                    keep_ratio: True
-            BoxLayout:
-                orientation: 'horizontal'
-                size_hint: 1,1
-                size_hint_min_y: 100
-                BoxLayout:
-                    orientation: 'vertical'
-                    size_hint: 1,None
-                    spacing: 10
-                    height: 70
-                    pos_hint: {'top': 1}
-                    Label:
-                        id: title_label
-                        size_hint: 1,None
-                        #shorten: True
-                        text: "3 Little Monkeys"
-                        text_size: self.size
-                        font_size: 15
-                        height: 15
-                        bold: True
-                        halign: 'left'
-                        valign: 'middle'
-                        shorten: True
-                        ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-
-                    Label:
-                        id: artist_label
-                        size_hint: 1,None
-                        height: 12
-                        text: ""
-                        color: .7,.7,.7,1
-                        text_size: self.size
-                        font_size: 12
-                        halign: 'left'
-                        valign: 'middle'
-                        shorten: True
-                        ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-
-                    Label:
-                        id: album_label
-                        size_hint: 1,None
-                        height: 12
-                        text_size: self.size
-                        text: ""
-                        color: .7,.7,.7,1
-                        halign: 'left'
-                        valign: 'middle'
-                        shorten: True
-                        ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-                        text: ""
-                        font_size: 12
-                ImageButton:
-                    size_hint: None, None
-                    size: 75,75
-                    pos_hint: {'top': 1}
-                    #text: 'SL'
-                    image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
-                    on_press: root.short_list.add_shortlist_track(root._track) if root._track is not None else None
-                ImageButton:
-                    size_hint: None, None
-                    size: 75,75
-                    pos_hint: {'top': 1}
-                    #text: 'queue'
-                    image:'atlas://pydjay/gui/images/resources/add_to_queue'
-                    on_press: root.queue.add_track(root._track) if root._track is not None else None
-
-        Widget:
-            size_hint: None, 1
+        #Widget:
+        #    size_hint: None, None
+        #    height: 20
         BoxLayout:
             orientation: 'vertical'
-            spacing: 10
-            size_hint: 1, None
-            height: 200
-            padding:[10,10,10,10]
+            size_hint: 1,1
+            padding: [15,10,15,7]
 
-            RelativeLayout:
-                size_hint: 1,1
-                WaveformSeekbar:
-                    canvas.before:
-                        Color:
-                            rgba: 0,0,0,0
-                        Rectangle:
-                            pos:  0,0#self.pos[0] - root.pos[0], self.pos[1] - root.pos[1]
-                            size: self.size
-
-                    size_hint: 1, None
-                    height: 100
-                    pos:0,0
-                    id: waveform
-
-                TrackCutWindow:
-                    id: cut_window
-                    size_hint: 1,None
-                    height: 100
-                    pos:0,0
-
-                TrackCuePointWindow:
-                    id: cue_point_window
-                    size_hint: 1,1
-
-            RelativeLayout:
+            BoxLayout:
+                orientation: 'horizontal'
                 size_hint: 1, None
-                height: 15
-                Label:
-                    id: start_time_label
-                    text: '0:00'
-                    font_size: 13
-                Label:
-                    id: end_time_label
-                    text: '0:00'
-                    font_size: 13
+                height: 85
+                spacing: 20
+                RelativeLayout:
+                    size_hint: None, 1
+                    width: self.height
 
-        Widget:
-            size_hint: None, 1
+                    Image:
+                        id: album_art
+                        size_hint: 1, 1
+                        #width: self.height
+                        source: 'atlas://pydjay/gui/images/resources/default_album_cover'
+                        allow_stretch: True
+                        keep_ratio: True
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint: 1,1
+                    size_hint_min_y: 100
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint: 1,None
+                        spacing: 10
+                        height: 70
+                        pos_hint: {'top': 1}
+                        Label:
+                            id: title_label
+                            size_hint: 1,None
+                            #shorten: True
+                            text: "3 Little Monkeys"
+                            text_size: self.size
+                            font_size: 18
+                            color: .2,.2,.2,1
+                            height: 15
+                            bold: True
+                            halign: 'left'
+                            valign: 'middle'
+                            shorten: True
+                            ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+
+                        Label:
+                            id: artist_label
+                            size_hint: 1,None
+                            height: 15
+                            text: ""
+                            #color: .7,.7,.7,1
+                            color: .4,.4,.4,1
+                            text_size: self.size
+                            font_size: 15
+                            halign: 'left'
+                            valign: 'middle'
+                            shorten: True
+                            ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+
+                        Label:
+                            id: album_label
+                            size_hint: 1,None
+                            height: 15
+                            text_size: self.size
+                            text: ""
+                            color: .4,.4,.4,1
+                            halign: 'left'
+                            valign: 'middle'
+                            shorten: True
+                            ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+                            text: ""
+                            font_size: 15
+                    #ImageButton:
+                    #    size_hint: None, None
+                    #    size: 75,75
+                    #    pos_hint: {'top': 1}
+                    #    #text: 'SL'
+                    #    image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
+                    #    on_press: root.short_list.add_shortlist_track(root._track) if root._track is not None else None
+                    #ImageButton:
+                    #    size_hint: None, None
+                    #    size: 75,75
+                    #    pos_hint: {'top': 1}
+                    #    #text: 'queue'
+                    #    image:'atlas://pydjay/gui/images/resources/add_to_queue'
+                    #    on_press: root.queue.add_track(root._track) if root._track is not None else None
+
+            Widget:
+                size_hint: None, 1
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 10
+                size_hint: 1, None
+                height: 200
+                padding:[10,10,10,10]
+
+                RelativeLayout:
+                    size_hint: 1,1
+                    WaveformSeekbar:
+                        canvas.before:
+                            Color:
+                                rgba: 0,0,0,0
+                            Rectangle:
+                                pos:  0,0#self.pos[0] - root.pos[0], self.pos[1] - root.pos[1]
+                                size: self.size
+
+                        size_hint: 1, None
+                        height: 100
+                        pos:0,0
+                        id: waveform
+
+                    TrackCutWindow:
+                        id: cut_window
+                        size_hint: 1,None
+                        height: 100
+                        pos:0,0
+
+                    TrackCuePointWindow:
+                        id: cue_point_window
+                        size_hint: 1,1
+
+                RelativeLayout:
+                    size_hint: 1, None
+                    height: 15
+                    Label:
+                        id: start_time_label
+                        color: .2,.2,.2,1
+                        text: '0:00'
+                        font_size: 13
+                    Label:
+                        id: end_time_label
+                        color: .2,.2,.2,1
+                        text: '0:00'
+                        font_size: 13
+
+            Widget:
+                size_hint: None, 1
+            #Widget:
+            #    size_hint: 1,1
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, None
+                height: 40
+                padding: [30,0,30,0]
+                spacing: 10
+                Button:
+                    size_hint:1,1
+                    text: "APPLY"
+                    on_press: root.apply_changes()
+                Button:
+                    size_hint:1,1
+                    text: "CANCEL"
+                    on_press: root.dismiss()
+
+#            Label:
+#                size_hint: 1,None
+#                height: 50
+#                font_size: 15
+#                markup: True
+#                halign: 'center'
+#                valign: 'middle'
+#                text_size: self.size
+#                text: "[color=#333333]Tap of click anywhere outside the dialog to dismiss.[/color]"
+#            Widget:
+#                size_hint: 1,1
 
 """
 
@@ -300,7 +364,7 @@ class TrackCutWindow(Widget):
             window_end = (self.track_length - track_end) * x_factor
             Rectangle(size = (window_end, self.height),
                       pos = [self.pos[0] + self.width - window_end, self.pos[1]])
-            Color(.7, .7, .7, 1)
+            Color(.3, .3, .3, 1)
             Line(rounded_rectangle = [track_start * x_factor, self.y,
                                       (track_end - track_start) * x_factor, self.height, 10],
                  width = 2)
@@ -326,7 +390,9 @@ class TrackCuePointWindow(Widget):
                   size         = self._redraw,
                   pos          = self._redraw)
 
-        self.bind(track_length = self._update_label_positions)
+        self.bind(track_length = self._update_label_positions,
+                  size         = self._update_label_positions,
+                  pos          = self._update_label_positions)
 
         self.bind(on_touch_down = self._on_touch_down,
                   on_touch_up   = self._on_touch_up,
@@ -381,13 +447,11 @@ class TrackCuePointWindow(Widget):
         else:
             self._active_cue_point -= 1
             self._active_cue_point = max(min(self._active_cue_point, len(self._cue_points)), 0)
-
         self.draw_window()
 
 
     def get_cue_point_after(self, timestamp):
         i = 0
-
         for cue in self._cue_points:
             if cue > timestamp:
                 return cue
@@ -396,18 +460,15 @@ class TrackCuePointWindow(Widget):
 
     def get_cue_point_before(self, timestamp):
         i = 0
-        #print 'before',
         for j in range(len(self._cue_points)):
             if self._cue_points[j] >= timestamp:
                 if j > 0:
-                    #print self._cue_points[j-1], timestamp
                     return self._cue_points[j-1]
                 else:
                     return self._cue_points[j]
 
         else:
             return self._cue_points[0]
-
 
     def current_cue_point(self):
         if self._active_cue_point is not None:
@@ -451,7 +512,7 @@ class TrackCuePointWindow(Widget):
         for i in range(seconds / 3):
             x = round(i * tick_space)
             if i % 5 == 0:
-                l = Label(text = seconds_to_human_readable(i * 3))
+                l = Label(text = seconds_to_human_readable(i * 3), color = [.2,.2,.2,1])
                 self.add_widget(l)
                 self._time_labels.append(l)
                 l.size_hint = (None, None)
@@ -471,7 +532,7 @@ class TrackCuePointWindow(Widget):
             i = 0
 
             y = self.height - 40
-            Color(1,1,1,1)
+            Color(.2,.2,.2,1)
             Line(points = [self.x,y,self.width+self.x,y])
 
             seconds = int(round(self.track_length / 1000000000))
@@ -567,8 +628,8 @@ class TrackEditor(ModalView):
                              pos    = self._update_track_labels
         )
         self.cut_window.bind(#track_length = self._update_track_labels,
-                             track_start  = self._update_track_start,
-                             track_end    = self._update_track_end,
+                             track_start  = self._update_track_labels,
+                             track_end    = self._update_track_labels,
         )
         self._update_track_labels()
 
@@ -583,7 +644,7 @@ class TrackEditor(ModalView):
 
 
     def _keyboard_closed(self):
-        print('My keyboard have been closed!')
+        #print('My keyboard have been closed!')
         self._keyboard.unbind(on_key_down = self._on_keyboard_down)
         self._keyboard = None
 
@@ -687,16 +748,24 @@ class TrackEditor(ModalView):
             self.start_time_label.opacity = 0
             self.end_time_label.opacity = 0
 
-    def _update_track_start(self, *a):
+
+    def apply_changes(self, *a):
         if self._track is not None:
             self._track.info.start_time = self.cut_window.track_start
-        self._update_track_labels()
-
-
-    def _update_track_end(self, *a):
-        if self._track is not None:
             self._track.info.end_time = self.cut_window.track_end
-        self._update_track_labels()
+        self.dismiss()
+
+
+    #def _update_track_start(self, *a):
+    #    if self._track is not None:
+    #        self._track.info.start_time = self.cut_window.track_start
+    #    self._update_track_labels()
+
+
+    #def _update_track_end(self, *a):
+    #    if self._track is not None:
+    #        self._track.info.end_time = self.cut_window.track_end
+    #    self._update_track_labels()
 
     def _on_eos(self, *a):
         self._duck_main_player = Animation(volume = self._save_monitor_volume,
@@ -711,7 +780,7 @@ class TrackEditor(ModalView):
         self.volume_controls.set_volume('preview_player', value)
 
     def play(self):
-        self._player.play(self._track)
+        self._player.play(self._track, self.cut_window.track_start, self.cut_window.track_end)
 
     def stop(self):
         self._player.stop()

@@ -92,7 +92,7 @@ class DragContext:
         self.drag = drag
         self.drop = drop
 
-        
+
 class MasterQueue(BoxLayout, TrackListBehaviour):
     queue_view        = ObjectProperty(None)
     track_list        = ListProperty()
@@ -135,19 +135,19 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
 
     def _update_session_contents(self, i, queue):
         self.current_session.set_track_list(queue)
-    
+
     def show_preview_player(self, track, pos, size):
         self.preview_player.play(track)
 
 
     def _move_selection_x(self, amount):
-        item = self.current_selection 
+        item = self.current_selection
         if item is not None:
             item = item['item'].track
             c_s = self._current_selection
             play_queue.move_track(item, self._current_selection + amount)
             self.select(c_s + amount)
-        
+
     def _move_selection_up(self):
         self._move_selection_x(-1)
 
@@ -183,10 +183,10 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
             play_queue.add_track(self.window._drag_payload, row)
             self.window.drop()
 
-        
+
     def contains(self, location):
         return location in self._queued_tracks
-        
+
     def _post_init(self, *args):
         self.queue_time = "[color=#bbbbbb]Total time:[/color] " + \
                           "[color=#ffffff]" + \
@@ -201,14 +201,14 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         self.list_view = self.queue_view.list_view
         self.list_view.layout_manager.default_size = 70
         self._update_queue_labels()
-        
+
     def set_player(self, p):
         self.player = p
 
     def _convert(self, row, item):
         return {'row': row, 'item': item, 'view':self, 'drag_context':self.drag_context, 'is_selected': False}
 
-    
+
     def add_track(self, track, index = None):
         play_queue.add_track(track, index)
     enqueue = add_track
@@ -251,7 +251,8 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         pass
 
     def shutdown(self):
-        self.deck.shutdown()
+        pass
+        #self.deck.shutdown()
 
 Builder.load_string(kv_string)
 Factory.register('MasterQueue', MasterQueue)

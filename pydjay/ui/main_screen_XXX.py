@@ -161,12 +161,11 @@ kv_string = """
                 BoxLayout
                     orientation: 'vertical'
                     size_hint: 1, None
-                    height: 160
+                    height: 100
 
                     PreviewPlayer:
                         id: preview_player
                         size_hint: 1, 1
-
                         #height: 225
                     HDivider:
                     Mixer:
@@ -210,10 +209,7 @@ class MainScreen(MainWindow):
         self._focusable_elements = [self.master_list,
                                     self.short_list,
                                     self.master_queue]
-
         self.master_list.focus()
-
-
 
     def request_focus(self, w):
         try:
@@ -238,7 +234,6 @@ class MainScreen(MainWindow):
 
 
     def _update_time(self, *args):
-        #t = time.localtime()
         self.current_date = time.strftime('%a, %b %d %Y')
         self.current_time = time.strftime('%H:%M:%S')
 
@@ -257,19 +252,8 @@ class MainScreen(MainWindow):
     def _completed_animation(self, *args):
         self._anim = None
 
-#    def dismiss_preview_player(self):
-#        if self._preview_player_visible:
-#            self.remove_widget(self.preview_player)
-#            self._preview_player_visible = False
-#            self.preview_player.stop()
-
-
-
     def shutdown(self):
-        #self.main_player.shutdown()
         self.master_queue.shutdown()
-
-        pass
 
 
 Builder.load_string(kv_string)

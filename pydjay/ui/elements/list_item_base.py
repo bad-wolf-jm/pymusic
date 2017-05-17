@@ -44,7 +44,7 @@ from pydjay.ui.elements import list_view
 
 
 
-class ListItemBase(RelativeLayout,
+class ListItemBase(RelativeLayout, LongPressButtonBehaviour,
                    list_view.RecycleViewMixin):
     album_art      = ObjectProperty(None)
     favorite       = BooleanProperty(False)
@@ -74,11 +74,11 @@ class ListItemBase(RelativeLayout,
             `data`: dict
                 The data dict used to populate this view.
         '''
-        
-        self.__initialize__(data['row'], data['item'], data['view'], data['drag_context'], data['is_selected'])
-        
 
-        
+        self.__initialize__(data['row'], data['item'], data['view'], data['drag_context'], data['is_selected'])
+
+
+
     def __initialize__(self, row = None, item = None, view = None, drag_context = None, is_selected = False, *args, **kwargs):
         self.row = row
         self._album_art = None
@@ -86,7 +86,7 @@ class ListItemBase(RelativeLayout,
         self._view = view
         self._item = self._item_data.track if self._item_data is not None else None
         self._drag_context = drag_context
-        #self._long_press_threshold = .25
+        self._long_press_threshold = .25
         self._preview_player_button = None
         self.is_selected = is_selected
         self.bind(on_long_press = self._start_dragging)
@@ -94,12 +94,12 @@ class ListItemBase(RelativeLayout,
         if self._item_data is not None:
             self._update_background()
             self._item_data.bind(is_available = self._update_background)
-            
+
         if self._item is not None:
             self.title  = unicode(self._item.metadata.title)
             self.artist = unicode(self._item.metadata.artist)
             self.album  = unicode(self._item.metadata.album)
-            self.rating = self._item.metadata.rating if self._item.metadata.rating is not None else 0            
+            self.rating = self._item.metadata.rating if self._item.metadata.rating is not None else 0
             self.genre  = unicode(self._item.metadata.genre) if self._item.metadata.genre is not None else ""
             self.style  = unicode(self._item.metadata.style) if self._item.metadata.style is not None else ""
             self.bpm    = str(self._item.metadata.bpm) if self._item.metadata.bpm is not None else ""
@@ -122,7 +122,7 @@ class ListItemBase(RelativeLayout,
             self.style    = ""
             self.length   = ""
             self.favorite = False
-    
+
     def _update_background(self, *value):
         value = self._item_data.is_selected if self._item_data is not None else False
         self.bg.canvas.clear()
@@ -142,26 +142,26 @@ class ListItemBase(RelativeLayout,
                         else:
                             Color(.1,.1,.1,.8)
                         Rectangle(pos=self.bg.pos, size=self.bg.size)
-        
+
         if self._item_data is not None and not self._item_data.is_available:
             self.dimmed = True
         else:
             self.dimmed = False
-        
+
     def _start_dragging(self, foo, x, y):
         if self._drag_context is not None:
             try:
                 self._drag_context.drag(self.to_window(x,y), self._item_data)
             except Exception, details:
                 print 'BAR', details
-                
+
     def _on_touch_down(self, window, event):
         if self.collide_point(*event.pos):
             try:
                 self._view.select(self.row)
             except Exception, details:
                 print 'foo', details, self._item
-                
+
     def _on_touch_up(self, window, event):
         if self.collide_point(*event.pos) and self._drag_context.drop is not None:
             if event.pos[1] - self.pos[1] < self.height / 2:

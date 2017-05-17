@@ -7,10 +7,10 @@ class PushServer(threading.Thread):
     """docstring for RPCServer."""
     def __init__(self, name = None, port = 9999, **kw):
         threading.Thread.__init__(self)
-        self.__name           = name
-        self.__port           = port
-        self.__running        = False
-        self.__context        = zmq.Context()
+        self.__name    = name
+        self.__port    = port
+        self.__running = False
+        self.__context = zmq.Context()
         self.__socket  = self.__context.socket(zmq.PUSH)
         self.__socket.bind("tcp://127.0.0.1:%s" % self.__port)
         self.__message_queue = []
@@ -37,7 +37,6 @@ class PushServer(threading.Thread):
         self.__running = False
 
     def push(self, event, *args, **kwargs):
-        #if replace:
         self.__message_queue = [x for x in self.__message_queue if x['event'] != event]
         self.__message_queue.append({'event': event, 'args': args, 'kwargs': kwargs})
 
@@ -56,7 +55,6 @@ class PushClient(threading.Thread):
 
     def run(self):
         while self.__running:
-            #print 'running', self, self.__running
             try:
                 event = self.__socket.recv_json(flags=zmq.NOBLOCK)
                 callback = self.__handlers.get(event['event'], None)
@@ -67,7 +65,6 @@ class PushClient(threading.Thread):
                     except Exception, details:
                         print details
             except zmq.Again as e:
-                #print "No message received yet"
                 time.sleep(0.01)
             except Exception, details:
                 print details, 'err'
@@ -76,9 +73,7 @@ class PushClient(threading.Thread):
         print 'Closed push client'
 
     def stop(self):
-        print 'closing'
         self.__running = False
-        #self.__socket.close()
 
     def register_push_event_handler(self, name, function):
         if name not in self.__handlers:

@@ -45,7 +45,7 @@ kv_string = """
     album_cover: album_art
     artist_label: artist_label
     title_label:  title_label
-    album_label:  album_label
+    #album_label:  album_label
     length_label:  length_label
     position_label:  position_label
     #preview_volume: preview_volume
@@ -75,7 +75,7 @@ kv_string = """
                     source: 'atlas://pydjay/gui/images/resources/default_album_cover'
                     allow_stretch: True
                     keep_ratio: True
-            BoxLayout: 
+            BoxLayout:
                 orientation: 'vertical'
                 size_hint: 1,1
                 spacing: 6
@@ -104,73 +104,73 @@ kv_string = """
                     shorten: True
                     ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
 
-                Label:
-                    id: album_label
-                    size_hint: 1,1
-                    text_size: self.size
-                    text: ""
-                    color: .7,.7,.7,1
-                    halign: 'left'
-                    valign: 'middle'
-                    shorten: True
-                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-                    text: ""
-                    font_size: 15
-            ImageButton:
-                size_hint: None, None
-                size: 50,50
-                pos_hint: {'top': 1}
-                image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
-                on_press:
-                    root.stop() 
-                    root.window.show_preview_player(root._track, None, None, None)  #short_list.add_shortlist_track(root._track) if root._track is not None else None
-                Widget:
-                    size_hint: 1,.5
+                #Label:
+                #    id: album_label
+                #    size_hint: 1,1
+                #    text_size: self.size
+                #    text: ""
+                #    color: .7,.7,.7,1
+                #    halign: 'left'
+                #    valign: 'middle'
+                #    shorten: True
+                #    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+                #    text: ""
+                #    font_size: 15
+            #ImageButton:
+            #    size_hint: None, None
+            #    size: 50,50
+            #    pos_hint: {'top': 1}
+            #    image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
+            #    on_press:
+            #        root.stop()
+            #        root.window.show_preview_player(root._track, None, None, None)  #short_list.add_shortlist_track(root._track) if root._track is not None else None
+            #    Widget:
+            #        size_hint: 1,.5
 
-        BoxLayout:
-            orientation: 'vertical'
-            size_hint: 1,None
-            height: 30
-            padding:[0,0,0,0]
-            ProgressBar:
-                id: seekbar
-                pos_hint: {'center_y': 0.5}
-                size_hint: 1,None
-                height: 10
-                on_touch_down: root._do_seek(*args)
-
-            BoxLayout:
-                orientation: 'horizontal'
-                size_hint: 1, None
-                height: 15
-                Label:
-                    id: position_label
-                    size_hint: None, 1
-                    width: 40
-                    text_size: self.size
-                    text: "0:00"
-                    color: .9,.9,.9,1
-                    halign: 'left'
-                    valign: 'middle'
-                    shorten: True
-                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-                    font_size: 13
-
-                Widget:
+                BoxLayout:
+                    orientation: 'vertical'
                     size_hint: 1,None
+                    height: 30
+                    padding:[0,0,0,0]
+                    ProgressBar:
+                        id: seekbar
+                        pos_hint: {'center_y': 0.5}
+                        size_hint: 1,None
+                        height: 10
+                        on_touch_down: root._do_seek(*args)
 
-                Label:
-                    id: length_label
-                    size_hint: None, 1
-                    width: 40
-                    text_size: self.size
-                    text: "0:00"
-                    color: .9,.9,.9,1
-                    halign: 'right'
-                    valign: 'middle'
-                    shorten: True
-                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-                    font_size: 13
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint: 1, None
+                        height: 15
+                        Label:
+                            id: position_label
+                            size_hint: None, 1
+                            width: 40
+                            text_size: self.size
+                            text: "0:00"
+                            color: .9,.9,.9,1
+                            halign: 'left'
+                            valign: 'middle'
+                            shorten: True
+                            ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+                            font_size: 13
+
+                        Widget:
+                            size_hint: 1,None
+
+                        Label:
+                            id: length_label
+                            size_hint: None, 1
+                            width: 40
+                            text_size: self.size
+                            text: "0:00"
+                            color: .9,.9,.9,1
+                            halign: 'right'
+                            valign: 'middle'
+                            shorten: True
+                            ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+                            font_size: 13
 
 """
 
@@ -190,8 +190,8 @@ class PreviewPlayer(RelativeLayout):
     volume           = NumericProperty(1.0)
     volume_controls  = ObjectProperty(None)
     player           = ObjectProperty(None)
-    
-    def __init__(self, *args, **kwargs): 
+
+    def __init__(self, *args, **kwargs):
         super(PreviewPlayer, self).__init__(*args, **kwargs)
         self._track              = None
         self.player = pydjay.bootstrap.preview_player
@@ -220,7 +220,7 @@ class PreviewPlayer(RelativeLayout):
             x_factor    = float(self.cut_window.width) / self.cut_window.track_length if self.cut_window.track_length is not 0 else 1
             self.start_time_label.center_x = self.cut_window.track_start * x_factor if self.cut_window.track_start is not None else 0
             self.end_time_label.center_x   = self.cut_window.track_end * x_factor if self.cut_window.track_end is not None else self.width
-            
+
         else:
             self.start_time_label.opacity = 0
             self.end_time_label.opacity = 0
@@ -238,7 +238,7 @@ class PreviewPlayer(RelativeLayout):
 
     def _on_eos(self, *a):
         pass
-        
+
     def play(self, track):
         self.set_track(track)
         if self._track is not None:
@@ -258,7 +258,7 @@ class PreviewPlayer(RelativeLayout):
             self.player.seek(int(val))
             return False
         return True
-                    
+
     def set_track(self, track):
         self.player.stop()
         self._track = track
@@ -268,9 +268,9 @@ class PreviewPlayer(RelativeLayout):
         self.seekbar.value = 0
         self.seekbar.max = 1
         if self._track is not None:
-            self.artist_label.text = self._track.metadata.artist
+            self.artist_label.text = self._track.metadata.artist + u' - ' + self._track.metadata.album
             self.title_label.text  = self._track.metadata.title
-            self.album_label.text  = self._track.metadata.album
+            #self.album_label.text  = self._track.metadata.album
             if self._track.metadata.album_cover is not None:
                 try:
                     self.album_cover.source = self._track.metadata.album_cover['small']
@@ -299,5 +299,3 @@ class PreviewPlayer(RelativeLayout):
 
 Builder.load_string(kv_string)
 Factory.register('PreviewPlayer', PreviewPlayer)
-
-

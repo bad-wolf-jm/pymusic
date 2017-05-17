@@ -58,127 +58,133 @@ kv_string = """
         #keep_ratio: False
 
     BoxLayout:
-        orientation: 'horizontal'
-        size_hint: 1,1
-        MainTrackList:
-            id: master_list
-            window: root
-            queue: master_queue
-            short_list: short_list
-            #main_player: deck
-            preview_player: preview_player
-            size_hint: (1.0, 1.0)
-            #text: "Browser goes here"
-        VDivider:
+        orientation: 'vertical'
+
+        #BoxLayout:
+        #    orientation: 'vertical'
+        #    size_hint: .25,1
+
         BoxLayout:
-            orientation: 'vertical'
-            size_hint: 1, 1
-            #height: 125 #time_label.height+date_label.height
+            orientation: 'horizontal'
+            size_hint: 1, None
+            height: 30 #time_label.height+date_label.height
+            padding: [10,0,10,0]
+            Label:
+                id: time_label
+                text: root.current_date #"Monday, November 23"
+                halign: 'left'
+                valign:"middle"
+                font_size: 15
+                size_hint: 1, 1
+                width: self.texture_size[0]
+                #size: self.texture_size
+                text_size: self.size
+            Label:
+                id:date_label
+                color: .6,.6,.6,1
+                text: root.current_time
+                halign: 'right'
+                valign: "middle"
+                font_size: 15
+                size_hint: 1, 1
+                #width:200
+                size: self.texture_size
+                text_size: self.size
+                #height:15#
 
+        HDivider:
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: 1,1
+            MainTrackList:
+                id: master_list
+                window: root
+                queue: master_queue
+                short_list: short_list
+                #main_player: deck
+                preview_player: preview_player
+                size_hint: (1.0, 1.0)
+                #text: "Browser goes here"
+            VDivider:
             BoxLayout:
-                orientation: 'horizontal'
-                size_hint: 1, None
-                height: 125 #time_label.height+date_label.height
-                padding: [0,0,0,0]
-                MainPlayerDisplay:
-                    id: display
-                    size_hint: 1, 1
-                    height: 150
-                    queue: master_queue
-                    deck: deck
+                orientation: 'vertical'
+                size_hint: 1, 1
+                #height: 125 #time_label.height+date_label.height
 
-                VDivider:
                 BoxLayout:
-                    orientation: 'vertical'
-                    size_hint: .25,1
-
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        size_hint: 1, None
-                        height: 30 #time_label.height+date_label.height
-                        padding: [10,0,10,0]
-                        Label:
-                            id: time_label
-                            text: root.current_date #"Monday, November 23"
-                            halign: 'left'
-                            valign:"middle"
-                            font_size: 15
-                            size_hint: 1, 1
-                            width: self.texture_size[0]
-                            #size: self.texture_size
-                            text_size: self.size
-                        Label:
-                            id:date_label
-                            color: .6,.6,.6,1
-                            text: root.current_time
-                            halign: 'right'
-                            valign: "middle"
-                            font_size: 15
-                            size_hint: 1, 1
-                            #width:200
-                            size: self.texture_size
-                            text_size: self.size
-                            #height:15#
-
-                    HDivider:
-
-                    MainPlayerDeck:
-                        id: deck
-                        size_hint: (1, 1)
-                        queue: master_queue
-                        window: root
-                        current_session_list: master_queue.current_session
+                    orientation: 'horizontal'
+                    size_hint: 1, None
+                    height: 125 #time_label.height+date_label.height
+                    padding: [0,0,0,0]
+                    MainPlayerDisplay:
+                        id: display
+                        size_hint: 1, 1
                         height: 150
+                        queue: master_queue
+                        #deck: deck
 
-            HDivider:
-        #HDivider:
+                    #VDivider:
 
-            BoxLayout:
-                orientation: 'horizontal'
-                size_hint: 1,1
-                #VDivider:
+                        #HDivider:
+    #
+    #                    MainPlayerDeck:
+    #                        id: deck
+    #                        size_hint: (1, 1)
+    #                        queue: master_queue
+    #                        window: root
+    #                        current_session_list: master_queue.current_session
+    #                        height: 150
+
+                HDivider:
+            #HDivider:
+
                 BoxLayout:
-                    orientation: 'vertical'
+                    orientation: 'horizontal'
                     size_hint: 1,1
+                    #VDivider:
                     BoxLayout:
-                        orientation: 'horizontal'
-                        size_hint: 1,1
-                        TrackShortList:
-                            #orientation: 'vertical'
-                            size_hint: .5, 1
-                            id: short_list
-                            window:root
-                            queue: master_queue
-                            preview_player: preview_player
-                            main_player: deck
-
-                        VDivider:
-                        MasterQueue:
-                            window:root
-                            preview_player: master_list.short_list.preview_player
-                            id: master_queue
-                            short_list: short_list
-                            preview_player: preview_player
-                            deck: deck
-                            size_hint: (.5, 1.0)
-                            #text: "Queue goes here"
-                    HDivider:
-                    BoxLayout
                         orientation: 'vertical'
-                        size_hint: 1, None
-                        height: 160
+                        size_hint: 1,1
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint: 1,1
+                            TrackShortList:
+                                #orientation: 'vertical'
+                                size_hint: .5, 1
+                                id: short_list
+                                window:root
+                                queue: master_queue
+                                preview_player: preview_player
+                                #main_player: deck
 
-                        PreviewPlayer:
-                            id: preview_player
-                            size_hint: 1, 1
-
-                            #height: 225
+                            VDivider:
+                            MasterQueue:
+                                window:root
+                                preview_player: master_list.short_list.preview_player
+                                id: master_queue
+                                short_list: short_list
+                                preview_player: preview_player
+                                #deck: deck
+                                size_hint: (.5, 1.0)
+                                #text: "Queue goes here"
                         HDivider:
-                        Mixer:
-                            id: mixer
+                        BoxLayout
+                            orientation: 'vertical'
                             size_hint: 1, None
-                            #width: 220
-                            height: 40
+                            height: 125
+
+                            PreviewPlayer:
+                                id: preview_player
+                                size_hint: 1, 1
+
+                                #height: 225
+                            HDivider:
+                            Mixer:
+                                id: mixer
+                                size_hint: 1, None
+                                #width: 220
+                                height: 40
 
 
 """
@@ -199,26 +205,19 @@ class MainScreen(MainWindow):
         key_map.bind(on_edit_track = self._show_track_editor)
         self._focusable_elements = []
 
-
-
     def _post_init(self, *args):
-        self.master_queue.deck.set_volume_control(self._volume_control)
+        #self.master_queue.deck.set_volume_control(self._volume_control)
         popup = TrackEditor(self._preview_player, self._volume_control, self)
         popup.bind(on_dismiss = self.restore_focus)
-        popup.size_hint = (None, None)
-        popup.size = [950,400]
+        #popup.size_hint = (None, None)
+        #popup.size = [950,400]
         popup.queue = self.master_queue
         popup.short_list = self.short_list
         popup.window = self
         self.preview_popup = popup
         self._focus = 0
-        self._focusable_elements = [self.master_list,
-                                    self.short_list,
-                                    self.master_queue]
-
+        self._focusable_elements = [self.master_list, self.short_list, self.master_queue]
         self.master_list.focus()
-
-
 
     def request_focus(self, w):
         try:
@@ -241,12 +240,10 @@ class MainScreen(MainWindow):
     def suspend_focus(self):
         self._focusable_elements[self._focus].unfocus()
 
-
     def _update_time(self, *args):
         #t = time.localtime()
         self.current_date = time.strftime('%a, %b %d %Y')
         self.current_time = time.strftime('%H:%M:%S')
-
 
     def _show_track_editor(self, *a):
         t = self._preview_player._track
@@ -268,13 +265,8 @@ class MainScreen(MainWindow):
 #            self._preview_player_visible = False
 #            self.preview_player.stop()
 
-
-
     def shutdown(self):
         #self.main_player.shutdown()
         self.master_queue.shutdown()
-
-        pass
-
 
 Builder.load_string(kv_string)

@@ -135,18 +135,18 @@ kv_string = """
 
 """
 
-        
+
 
 class MainPlayerDeck(BoxLayout):
     stopping_message = ObjectProperty(None)
     wait_time_input      = ObjectProperty(None)
     wait_toggle          = ObjectProperty(None)
     window               = ObjectProperty(None)
-    
+
     def __init__(self, *args, **kw):
         super(MainPlayerDeck, self).__init__(*args, **kw)
         self._track              = None
-        playback_manager.bind(queue_is_playing = self._watch_queue_data,
+        playback_manager.bind(queue_is_playing   = self._watch_queue_data,
                               queue_stop_request = self._on_queue_stop_request)
         play_queue.bind(on_queue_content_change = self._watch_queue_data)
         Clock.schedule_once(self._post_init, -1)
@@ -161,7 +161,7 @@ class MainPlayerDeck(BoxLayout):
             self.window.restore_focus()
         else:
             self.window.suspend_focus()
-    
+
     def set_volume_control(self, volume_control):
         self._volume_control = volume_control
 
@@ -173,32 +173,32 @@ class MainPlayerDeck(BoxLayout):
             self.wait_time_input.text = '2'
             playback_manager.wait_time = 2
         self.wait_toggle.active = False
-            
+
     def set_wait_time_by_focus(self, i, value):
         if not value:
             self.set_wait_time()
-            
+
     def shutdown(self):
         pass
-                
+
     def _watch_queue_data(self, *q):
         if not play_queue.is_empty:
             if not playback_manager.queue_is_playing:
                 self.start_queue_button.text = "START"
-                self.stopping_message.text = "" 
+                self.stopping_message.text = ""
                 self.start_queue_button.disabled = False
             else:
                 self.start_queue_button.text = "STOP"
-                self.stopping_message.text = "" 
+                self.stopping_message.text = ""
                 self.start_queue_button.disabled = False
-                
+
         else:
             if not playback_manager.queue_is_playing:
                 self.start_queue_button.text = "EMPTY"
-                self.stopping_message.text = "" 
+                self.stopping_message.text = ""
                 self.start_queue_button.disabled = True
 
-            
+
     def start_queue(self):
         if not playback_manager.queue_is_playing:
             playback_manager.start_queue()
@@ -215,7 +215,7 @@ class MainPlayerDeck(BoxLayout):
             self.stopping_message.text = ""
 
 
-        
+
     def _set_volume(self, *a):
         if self._volume_control is not None:
             self._volume_control.set_volume('main_player', self.volume)
