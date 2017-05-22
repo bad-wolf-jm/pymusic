@@ -20,8 +20,9 @@ class PushServer(threading.Thread):
             while len(self.__message_queue) > 0:
                 event = self.__message_queue.pop(0)
                 try:
-                    self.__socket.send_json(event)
-                    time.sleep(.05)
+                    self.__socket.send_json(event, flags=zmq.NOBLOCK)
+                except zmq.Again as e:
+                    time.sleep(0.01)
                 except Exception, details:
                     print "ERROR", details
         self.__socket.close()

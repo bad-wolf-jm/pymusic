@@ -17,8 +17,10 @@ class RPCServer(threading.Thread):
     def __run(self):
         while self.__running:
             try:
-                command = self.__socket.recv()
+                command = self.__socket.recv(flags=zmq.NOBLOCK)
                 command = json.loads(command)
+            except zmq.Again as e:
+                pass #time.sleep(0.01)
             except Exception, details:
                 print details
                 break
@@ -34,7 +36,7 @@ class RPCServer(threading.Thread):
             except Exception, details:
                 print 'ERROR CALLING', details, value
                 continue
-                time.sleep(.05)
+                #time.sleep(.05)
         self.__socket.close()
 
     def start(self, threaded = True):
