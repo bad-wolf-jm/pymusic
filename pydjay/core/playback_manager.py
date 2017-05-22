@@ -4,7 +4,7 @@ from kivy.clock import mainthread, Clock
 from kivy.properties import ObjectProperty, StringProperty, BooleanProperty, NumericProperty
 from kivy.logger import Logger
 from kivy.event import EventDispatcher
-        
+
 
 class PlaybackManager(EventDispatcher):
     track              = ObjectProperty(None)
@@ -19,11 +19,11 @@ class PlaybackManager(EventDispatcher):
     track_duration     = NumericProperty(None, allownone = True)
     track_length       = NumericProperty(None, allownone = True)
     remaining_time     = NumericProperty(None, allownone = True)
-    
-    
+
+
     def __init__(self, player, queue, session_manager, *args, **kw):
         super(PlaybackManager, self).__init__(*args, **kw)
-        self.player          = player 
+        self.player          = player
         self.queue           = queue
         self.session_manager = session_manager
         self.player.bind(on_end_of_stream = self._on_eos,
@@ -45,7 +45,7 @@ class PlaybackManager(EventDispatcher):
 
     def on_playback_started(self, *args):
         pass
-    
+
     def on_queue_started(self, *args):
         pass
 
@@ -54,7 +54,7 @@ class PlaybackManager(EventDispatcher):
 
     def on_end_of_stream(self, *args):
         pass
-    
+
     def on_track_eject(self, *args):
         pass
 
@@ -72,7 +72,7 @@ class PlaybackManager(EventDispatcher):
         self.track_length = self.player.track_length
 
 
-        
+
     def shutdown(self):
         pass
 
@@ -89,7 +89,7 @@ class PlaybackManager(EventDispatcher):
             self.queue_is_playing = False
             self.dispatch("on_track_eject")
             self.dispatch('on_queue_stopped')
-                
+
     def play_next_track_in(self, time):
         Logger.info('MainPlayer: End of stream %s', self.track)
         self.immediate_stop()
@@ -109,10 +109,10 @@ class PlaybackManager(EventDispatcher):
             self.queue_is_playing = False
             self.immediate_stop()
             self.dispatch('on_queue_stopped')
-                            
+
     def play_next_track(self, *args):
         self.play_next_track_in(0)
-            
+
     def _load_next(self, *args):
         Logger.info('MainPlayer: Loading next track')
         if not self.queue.is_empty:
@@ -120,14 +120,16 @@ class PlaybackManager(EventDispatcher):
                 track = self.queue.dequeue()
                 self.track = track
                 self.play()
-        else: 
+            else:
+                self.queue_is_playing = False
+        else:
             self.queue_is_playing = False
-        
+
     def _start_play(self):
         if self.queue is not None and not self.queue.is_empty:
             Clock.schedule_once(self._load_next, 0)
             self.dispatch('on_queue_started')
-            
+
     def start_queue(self):
         if not self.queue_is_playing and not self.queue.is_empty:
             Logger.info('MainPlayer: Starting queue')
@@ -139,7 +141,7 @@ class PlaybackManager(EventDispatcher):
         if not self.queue_stop_request:
             Logger.info('MainPlayer: Setting queue to stop after the current track')
             self.queue_stop_request = True
-    
+
     def play(self):
         if self.track is not None:
             Logger.info('MainPlayer: Starting playback of %s', self.track)
@@ -157,4 +159,3 @@ class PlaybackManager(EventDispatcher):
         current_time = time.time()
         r_t = self.remaining_time if self.remaining_time is not None else 0
         self.queue_end_time = current_time + (r_t + self.queue_length) / 1000000000
-            

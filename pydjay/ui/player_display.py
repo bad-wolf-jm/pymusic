@@ -102,7 +102,7 @@ kv_string = """
                                         size_hint: None,1
                                         id: time_remaining
                                         font_size:'20sp'
-                                        width: 50
+                                        width: 75
                                         bold: True
                                         #color: 0.8,0.8,0.8,1
                                         text: "0:00"
@@ -501,7 +501,7 @@ settings_dialog_kv = """
                                 halign: 'center'
                                 valign: 'middle'
                                 text_size: self.width, self.height
-                                text: '5'
+                                text: '' #####tr(pydjay.bootstrap.playback_manager.wait_time)
                                 foreground_color: 1,1,1,.8
                                 background_color: 0,0,0,0
                                 on_text_validate: root.set_wait_time(*args)
@@ -542,18 +542,18 @@ class PlaybackSettingsDialog(ModalView):
     #wait_toggle          = ObjectProperty(None)
     #window               = ObjectProperty(None)
 
-    #def __init__(self, *args, **kw):
-#        super(MainPlayerDeck, self).__init__(*args, **kw)
+    def __init__(self, *args, **kw):
+        super(PlaybackSettingsDialog, self).__init__(*args, **kw)
 #        self._track              = None
 #        playback_manager.bind(queue_is_playing   = self._watch_queue_data,
 #                              queue_stop_request = self._on_queue_stop_request)
 #        play_queue.bind(on_queue_content_change = self._watch_queue_data)
-#        Clock.schedule_once(self._post_init, -1)
+        Clock.schedule_once(self._post_init, -1)
 
 
-#    def _post_init(self, *args):
-#        self.wait_time_input.text = "%s"%playback_manager.wait_time
-#        self.wait_time_input.bind(focus = self._toggle_keyboard_shortcuts)
+    def _post_init(self, *args):
+        self.wait_time_input.text = "%s"%pydjay.bootstrap.playback_manager.wait_time
+        #self.wait_time_input.bind(focus = self._toggle_keyboard_shortcuts)
 
 #    def _toggle_keyboard_shortcuts(self, *a):
 #        if not self.wait_time_input.focus:
@@ -567,11 +567,11 @@ class PlaybackSettingsDialog(ModalView):
     def set_wait_time(self, *args):
         try:
             t = int(self.wait_time_input.text)
-            playback_manager.wait_time = t
+            pydjay.bootstrap.playback_manager.wait_time = t
         except:
             self.wait_time_input.text = '2'
-            playback_manager.wait_time = 2
-        self.wait_toggle.active = False
+            pydjay.bootstrap.playback_manager.wait_time = 2
+        #self.wait_toggle.active = False
 
     def set_wait_time_by_focus(self, i, value):
         if not value:
@@ -665,10 +665,16 @@ class MainPlayerDisplay(BoxLayout):
             if not pydjay.bootstrap.playback_manager.queue_is_playing:
                 #self.start_queue_button.text = "START"
                 #self.stopping_message.text = ""
+                self.countdown_timeout = ""
+                self._stop_blink_indicator()
+
                 self.start_queue_button.disabled = False
             else:
                 #self.start_queue_button.text = "STOP"
                 #self.stopping_message.text = ""
+                self.countdown_timeout = ""
+                self._stop_blink_indicator()
+
                 self.start_queue_button.disabled = False
 
         else:
@@ -684,14 +690,27 @@ class MainPlayerDisplay(BoxLayout):
         else:
             pydjay.bootstrap.playback_manager.queue_stop_request = not pydjay.bootstrap.playback_manager.queue_stop_request
 
+
+    def _blink(self, *a):
+        self.start_queue_button.opacity = (0 if self.start_queue_button.opacity == 1 else 1)
+
+    def _start_blink_indicator(self):
+        Clock.schedule_interval(self._blink, 0.5)
+
+    def _stop_blink_indicator(self):
+        Clock.unschedule(self._blink)
+        self.start_queue_button.opacity = 1
+
     def _on_queue_stop_request(self, *a):
         if pydjay.bootstrap.playback_manager.queue_stop_request:
             #self.start_queue_button.text = 'CANCEL'
             self.countdown_timeout = "Queue will stop after this song"
+            self._start_blink_indicator()
         else:
-            self._stop_counter = True
+            #self._stop_counter = True
             #self.start_queue_button.text = 'STOP'
             self.countdown_timeout = ""
+            self._stop_blink_indicator()
 
     def show_eject_panel(self, *a):
         foo = StopOptionsDialog()
