@@ -15,6 +15,10 @@ from kivy.event import EventDispatcher
 from kivy.clock import mainthread, Clock
 
 
+from pydjay.backend.audio_player_server import AudioServer
+from pydjay.core.audio.volume import VolumeController
+from pydjay.backend.command_server import RPCServer#, PushServer
+from pydjay.backend.push_server import PushServer
 
 #if True:
 #    print 'Starting Volume Controller'
@@ -32,6 +36,50 @@ from kivy.clock import mainthread, Clock
 #    from pydjay.backend.main_player import main_player as main_player_server
 #    main_player_server.start()
 #    time.sleep(2)
+class VolumeControlServer(VolumeController, RPCServer):
+    def __init__(self, name = 'VolumeControl', num_channels = 2, port = 9997, event_port = 5555):
+        RPCServer.__init__(self, name, port)
+        VolumeController.__init__(self, name, num_channels)
+        self.event = PushServer(name, event_port)
+        self.event.start()
+
+    def set_volumes(self, channels, volume):
+        VolumeController.set_volumes(self, channels = channels, value = volume)
+        self.event.push('volume_set_notice', channels = channels, value = volume)
+
+
+#if __name__ == '__main__':
+
+c = VolumeControlServer('VolumeControl', num_channels = 6)
+c.connect_outputs(output_1 = "system:playback_1",
+                  output_2 = "system:playback_2",
+                  output_3 = "system:playback_5",
+                  output_4 = "system:playback_6",
+                  output_5 = "system:playback_5",
+                  output_6 = "system:playback_6")
+
+#c.start(threaded = False)
+
+
+
+
+main_player_server = AudioServer("MainPlayer", 2, port = 9999, event_port = 5557)
+main_player_server.connect_outputs(output_1 = "VolumeControl:input_1",
+                                   output_2 = "VolumeControl:input_2")
+main_player_server.connect_outputs(output_1 = "VolumeControl:input_3",
+                                   output_2 = "VolumeControl:input_4")
+
+preview_player = AudioServer("PreviewPlayer", 2, port = 9998, event_port = 5556)
+preview_player.connect_outputs(output_1 = "VolumeControl:input_5",
+                            output_2 = "VolumeControl:input_6")
+
+
+main_player.start()
+preview_player.start()
+c.start()
+
+print "Audio Services Started"
+
 
 #preview_player = AudioServer("PreviewPlayer", 2, port = 9998, event_port = 5556)
 #preview_player.connect_outputs(output_1 = "VolumeControl:input_5",
