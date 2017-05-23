@@ -1,172 +1,39 @@
 #Core of audio part
+from pydjay.core.audio.player import AudioPlayer
 from pydjay.core.audio.volume import VolumeController
 from pydjay.core.precue import PreviewPlayer
 from pydjay.core.keyboard import key_map
 
-import zmq
-import os
-import threading
-import json
-import time
-from pydjay.backend.push_server import PushClient
-from pydjay.backend.command_server import RPCClient
-from kivy.properties import StringProperty, NumericProperty, AliasProperty
+main_player      = AudioPlayer("MainPlayer", 2)
+preview_player_o = AudioPlayer("PreviewPlayer", 2)
+volume_control_o = VolumeController("VolumeControl", num_channels = 6)
+#preview_volume_control = VolumeController("PrecuePlayerVolume")
+
+preview_player_o.connect_outputs(output_1 = "VolumeControl:input_5",
+                                 output_2 = "VolumeControl:input_6")
+
+#preview_volume_control.connect_outputs(output_1 = "system:playback_5",
+#                                       output_2 = "system:playback_6")
+main_player.connect_outputs(output_1 = "VolumeControl:input_1",
+                            output_2 = "VolumeControl:input_2")
+
+main_player.connect_outputs(output_1 = "VolumeControl:input_3",
+                            output_2 = "VolumeControl:input_4")
+
+volume_control_o.connect_outputs(output_1 = "system:playback_1",
+                                 output_2 = "system:playback_2",
+                                 output_3 = "system:playback_5",
+                                 output_4 = "system:playback_6",
+                                 output_5 = "system:playback_5",
+                                 output_6 = "system:playback_6")
+
+from kivy.properties import AliasProperty
 from kivy.event import EventDispatcher
-from kivy.clock import mainthread, Clock
-
-
-from pydjay.backend.audio_player_server import AudioServer
-from pydjay.core.audio.volume import VolumeController
-from pydjay.backend.command_server import RPCServer#, PushServer
-from pydjay.backend.push_server import PushServer
-
-#if True:
-#    print 'Starting Volume Controller'
-#    from pydjay.backend.volume_control import c as volume_controller_server
-#    volume_controller_server.start()
-#    time.sleep(2)
-
-#    print 'Starting Preview Player'
-#    from pydjay.backend.preview_player import main_player as preview_player_server
-
-#    preview_player_server.start()
-#    time.sleep(2)
-
-#    print 'Starting Main Player'
-#    from pydjay.backend.main_player import main_player as main_player_server
-#    main_player_server.start()
-#    time.sleep(2)
-class VolumeControlServer(VolumeController, RPCServer):
-    def __init__(self, name = 'VolumeControl', num_channels = 2, port = 9997, event_port = 5555):
-        RPCServer.__init__(self, name, port)
-        VolumeController.__init__(self, name, num_channels)
-        self.event = PushServer(name, event_port)
-        self.event.start()
-
-    def set_volumes(self, channels, volume):
-        VolumeController.set_volumes(self, channels = channels, value = volume)
-        self.event.push('volume_set_notice', channels = channels, value = volume)
-
-
-#if __name__ == '__main__':
-
-c = VolumeControlServer('VolumeControl', num_channels = 6)
-c.connect_outputs(output_1 = "system:playback_1",
-                  output_2 = "system:playback_2",
-                  output_3 = "system:playback_5",
-                  output_4 = "system:playback_6",
-                  output_5 = "system:playback_5",
-                  output_6 = "system:playback_6")
-
-#c.start(threaded = False)
-
-
-
-
-main_player_server = AudioServer("MainPlayer", 2, port = 9999, event_port = 5557)
-main_player_server.connect_outputs(output_1 = "VolumeControl:input_1",
-                                   output_2 = "VolumeControl:input_2")
-main_player_server.connect_outputs(output_1 = "VolumeControl:input_3",
-                                   output_2 = "VolumeControl:input_4")
-
-preview_player = AudioServer("PreviewPlayer", 2, port = 9998, event_port = 5556)
-preview_player.connect_outputs(output_1 = "VolumeControl:input_5",
-                            output_2 = "VolumeControl:input_6")
-
-
-main_player.start()
-preview_player.start()
-c.start()
-
-print "Audio Services Started"
-
-
-#preview_player = AudioServer("PreviewPlayer", 2, port = 9998, event_port = 5556)
-#preview_player.connect_outputs(output_1 = "VolumeControl:input_5",
-#                               output_2 = "VolumeControl:input_6")
-#preview_player.start(threaded = False)
-#
-#
-#main_player = AudioServer("MainPlayer", 2, port = 9999, event_port = 5557)
-#main_player.connect_outputs(output_1 = "VolumeControl:input_1",
-#                            output_2 = "VolumeControl:input_2")
-#main_player.connect_outputs(output_1 = "VolumeControl:input_3",#
-#                            output_2 = "VolumeControl:input_4")
-#main_player.start(threaded = True)
-
-
-
-class AudioPlayer(EventDispatcher): #, RPCClient, PushClient):
-    state                = StringProperty(None, allownone = True)
-    track_duration       = NumericProperty(None, allownone = True)
-    track_position       = NumericProperty(None, allownone = True)
-    track_length         = NumericProperty(None, allownone = True)
-
-    def __init__(self, port = 9999, event_port = 5757, *args, **kw):
-        EventDispatcher.__init__(self)
-        self.event = PushClient("", event_port)
-        self.rpc   = RPCClient("", port)
-        self.event.register_push_event_handler('end_of_stream',         self.signal_end_of_stream)
-        self.event.register_push_event_handler('track_position_notice', self._set_track_position)
-        self.event.register_push_event_handler('track_duration_notice', self._set_track_duration)
-        self.event.register_push_event_handler('track_length_notice',   self._set_track_length)
-        self.register_event_type("on_end_of_stream")
-        self.event.start()
-
-    def on_end_of_stream(self, *args):
-       pass
-
-    @mainthread
-    def set_time(self, type_, value):
-        setattr(self, type_, value)
-
-    def _set_track_duration(self, value = None):
-        self.set_time('track_duration', value)
-
-    def _set_track_position(self, value = None):
-        self.set_time('track_position', value)
-
-    def _set_track_length(self, value = None):
-        self.set_time('track_length', value)
-
-    @mainthread
-    def signal_end_of_stream(self, after_time = 0):
-        self.dispatch('on_end_of_stream')
-
-    def _get_remaining_time(self, *a):
-        if self.track_duration is not None and self.track_position is not None:
-            return self.track_duration - self.track_position
-        return 0
-
-    remaining_time  = AliasProperty(_get_remaining_time, bind = ['track_duration', 'track_position'])
-
-    def play(self, filename, start_time = None, end_time = None):
-        self.rpc.remote_call('play', filename, start_time = start_time, end_time = end_time)
-
-    def stop(self, flush = False):
-        self.rpc.remote_call('stop', flush = flush)
-
-    def pause(self):
-        self.state = "paused"
-
-    def seek(self, timestamp):
-        self.rpc.remote_call('seek', timestamp)
-
-    def seek_relative(self, time):
-        self.rpc.remote_call('seek_relative', time)
-
-    def shutdown(self):
-        self.event.stop()
-        self.event.join()
-
-main_player      = AudioPlayer(port = 9999, event_port = 5557)
-preview_player_o = AudioPlayer(port = 9998, event_port = 5556)
 
 class VolumeControl(EventDispatcher):
-    def __init__(self, port = 9997, event_port = 5555):
-        EventDispatcher.__init__(self)
-        self.rpc = RPCClient("", port)
-        self.event = PushClient("", event_port)
+    def __init__(self):
+        super(VolumeControl, self).__init__()
+
         self.channel_layout =  {'main_player':         [1,2],
                                 'main_player_monitor': [3,4],
                                 'preview_player':      [5,6]}
@@ -174,24 +41,20 @@ class VolumeControl(EventDispatcher):
                          'main_player_monitor': 1.0,
                          'preview_player':      1.0,
                          'main_player_monitor_mute': 0.07}
-        self.event.start()
+        self.controller = volume_control_o
 
-    def propagate_volume(self, *a, **kw):
-        pass
 
     def set_volume(self, channel, value):
         self.volumes[channel] = value
         if channel in self.channel_layout:
-            self.rpc.remote_call('set_volumes', channels = self.channel_layout[channel], volume = value)
+            self.controller.set_volumes(channels = self.channel_layout[channel], value = value)
         return True
 
     def get_volume(self, channel):
         return self.volumes[channel]
 
     def shutdown(self):
-        self.event.stop()
-        self.event.join()
-
+        self.controller.shutdown()
 
     main_player = AliasProperty(lambda self: self.get_volume('main_player'),
                                 lambda self, value: self.set_volume('main_player', value))
@@ -304,4 +167,4 @@ session_manager  = SessionManager(os.path.join(SESSIONS, "Current Session.m3u"))
 play_queue       = PlayQueue()
 playback_manager = PlaybackManager(main_player, play_queue, session_manager)
 
-print "BOOTSTRAP DONE"
+#print "DONE"

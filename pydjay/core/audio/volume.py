@@ -227,3 +227,4 @@ class VolumeController(object):
         self._foo.join()
         self.out_queue.close()
         self.in_queue.close()
+    shutdown = close
