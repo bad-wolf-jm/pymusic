@@ -20,11 +20,15 @@ from pydjay.backend.preview_player import main_player as preview_player_server
 from pydjay.backend.volume_controller import c as volume_controller_server
 
 
-
+print 'Starting Volume Controller'
 volume_controller_server.start()
 time.sleep(2)
+
+print 'Starting Preview Player'
 preview_player_server.start()
 time.sleep(2)
+
+print 'Starting Main Player'
 main_player_server.start()
 time.sleep(2)
 

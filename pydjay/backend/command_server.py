@@ -39,6 +39,8 @@ class RPCServer(threading.Thread):
                 #time.sleep(.05)
         self.__socket.close()
 
+    run = __run
+
     def start(self, threaded = True):
         self.__running = True
         if threaded:
