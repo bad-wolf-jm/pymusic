@@ -14,6 +14,35 @@ from kivy.properties import StringProperty, NumericProperty, AliasProperty
 from kivy.event import EventDispatcher
 from kivy.clock import mainthread, Clock
 
+
+from pydjay.backend.main_player import main_player as main_player_server
+from pydjay.backend.preview_player import main_player as preview_player_server
+from pydjay.backend.volume_controller import c as volume_controller_server
+
+
+
+volume_controller_server.start()
+time.sleep(2)
+preview_player_server.start()
+time.sleep(2)
+main_player_server.start()
+time.sleep(2)
+
+#preview_player = AudioServer("PreviewPlayer", 2, port = 9998, event_port = 5556)
+#preview_player.connect_outputs(output_1 = "VolumeControl:input_5",
+#                               output_2 = "VolumeControl:input_6")
+#preview_player.start(threaded = False)
+#
+#
+#main_player = AudioServer("MainPlayer", 2, port = 9999, event_port = 5557)
+#main_player.connect_outputs(output_1 = "VolumeControl:input_1",
+#                            output_2 = "VolumeControl:input_2")
+#main_player.connect_outputs(output_1 = "VolumeControl:input_3",#
+#                            output_2 = "VolumeControl:input_4")
+#main_player.start(threaded = True)
+
+
+
 class AudioPlayer(EventDispatcher): #, RPCClient, PushClient):
     state                = StringProperty(None, allownone = True)
     track_duration       = NumericProperty(None, allownone = True)

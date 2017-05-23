@@ -16,12 +16,13 @@ class VolumeControlServer(VolumeController, RPCServer):
         VolumeController.set_volumes(self, channels = channels, value = volume)
         self.event.push('volume_set_notice', channels = channels, value = volume)
 
+c = VolumeControlServer('VolumeControl', num_channels = 6)
+c.connect_outputs(output_1 = "system:playback_1",
+                  output_2 = "system:playback_2",
+                  output_3 = "system:playback_5",
+                  output_4 = "system:playback_6",
+                  output_5 = "system:playback_5",
+                  output_6 = "system:playback_6")
+
 if __name__ == '__main__':
-    c = VolumeControlServer('VolumeControl', num_channels = 6)
-    c.connect_outputs(output_1 = "system:playback_1",
-                      output_2 = "system:playback_2",
-                      output_3 = "system:playback_5",
-                      output_4 = "system:playback_6",
-                      output_5 = "system:playback_5",
-                      output_6 = "system:playback_6")
     c.start(threaded = False)
