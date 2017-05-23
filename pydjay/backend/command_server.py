@@ -20,6 +20,7 @@ class RPCServer(threading.Thread):
                 command = self.__socket.recv(flags=zmq.NOBLOCK)
                 command = json.loads(command)
             except zmq.Again as e:
+                continue
                 pass #time.sleep(0.01)
             except Exception, details:
                 print details

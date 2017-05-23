@@ -15,22 +15,23 @@ from kivy.event import EventDispatcher
 from kivy.clock import mainthread, Clock
 
 
-from pydjay.backend.main_player import main_player as main_player_server
-from pydjay.backend.preview_player import main_player as preview_player_server
-from pydjay.backend.volume_controller import c as volume_controller_server
 
+#if True:
+#    print 'Starting Volume Controller'
+#    from pydjay.backend.volume_control import c as volume_controller_server
+#    volume_controller_server.start()
+#    time.sleep(2)
 
-print 'Starting Volume Controller'
-volume_controller_server.start()
-time.sleep(2)
+#    print 'Starting Preview Player'
+#    from pydjay.backend.preview_player import main_player as preview_player_server
 
-print 'Starting Preview Player'
-preview_player_server.start()
-time.sleep(2)
+#    preview_player_server.start()
+#    time.sleep(2)
 
-print 'Starting Main Player'
-main_player_server.start()
-time.sleep(2)
+#    print 'Starting Main Player'
+#    from pydjay.backend.main_player import main_player as main_player_server
+#    main_player_server.start()
+#    time.sleep(2)
 
 #preview_player = AudioServer("PreviewPlayer", 2, port = 9998, event_port = 5556)
 #preview_player.connect_outputs(output_1 = "VolumeControl:input_5",
@@ -254,3 +255,5 @@ PLAYLISTS    = os.path.join(PYDJAY_CACHE, 'playlists')
 session_manager  = SessionManager(os.path.join(SESSIONS, "Current Session.m3u"))
 play_queue       = PlayQueue()
 playback_manager = PlaybackManager(main_player, play_queue, session_manager)
+
+print "BOOTSTRAP DONE"
