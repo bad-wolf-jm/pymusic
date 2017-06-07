@@ -7,22 +7,30 @@ from pydjay.bootstrap import play_queue, session_manager, playback_manager
 
 class TrackListBehaviour(EventDispatcher):
     has_focus = BooleanProperty(False)
+    dim_unavailable_tracks     = BooleanProperty(True)
+    fixed_item_positions       = BooleanProperty(True)
+    can_delete_items           = BooleanProperty(False)
+    can_add_selection_to_queue = BooleanProperty(True)
     adapter   = ObjectProperty(None)
     queue     = ObjectProperty(None)
     window    = ObjectProperty(None)
     list_view = ObjectProperty(None)
-    
+
     def __init__(self, *args, **kwargs):
         super(TrackListBehaviour, self).__init__(*args, **kwargs)
         self._focus = False
         self._keyboard = None
-        self._keyboard_handlers = {'up':          self._on_up_arrow,
-                                   'down':        self._on_down_arrow,
-                                   'shift+up' :   self._on_shift_up_arrow,
-                                   'shift+down' : self._on_shift_down_arrow,
-                                   'shift+u' :    self._make_selection_unavailable,
-                                   'shift+a' :    self._make_selection_available,
-                                   'enter':       self._preview_current_selection}
+        self._keyboard_handlers = {'up':              self._on_up_arrow,
+                                   'down':            self._on_down_arrow,
+                                   'shift+up' :       self._on_shift_up_arrow,
+                                   'shift+down' :     self._on_shift_down_arrow,
+                                   'shift+u' :        self._make_selection_unavailable,
+                                   'shift+a' :        self._make_selection_available,
+                                   'enter':           self._preview_current_selection,
+                                   'u':               self._move_selection_up,
+                                   'd':               self._move_selection_down,
+                                   't':               self._move_selection_to_top,
+                                   'shift+backspace': self._delete_selection}
         self._current_selection = None
 
     def focus(self):
@@ -39,7 +47,7 @@ class TrackListBehaviour(EventDispatcher):
                 self._current_selection = row
             except IndexError:
                 self._current_selection = None
-                
+
     def unfocus(self):
         self.has_focus = False
         if self._keyboard is not None:
@@ -89,7 +97,7 @@ class TrackListBehaviour(EventDispatcher):
     def select(self, row):
         if len(self.adapter.data) == 0:
             self._current_selection = None
-            return 
+            return
 
         row = max(min(row, len(self.adapter.data) - 1), 0)
         if self._current_selection is not None:
@@ -111,23 +119,14 @@ class TrackListBehaviour(EventDispatcher):
             pass
 
     def _track_is_available(self, track):
-        is_available = True
-        is_available = is_available and not play_queue.contains(track.location)
-        is_available = is_available and session_manager.is_available(track)
-        if playback_manager.track is not None:
-            return is_available and playback_manager.track.location != track.location
-        return is_available
-        
-        #else:
-        #    print "queue is None"
-        #if self.main_player is not None:
-        #    is_available = is_available and not self.main_player.has_played(track.location)
-        #else:
-        #    print "player is None"
-
-        #print track, is_available
-        return is_available
-
+        if self.dim_unavailable_tracks:
+            is_available = True
+            is_available = is_available and not play_queue.contains(track.location)
+            is_available = is_available and session_manager.is_available(track)
+            if playback_manager.track is not None:
+                return is_available and playback_manager.track.location != track.location
+            return is_available
+        return True
 
     def _move_selection(self, amount):
         if self._current_selection is not None:
@@ -148,13 +147,13 @@ class TrackListBehaviour(EventDispatcher):
         self._move_selection(-20)
 
     def _make_selection_unavailable(self):
-        item = self.current_selection 
+        item = self.current_selection
         if item is not None:
             #self.main_player.add_unavailable(item['item'].track.location)
             session_manager.add(item['item'].track, False)
 
     def _make_selection_available(self):
-        item = self.current_selection 
+        item = self.current_selection
         if item is not None:
             #self.main_player.remove_unavailable(item['item'].track.location)
             session_manager.remove(item['item'].track)
@@ -163,3 +162,38 @@ class TrackListBehaviour(EventDispatcher):
         item = self.current_selection
         if item is not None:
             self.preview_player.play(item['item'].track)
+
+    def _move_selection_up(self):
+        item = self.current_selection
+        if item is not None and not self.fixed_item_positions:
+            index = max(min(self._current_selection - 1, len(self.adapter.data)), 0)
+            self.remove_track(item['item'])
+            self.add_track(item['item'].track, index, self._track_is_available)
+            self.select(index)
+
+    def _move_selection_down(self):
+        item = self.current_selection
+        if item is not None and not self.fixed_item_positions:
+            index = max(min(self._current_selection + 1, len(self.adapter.data)), 0)
+            self.remove_track(item['item'])
+            self.add_track(item['item'].track, index, self._track_is_available)
+            self.select(index)
+
+    def _move_selection_to_top(self):
+        item = self.current_selection
+        if item is not None and not self.fixed_item_positions:
+            self.remove_track(item['item'])
+            self.add_track(item['item'].track, 0, self._track_is_available)
+            self.select(self._current_selection)
+
+    def _delete_selection(self):
+        item = self.current_selection
+        if item is not None and not self.can_delete_items:
+            self.remove_track(item['item'])
+            self.select(self._current_selection)
+
+    def _add_selection_to_queue(self):
+        item = self.current_selection
+        if item is not None and self.can_add_selection_to_queue:
+            #self.remove_track(item['item'])
+            self.queue.add_track(item['item'].track)

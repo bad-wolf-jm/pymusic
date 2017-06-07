@@ -51,6 +51,9 @@ kv_string = """
     #preview_volume: preview_volume
     #monitor_volume: monitor_volume
     title: "PREVIEW"
+    title_color: 1,1,1,1
+    artist_color: .7,.7,.7,1
+    time_color: 1,1,1,1
 
     BoxLayout:
         orientation: 'vertical'
@@ -84,6 +87,7 @@ kv_string = """
                     size_hint: 1,1
                     #shorten: True
                     text: "<No track being previewed>"
+                    color: root.title_color
                     text_size: self.size
                     font_size: 15
                     bold: True
@@ -96,7 +100,7 @@ kv_string = """
                     id: artist_label
                     size_hint: 1,1
                     text: ""
-                    color: .7,.7,.7,1
+                    color: root.artist_color #.7,.7,.7,1
                     text_size: self.size
                     font_size: 15
                     halign: 'left'
@@ -149,7 +153,8 @@ kv_string = """
                             width: 40
                             text_size: self.size
                             text: "0:00"
-                            color: .9,.9,.9,1
+                            #color: .9,.9,.9,1
+                            color: root.time_color
                             halign: 'left'
                             valign: 'middle'
                             shorten: True
@@ -165,7 +170,8 @@ kv_string = """
                             width: 40
                             text_size: self.size
                             text: "0:00"
-                            color: .9,.9,.9,1
+                            color: root.time_color
+                            #color: .9,.9,.9,1
                             halign: 'right'
                             valign: 'middle'
                             shorten: True

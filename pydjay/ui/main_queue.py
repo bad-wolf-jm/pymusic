@@ -8,10 +8,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.factory import Factory
 from elements.utils import seconds_to_human_readable
 from kivy.logger import Logger
-from current_session_list import CurrentSessionList
+#from current_session_list import CurrentSessionList
 from elements import large_track_list
 from behaviors.track_list_behaviour import TrackListBehaviour
-from pydjay.bootstrap import play_queue, playback_manager, session_manager
+from pydjay.bootstrap import play_queue, playback_manager, session_manager, add_shortlist_track
 
 kv_string = """
 #:import MasterQueueTrackCard pydjay.ui.elements.main_queue_track_card.MasterQueueTrackCard
@@ -19,7 +19,7 @@ kv_string = """
     queue_view: list_view
     orientation: 'vertical'
     size_hint: 1,1
-    current_session: current_session
+    #current_session: current_session
     on_touch_up: self._on_touch_up(*args)
     BoxLayout:
         orientation: 'vertical'
@@ -79,12 +79,11 @@ kv_string = """
         spacing:5
         item_class: MasterQueueTrackCard
         item_convert: root._convert
-
         on_touch_down: root._on_touch_down(*args)
-    HDivider:
-    CurrentSessionList:
-        id: current_session
-        size_hint: 1, .75
+    #HDivider:
+    #CurrentSessionList:
+    #    id: current_session
+    #    size_hint: 1, .75
 """
 
 class DragContext:
@@ -115,12 +114,13 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         self._total_queue_time = 0
         self.has_focus         = False
         self._current_selection = None
+        self.can_delete_items = True
+        self.fixed_item_positions = False
         self.set_keyboard_handlers({'shift+up':        self._move_selection_up,
                                     'shift+down':      self._move_selection_down,
                                     'shift+t':         self._move_selection_to_top,
                                     'shift+backspace': self._delete_selection})
         play_queue.bind(on_queue_content_change = self._update_queue_contents)
-        session_manager.bind(on_current_session_changed = self._update_session_contents)
         playback_manager.bind(wait_time = self._update_queue_labels,
                               queue_length = self._update_queue_length,
                               queue_end_time = self._update_queue_end_time)
@@ -133,42 +133,8 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         if item is not None:
             self.select(self._current_selection + 1)
 
-    def _update_session_contents(self, i, queue):
-        self.current_session.set_track_list(queue)
-
     def show_preview_player(self, track, pos, size):
         self.preview_player.play(track)
-
-
-    def _move_selection_x(self, amount):
-        item = self.current_selection
-        if item is not None:
-            item = item['item'].track
-            c_s = self._current_selection
-            play_queue.move_track(item, self._current_selection + amount)
-            self.select(c_s + amount)
-
-    def _move_selection_up(self):
-        self._move_selection_x(-1)
-
-    def _move_selection_down(self):
-        self._move_selection_x(1)
-
-    def _move_selection_to_top(self):
-        item = self.current_selection
-        if item is not None:
-            item = item['item'].track
-            c_s = self._current_selection
-            play_queue.move_track(item, 0)
-            self.select(c_s)
-
-    def _delete_selection(self):
-        item = self.current_selection
-        if item is not None:
-            c_s = self._current_selection
-            play_queue.remove_track(item['item'].track)
-            self.short_list.add_shortlist_track(item['item'].track, 0)
-            self.select(c_s)
 
     def _start_drag(self, coords, item):
         if self.window is not None:

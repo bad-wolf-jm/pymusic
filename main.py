@@ -13,7 +13,9 @@ if __name__ == '__main__':
     from kivy.core.window import Window
     from kivy.clock import Clock
     from pydjay.core.library import init, save, get_track_by_name, get_tracks
-
+    from kivy.config import Config
+    #Config.getint('kivy', 'show_fps')
+    Config.set('kivy', 'exit_on_escape', '0')
     from pydjay.ui.main_screen import MainScreen
 
     Window.clearcolor = (0.1,0.1,0.1, 1)
@@ -49,11 +51,13 @@ if __name__ == '__main__':
     #bar.master_queue.deck.set_current_session(queue)
     #bar.master_queue.deck.current_session_list.set_track_list(queue)
 
-    bar.master_list.set_playlist_title('TRACKS')
-    bar.master_list.set_track_list(get_tracks())
+    bar.master_list.set_playlist_title('All songs')
+    bar.master_list.display_list(list_ = pydjay.bootstrap.get_all_tracks())
+    #bar.master_list.set_track_list(get_tracks())
 
     queue = read_state(pydjay.bootstrap.STATE, 'shortlist.txt')
-    bar.short_list.set_track_list(queue)
+    #bar.short_list.set_track_list(queue)
+    pydjay.bootstrap.set_short_list(queue)
 
     try:
         key_map.bind(on_cycle_focus = bar.cycle_focus)
@@ -77,9 +81,9 @@ if __name__ == '__main__':
 
 
         foo = open(os.path.join(pydjay.bootstrap.STATE, 'shortlist.txt'), 'w')
-        for track in bar.short_list.short_list.adapter.data:
-            if track['item'].track.location is not None:
-                foo.write(track['item'].track.location + '\n')
+        for track in pydjay.bootstrap.get_short_list():#bar.short_list.short_list.adapter.data:
+            if track.location is not None:
+                foo.write(track.location + '\n')
         foo.close()
         save()
         bar.shutdown()

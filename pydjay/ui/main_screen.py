@@ -28,18 +28,34 @@ from kivy.animation import Animation
 
 from elements.main_window import MainWindow
 from track_editor import TrackEditor
+#from playlist_editor import PlaylistEditor
+#from shortlist_view import ShortListView
+from dialogs.playlist_view import PlaylistView
+
+
+from dialogs.playlist_selector import PlaylistSelector
+
+#from dialogs.playlist_chooser import PlaylistChooser
+#from dialogs.session_chooser import SessionChooser
+#from dialogs.genre_chooser import GenreChooser
+#from dialogs.style_chooser import StyleChooser
+
+#from current_session_view import CurrentSessionView
 from preview_player import PreviewPlayer
 from mixer import Mixer
 
 from main_track_list import MainTrackList
 from track_short_list import TrackShortList
+from kivy.uix.treeview import TreeViewLabel
 
+import pydjay.bootstrap
 
 kv_string = """
 <MainScreen>:
     master_queue: master_queue
     master_list: master_list
-    short_list: short_list
+    #side_view: side_view
+    #short_list: short_list
     precue_player: preview_player
     #main_player: main_player
     size_hint: 1,1
@@ -97,11 +113,31 @@ kv_string = """
         BoxLayout:
             orientation: 'horizontal'
             size_hint: 1,1
+
+            #ScrollView:
+            #    size_hint: .3,1
+            #    do_scroll:True
+            #    canvas.before:
+            #        Color:
+            #            rgba: 0.1,0.1,0.1,1
+            #        Rectangle:
+            #            size: self.size
+            #            pos: self.pos
+#
+#                TreeView:
+#                    id: side_view
+#                    size_hint_y: None
+#                    hide_root: True
+#                    item_height: 25
+#                    load_func: root._load_tree_node
+#                    odd_color: .1,.1,.1,1
+#                    minimum_height: self.height
+#            VDivider:
             MainTrackList:
                 id: master_list
                 window: root
                 queue: master_queue
-                short_list: short_list
+                #short_list: short_list
                 #main_player: deck
                 preview_player: preview_player
                 size_hint: (1.0, 1.0)
@@ -109,7 +145,7 @@ kv_string = """
             VDivider:
             BoxLayout:
                 orientation: 'vertical'
-                size_hint: 1, 1
+                size_hint: .6, 1
                 #height: 125 #time_label.height+date_label.height
 
                 BoxLayout:
@@ -122,22 +158,8 @@ kv_string = """
                         size_hint: 1, 1
                         height: 150
                         queue: master_queue
-                        #deck: deck
-
-                    #VDivider:
-
-                        #HDivider:
-    #
-    #                    MainPlayerDeck:
-    #                        id: deck
-    #                        size_hint: (1, 1)
-    #                        queue: master_queue
-    #                        window: root
-    #                        current_session_list: master_queue.current_session
-    #                        height: 150
 
                 HDivider:
-            #HDivider:
 
                 BoxLayout:
                     orientation: 'horizontal'
@@ -149,24 +171,15 @@ kv_string = """
                         BoxLayout:
                             orientation: 'horizontal'
                             size_hint: 1,1
-                            TrackShortList:
-                                #orientation: 'vertical'
-                                size_hint: .5, 1
-                                id: short_list
-                                window:root
-                                queue: master_queue
-                                preview_player: preview_player
-                                #main_player: deck
-
                             VDivider:
                             MasterQueue:
                                 window:root
                                 preview_player: master_list.short_list.preview_player
                                 id: master_queue
-                                short_list: short_list
+                                #short_list: short_list
                                 preview_player: preview_player
                                 #deck: deck
-                                size_hint: (.5, 1.0)
+                                size_hint: (.65, 1.0)
                                 #text: "Queue goes here"
                         HDivider:
                         BoxLayout
@@ -191,6 +204,8 @@ kv_string = """
 
 from pydjay.core.keyboard import key_map
 
+#even_color = [.1,.1,.1,1], odd_color = [.1,.1,.1,1]
+
 class MainScreen(MainWindow):
     def __init__(self, main_player, preview_player, volume_control, *args, **kwargs):
         super(MainScreen, self).__init__(*args, **kwargs)
@@ -203,20 +218,23 @@ class MainScreen(MainWindow):
         self._preview_player = preview_player
 
         key_map.bind(on_edit_track = self._show_track_editor)
+        key_map.bind(on_edit_playlist = self._show_playlist_editor)
+        key_map.bind(on_display_sessions = self._show_session_chooser)
+        key_map.bind(on_display_playlists = self._show_playlist_chooser)
+        key_map.bind(on_display_genres = self._show_genre_chooser)
+        key_map.bind(on_display_styles = self._show_style_chooser)
+        key_map.bind(on_reset_playlist = self._reset_playlist)
         self._focusable_elements = []
+        self._no_cycle = False
 
     def _post_init(self, *args):
-        #self.master_queue.deck.set_volume_control(self._volume_control)
         popup = TrackEditor(self._preview_player, self._volume_control, self)
         popup.bind(on_dismiss = self.restore_focus)
-        #popup.size_hint = (None, None)
-        #popup.size = [950,400]
         popup.queue = self.master_queue
-        popup.short_list = self.short_list
         popup.window = self
         self.preview_popup = popup
         self._focus = 0
-        self._focusable_elements = [self.master_list, self.short_list, self.master_queue]
+        self._focusable_elements = [self.master_list, self.master_queue]
         self.master_list.focus()
 
     def request_focus(self, w):
@@ -230,11 +248,13 @@ class MainScreen(MainWindow):
             self._focusable_elements[self._focus].focus()
 
     def cycle_focus(self, _, i):
-        self._focusable_elements[self._focus].unfocus()
-        self._focus = (self._focus + i) % len(self._focusable_elements)
-        self._focusable_elements[self._focus].focus()
+        if not self._no_cycle:
+            self._focusable_elements[self._focus].unfocus()
+            self._focus = (self._focus + i) % len(self._focusable_elements)
+            self._focusable_elements[self._focus].focus()
 
     def restore_focus(self, *a):
+        self._no_cycle = False
         self._focusable_elements[self._focus].focus()
 
     def suspend_focus(self):
@@ -250,6 +270,119 @@ class MainScreen(MainWindow):
         if t is not None:
             self.show_preview_player(t, 0,0)
 
+    def _show_playlist_editor(self, *a):
+        self._no_cycle = True
+        foo = PlaylistView()
+        foo.bind(on_dismiss = self.restore_focus)
+        foo.open()
+
+    def _show_session_chooser(self, *a):
+        self._no_cycle = True
+        foo = PlaylistSelector()
+        foo.bind(on_dismiss = self.restore_focus,
+                 on_playlist_selected = self.__select_playlist)
+
+        sessions = [#{'list': pydjay.bootstrap.get_current_session(),
+                     {'list': pydjay.bootstrap.get_current_session(),
+                      'dim_unavailable_tracks':     False,
+                      'fixed_item_positions':       True,
+                      'can_delete_items':           False,
+                      'auto_save':                  False,
+                      'sort':                       False,
+                      'can_add_selection_to_queue': True}
+                    ]
+
+        sessions.extend([{'list':x,
+                          'dim_unavailable_tracks':True,
+                          'fixed_item_positions':True,
+                          'can_delete_items':False,
+                          'auto_save': False,
+                          'sort': False,
+                          'can_add_selection_to_queue':True} for x in pydjay.bootstrap.get_all_sessions()])
+        #print sessions
+        foo.open(title = 'SESSIONS', pl_list = sessions)
+
+    def __select_playlist(self, w, g):
+        params = dict(list_                      = g['list'],
+                      dim_unavailable_tracks     = g['dim_unavailable_tracks'],
+                      fixed_item_positions       = g['fixed_item_positions'],
+                      can_delete_items           = g['can_delete_items'],
+                      can_add_selection_to_queue = g['can_add_selection_to_queue'],
+                      auto_save                  = g['auto_save'],
+                      sort                       = g['sort'],
+                      context_menu               = None,
+                      editable                   = False)
+        self.master_list.display_list(**params)
+
+    def _show_playlist_chooser(self, *a):
+        self._no_cycle = True
+        foo = PlaylistSelector()
+
+        playlists = [{'list':pydjay.bootstrap.get_all_tracks(),
+                      'dim_unavailable_tracks':     True,
+                      'fixed_item_positions':       True,
+                      'can_delete_items':           False,
+                      'auto_save':                  False,
+                      'sort':                       False,
+                      'can_add_selection_to_queue': True},
+
+                     {'list':pydjay.bootstrap.get_short_list_playlist(),
+                      'dim_unavailable_tracks':     True,
+                      'fixed_item_positions':       False,
+                      'can_delete_items':           True,
+                      'auto_save':                  True,
+                      'sort':                       False,
+                      'can_add_selection_to_queue': True}]
+
+
+        playlists.extend([{'list':x,
+                          'dim_unavailable_tracks':     True,
+                          'fixed_item_positions':       False,
+                          'can_delete_items':           False,
+                          'auto_save':                  True,
+                          'sort':                       False,
+                          'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_playlists()])
+                         #pydjay.bootstrap.get_all_playlists())
+        foo.bind(on_dismiss = self.restore_focus,
+                 on_playlist_selected = self.__select_playlist)
+        foo.open(title = 'PLAYLISTS', pl_list = playlists)
+
+    def _show_genre_chooser(self, *a):
+        self._no_cycle = True
+        foo = PlaylistSelector()
+        foo.bind(on_dismiss = self.restore_focus,
+                 on_playlist_selected = self.__select_playlist)
+        foo.open(title = 'GENRES', pl_list = [{'list':x,
+                          'dim_unavailable_tracks':     True,
+                          'fixed_item_positions':       True,
+                          'can_delete_items':           False,
+                          'auto_save':                  False,
+                          'sort':                       True,
+                          'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_genres()])
+
+    def _show_style_chooser(self, *a):
+        self._no_cycle = True
+        foo = PlaylistSelector()
+        foo.bind(on_dismiss = self.restore_focus,
+                 on_playlist_selected = self.__select_playlist)
+        foo.open(title = 'STYLES', pl_list = [{'list':x,
+                          'dim_unavailable_tracks':     True,
+                          'fixed_item_positions':       True,
+                          'can_delete_items':           False,
+                          'auto_save':                  False,
+                          'sort':                       True,
+                          'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_styles()])
+
+    def _reset_playlist(self, *a):
+        self.master_list.display_list(#title = g.name if g is not None else "Unknown playlist",
+                          list_ = pydjay.bootstrap.get_all_tracks(),
+                          dim_unavailable_tracks     = True,
+                          fixed_item_positions       = True,
+                          can_delete_items           = False,
+                          can_add_selection_to_queue = True,
+                          context_menu               = None,
+                          editable                   = False)
+
     def show_preview_player(self, track, pos, size, rel = 'right'):
         def _foo(*a):
             self.preview_popup.set_track(track)
@@ -258,12 +391,6 @@ class MainScreen(MainWindow):
 
     def _completed_animation(self, *args):
         self._anim = None
-
-#    def dismiss_preview_player(self):
-#        if self._preview_player_visible:
-#            self.remove_widget(self.preview_player)
-#            self._preview_player_visible = False
-#            self.preview_player.stop()
 
     def shutdown(self):
         #self.main_player.shutdown()

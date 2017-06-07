@@ -55,7 +55,7 @@ from kivy.logger import Logger
 #from track_upload import DelayedTrack
 #from current_session_list import CurrentSessionList
 
-from list_item_base import ListItemBase
+from track_list_item_base import TrackListItemBase
 
 
 kv_string_item = """
@@ -71,18 +71,18 @@ kv_string_item = """
     on_size: root._update_background()#self.pos, self.size)
     on_touch_up: self._on_touch_up(*args)
     on_touch_down: self._on_touch_down(*args)
- 
+
     Widget:
         id: bg
         size_hint: 1,1
         on_pos:  root._update_background()
         on_size: root._update_background()#self.pos, self.size)
-        
+
 
     BoxLayout:
         orientation: 'horizontal'
         size_hint: 1, None
-        size_hint: 1,1 
+        size_hint: 1,1
         pos_hint: {'x': 0, 'y': 0}
         padding:[10,5,7,5]
         spacing: 8
@@ -169,7 +169,7 @@ kv_string_item = """
 
 
 
-class MasterQueueTrackCard(ListItemBase):
+class MasterQueueTrackCard(TrackListItemBase):
     play_time = StringProperty("")
 
     def __init__(self, row = None, item = None, view = None, drag_context = None, *args, **kwargs):
@@ -185,7 +185,7 @@ class MasterQueueTrackCard(ListItemBase):
             `data`: dict
                 The data dict used to populate this view.
         '''
-        
+
         self.__initialize__(data['row'], data['item'], data['view'], data['drag_context'], data['is_selected'])
 
     def __initialize__(self, row = None, item = None, view = None, drag_context = None, is_selected = False, *args, **kwargs):
@@ -212,8 +212,7 @@ class MasterQueueTrackCard(ListItemBase):
     def _play_time_change(self, obj, new_value):
         #print "PLAY TIME CHANGED", self._item_data.play_time
         self.play_time = new_value
-  
+
 
 Builder.load_string(kv_string_item)
 Factory.register('MasterQueueTrackCard', MasterQueueTrackCard)
- 

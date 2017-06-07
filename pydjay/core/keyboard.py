@@ -33,7 +33,7 @@ def key_pressed(key, mods):
     action = k_map.get(key_seq, None)
     if action is not None:
         action()
-             
+
     #if __enable_keyboard_shortcuts:
     #    print key, scan, codepoint, mods
 
@@ -46,7 +46,7 @@ class KeyMappings(EventDispatcher):
         self.register_event_type('on_monitor_volume_down')
         self.register_event_type('on_preview_volume_up')
         self.register_event_type('on_preview_volume_down')
-        
+
         self.register_event_type('on_play_pause_preview')
         self.register_event_type('on_stop_preview')
         self.register_event_type('on_seek_preview')
@@ -54,6 +54,13 @@ class KeyMappings(EventDispatcher):
 
         self.register_event_type('on_cycle_focus')
         self.register_event_type('on_edit_track')
+        self.register_event_type('on_edit_playlist')
+        #self.register_event_type('on_display_shortlist')
+        self.register_event_type('on_display_playlists')
+        self.register_event_type('on_reset_playlist')
+        self.register_event_type('on_display_genres')
+        self.register_event_type('on_display_styles')
+        self.register_event_type('on_display_sessions')
 
     def on_main_volume_up(self):
         pass
@@ -91,6 +98,26 @@ class KeyMappings(EventDispatcher):
     def on_edit_track(self):
         pass
 
+    def on_edit_playlist(self):
+        pass
+
+    #def on_display_shortlist(self):
+#        pass
+
+    def on_display_playlists(self):
+        pass
+
+    def on_reset_playlist(self):
+        pass
+
+    def on_display_styles(self):
+        pass
+
+    def on_display_genres(self):
+        pass
+
+    def on_display_sessions(self):
+        pass
 
 
         #EventLoop.window.bind(on_keyboard = _keyboard_key_pressed)
@@ -114,7 +141,20 @@ class KeyMappings(EventDispatcher):
                  'shift+ctrl+.': lambda: self.dispatch('on_seek_preview', 10), #preview long seek back
                  'right':          lambda: self.dispatch('on_cycle_focus', 1),
                  'left':    lambda: self.dispatch('on_cycle_focus', -1),
-                 'ctrl+e':    lambda: self.dispatch('on_edit_track')} #preview long seek forward
+                 'ctrl+e':    lambda: self.dispatch('on_edit_track'),
+
+                 'shift+1': lambda: self.dispatch('on_display_playlists'),
+                 'shift+2': lambda: self.dispatch('on_display_genres'),
+                 'shift+3': lambda: self.dispatch('on_display_styles'),
+                 'shift+4': lambda: self.dispatch('on_display_sessions'),
+
+                 'shift+ctrl+p':    lambda: self.dispatch('on_edit_playlist'),
+                 #'shift+ctrl+s':    lambda: self.dispatch('on_display_shortlist'),
+                 #'shift+ctrl+l':    lambda: self.dispatch('on_display_playlists'),
+                 'shift+ctrl+c': lambda: self.dispatch('on_display_current_session'),
+                 #'escape':    lambda: self.dispatch('on_reset_playlist'),
+                 #'shift+ctrl+g':    lambda: self.dispatch('on_display_genres')
+                 } #preview long seek forward
 
         key_seq = "+".join(mods+[key[1]])
         #print key_seq

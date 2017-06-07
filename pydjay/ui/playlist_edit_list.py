@@ -20,63 +20,60 @@ from behaviors.track_list_behaviour import TrackListBehaviour
 from pydjay.bootstrap import play_queue, session_manager
 
 kv_string = """
-#:import label kivy.uix.label
-#:import sla kivy.adapters.simplelistadapter
-#:import SimpleDetailedListItem pydjay.ui.elements.simple_detailed_list_item.SimpleDetailedListItem
-#:import SimpleTrackCardItem pydjay.ui.elements.simple_track_card_item.SimpleTrackCardItem
-<TrackShortList>:
+#:import SimpleTrackCardItemModal pydjay.ui.dialogs.simple_track_card_item_modal.SimpleTrackCardItemModal
+<PlaylistEditModal>:
     orientation: 'horizontal'
     size_hint: 1,1
     #master_list: master_list
     #preview_player: preview_player
     short_list: short_list
-    sl_track_count:sl_track_count
+    #sl_track_count:sl_track_count
     button_size: 45
     BoxLayout:
         orientation: 'vertical'
         size_hint: .30, 1
-        BoxLayout:
-            orientation: 'vertical'
-            size_hint: 1, None
-            height:55
-            padding: [10,0,10,0]
+        #BoxLayout:
+        #    orientation: 'vertical'
+        #    size_hint: 1, None
+        #    height:55
+        #    padding: [10,0,10,0]
+#
+#            canvas.before:
+#                Color:
+#                    rgba: (.3, .3, .3, 1) if root.has_focus else (0.1, 0.1, 0.1, 1)
+#                Rectangle:
+#                    pos: self.pos
+#                    size: self.size
+#
+#            Label:
+#                text: "SHORT LIST"
+#                halign: 'center'
+#                valign: 'bottom'
+#                font_size: 18
+#                bold: True
+#                size_hint: 1, None
+#                text_size: self.size
+#                height:30#
+#
+#            Label:
+#                id: sl_track_count
+#                size_hint: 1, 1
+#                markup:True
+#                text: ""
+#                bold: True
+#                halign: 'center'
+#                valign: "top"
+#                text_size: self.size
+#                font_size: 15
+#                #size_hint: None, None
+#                #size: self.texture_size
+#                height:30#
 
-            canvas.before:
-                Color:
-                    rgba: (.3, .3, .3, 1) if root.has_focus else (0.1, 0.1, 0.1, 1)
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-
-            Label:
-                text: "SHORT LIST"
-                halign: 'center'
-                valign: 'bottom'
-                font_size: 18
-                bold: True
-                size_hint: 1, None
-                text_size: self.size
-                height:30#
-
-            Label:
-                id: sl_track_count
-                size_hint: 1, 1
-                markup:True
-                text: ""
-                bold: True
-                halign: 'center'
-                valign: "top"
-                text_size: self.size
-                font_size: 15
-                #size_hint: None, None
-                #size: self.texture_size
-                height:30#
-
-        HDivider:
+#        HDivider:
         LargeTrackList:
             id: short_list
             size_hint: 1,1
-            item_class: SimpleTrackCardItem
+            item_class: SimpleTrackCardItemModal
             item_convert: root._convert_sl
             on_touch_up: root._on_touch_up(*args)
             on_touch_down: root._on_list_touch_down(*args)
@@ -88,7 +85,8 @@ class DragContext:
         self.drop = drop
 
 
-class TrackShortList(BoxLayout, TrackListBehaviour):
+class PlaylistEditModal(BoxLayout, TrackListBehaviour):
+    dim_unavailable_tracks = BooleanProperty(False)
     master_list = ObjectProperty(None)
     short_list  = ObjectProperty(None)
     preview_player = ObjectProperty(None)
@@ -97,7 +95,7 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
     title = StringProperty("")
 
     def __init__(self, *args, **kwargs):
-        super(TrackShortList, self).__init__(*args, **kwargs)
+        super(PlaylistEditModal, self).__init__(*args, **kwargs)
         Clock.schedule_once(self._post_init,-1)
         self.drag_context_sl = DragContext(self._start_drag_sl, self._drop_sl)
         self.has_focus = False
@@ -110,13 +108,13 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
 
 
     def _post_init(self, *args):
-        self.short_list.adapter.bind(data = self._update_sl_track_count)
-        self.short_list.bind(adapter = self._update_sl_track_count)
+        #self.short_list.adapter.bind(data = self._update_sl_track_count)
+        #self.short_list.bind(adapter = self._update_sl_track_count)
         play_queue.bind(on_queue_content_change =  self._update_availability)
         session_manager.bind(on_current_session_changed = self._update_availability)
-        self.preview_player.window = self.window
-        self.preview_player.player = self.window._preview_player
-        self.preview_player.volume_controls = self.window._volume_control
+        #self.preview_player.window = self.window
+        #self.preview_player.player = self.window._preview_player
+        #self.preview_player.volume_controls = self.window._volume_control
         self.adapter = self.short_list.adapter
         self.list_view = self.short_list.list_view
         self.list_view.layout_manager.default_size = 60
@@ -219,7 +217,7 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
         track_count_text += "[color=#ffffff]" + str(num) + " tracks " + "[/color]" + \
                             "[color=#444444] | [/color]"+ \
                             "[color=#888888]" + seconds_to_human_readable(time / 1000000000) + "[/color]"
-        self.sl_track_count.text = track_count_text
+        #self.sl_track_count.text = track_count_text
         return True
 
     def _on_list_touch_down(self, window, event):
@@ -244,4 +242,4 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
 
 
 Builder.load_string(kv_string)
-Factory.register('TrackShortList', TrackShortList)
+Factory.register('PlaylistEditModal', PlaylistEditModal)

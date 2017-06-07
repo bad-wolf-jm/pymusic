@@ -11,7 +11,6 @@ from track_data import TrackData
 
 
 
-
 kv_string = """
 #:import label kivy.uix.label
 #:import sla kivy.adapters.simplelistadapter
@@ -41,7 +40,7 @@ class LargeTrackList(BoxLayout):
     item_class   = ObjectProperty(None)
     item_convert = ObjectProperty(None)
     list_header  = ObjectProperty(None)
-    
+
     def __init__(self, *args, **kwargs):
         super(LargeTrackList, self).__init__(*args, **kwargs)
 
@@ -67,12 +66,12 @@ class LargeTrackList(BoxLayout):
 
     def _update_filter(self, *a):
         self.do_filter(self._filter_text)
-        
+
     def do_filter(self, text):
         if text == "":
             self._filter_cache = {}
         self._filter_text = text
-            
+
         if text in self._filter_cache:
             bar  = self._filter_cache[text]
             _conv = self.item_convert if self.item_convert is not None else self._convert
@@ -84,7 +83,7 @@ class LargeTrackList(BoxLayout):
             self._filter_cache[text] = bar
             _conv = self.item_convert if self.item_convert is not None else self._convert
             self.adapter.data = [_conv(i, x) for i, x in zip(range(len(bar)), bar)]
-        
+
     def _convert(self, row, item):
         return {'row':          row,
                 'item':         item,
@@ -110,14 +109,14 @@ class LargeTrackList(BoxLayout):
             if available is not None:
                 #print type(track)
                 track.is_available = available(track.track)
-    
+
     def _on_touch_up(self, window, event):
         if self.collide_point(*event.pos):
             if len(self.shortlist_adapter.data) == 0 or \
                (event.pos[1] < self.short_list.height - self.short_list.container.height + self.short_list.pos[1]):
                 if self.window is not None and self.window._drag_payload is not None:
                     self.accept_drop_payload()
-                    
+
     def set_track_list(self, list, sort = True, available = None):
         ll = []
         foo = sorted(list) if sort else list
@@ -128,7 +127,7 @@ class LargeTrackList(BoxLayout):
             else:
                 x.available = True
             x.bind(is_selected = self._update_selection)
-                
+
         self._unfiltered_list = bar
         _conv = self.item_convert if self.item_convert is not None else self._convert
         self.adapter.data = [_conv(i, x) for i, x in zip(range(len(bar)), bar)]
@@ -140,11 +139,11 @@ class LargeTrackList(BoxLayout):
         else:
             if self._current_selection != obj:
                 self._current_selection = obj
-                
+
 
     def get_full_track_list(self):
         return [x.track for x in self._unfiltered_list]
-    
+
     def add_track(self, track, index = None, is_available = None):
         foo = TrackData(track)
         if is_available is not None:
@@ -154,7 +153,7 @@ class LargeTrackList(BoxLayout):
         else:
             self._unfiltered_list.append(foo)
         self.do_filter(self._filter_text)
-    
+
     def remove_track(self, track_data):
         self._unfiltered_list.remove(track_data)
         self.do_filter(self._filter_text)
@@ -165,4 +164,3 @@ class LargeTrackList(BoxLayout):
 
 Builder.load_string(kv_string)
 Factory.register('LargeTrackList', LargeTrackList)
-

@@ -27,6 +27,33 @@ kv_string = """
             pos:self.pos
             size: self.size
 
+<ModalHDivider@Widget>
+    size_hint: 1, None
+    height: 1
+    canvas.after:
+        Color:
+            rgba: .2, .2, .2, .8
+        Line:
+            points: [self.pos[0],self.pos[1], self.pos[0] + self.width, self.pos[1]]
+        Rectangle:
+            pos:self.pos
+            size: self.size
+
+<ModalVDivider@Widget>
+    size_hint: None, 1
+    width: 1
+    canvas.after:
+        Color:
+            rgba: .2,.2,.2, .8
+        Line:
+            points: [self.pos[0], self.pos[1], self.pos[0], self.pos[1]+self.height]
+        Rectangle:
+            pos:self.pos
+            size: self.size
+
+
+
+
 <OneLineLabel@Label>:
     text_size: self.size
     size_hint: 1, 1

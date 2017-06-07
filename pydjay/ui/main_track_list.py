@@ -19,6 +19,8 @@ from elements import large_track_list
 from behaviors.track_list_behaviour import TrackListBehaviour
 from pydjay.bootstrap import play_queue, session_manager, playback_manager
 
+import pydjay.bootstrap
+
 
 kv_string = """
 #:import label kivy.uix.label
@@ -54,22 +56,15 @@ kv_string = """
                         padding:[10,0,10,0]
                         spacing: 10
                         canvas.before:
-                            Color: 
+                            Color:
                                 rgba: (.3,.3,.3,1) if root.has_focus else (0.1,0.1,0.1,1)
                             Rectangle:
                                 pos: self.pos
                                 size: self.size
-
-                        #ImageButton:
-                        #    size_hint: None, None
-                        #    size: root.button_size,root.button_size
-                        #    pos_hint: {'center_y':.5}
-                        #    #on_press: root.show_side_view()
-                        #    image: 'atlas://pydjay/gui/images/resources/show-list'
                         BoxLayout:
                             orientation: 'vertical'
                             size_hint: .75, 1
-                            #height: 
+                            #height:
                             Label:
                                 size_hint: 1,1
                                 text: root.playlist_title  #"PLAYLIST TITLE"
@@ -117,15 +112,12 @@ kv_string = """
                                 on_text: root.do_filter(*args)
 
                             ImageButton:
-                                size_hint: None, None 
+                                size_hint: None, None
                                 #pos_hint: {'center_y': .5}
                                 size: 30,30
                                 image:'atlas://pydjay/gui/images/resources/clear-filter'
                                 on_press: search_filter.text = ''
-                                #text:'Clear'
-
                 HDivider:
-
                 LargeTrackList:
                     id: master_list
                     size_hint: 1,1
@@ -158,14 +150,16 @@ class DragContext:
 
 class MainTrackList(BoxLayout, TrackListBehaviour):
     master_list       = ObjectProperty(None)
-    short_list        = ObjectProperty(None)
     #main_player       = ObjectProperty(None)
     preview_player    = ObjectProperty(None)
     search_filter     = ObjectProperty(None)
+    sort              = BooleanProperty(True)
+    track_list        = ObjectProperty(None)
+    auto_save         = BooleanProperty(False)
     total_track_count = StringProperty("")
     playlist_title    = StringProperty("")
     title             = StringProperty("")
-    
+
     def __init__(self, *args, **kwargs):
         super(MainTrackList, self).__init__(*args, **kwargs)
         self._focus = False
@@ -174,9 +168,10 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
         self.drag_context = DragContext(self._start_drag, None)
         self._current_selection = None
         self.set_keyboard_handlers({'ctrl+f':  self._focus_filter,
+                                    'escape': self._reset_playlist,
                                     'shift+q': self._add_selection_to_queue,
                                     'shift+s': self._add_selection_to_short_list})
-        
+
     def _post_init(self, *args):
         self.search_filter.bind(focus = self._toggle_keyboard_shortcuts)
         self.master_list.adapter.bind(data = self._update_track_count)
@@ -186,22 +181,23 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
         session_manager.bind(on_current_session_changed = self._update_availability)
         self.adapter = self.master_list.adapter
         self.list_view = self.master_list.list_view
-        
+
     def _focus_filter(self):
         self.search_filter.focus = True
 
     def _add_selection_to_short_list(self):
         item = self.current_selection
         if item is not None:
-            self.short_list.add_shortlist_track(item['item'].track)
+            #self.short_list.add_shortlist_track(item['item'].track)
+            pydjay.bootstrap.add_shortlist_track(item['item'].track)
 
     def _add_selection_to_queue(self):
         item = self.current_selection
         if item is not None:
             play_queue.add_track(item['item'].track)
 
-    
-        
+
+
     def _toggle_keyboard_shortcuts(self, *a):
         if not self.search_filter.focus:
             self.window.request_focus(self)
@@ -210,6 +206,7 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
             pass
 
     def _update_availability(self, *args):
+        #if self.dim_unavailable_tracks:
         self.master_list.update_availability(self._track_is_available)
 
     def show_preview_player(self, track, pos, size):
@@ -217,7 +214,7 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
 
     def set_playlist_title(self, tit):
         self.playlist_title = tit
-    
+
     def _start_drag(self, coords, item):
         self.window.start_drag(coords, item.track)
 
@@ -237,7 +234,7 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
 
         track_count_text = self.title
         if num > 0 and track_count_text != "":
-            track_count_text += " - " 
+            track_count_text += " - "
         for t in self.master_list.adapter.data:
             try:
                 time += t['item'].track.info.length
@@ -248,7 +245,7 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
                             "[color=#888888]" + seconds_to_human_readable(time / 1000000000) + "[/color]"
         self.track_count.text = track_count_text
         return True
-        
+
     def _on_list_touch_down(self, window, event):
         if self.master_list.collide_point(*event.pos):
             if not event.is_mouse_scrolling:
@@ -272,6 +269,63 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
                                      "[color=#444444] | [/color]"+ \
                                      "[color=#888888]" + seconds_to_human_readable(time / 1000000000) + "[/color]"
 
-        
+    def display_list(self, list_, dim_unavailable_tracks = True, fixed_item_positions = True, can_delete_items = False,
+                     can_add_selection_to_queue = True, auto_save = False, sort = True, context_menu = None, editable = False):
+
+        if self.auto_save and self.track_list is not None:
+            self.track_list.save()
+
+        self.set_playlist_title(list_.name if list_.name not in [None, ""] else "N/A")
+        self.track_list = list_
+        self.sort = sort
+        self.auto_save = auto_save
+        self.dim_unavailable_tracks = dim_unavailable_tracks
+        self.fixed_item_positions = fixed_item_positions
+        self.can_delete_items = can_delete_items
+        self.can_add_selection_to_queue = can_add_selection_to_queue
+        self.set_track_list(list_.get_tracks(), sort = sort)
+
+    #def _reset_playlist(self, *a):
+    #    self.display_list(list_ = pydjay.bootstrap.get_all_tracks(),
+    #                      dim_unavailable_tracks = True,
+    #                      context_menu    = None,
+    #                      editable        = False)
+
+
+    def _reset_playlist(self, *a):
+        #self.display_list(list_ = pydjay.bootstrap.get_all_tracks(),
+        #                  dim_unavailable = True,
+        #                  context_menu    = None,
+        #                  editable        = False)
+        self.display_list(list_ = pydjay.bootstrap.get_all_tracks(),
+                          dim_unavailable_tracks = True,
+                          fixed_item_positions = True,
+                          can_delete_items = False,
+                          can_add_selection_to_queue = True,
+                          context_menu = None,
+                          auto_save = False,
+                          sort = True,
+                          editable = False)
+
+    def add_track(self, track, index = None, is_available = None):
+        self.master_list.add_track(track, index, is_available)
+        self.track_list.insert(track, index)
+        #foo = TrackData(track)
+        #if is_available is not None:
+    #        foo.is_available = is_available(track)
+    #    if index is not None:
+    #        self._unfiltered_list.insert(index, foo)
+    #    else:
+    #        self._unfiltered_list.append(foo)
+    #    self.do_filter(self._filter_text)
+
+    def remove_track(self, track_data):
+        self.master_list.remove_track(track_data)
+        self.track_list.remove(track_data.track)
+        #self._unfiltered_list.remove(track_data)
+        #self.do_filter(self._filter_text)
+
+
+
 Builder.load_string(kv_string)
 Factory.register('MainTrackList', MainTrackList)

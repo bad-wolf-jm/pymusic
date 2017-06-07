@@ -28,17 +28,20 @@ from pydjay.ui.behaviors.long_press_button import LongPressButtonBehaviour
 
 from kivy.graphics import *
 
-from track_list_item_base import TrackListItemBase
+#from list_item_base import ListItemBase
+from modal_list_item_base import ModalListItemBase
+
+
 
 kv_string_item = """
-<SimpleDetailedListItem>:
+<ModalShortlistItem>:
     album_art: album_art
     album_art_file:'atlas://pydjay/gui/images/resources/transparent_image'
     bg: bg
     size_hint: 1, None
     height:60
     bold: False
-    color: 1,1,1,1
+    color: .2,.2,.2,1
     on_touch_down: self._on_touch_down(*args)
 
     Widget:
@@ -105,24 +108,6 @@ kv_string_item = """
             text: root.artist
             opacity: 0.2 if root.dimmed else 1
 
-        ListItemLabel:
-            id: genre
-            size_hint: .4,1
-            bold: root.bold
-            color: root.color
-            text: root.genre
-            opacity: 0.2 if root.dimmed else 1
-
-        #ListItemLabel:
-        #    id: style
-        #    size_hint: .4,1
-        #    bold: root.bold
-        #    color: root.color
-        #    text: root.style
-        #    opacity: 0.2 if root.dimmed else 1
-
-
-
         RelativeLayout:
             size_hint: None, 1
             width: 60 #self.height
@@ -151,7 +136,6 @@ kv_string_item = """
             width:40
             opacity: 0.2 if root.dimmed else 1
 
-
         ListItemLabel:
             id: length
             bold: root.bold
@@ -164,11 +148,11 @@ kv_string_item = """
 """
 
 
-class SimpleDetailedListItem(TrackListItemBase):
+class ModalShortlistItem(ModalListItemBase):
     pass
 
 
 
 
 Builder.load_string(kv_string_item)
-Factory.register('SimpleDetailedListItem', SimpleDetailedListItem)
+Factory.register('ModalShortlistItem', ModalShortlistItem)

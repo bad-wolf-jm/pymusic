@@ -593,7 +593,7 @@ class TrackEditor(ModalView):
     title_label    = ObjectProperty(None)
     artist_label   = ObjectProperty(None)
     queue          = ObjectProperty(None)
-    short_list     = ObjectProperty(None)
+    #short_list     = ObjectProperty(None)
     waveform       = ObjectProperty(None)
     volume         = NumericProperty(1.0)
     volume_controls = ObjectProperty(None)#NumericProperty(1.0)
@@ -617,7 +617,7 @@ class TrackEditor(ModalView):
         self.bind(volume = self._set_volume)
         self._duration = None
         self.queue = queue
-        self.short_list = short_list
+        #self.short_list = short_list
         Clock.schedule_once(self._post_init, -1)
 
     def _post_init(self, *a):
@@ -710,17 +710,17 @@ class TrackEditor(ModalView):
         elif key_seq == 'escape':
             self.dismiss()
 
-        elif key_seq == 'shift+s':
-            #if self._current_selection is not None:
-            self.short_list.add_shortlist_track(self._track)
-            self.dismiss()
-            #else:
-            #    self.select(0)
+        #elif key_seq == 'shift+s':
+        #    #if self._current_selection is not None:
+        #    self.short_list.add_shortlist_track(self._track)
+        #    self.dismiss()
+        #    #else:
+        #    #    self.select(0)
 
-        elif key_seq == 'shift+q':
-            #if self._current_selection is not None:
-            self.queue.add_track(self._track)
-            self.dismiss()
+        #elif key_seq == 'shift+q':
+        #    #if self._current_selection is not None:
+        #    self.queue.add_track(self._track)
+        #    self.dismiss()
 
 
         elif key_seq == 'enter': # start playback from current cue point
