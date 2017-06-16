@@ -204,8 +204,6 @@ kv_string = """
 
 from pydjay.core.keyboard import key_map
 
-#even_color = [.1,.1,.1,1], odd_color = [.1,.1,.1,1]
-
 class MainScreen(MainWindow):
     def __init__(self, main_player, preview_player, volume_control, *args, **kwargs):
         super(MainScreen, self).__init__(*args, **kwargs)
@@ -261,7 +259,6 @@ class MainScreen(MainWindow):
         self._focusable_elements[self._focus].unfocus()
 
     def _update_time(self, *args):
-        #t = time.localtime()
         self.current_date = time.strftime('%a, %b %d %Y')
         self.current_time = time.strftime('%H:%M:%S')
 
@@ -282,7 +279,7 @@ class MainScreen(MainWindow):
         foo.bind(on_dismiss = self.restore_focus,
                  on_playlist_selected = self.__select_playlist)
 
-        sessions = [#{'list': pydjay.bootstrap.get_current_session(),
+        sessions = [
                      {'list': pydjay.bootstrap.get_current_session(),
                       'dim_unavailable_tracks':     False,
                       'fixed_item_positions':       True,
@@ -299,7 +296,6 @@ class MainScreen(MainWindow):
                           'auto_save': False,
                           'sort': False,
                           'can_add_selection_to_queue':True} for x in pydjay.bootstrap.get_all_sessions()])
-        #print sessions
         foo.open(title = 'SESSIONS', pl_list = sessions)
 
     def __select_playlist(self, w, g):
@@ -342,7 +338,6 @@ class MainScreen(MainWindow):
                           'auto_save':                  True,
                           'sort':                       False,
                           'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_playlists()])
-                         #pydjay.bootstrap.get_all_playlists())
         foo.bind(on_dismiss = self.restore_focus,
                  on_playlist_selected = self.__select_playlist)
         foo.open(title = 'PLAYLISTS', pl_list = playlists)
@@ -352,36 +347,37 @@ class MainScreen(MainWindow):
         foo = PlaylistSelector()
         foo.bind(on_dismiss = self.restore_focus,
                  on_playlist_selected = self.__select_playlist)
-        foo.open(title = 'GENRES', pl_list = [{'list':x,
-                          'dim_unavailable_tracks':     True,
-                          'fixed_item_positions':       True,
-                          'can_delete_items':           False,
-                          'auto_save':                  False,
-                          'sort':                       True,
-                          'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_genres()])
+        foo.open(title = 'GENRES',
+                 pl_list = [{'list':x,
+                             'dim_unavailable_tracks':     True,
+                             'fixed_item_positions':       True,
+                             'can_delete_items':           False,
+                             'auto_save':                  False,
+                             'sort':                       True,
+                             'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_genres()])
 
     def _show_style_chooser(self, *a):
         self._no_cycle = True
         foo = PlaylistSelector()
         foo.bind(on_dismiss = self.restore_focus,
                  on_playlist_selected = self.__select_playlist)
-        foo.open(title = 'STYLES', pl_list = [{'list':x,
-                          'dim_unavailable_tracks':     True,
-                          'fixed_item_positions':       True,
-                          'can_delete_items':           False,
-                          'auto_save':                  False,
-                          'sort':                       True,
-                          'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_styles()])
+        foo.open(title = 'STYLES',
+                 pl_list = [{'list':x,
+                             'dim_unavailable_tracks':     True,
+                             'fixed_item_positions':       True,
+                             'can_delete_items':           False,
+                             'auto_save':                  False,
+                             'sort':                       True,
+                             'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_styles()])
 
     def _reset_playlist(self, *a):
-        self.master_list.display_list(#title = g.name if g is not None else "Unknown playlist",
-                          list_ = pydjay.bootstrap.get_all_tracks(),
-                          dim_unavailable_tracks     = True,
-                          fixed_item_positions       = True,
-                          can_delete_items           = False,
-                          can_add_selection_to_queue = True,
-                          context_menu               = None,
-                          editable                   = False)
+        self.master_list.display_list(list_ = pydjay.bootstrap.get_all_tracks(),
+                                      dim_unavailable_tracks     = True,
+                                      fixed_item_positions       = True,
+                                      can_delete_items           = False,
+                                      can_add_selection_to_queue = True,
+                                      context_menu               = None,
+                                      editable                   = False)
 
     def show_preview_player(self, track, pos, size, rel = 'right'):
         def _foo(*a):
@@ -393,7 +389,6 @@ class MainScreen(MainWindow):
         self._anim = None
 
     def shutdown(self):
-        #self.main_player.shutdown()
         self.master_queue.shutdown()
 
 Builder.load_string(kv_string)

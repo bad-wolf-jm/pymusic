@@ -22,6 +22,8 @@ class MusicLibrary(object):
         self._sessions           = {}
         self._playlists          = {}
         self._library            = {}
+        self._genres_count       = {}
+        self._styles_count       = {}
 
         structure = ['state', 'sessions', 'image_cache', 'wave_cache', 'playlists']
 
@@ -35,6 +37,7 @@ class MusicLibrary(object):
             _tracks = pickle.load(foo)
             for key, location, info, metadata in _tracks:
                 self._library[key] = (location, info, metadata)
+        self._modified = False
 
         playlist_folder = os.path.join(self._root_folder, "playlists")
         for playlist in os.listdir(playlist_folder):
@@ -47,6 +50,17 @@ class MusicLibrary(object):
             if session.endswith('.m3u'):
                 name, ext = os.path.splitext(session)
                 self._sessions[name] = FilePlaylist(self, session_folder, name)
+
+
+        for loc, info, metadata in self._library.values():
+            sty = metadata.get('style', 'N/A')
+            gen = metadata.get('genre', 'N/A')
+            if sty not in self._styles_count:
+                self._styles_count[sty] = 0
+            if gen not in self._genres_count:
+                self._genres_count[gen] = 0
+            self._styles_count[sty] += 1
+            self._genres_count[gen] += 1
 
     def __getitem__(self, index):
         return Track(*self._library[index])
@@ -79,7 +93,7 @@ class MusicLibrary(object):
         return [self.get_style_by_name(g) for g in styles]
 
     def get_style_by_name(self, name):
-        return FilteredPlaylist(self, 'style', 'equals', name)
+        return FilteredPlaylist(self, 'style', 'equals', name, self._styles_count.get(name, None))
 
     def get_all_genres(self):
         genres = set([])
@@ -89,7 +103,7 @@ class MusicLibrary(object):
         return [self.get_genre_by_name(g) for g in genres]
 
     def get_genre_by_name(self, name):
-        return FilteredPlaylist(self, 'genre', 'equals', name)
+        return FilteredPlaylist(self, 'genre', 'equals', name, self._genres_count.get(name, None))
 
 
     def get_all_playlists(self):
@@ -97,7 +111,6 @@ class MusicLibrary(object):
 
     def get_all_sessions(self):
         return [self._sessions[x] for x in self._sessions]
-
 
     def get_current_session(self, name):
         return TrackList(name, self._current_session.track_list)

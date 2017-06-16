@@ -32,14 +32,12 @@ class Playlist(object):
         self.load()
         return (track_location in self._track_indices)
 
-
     def find(self, track):
         foo = [id(x) for x in self._tracks].index(id(track))
         return foo
 
     def auto_save(self):
         if self._auto_save:
-            #print 'saving'
             self.save()
             self._is_modified = False
 
@@ -69,7 +67,6 @@ class Playlist(object):
 
     def insert(self, element, index):
         self.load()
-        #print element
         if index is None:
             return self.append(element)
         else:
@@ -81,16 +78,13 @@ class Playlist(object):
             return elem
 
     def remove(self, element):
-        #self.load()
         i = self.find(element)
         del self._tracks[i]
-        #self._tracks.remove(element)
         self._is_modified = True
         self._update_track_dict(element.location, -1)
         self.auto_save()
 
     def remove_all(self, element, index):
-        #self.load()
         self._tracks = []
         self._is_modified = True
         self._track_indices = {}
@@ -125,7 +119,6 @@ class FilePlaylist(Playlist):
         super(FilePlaylist, self).__init__(library, display_name if display_name is not None else file_name, auto_save)
         self._path = path
         self._file_name = file_name
-        #self._display_name = file_name if display_name is None else display_name
 
     def load(self):
         if self._tracks is None:
@@ -162,15 +155,21 @@ class TrackList(Playlist):
 
 
 class FilteredPlaylist(Playlist):
-    def __init__(self, library, field = None, comparison = None, value = None):
+    def __init__(self, library, field = None, comparison = None, value = None, num = None):
         super(FilteredPlaylist, self).__init__(library, value)
         self._field = field
         self._comparison = comparison
         self._value = value
+        self._num = num
 
+    def __len__(self):
+        if (self._num is not None) and (self._tracks is None):
+            return self._num
+        else:
+            self.load()
+            return len(self._tracks) if self._tracks is not None else 0
 
     def load(self):
-        #print 'LOADING', self._value
         if self._tracks is None:
             self._tracks = []
             try:
@@ -182,7 +181,6 @@ class FilteredPlaylist(Playlist):
             for t in self._library.iterate_tracks():
                 try:
                     if cmpr(t):
-                        #print 'TRUE'
                         self._tracks.append(t)
                 except Exception, details:
                     print details
@@ -205,25 +203,7 @@ class FilteredPlaylist(Playlist):
                 foo = getattr(track.metadata, self._field)
                 return foo == self._value
             except Exception, details:
-                #print details
                 return False
-
 
     def _true(self, track):
         return True
-
-    #def get_tracks(self):
-    #    try:
-    #        cmpr = getattr(self, "_"+self._comparison)
-    #    except Exception, details:
-    #        print details
-    #        return []
-    #    ret_val = []
-    #    for t in self._library.values():
-    #        try:
-    #            if cmpr(t):
-    #                ret_val.append(t)
-    #        except Exception, details:
-    #            print details
-    #            pass
-    #    return ret_val
