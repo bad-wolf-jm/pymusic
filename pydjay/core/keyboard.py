@@ -148,10 +148,10 @@ class KeyMappings(EventDispatcher):
                  'shift+3': lambda: self.dispatch('on_display_styles'),
                  'shift+4': lambda: self.dispatch('on_display_sessions'),
 
-                 'shift+ctrl+p':    lambda: self.dispatch('on_edit_playlist'),
+                 #'shift+ctrl+p':    lambda: self.dispatch('on_edit_playlist'),
                  #'shift+ctrl+s':    lambda: self.dispatch('on_display_shortlist'),
                  #'shift+ctrl+l':    lambda: self.dispatch('on_display_playlists'),
-                 'shift+ctrl+c': lambda: self.dispatch('on_display_current_session'),
+                 #'shift+ctrl+c': lambda: self.dispatch('on_display_current_session'),
                  #'escape':    lambda: self.dispatch('on_reset_playlist'),
                  #'shift+ctrl+g':    lambda: self.dispatch('on_display_genres')
                  } #preview long seek forward
