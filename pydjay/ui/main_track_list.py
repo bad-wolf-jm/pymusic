@@ -181,6 +181,7 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
         session_manager.bind(on_current_session_changed = self._update_availability)
         self.adapter = self.master_list.adapter
         self.list_view = self.master_list.list_view
+        self._update_availability(None)
 
     def _focus_filter(self):
         self.search_filter.focus = True
@@ -308,8 +309,8 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
                           editable = False)
 
     def add_track(self, track, index = None, is_available = None):
-        self.master_list.add_track(track, index, is_available)
-        self.track_list.insert(track, index)
+        foo = self.track_list.insert(track.location, index)
+        self.master_list.add_track(foo, index, is_available)
         #foo = TrackData(track)
         #if is_available is not None:
     #        foo.is_available = is_available(track)

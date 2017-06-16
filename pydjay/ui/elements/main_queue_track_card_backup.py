@@ -62,7 +62,6 @@ kv_string_item = """
 <MasterQueueTrackCard>:
     orientation: 'horizontal'
     size_hint: 1, None
-    htight:80
     bg: bg
     title:     ""
     artist:    ""
@@ -72,7 +71,6 @@ kv_string_item = """
     on_size: root._update_background()#self.pos, self.size)
     on_touch_up: self._on_touch_up(*args)
     on_touch_down: self._on_touch_down(*args)
-
 
     Widget:
         id: bg
@@ -102,66 +100,71 @@ kv_string_item = """
                 on_touch_up: root._view.show_preview_player(root._item, self.to_window(*self.pos), self.size) \
                            if self.collide_point(*args[1].pos) else ""
 
-        Label:
-            font_size:15
-            bold: True
-            text: root.title #"Title"
-            text_size: self.size
-            halign: 'left'
-            valign: 'middle'
-            size_hint: 1, 1
-            shorten: True
-            ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-
-        Label:
-            text: root.artist  #"Artist"
-            color: .6,.6,.6,1
-            text_size: self.size
-            halign: 'left'
-            valign: 'middle'
-            font_size: 15
-            size_hint: 1, 1
-            shorten: True
-            ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-            height:15
-
-        Label:
-            size_hint: None, 1
-            font_size:15
-            #bold:True
-            padding_x:5
-            text: root.bpm + " BPM"
-            text_size: self.size
-            halign: 'right'
-            valign: 'middle'
-            width: 100 #self.texture_size[0]
-            #height:13
-
         BoxLayout:
-            size_hint: None, 1
             orientation: 'vertical'
-            width: 60
-            Label:
-                size_hint: 1, 1
-                font_size:15
-                bold:True
-                padding_x:5
-                text: root.length
-                text_size: self.size
-                halign: 'right'
-                valign: 'bottom'
-                width: 60 #self.texture_size[0]
+            size_hint: 1,.85
+            pos_hint: {'center_y': 0.5}
 
-            Label:
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1,1
+                #height: will_play.height
+                #padding:[5,5,5,2]
+
+                Label:
+                    font_size:15
+                    bold: True
+                    text: root.title #"Title"
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'middle'
+                    size_hint: 1, 1
+                    shorten: True
+                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+
+                    #height:will_play.height
+
+                Label:
+                    font_size:15
+                    bold:True
+                    padding_x:5
+                    text: root.length
+                    text_size: self.size
+                    halign: 'right'
+                    valign: 'middle'
+                    size_hint: None, 1
+                    width: 60 #self.texture_size[0]
+                    height:15
+
+
+            BoxLayout:
+                orientation: 'horizontal'
                 size_hint: 1, 1
-                font_size:12
-                color: .6,.6,.6,1
-                padding_x:5
-                text: root.play_time
-                text_size: self.size
-                halign: 'right'
-                valign: 'top'
-                width: 60 #self.texture_size[0]
+                width:65
+
+                Label:
+                    text: root.artist  #"Artist"
+                    color: .6,.6,.6,1
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'top'
+                    font_size: 15
+                    size_hint: 1, 1
+                    shorten: True
+                    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
+                    height:15
+
+                Label:
+                    font_size:13
+                    color: .6,.6,.6,1
+                    padding_x:5
+                    text: root.play_time
+                    text_size: self.size
+                    halign: 'right'
+                    valign: 'top'
+                    size_hint: None, 1
+                    width: 60 #self.texture_size[0]
+                    height:13
 """
 
 
@@ -207,6 +210,7 @@ class MasterQueueTrackCard(TrackListItemBase):
             self.length = ""
 
     def _play_time_change(self, obj, new_value):
+        #print "PLAY TIME CHANGED", self._item_data.play_time
         self.play_time = new_value
 
 

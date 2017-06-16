@@ -118,8 +118,8 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         self.fixed_item_positions = False
         self.set_keyboard_handlers({'shift+up':        self._move_selection_up,
                                     'shift+down':      self._move_selection_down,
-                                    'shift+t':         self._move_selection_to_top,
-                                    'shift+backspace': self._delete_selection})
+                                    'shift+t':         self._move_selection_to_top})
+                                    #'shift+backspace': self._delete_selection})
         play_queue.bind(on_queue_content_change = self._update_queue_contents)
         playback_manager.bind(wait_time = self._update_queue_labels,
                               queue_length = self._update_queue_length,
@@ -149,6 +149,11 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
             play_queue.add_track(self.window._drag_payload, row)
             self.window.drop()
 
+    def _delete_selection(self):
+        item = self.current_selection
+        if item is not None and self.can_delete_items:
+            self.remove_track(item['item'])
+            self.select(self._current_selection - 1)
 
     def contains(self, location):
         return location in self._queued_tracks
@@ -166,6 +171,7 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         self.adapter = self.queue_view.adapter
         self.list_view = self.queue_view.list_view
         self.list_view.layout_manager.default_size = 70
+        self._update_queue_contents(None, play_queue.track_list)
         self._update_queue_labels()
 
     def set_player(self, p):
@@ -175,9 +181,12 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         return {'row': row, 'item': item, 'view':self, 'drag_context':self.drag_context, 'is_selected': False}
 
 
-    def add_track(self, track, index = None):
+    def add_track(self, track, index = None, track_is_available = True):
         play_queue.add_track(track, index)
     enqueue = add_track
+
+    def remove_track(self, track):
+        play_queue.remove_track(track.track)
 
     def set_track_list(self, list):
         self.queue_view.set_track_list(list, False)

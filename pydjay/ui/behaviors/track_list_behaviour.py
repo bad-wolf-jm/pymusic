@@ -149,13 +149,11 @@ class TrackListBehaviour(EventDispatcher):
     def _make_selection_unavailable(self):
         item = self.current_selection
         if item is not None:
-            #self.main_player.add_unavailable(item['item'].track.location)
             session_manager.add(item['item'].track, False)
 
     def _make_selection_available(self):
         item = self.current_selection
         if item is not None:
-            #self.main_player.remove_unavailable(item['item'].track.location)
             session_manager.remove(item['item'].track)
 
     def _preview_current_selection(self):
@@ -188,12 +186,11 @@ class TrackListBehaviour(EventDispatcher):
 
     def _delete_selection(self):
         item = self.current_selection
-        if item is not None and not self.can_delete_items:
+        if item is not None and self.can_delete_items:
             self.remove_track(item['item'])
             self.select(self._current_selection)
 
     def _add_selection_to_queue(self):
         item = self.current_selection
         if item is not None and self.can_add_selection_to_queue:
-            #self.remove_track(item['item'])
             self.queue.add_track(item['item'].track)
