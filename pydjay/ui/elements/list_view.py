@@ -43,6 +43,7 @@ _cache_count = 0
 # maximum number of items in the class cache
 _max_cache_size = 1000
 
+
 def _clean_cache():
     '''Trims _cached_views cache to half the size of `_max_cache_size`.
     '''
@@ -808,7 +809,6 @@ class RecycleView(ScrollView):
         '''
         getattr(self.__class__, prop_name).dispatch(self)
 
-
     def _handle_ask_data_refresh(self, *largs, **kwargs):
         self._refresh_flags[kwargs['extent']] = True
         self._refresh_trigger()
@@ -912,6 +912,7 @@ class RecycleView(ScrollView):
     # or easier way to use
     def _get_data(self):
         return self.adapter.data
+
     def _set_data(self, value):
         self.adapter.data = value
     data = AliasProperty(_get_data, _set_data, bind=["adapter"])
@@ -920,24 +921,27 @@ class RecycleView(ScrollView):
 
     def _get_viewclass(self):
         return self.adapter.viewclass
+
     def _set_viewclass(self, value):
         self.adapter.viewclass = value
     viewclass = AliasProperty(_get_viewclass, _set_viewclass,
-        bind=["adapter"])
+                              bind=["adapter"])
     """Set the viewclass on the current adapter
     """
 
     def _get_key_viewclass(self):
         return self.adapter.key_viewclass
+
     def _set_key_viewclass(self, value):
         self.adapter.key_viewclass = value
     key_viewclass = AliasProperty(_get_key_viewclass, _set_key_viewclass,
-        bind=["adapter"])
+                                  bind=["adapter"])
     """Set the key viewclass on the current adapter
     """
 
     def _get_default_size(self):
         return self.layout_manager.default_size
+
     def _set_default_size(self, value):
         self.layout_manager.default_size = value
     default_size = AliasProperty(_get_default_size, _set_default_size,
@@ -947,6 +951,7 @@ class RecycleView(ScrollView):
 
     def _get_key_size(self):
         return self.layout_manager.key_size
+
     def _set_key_size(self, value):
         self.layout_manager.key_size = value
     key_size = AliasProperty(_get_key_size, _set_key_size,

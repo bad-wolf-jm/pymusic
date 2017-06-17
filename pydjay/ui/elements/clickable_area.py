@@ -5,7 +5,7 @@ from kivy.properties import ObjectProperty, StringProperty
 #from pydjay.uix import aligned_label
 
 
-#def get_path(path):
+# def get_path(path):
 #    return os.path.join(os.path.dirname(__file__), path + '.png')
 
 kv_string = """
@@ -74,27 +74,31 @@ kv_string = """
 """
 
 
-
-
 class ClickableArea(Button):
     def __init__(self, **args):
         super(ClickableArea, self).__init__(**args)
 
+
 class ImageButton(ClickableArea):
     def __init__(self, **args):
         super(ImageButton, self).__init__(**args)
-        #print "OMAGE BUTTON CREATED", self
+        # print "OMAGE BUTTON CREATED", self
+
 
 class TextButton(Button):
     label = ObjectProperty(None)
     label_text = StringProperty(None)
+
     def __init__(self, **args):
         super(TextButton, self).__init__(**args)
 
+
 class TagButton(ClickableArea):
     tag_area = ObjectProperty(None)
+
     def __init__(self, **args):
         super(TagButton, self).__init__(**args)
+
 
 from kivy.lang import Builder
 from kivy.factory import Factory

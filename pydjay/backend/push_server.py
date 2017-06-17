@@ -1,17 +1,19 @@
 import zmq
-import json
+#import json
 import threading
 import time
 
+
 class PushServer(threading.Thread):
     """docstring for RPCServer."""
-    def __init__(self, name = None, port = 9999, **kw):
+
+    def __init__(self, name=None, port=9999, **kw):
         threading.Thread.__init__(self)
-        self.__name    = name
-        self.__port    = port
+        self.__name = name
+        self.__port = port
         self.__running = False
         self.__context = zmq.Context()
-        self.__socket  = self.__context.socket(zmq.PUSH)
+        self.__socket = self.__context.socket(zmq.PUSH)
         self.__socket.bind("tcp://127.0.0.1:%s" % self.__port)
         self.__message_queue = []
 
@@ -27,7 +29,7 @@ class PushServer(threading.Thread):
                     print "ERROR", details
         self.__socket.close()
 
-    def start(self, threaded = True):
+    def start(self, threaded=True):
         self.__running = True
         if not threaded:
             self.run()
@@ -44,13 +46,14 @@ class PushServer(threading.Thread):
 
 class PushClient(threading.Thread):
     """docstring for RPCServer."""
-    def __init__(self, name = None, port = 9999, **kw):
+
+    def __init__(self, name=None, port=9999, **kw):
         threading.Thread.__init__(self)
-        self.__name           = name
-        self.__port           = port
-        self.__running        = False
-        self.__context        = zmq.Context()
-        self.__socket  = self.__context.socket(zmq.PULL)
+        self.__name = name
+        self.__port = port
+        self.__running = False
+        self.__context = zmq.Context()
+        self.__socket = self.__context.socket(zmq.PULL)
         self.__socket.connect("tcp://127.0.0.1:%s" % self.__port)
         self.__handlers = {}
 
@@ -81,7 +84,7 @@ class PushClient(threading.Thread):
             self.__handlers[name] = []
         self.__handlers[name].append(function)
 
-    def start(self, threaded = True):
+    def start(self, threaded=True):
         self.__running = True
         if not threaded:
             self.run()

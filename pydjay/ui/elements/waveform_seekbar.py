@@ -1,6 +1,5 @@
 
 
-
 import os
 import re
 import mimetypes
@@ -31,18 +30,17 @@ from kivy.graphics import Line, RenderContext
 from kivy.uix.relativelayout import RelativeLayout
 
 
-electric_blue = [44.0/255, 117.0/255, 255.0/255, .7]
-purple = [137.0/255, 59.0/255, 255/255, .7]
-purple_2 = [127.0/255, 56.0/255, 236.0/255, 1]
-purple_3 = [176.0/255, 65.0/255, 255.0/255, .7]
-green_1 = [84.0/255, 185.0/255, 213.0/255, .7]
+electric_blue = [44.0 / 255, 117.0 / 255, 255.0 / 255, .7]
+purple = [137.0 / 255, 59.0 / 255, 255 / 255, .7]
+purple_2 = [127.0 / 255, 56.0 / 255, 236.0 / 255, 1]
+purple_3 = [176.0 / 255, 65.0 / 255, 255.0 / 255, .7]
+green_1 = [84.0 / 255, 185.0 / 255, 213.0 / 255, .7]
 gray_1 = [.7, .7, .7, .7]
 gray_2 = [.5, .5, .5, .5]
 
 
-
 class WaveformVisualize(StencilView):
-    color  = ListProperty(purple_2)
+    color = ListProperty(purple_2)
     points = ListProperty([])
     x_min = ObjectProperty(None)
     x_max = ObjectProperty(None)
@@ -50,12 +48,12 @@ class WaveformVisualize(StencilView):
     def __init__(self, *args, **kwargs):
         super(WaveformVisualize, self).__init__(*args, **kwargs)
         self.ask_redraw = Clock.create_trigger(self.draw_waveform)
-        self.bind(width  = self.ask_redraw,
-                  size   = self.ask_redraw,
-                  x_max  = self.ask_redraw,
-                  x_min  = self.ask_redraw,
-                  points = self.ask_redraw,
-                  height = self.ask_redraw)
+        self.bind(width=self.ask_redraw,
+                  size=self.ask_redraw,
+                  x_max=self.ask_redraw,
+                  x_min=self.ask_redraw,
+                  points=self.ask_redraw,
+                  height=self.ask_redraw)
 
     def draw_waveform(self, *args):
         points = []
@@ -63,7 +61,7 @@ class WaveformVisualize(StencilView):
         with self.canvas:
             Color(*self.color)
             for x, y in self.iterate_points():
-                Line(points = [x, y[0], x, y[1]], width = 1, joints = 'round')
+                Line(points=[x, y[0], x, y[1]], width=1, joints='round')
 
     def iterate_points(self):
         '''Iterate on all the points adjusted to the graph settings
@@ -83,20 +81,19 @@ class WaveformVisualize(StencilView):
             sample_min_y = self.points[0][1]
             sample_max_y = self.points[0][1]
 
-            for x,y in self.points:
+            for x, y in self.points:
                 if y > sample_max_y:
                     sample_max_y = y
                 if y < sample_min_y:
                     sample_min_y = y
 
-
-            zero_y      = self.height / 2 + self.y
+            zero_y = self.height / 2 + self.y
             y_amplitude = sample_max_y - sample_min_y
-            y_factor    = float(self.height) / y_amplitude
+            y_factor = float(self.height) / y_amplitude
 
-            zero_x      = self.x#self.height / 2 
+            zero_x = self.x  # self.height / 2
             x_amplitude = sample_max_x - sample_min_x
-            x_factor    = float(self.width) / x_amplitude
+            x_factor = float(self.width) / x_amplitude
 
             scaled = {}
             c_p = 0
@@ -117,8 +114,8 @@ class WaveformVisualize(StencilView):
             return []
 
 
-            
-#Builder.load_string(kv_string)
+
+# Builder.load_string(kv_string)
 Factory.register('WaveformVisualize', WaveformVisualize)
 
 kv_string = """
@@ -158,14 +155,17 @@ kv_string = """
 
 #84, 197, 113
 #176, 65, 255
+
+
 class WaveformSeekbar(RelativeLayout):
-    waveform   = ObjectProperty(None)
-    min_value  = NumericProperty(0)
-    max_value  = NumericProperty(100)
-    value      = NumericProperty(0)
+    waveform = ObjectProperty(None)
+    min_value = NumericProperty(0)
+    max_value = NumericProperty(100)
+    value = NumericProperty(0)
 
     def __init__(self, *args, **kwargs):
         super(WaveformSeekbar, self).__init__(*args, **kwargs)
-           
+
+
 Builder.load_string(kv_string)
 Factory.register('WaveformSeekbar', WaveformSeekbar)

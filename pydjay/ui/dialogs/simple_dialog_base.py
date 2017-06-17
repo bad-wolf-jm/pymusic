@@ -1,29 +1,29 @@
-import os
-import re
-import mimetypes
-import array
-from functools import partial
-from threading import Thread
-from os.path import getsize
-from datetime import datetime
-from kivy.core.window import Window
-from kivy.graphics import Mesh, Color, Rectangle, Line, RoundedRectangle, Ellipse, Triangle
-from kivy.clock import mainthread, Clock
+# import os
+# import re
+# import mimetypes
+# import array
+# from functools import partial
+# from threading import Thread
+# from os.path import getsize
+# from datetime import datetime
+# from kivy.core.window import Window
+# from kivy.graphics import Mesh, Color, Rectangle, Line, RoundedRectangle, Ellipse, Triangle
+from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.relativelayout import RelativeLayout
-from kivy.uix.widget import Widget
-from kivy.uix.label import Label
-from kivy.properties import ObjectProperty, NumericProperty
+# from kivy.uix.boxlayout import BoxLayout
+# from kivy.uix.relativelayout import RelativeLayout
+# from kivy.uix.widget import Widget
+# from kivy.uix.label import Label
+# from kivy.properties import ObjectProperty
 from kivy.factory import Factory
-from kivy.uix.popup import Popup
+# from kivy.uix.popup import Popup
 from kivy.uix.modalview import ModalView
-from elements import waveform_seekbar#screen, paged_grid, paged_display
-from elements.utils import seconds_to_human_readable
-from kivy.animation import Animation
+# from elements import waveform_seekbar#screen, paged_grid, paged_display
+# from elements.utils import seconds_to_human_readable
+# from kivy.animation import Animation
 import pydjay.bootstrap
-import pydjay.ui.track_short_list_modal
+# import pydjay.ui.track_short_list_modal
 
 
 kv_string = """

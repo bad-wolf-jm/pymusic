@@ -10,7 +10,6 @@ from default_track_list_item import DefaultTrackItemView
 from track_data import TrackData
 
 
-
 kv_string = """
 #:import label kivy.uix.label
 #:import sla kivy.adapters.simplelistadapter
@@ -26,20 +25,20 @@ kv_string = """
 """
 
 
-
 class ListLayoutManager(list_view.LinearRecycleLayoutManager,
                         list_view.LayoutSelectionMixIn):
     def __init__(self, *args, **kwargs):
         super(ListLayoutManager, self).__init__(*args, **kwargs)
         self.key_selection = ''
 
+
 class LargeTrackList(BoxLayout):
-    list_view    = ObjectProperty(None)
-    window       = ObjectProperty(None)
-    adapter      = ObjectProperty(None)
-    item_class   = ObjectProperty(None)
+    list_view = ObjectProperty(None)
+    window = ObjectProperty(None)
+    adapter = ObjectProperty(None)
+    item_class = ObjectProperty(None)
     item_convert = ObjectProperty(None)
-    list_header  = ObjectProperty(None)
+    list_header = ObjectProperty(None)
 
     def __init__(self, *args, **kwargs):
         super(LargeTrackList, self).__init__(*args, **kwargs)
@@ -49,16 +48,16 @@ class LargeTrackList(BoxLayout):
         self._filter_cache = {}
         self._current_selection = None
         self.adapter = RecycleAdapter(
-            cls = DefaultTrackItemView,
-            data = [],
-            selection_mode = 'none',
-            allow_empty_selection = True,
-            args_converter = self._convert
+            cls=DefaultTrackItemView,
+            data=[],
+            selection_mode='none',
+            allow_empty_selection=True,
+            args_converter=self._convert
         )
 
-        Clock.schedule_once(self._post_init,0)
-        self.bind(item_class = self._update_adapter)
-        self.bind(item_convert = self._update_adapter)
+        Clock.schedule_once(self._post_init, 0)
+        self.bind(item_class=self._update_adapter)
+        self.bind(item_convert=self._update_adapter)
 
     def _post_init(self, *args):
         self.list_view.adapter = self.adapter
@@ -73,7 +72,7 @@ class LargeTrackList(BoxLayout):
         self._filter_text = text
 
         if text in self._filter_cache:
-            bar  = self._filter_cache[text]
+            bar = self._filter_cache[text]
             _conv = self.item_convert if self.item_convert is not None else self._convert
             self.adapter.data = [_conv(i, x) for i, x in zip(range(len(bar)), bar)]
         else:
@@ -91,23 +90,22 @@ class LargeTrackList(BoxLayout):
                 'drag_context': self.window,
                 'is_selected':  False}
 
-
     def _update_adapter(self, window, value):
         data = self.adapter.data
         self.adapter = RecycleAdapter(
-            viewclass = self.item_class,
-            data = [],
-            selection_mode = 'none',
-            allow_empty_selection = False,
-            args_converter = self.item_convert
+            viewclass=self.item_class,
+            data=[],
+            selection_mode='none',
+            allow_empty_selection=False,
+            args_converter=self.item_convert
         )
         self.adapter.data = data
         self.list_view.adapter = self.adapter
 
-    def update_availability(self, available = None):
+    def update_availability(self, available=None):
         for track in self._unfiltered_list:
             if available is not None:
-                #print type(track)
+                # print type(track)
                 track.is_available = available(track.track)
 
     def _on_touch_up(self, window, event):
@@ -117,7 +115,7 @@ class LargeTrackList(BoxLayout):
                 if self.window is not None and self.window._drag_payload is not None:
                     self.accept_drop_payload()
 
-    def set_track_list(self, list, sort = True, available = None):
+    def set_track_list(self, list, sort=True, available=None):
         ll = []
         foo = sorted(list) if sort else list
         bar = [TrackData(x) for x in foo]
@@ -126,7 +124,7 @@ class LargeTrackList(BoxLayout):
                 x.is_available = available(x.track)
             else:
                 x.available = True
-            x.bind(is_selected = self._update_selection)
+            x.bind(is_selected=self._update_selection)
 
         self._unfiltered_list = bar
         _conv = self.item_convert if self.item_convert is not None else self._convert
@@ -140,11 +138,10 @@ class LargeTrackList(BoxLayout):
             if self._current_selection != obj:
                 self._current_selection = obj
 
-
     def get_full_track_list(self):
         return [x.track for x in self._unfiltered_list]
 
-    def add_track(self, track, index = None, is_available = None):
+    def add_track(self, track, index=None, is_available=None):
         foo = TrackData(track)
         if is_available is not None:
             foo.is_available = is_available(track)
@@ -161,6 +158,7 @@ class LargeTrackList(BoxLayout):
     def sort(self):
         self._unfiltered_list.sort()
         self.do_filter(self._filter_text)
+
 
 Builder.load_string(kv_string)
 Factory.register('LargeTrackList', LargeTrackList)

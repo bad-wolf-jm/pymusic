@@ -145,6 +145,5 @@ class SimpleTrackCardItem(TrackListItemBase):
     pass
 
 
-
 Builder.load_string(kv_string_shortlist_item)
 Factory.register('SimpleTrackCardItem', SimpleTrackCardItem)

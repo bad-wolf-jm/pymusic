@@ -13,6 +13,7 @@ class PlayQueue(EventDispatcher):
         #self._queued_tracks = set([])
         #self._track_list    = []
         self.register_event_type("on_queue_content_change")
+        self._update_queue_length()
 
     def on_queue_content_change(self, *args):
         pass

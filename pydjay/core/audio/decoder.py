@@ -53,7 +53,6 @@ from gi.repository import Gst
 from gi.repository import GObject
 
 
-
 import sys
 import threading
 import os
@@ -84,6 +83,7 @@ class GStreamerError(Exception):
 
 class UnknownTypeError(GStreamerError):
     """Raised when Gstreamer can't decode the given file type."""
+
     def __init__(self, streaminfo):
         super(UnknownTypeError, self).__init__(
             "can't decode stream: " + streaminfo
@@ -100,6 +100,7 @@ class NoStreamError(GStreamerError):
     """Raised when the file was read successfully but no audio streams
     were found.
     """
+
     def __init__(self):
         super(NoStreamError, self).__init__('no audio streams found')
 
@@ -115,6 +116,7 @@ class IncompleteGStreamerError(GStreamerError):
     """Raised when necessary components of GStreamer (namely, the
     principal plugin packages) are missing.
     """
+
     def __init__(self):
         super(IncompleteGStreamerError, self).__init__(
             'missing GStreamer base plugins'
@@ -128,6 +130,7 @@ _loop_thread_lock = threading.RLock()
 
 GObject.threads_init()
 Gst.init(None)
+
 
 def get_loop_thread():
     """Get the shared main-loop thread.
@@ -144,6 +147,7 @@ def get_loop_thread():
 class MainLoopThread(threading.Thread):
     """A daemon thread encapsulating a Gobject main loop.
     """
+
     def __init__(self):
         super(MainLoopThread, self).__init__()
         self.loop = GLib.MainLoop()
@@ -153,6 +157,7 @@ class MainLoopThread(threading.Thread):
         self.loop.run()
 
 # The decoder.
+
 
 class GstAudioFile(object):
     """Reads raw audio data from any audio file that Gstreamer
@@ -171,24 +176,25 @@ class GstAudioFile(object):
     Alternatively, of course, one can just use the file as a context
     manager, as shown above.
     """
-    def __init__(self, path, num_channels = 2, samplerate = 44100, format = "F32LE", timeout = None, start_time = None, end_time = None):
-        self.duration       = None
-        self.track_length   = None
-        self.running        = False
-        self.finished       = False
-        self._num_channels  = num_channels
-        self._samplerate    = samplerate
-        self._format        = format
-        self._queue_timeout = timeout
-        self._start_time    = start_time
-        self._end_time      = end_time
-        self.pipeline       = Gst.Pipeline()
 
-        self.src      = Gst.ElementFactory.make("filesrc", None)
-        self.dec      = Gst.ElementFactory.make("decodebin", None)
-        self.conv     = Gst.ElementFactory.make("audioconvert", None)
+    def __init__(self, path, num_channels=2, samplerate=44100, format="F32LE", timeout=None, start_time=None, end_time=None):
+        self.duration = None
+        self.track_length = None
+        self.running = False
+        self.finished = False
+        self._num_channels = num_channels
+        self._samplerate = samplerate
+        self._format = format
+        self._queue_timeout = timeout
+        self._start_time = start_time
+        self._end_time = end_time
+        self.pipeline = Gst.Pipeline()
+
+        self.src = Gst.ElementFactory.make("filesrc", None)
+        self.dec = Gst.ElementFactory.make("decodebin", None)
+        self.conv = Gst.ElementFactory.make("audioconvert", None)
         self.resample = Gst.ElementFactory.make("audioresample", None)
-        self.sink     = Gst.ElementFactory.make("appsink", None)
+        self.sink = Gst.ElementFactory.make("appsink", None)
 
         if self.src is None or \
            self.dec is None or \
@@ -219,7 +225,8 @@ class GstAudioFile(object):
         # We want short integer data.
         self.sink.set_property(
             'caps',
-            Gst.Caps.from_string('audio/x-raw, format=(string)F32LE, rate=(int)%s, channels=(int)%s'%(self._samplerate, self._num_channels)),
+            Gst.Caps.from_string('audio/x-raw, format=(string)F32LE, rate=(int)%s, channels=(int)%s' %
+                                 (self._samplerate, self._num_channels)),
         )
 
         # TODO set endianness?
@@ -265,7 +272,7 @@ class GstAudioFile(object):
         self.read_exc = None
 
         # Return as soon as the stream is ready!
-        self.running  = True
+        self.running = True
         self.got_caps = False
         self.pipeline.set_state(Gst.State.PLAYING)
         self.ready_sem.acquire()
@@ -293,7 +300,7 @@ class GstAudioFile(object):
         # Query duration.
         success, length = pad.get_peer().query_duration(Gst.Format.TIME)
         if success:
-            self.track_length = length #/ 1000000000
+            self.track_length = length  # / 1000000000
             if self._end_time is not None:
                 if self._start_time is not None:
                     self.duration = self._end_time - self._start_time
@@ -351,7 +358,7 @@ class GstAudioFile(object):
             else:
                 result, data = buf.map(Gst.MapFlags.READ)
                 if result:
-                    buffer_bytes  = array.array('f', data.data)
+                    buffer_bytes = array.array('f', data.data)
                     buf.unmap(data)
 
                 self.queue.put((position, buffer_bytes))

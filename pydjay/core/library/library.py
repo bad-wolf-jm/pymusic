@@ -1,4 +1,4 @@
-#init
+# init
 import os
 import cPickle as pickle
 import time
@@ -8,22 +8,26 @@ from queue import PlayQueue
 from short_list import ShortList
 from track_set import TrackSet
 
+
 class MusicLibrary(object):
 
-    def __init__(self, root_folder = None):
+    def __init__(self, root_folder=None):
         super(MusicLibrary, self).__init__()
         self._root_folder = root_folder
         self._state_folder = os.path.join(self._root_folder, 'state')
 
-        self._short_list         = ShortList(self, self._state_folder, 'short_list', display_name = 'Short list')
-        self._main_queue         = PlayQueue(self, self._state_folder, 'queue')
-        self._current_session    = FilePlaylist(self, self._state_folder, 'current_session', auto_save = True,  display_name = 'Current session')
-        self._unavailable_tracks = TrackSet(self, self._state_folder, 'unavailable_tracks', auto_save = True)
-        self._sessions           = {}
-        self._playlists          = {}
-        self._library            = {}
-        self._genres_count       = {}
-        self._styles_count       = {}
+        self._short_list = ShortList(self, self._state_folder,
+                                     'short_list', display_name='Short list')
+        self._main_queue = PlayQueue(self, self._state_folder, 'queue')
+        self._current_session = FilePlaylist(
+            self, self._state_folder, 'current_session', auto_save=True,  display_name='Current session')
+        self._unavailable_tracks = TrackSet(
+            self, self._state_folder, 'unavailable_tracks', auto_save=True)
+        self._sessions = {}
+        self._playlists = {}
+        self._library = {}
+        self._genres_count = {}
+        self._styles_count = {}
 
         structure = ['state', 'sessions', 'image_cache', 'wave_cache', 'playlists']
 
@@ -51,7 +55,6 @@ class MusicLibrary(object):
                 name, ext = os.path.splitext(session)
                 self._sessions[name] = FilePlaylist(self, session_folder, name)
 
-
         for loc, info, metadata in self._library.values():
             sty = metadata.get('style', 'N/A')
             gen = metadata.get('genre', 'N/A')
@@ -72,7 +75,8 @@ class MusicLibrary(object):
     def save(self):
         if self._root_folder is not None:
             foo = open(os.path.join(self._root_folder, "library.data"), "w")
-            tracks = [(key, self._library[key][0], self._library[key][1], self._library[key][2]) for key in _library]
+            tracks = [(key, self._library[key][0], self._library[key]
+                       [1], self._library[key][2]) for key in _library]
             pickle.dump(tracks, foo)
             foo.close()
 
@@ -86,25 +90,16 @@ class MusicLibrary(object):
         return TrackList(name, [self[x] for x in self._library])
 
     def get_all_styles(self):
-        styles = set([])
-        for loc, info, metadata in self._library.values():
-            styles.add(metadata.get('style', None))
-        styles = sorted(list(styles))
-        return [self.get_style_by_name(g) for g in styles]
+        return [self.get_style_by_name(g) for g in sorted(self._styles_count)]
 
     def get_style_by_name(self, name):
         return FilteredPlaylist(self, 'style', 'equals', name, self._styles_count.get(name, None))
 
     def get_all_genres(self):
-        genres = set([])
-        for loc, info, metadata in self._library.values():
-            genres.add(metadata.get('genre', None))
-        genres = sorted(list(genres))
-        return [self.get_genre_by_name(g) for g in genres]
+        return [self.get_genre_by_name(g) for g in sorted(self._genres_count)]
 
     def get_genre_by_name(self, name):
         return FilteredPlaylist(self, 'genre', 'equals', name, self._genres_count.get(name, None))
-
 
     def get_all_playlists(self):
         return [self._playlists[x] for x in self._playlists]

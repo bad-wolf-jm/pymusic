@@ -1,29 +1,29 @@
-import os
-import re
-import mimetypes
-import array
-from functools import partial
-from threading import Thread
-from os.path import getsize
-from datetime import datetime
-from kivy.core.window import Window
-#from kivy.graphics import Mesh, Color, Rectangle, Line, RoundedRectangle, Ellipse, Triangle
-from kivy.clock import mainthread, Clock
+# import os
+# import re
+# import mimetypes
+# import array
+# from functools import partial
+# from threading import Thread
+# from os.path import getsize
+# from datetime import datetime
+# from kivy.core.window import Window
+# from kivy.graphics import Mesh, Color, Rectangle, Line, RoundedRectangle, Ellipse, Triangle
+from kivy.clock import Clock
 from kivy.lang import Builder
-#from kivy.properties import ObjectProperty
-from kivy.uix.boxlayout import BoxLayout
-#from kivy.uix.relativelayout import RelativeLayout
-from kivy.uix.widget import Widget
-from kivy.uix.label import Label
-from kivy.properties import ObjectProperty, NumericProperty, StringProperty
+# from kivy.properties import ObjectProperty
+# from kivy.uix.boxlayout import BoxLayout
+# from kivy.uix.relativelayout import RelativeLayout
+# from kivy.uix.widget import Widget
+# from kivy.uix.label import Label
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.factory import Factory
-#from kivy.uix.popup import Popup
+# from kivy.uix.popup import Popup
 from kivy.uix.modalview import ModalView
-#from elements import waveform_seekbar#screen, paged_grid, paged_display
-#from elements.utils import seconds_to_human_readable
-#from kivy.animation import Animation
+# from elements import waveform_seekbar#screen, paged_grid, paged_display
+# from elements.utils import seconds_to_human_readable
+# from kivy.animation import Animation
 import pydjay.bootstrap
-#import pydjay.ui.track_short_list_modal
+# import pydjay.ui.track_short_list_modal
 import pydjay.ui.dialogs.track_list
 
 
@@ -88,10 +88,11 @@ kv_string = """
 """
 
 class PlaylistSelector(ModalView):
-    short_list     = ObjectProperty(None)
+    short_list = ObjectProperty(None)
     item_count = StringProperty("")
 
     def __init__(self, *args, **kw):
+        """Doc."""
         super(PlaylistSelector, self).__init__(*args, **kw)
         self._drag_payload = None
         self.register_event_type('on_playlist_selected')
@@ -101,12 +102,14 @@ class PlaylistSelector(ModalView):
         pass
 
     def on_playlist_selected(self, *a):
+        """Doc."""
         pass
 
     def open(self, title, pl_list):
+        """Doc."""
         super(PlaylistSelector, self).open()
         self.title = title
-        self.short_list.set_track_list(pl_list, sort = False)
+        self.short_list.set_track_list(pl_list, sort=False)
         N = len(pl_list)
         if N == 1:
             self.item_count = "1 item"
@@ -116,33 +119,35 @@ class PlaylistSelector(ModalView):
         self.short_list.focus()
 
     def dismiss(self):
+        """Doc."""
         super(PlaylistSelector, self).dismiss()
 
     def _select_playlist(self):
-        #print self.short_list.current_selection
+        """Doc."""
+        # print self.short_list.current_selection
         self.dispatch('on_playlist_selected', self.short_list.current_selection['item'].track)
         self.dismiss()
 
-    #def do_filter(self, window, text):
+    # def do_filter(self, window, text):
     #    self.short_list.short_list.do_filter(text)
 
     def _keyboard_closed(self):
+        """Doc."""
         self._keyboard.unbind(on_key_down = self._on_keyboard_down)
         self._keyboard = None
 
     def request_focus(self, *a):
+        """Doc."""
         pass
 
-
-
-    #def remove_unavailable_tracks(self, *a):
+    # def remove_unavailable_tracks(self, *a):
     #    foo = RemoveUnavailableDialog(self)
     #    foo.open()
-#
-#    def do_remove_unavailable_tracks(self):
-#        tracks = [x for x in pydjay.bootstrap.get_short_list() if pydjay.bootstrap.track_is_available(x)]
-#        pydjay.bootstrap.set_short_list(tracks)
-##        self.short_list.focus()
+    #
+    #    def do_remove_unavailable_tracks(self):
+    #        tracks = [x for x in pydjay.bootstrap.get_short_list() if pydjay.bootstrap.track_is_available(x)]
+    #        pydjay.bootstrap.set_short_list(tracks)
+    #        self.short_list.focus()
 
 
 Builder.load_string(kv_string)

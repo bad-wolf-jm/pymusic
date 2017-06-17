@@ -165,11 +165,10 @@ kv_string_item = """
 """
 
 
-
 class MasterQueueTrackCard(TrackListItemBase):
     play_time = StringProperty("")
 
-    def __init__(self, row = None, item = None, view = None, drag_context = None, *args, **kwargs):
+    def __init__(self, row=None, item=None, view=None, drag_context=None, *args, **kwargs):
         super(MasterQueueTrackCard, self).__init__(*args, **kwargs)
         self.__initialize__(row, item, view, drag_context)
 
@@ -183,13 +182,14 @@ class MasterQueueTrackCard(TrackListItemBase):
                 The data dict used to populate this view.
         '''
 
-        self.__initialize__(data['row'], data['item'], data['view'], data['drag_context'], data['is_selected'])
+        self.__initialize__(data['row'], data['item'], data['view'],
+                            data['drag_context'], data['is_selected'])
 
-    def __initialize__(self, row = None, item = None, view = None, drag_context = None, is_selected = False, *args, **kwargs):
+    def __initialize__(self, row=None, item=None, view=None, drag_context=None, is_selected=False, *args, **kwargs):
         super(MasterQueueTrackCard, self).__initialize__(row, item, view, drag_context, is_selected)
         if self._item is not None:
             self.play_time = self._item_data.play_time
-            self._item_data.bind(play_time = self._play_time_change)
+            self._item_data.bind(play_time=self._play_time_change)
 
             if self._item.metadata.album_cover is not None:
                 try:
@@ -200,10 +200,10 @@ class MasterQueueTrackCard(TrackListItemBase):
             else:
                 self.album_art.source = 'atlas://pydjay/gui/images/resources/default_album_cover'
         else:
-            self.title  = ""
+            self.title = ""
             self.artist = ""
-            self.album  = ""
-            self.bpm    = ""
+            self.album = ""
+            self.bpm = ""
             self.length = ""
 
     def _play_time_change(self, obj, new_value):

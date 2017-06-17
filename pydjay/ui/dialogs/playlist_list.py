@@ -13,7 +13,6 @@ from kivy.factory import Factory
 from pydjay.ui.elements.utils import seconds_to_human_readable
 
 
-
 from kivy.core.window import Window
 from pydjay.ui.elements import large_track_list
 from pydjay.ui.behaviors.track_list_behaviour import TrackListBehaviour
@@ -40,6 +39,7 @@ kv_string = """
         on_touch_down: root._on_list_touch_down(*args)
 """
 
+
 class DragContext:
     def __init__(self, drag, drop):
         self.drag = drag
@@ -49,25 +49,23 @@ class DragContext:
 class PlaylistList(BoxLayout, TrackListBehaviour):
     master_list = ObjectProperty(None)
     dim_unavailable_tracks = ObjectProperty(None)
-    short_list  = ObjectProperty(None)
+    short_list = ObjectProperty(None)
     preview_player = ObjectProperty(None)
     search_filter = ObjectProperty(None)
     total_track_count = StringProperty("")
     title = StringProperty("")
 
-
     def __init__(self, *args, **kwargs):
         super(PlaylistList, self).__init__(*args, **kwargs)
-        Clock.schedule_once(self._post_init,-1)
+        Clock.schedule_once(self._post_init, -1)
         self.drag_context_sl = DragContext(self._start_drag_sl, self._drop_sl)
         self.has_focus = False
         self._current_selection = None
         self.mobile_selection = True
 
-
     def _post_init(self, *args):
-        play_queue.bind(on_queue_content_change =  self._update_availability)
-        session_manager.bind(on_current_session_changed = self._update_availability)
+        play_queue.bind(on_queue_content_change=self._update_availability)
+        session_manager.bind(on_current_session_changed=self._update_availability)
         self.adapter = self.short_list.adapter
         self.list_view = self.short_list.list_view
         self.list_view.layout_manager.default_size = 60
@@ -102,20 +100,20 @@ class PlaylistList(BoxLayout, TrackListBehaviour):
                     self.add_shortlist_track(self.window._drag_payload)
                     self.window.drop()
 
-    def add_shortlist_track(self, track, index = None):
+    def add_shortlist_track(self, track, index=None):
         self.short_list.add_track(track, index, self._track_is_available)
 
     def _convert_sl(self, row, item):
         return {'row': row,
                 'item': item,
                 'view': self,
-                'drag_context':self.drag_context_sl,
+                'drag_context': self.drag_context_sl,
                 'is_selected': False}
 
     def _on_list_touch_down(self, window, event):
         pass
 
-    def set_track_list(self, list, sort = True):
+    def set_track_list(self, list, sort=True):
         self.short_list.set_track_list(list, sort, self._track_is_available)
 
 

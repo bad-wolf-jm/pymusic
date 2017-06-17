@@ -19,7 +19,7 @@ from kivy.properties import ObjectProperty, NumericProperty
 from kivy.factory import Factory
 from kivy.uix.popup import Popup
 from kivy.uix.modalview import ModalView
-from elements import waveform_seekbar#screen, paged_grid, paged_display
+from elements import waveform_seekbar  # screen, paged_grid, paged_display
 from elements.utils import seconds_to_human_readable
 from kivy.animation import Animation
 import pydjay.bootstrap
@@ -107,21 +107,22 @@ kv_remove_unavailable_string = """
 
 """
 
+
 class RemoveUnavailableDialog(ModalView):
-    short_list     = ObjectProperty(None)
+    short_list = ObjectProperty(None)
     sl_track_count = ObjectProperty(None)
 
     def __init__(self, parent, *args, **kw):
         super(RemoveUnavailableDialog, self).__init__(*args, **kw)
         self._parent = parent
+
     def remove_unavailable_tracks(self):
         self._parent.do_remove_unavailable_tracks()
         self.dismiss()
 
+
 Builder.load_string(kv_remove_unavailable_string)
 Factory.register('RemoveUnavailableDialog', RemoveUnavailableDialog)
-
-
 
 
 kv_string = """
@@ -241,23 +242,24 @@ kv_string = """
                 on_press: root.remove_unavailable_tracks()
 """
 
+
 class ShortListView(ModalView):
-    short_list     = ObjectProperty(None)
+    short_list = ObjectProperty(None)
     sl_track_count = ObjectProperty(None)
 
     def __init__(self, *args, **kw):
         super(ShortListView, self).__init__(*args, **kw)
-        self.bind(on_dismiss = lambda *a: pydjay.bootstrap.preview_player.stop())
+        self.bind(on_dismiss=lambda *a: pydjay.bootstrap.preview_player.stop())
         self._drag_payload = None
         Clock.schedule_once(self._post_init, -1)
 
     def _post_init(self, *a):
-        self.short_list.short_list.adapter.bind(data = self._update_sl_track_count)
+        self.short_list.short_list.adapter.bind(data=self._update_sl_track_count)
         pass
 
     def open(self):
         super(ShortListView, self).open()
-        self.short_list.set_track_list(pydjay.bootstrap.get_short_list(), sort = False)
+        self.short_list.set_track_list(pydjay.bootstrap.get_short_list(), sort=False)
         self._update_sl_track_count()
         self.short_list.focus()
 
@@ -269,7 +271,7 @@ class ShortListView(ModalView):
         self.short_list.short_list.do_filter(text)
 
     def _keyboard_closed(self):
-        self._keyboard.unbind(on_key_down = self._on_keyboard_down)
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None
 
     def _update_sl_track_count(self, *args):
@@ -282,8 +284,9 @@ class ShortListView(ModalView):
             except:
                 pass
         track_count_text = "[color=#ffffff]" + str(num) + " tracks " + "[/color]" + \
-                            "[color=#999999] | [/color]"+ \
-                            "[color=#cccccc]" + seconds_to_human_readable(time / 1000000000) + "[/color]"
+            "[color=#999999] | [/color]" + \
+            "[color=#cccccc]" + \
+            seconds_to_human_readable(time / 1000000000) + "[/color]"
         self.sl_track_count.text = track_count_text
 
     def request_focus(self, *a):
@@ -294,9 +297,10 @@ class ShortListView(ModalView):
         foo.open()
 
     def do_remove_unavailable_tracks(self):
-        tracks = [x for x in pydjay.bootstrap.get_short_list() if pydjay.bootstrap.track_is_available(x)]
+        tracks = [x for x in pydjay.bootstrap.get_short_list(
+        ) if pydjay.bootstrap.track_is_available(x)]
         pydjay.bootstrap.set_short_list(tracks)
-        self.short_list.set_track_list(pydjay.bootstrap.get_short_list(), sort = False)
+        self.short_list.set_track_list(pydjay.bootstrap.get_short_list(), sort=False)
         self._update_sl_track_count()
         self.short_list.focus()
 

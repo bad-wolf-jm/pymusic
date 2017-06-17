@@ -1,19 +1,20 @@
-import os
+#import os
 import threading
 from decoder import GstAudioFile
 from output_jack import JackOutput
 
+
 class AudioPlayer(object):
-    def __init__(self, player_name = None, num_channels = 2, **kw):
+    def __init__(self, player_name=None, num_channels=2, **kw):
         object.__init__(self)
-        self._current_time  = None
-        self.player_name    = player_name
-        self.num_channels   = num_channels
-        self._is_playing    = False
+        self._current_time = None
+        self.player_name = player_name
+        self.num_channels = num_channels
+        self._is_playing = False
         self._player_thread = None
-        self._decoder       = None
-        self._output        = JackOutput(self.player_name, self.num_channels)
-        self.state          = None
+        self._decoder = None
+        self._output = JackOutput(self.player_name, self.num_channels)
+        self.state = None
         self.track_duration = None
         self.track_position = None
 
@@ -41,7 +42,7 @@ class AudioPlayer(object):
     def _player_loop(self):
         eos = False
         has_duration = False
-        iteration = 0
+        #iteration = 0
         while self._is_playing:
             try:
                 timestamp, samples = self._decoder.next()
@@ -60,18 +61,19 @@ class AudioPlayer(object):
         if eos:
             self.on_end_of_stream()
 
-    def play(self, filename, start_time = None, end_time = None):
-        self.stop(flush = True)
-        self._file  = filename
+    def play(self, filename, start_time=None, end_time=None):
+        self.stop(flush=True)
+        self._file = filename
         try:
-            self._decoder  = GstAudioFile(self._file, self._output.num_channels, self._output.samplerate, 'F32LE', None, start_time, end_time)
+            self._decoder = GstAudioFile(
+                self._file, self._output.num_channels, self._output.samplerate, 'F32LE', None, start_time, end_time)
             if start_time is not None:
                 self._decoder.set_start_time(start_time)
                 self._output.reset_timer(start_time)
             else:
                 self._output.reset_timer(0)
-            self._player_thread = threading.Thread(target = self._player_loop)
-            self._is_playing    = True
+            self._player_thread = threading.Thread(target=self._player_loop)
+            self._is_playing = True
             self._player_thread.start()
             self.state = "playing"
         except IOError:
@@ -80,7 +82,7 @@ class AudioPlayer(object):
             print details
             self.state = 'stopped'
 
-    def stop(self, flush = False):
+    def stop(self, flush=False):
         self._is_playing = False
         if flush:
             self._output.flush_buffer()
@@ -88,11 +90,11 @@ class AudioPlayer(object):
         if self._player_thread is not None:
             self._player_thread.join()
         self._player_thread = None
-        self._decoder       = None
+        self._decoder = None
         self.on_track_length(None)
         self.on_track_duration(None)
         self.on_track_position(None)
-        self.state          = "stopped"
+        self.state = "stopped"
 
     def pause(self):
         self.state = "paused"

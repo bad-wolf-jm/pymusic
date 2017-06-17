@@ -20,7 +20,7 @@ from kivy.uix.modalview import ModalView
 from elements import widgets, waveform_seekbar
 from elements.utils import seconds_to_human_readable
 #from pydjay.gui import volume_slider
-from pydjay.utils.protocol import MAGIC
+#from pydjay.utils.protocol import MAGIC
 
 from kivy.logger import Logger
 import pydjay.bootstrap
@@ -34,14 +34,8 @@ kv_string = """
     artist_label:         artist_label
     title_label:          title_label
     time_remaining_label: time_remaining
-    #player_stopped:       player_stopped.__self__
-    #main_player_volume:   main_player_volume
     start_queue_button:    start_queue_button
-    #stopping_message: stopping_message
     orientation: 'horizontal'
-    size_hint: 1, 1
-    #skip_to_next_overlay: skip_to_next_overlay.__self__
-    #countdown: countdown.__self__
     size_hint: 1, 1
 
     StencilView:
@@ -89,7 +83,6 @@ kv_string = """
                                         id: title_label
                                         font_size:'20sp'
                                         bold: True
-                                        #color: 0,0,0,1
                                         text: 'TITLE OF SONG'
                                         text_size: self.size
                                         halign: 'left'
@@ -104,7 +97,6 @@ kv_string = """
                                         font_size:'20sp'
                                         width: 75
                                         bold: True
-                                        #color: 0.8,0.8,0.8,1
                                         text: "0:00"
                                         text_size: self.size
                                         halign: 'left'
@@ -145,45 +137,7 @@ kv_string = """
                                             valign:'middle'
                                             shorten: True
                                             ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-
                                             font_size: 12
-                                            #size_hint: 1, None
-                                            #height:35
-
-                                    #HorizontalBox:
-                                    #    size_hint: 1,1
-                                    #    padding: [5,10,5,3]
-                                    #    Button:
-                                    #        id: start_queue_button
-                                    #        size_hint: None, 1
-                                    #        size: 100,40
-                                    #        pos_hint: {'center_y': .5}
-                                    #        text: ''
-                                    #        font_size: 20
-                                    #        on_press: root.start_queue() #_start_play()
-                                    #        pos: self.parent.width - 130, 10
-
-                                    #    Label:
-                                    #        id: stopping_message
-                                    #        size_hint: None, None
-                                    #        pos_hint: {'center_y': .5}
-                                    #        halign: 'center'
-                                    #        valign: 'middle'
-                                    #        size: 125,75
-                                    #        text_size: self.size
-                                    #        text: ''
-                                    #        font_size: 15
-                                    #        pos: self.parent.width - 130, 65
-
-
-
-                                    #ImageButton:
-                                    #    size_hint: None, None
-                                    #    size: 25,25
-                                    #    pos_hint: {'top': 1}
-                                    #    #text: 'SL'
-                                    #    image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
-                                    #    on_press: root.show_eject_panel()
 
                                     ImageButton:
                                         id: start_queue_button
@@ -211,112 +165,10 @@ kv_string = """
                                         image:'atlas://pydjay/gui/images/resources/settings'
                                         on_press: root.show_settings_panel()
 
-
-
-
                     HDivider:
                     WaveformSeekbar:
                         size_hint: 1, .5
                         id: seekbar
-
-            #RelativeLayout:
-            #    size_hint: 1,1
-            #    id: skip_to_next_overlay
-            #    canvas:
-            #        Color:
-            #            rgba: .3,0.3,0.3,.98
-            #        Rectangle:
-            #            size: self.size
-            #            pos: self.pos
-            #    Button:
-            #        size_hint: None, None
-            #        size: 100,50
-            #        pos_hint:{'center_x':.25, 'center_y':.5}
-            #        text: "EJECT"
-            #        #disabled: not root.show_force_skip
-            #        on_press: root.immediate_stop()
-#
-#                Button:
-#                    size_hint: None, None
-#                    size: 100,50
-#                    pos_hint:{'center_x':.75, 'center_y':.5}
-#                    text: "SKIP"
-#                    #disabled: not root.show_force_skip
-#                    on_press: root.play_next_track()
-#                Button:
-#                    size_hint: None, None
-#                    size: 75,25
-#                    pos_hint:{'right':1, 'y':0}
-#                    text: "Cancel"
-#                    #disabled: not root.show_force_skip
-#                    on_press: root.dismiss_eject_panel()
-
-#            RelativeLayout:
-#                size_hint: 1,1
-#                id: countdown
-#                disabled: False
-#                #opacity: 1 if root.show_force_skip else 0
-#                canvas:
-#                    Color:
-#                        rgba: 0,0,0,.8
-#                    Rectangle:
-#                        size: self.size
-#                        pos: 0,0 #self.pos
-#
-#                BoxLayout:
-#                    orientation: 'vertical'
-#                    size_hint: .5, 1
-#                    pos_hint: {'center_x':.5, 'center_y':.5}
-#                    height: 50
-#                    spacing: 10
-#                    padding:[0,10,0,10]
-#                    Label:
-#                        size_hint: 1,1
-#                        height: 40
-#                        font_size: 20
-#                        markup: True
-#                        halign: 'center'
-#                        valign: 'top'
-#                        text_size: self.size
-#                        text: root.countdown_timeout
-#                    Button:
-#                        id: start_queue_button_XXX
-#                        size_hint: None, None
-#                        size: 200,40
-#                        pos_hint:{'center_x':.5, 'center_y':.5}
-#                        text: "PLAY NOW"
-#                        #disabled: not root.show_force_skip
-#                        on_press: root.play_next_track()
-
-
-            #RelativeLayout:
-            #    size_hint: 1,1
-            #    id: player_stopped
-            #    disabled: False
-            #    #opacity: 1 if root.show_force_skip else 0
-            #    canvas:
-            #        Color:
-            #            rgba: 0,0,0,.9
-            #        Rectangle:
-            #            size: self.size
-            #            pos: 0,0 #self.pos
-
-            #    BoxLayout:
-            #        orientation: 'vertical'
-            #        size_hint: .5, 1
-            #        pos_hint: {'center_x':.5, 'center_y':.5}
-            #        height: 50
-            #        spacing: 10
-            #        padding:[0,10,0,10]
-            #        Label:
-            #            size_hint: 1,1
-            #            height: 40
-            #            font_size: 20
-            #            markup: True
-            #            halign: 'center'
-            #            valign: 'middle'
-            #            text_size: self.size
-            #            text: "No track currently playing"
 """
 
 
@@ -384,6 +236,7 @@ stop_options_kv = """
 
 """
 
+
 class StopOptionsDialog(ModalView):
 
     def play_next_track(self):
@@ -397,7 +250,6 @@ class StopOptionsDialog(ModalView):
 
 Builder.load_string(stop_options_kv)
 Factory.register('StopOptionsDialog', StopOptionsDialog)
-
 
 
 settings_dialog_kv = """
@@ -535,7 +387,6 @@ settings_dialog_kv = """
 """
 
 
-
 class PlaybackSettingsDialog(ModalView):
     #stopping_message = ObjectProperty(None)
     #wait_time_input      = ObjectProperty(None)
@@ -550,9 +401,8 @@ class PlaybackSettingsDialog(ModalView):
 #        play_queue.bind(on_queue_content_change = self._watch_queue_data)
         Clock.schedule_once(self._post_init, -1)
 
-
     def _post_init(self, *args):
-        self.wait_time_input.text = "%s"%pydjay.bootstrap.playback_manager.wait_time
+        self.wait_time_input.text = "%s" % pydjay.bootstrap.playback_manager.wait_time
         #self.wait_time_input.bind(focus = self._toggle_keyboard_shortcuts)
 
 #    def _toggle_keyboard_shortcuts(self, *a):
@@ -614,49 +464,48 @@ class PlaybackSettingsDialog(ModalView):
 #            self.stopping_message.text = ""
 
 
-
 #    def _set_volume(self, *a):
 #        if self._volume_control is not None:
 #            self._volume_control.set_volume('main_player', self.volume)
+
 
 Builder.load_string(settings_dialog_kv)
 Factory.register('PlaybackSettingsDialog', PlaybackSettingsDialog)
 
 
 class MainPlayerDisplay(BoxLayout):
-    seekbar           = ObjectProperty(None)
-    title_label       = ObjectProperty(None)
-    artist_label      = ObjectProperty(None)
-    album_art         = ObjectProperty(None)
+    seekbar = ObjectProperty(None)
+    title_label = ObjectProperty(None)
+    artist_label = ObjectProperty(None)
+    album_art = ObjectProperty(None)
     #skip_to_next_overlay = ObjectProperty(None)
-    display_window       = ObjectProperty(None)
-    countdown            = ObjectProperty(None)
-    countdown_timeout    = StringProperty("")
-
+    display_window = ObjectProperty(None)
+    countdown = ObjectProperty(None)
+    countdown_timeout = StringProperty("")
 
     def __init__(self, *args, **kw):
         super(MainPlayerDisplay, self).__init__(*args, **kw)
-        self._track              = None
+        self._track = None
         self._duration = None
         self.countdown_timeout = ""
         self._countdown_timeout = 0
-        pydjay.bootstrap.playback_manager.bind(track               = self.set_track,
-                                               track_duration      = self._update,
-                                               track_position      = self._update,
-                                               remaining_time      = self._update,
-                                               on_end_of_stream    = self._on_eos,
-                                               on_queue_started    = self.dismiss_stopped_state,
-                                               on_queue_stopped    = self.display_stopped_state,
-                                               on_playback_started = self._on_playback_started)
-        pydjay.bootstrap.playback_manager.bind(queue_is_playing   = self._watch_queue_data,
-                                               queue_stop_request = self._on_queue_stop_request)
-        pydjay.bootstrap.play_queue.bind(on_queue_content_change = self._watch_queue_data)
+        pydjay.bootstrap.playback_manager.bind(track=self.set_track,
+                                               track_duration=self._update,
+                                               track_position=self._update,
+                                               remaining_time=self._update,
+                                               on_end_of_stream=self._on_eos,
+                                               on_queue_started=self.dismiss_stopped_state,
+                                               on_queue_stopped=self.display_stopped_state,
+                                               on_playback_started=self._on_playback_started)
+        pydjay.bootstrap.playback_manager.bind(queue_is_playing=self._watch_queue_data,
+                                               queue_stop_request=self._on_queue_stop_request)
+        pydjay.bootstrap.play_queue.bind(on_queue_content_change=self._watch_queue_data)
 
         Clock.schedule_once(self._post_init, -1)
 
     def _post_init(self, *args):
-        #self.display_window.remove_widget(self.skip_to_next_overlay)
-        #self.display_window.remove_widget(self.countdown)
+        # self.display_window.remove_widget(self.skip_to_next_overlay)
+        # self.display_window.remove_widget(self.countdown)
         #self.player_stopped.pos = 0,0
         pass
 
@@ -683,13 +532,11 @@ class MainPlayerDisplay(BoxLayout):
                 #self.stopping_message.text = ""
                 self.start_queue_button.disabled = True
 
-
     def start_queue(self):
         if not pydjay.bootstrap.playback_manager.queue_is_playing:
             pydjay.bootstrap.playback_manager.start_queue()
         else:
             pydjay.bootstrap.playback_manager.queue_stop_request = not pydjay.bootstrap.playback_manager.queue_stop_request
-
 
     def _blink(self, *a):
         self.start_queue_button.opacity = (0 if self.start_queue_button.opacity == 1 else 1)
@@ -716,13 +563,12 @@ class MainPlayerDisplay(BoxLayout):
         foo = StopOptionsDialog()
         foo.open()
 
-
     def show_settings_panel(self, *a):
         foo = PlaybackSettingsDialog()
         foo.open()
-        #self.display_window.add_widget(self.skip_to_next_overlay)
+        # self.display_window.add_widget(self.skip_to_next_overlay)
 
-    #def dismiss_eject_panel(self, *a):
+    # def dismiss_eject_panel(self, *a):
     #    self.display_window.remove_widget(self.skip_to_next_overlay)
 
     def _update_volume(self, *args):
@@ -739,33 +585,33 @@ class MainPlayerDisplay(BoxLayout):
 
     def immediate_stop(self):
         pydjay.bootstrap.playback_manager.immediate_stop(True)
-        #self.display_window.remove_widget(self.skip_to_next_overlay)
+        # self.display_window.remove_widget(self.skip_to_next_overlay)
 
     def _update_countdown(self, *a):
         self._countdown_timeout -= 1
         if self._countdown_timeout > 0:
-            self.countdown_timeout = '[color=#aaaaaa]Next track will play in [/color] [b]%s seconds[/b]'% self._countdown_timeout
+            self.countdown_timeout = '[color=#aaaaaa]Next track will play in [/color] [b]%s seconds[/b]' % self._countdown_timeout
         else:
-            self.countdown_timeout = "" #s[b]The next track should be playing now...[/b]"
+            self.countdown_timeout = ""  # s[b]The next track should be playing now...[/b]"
 
     def display_countdown(self, timeout):
         self._countdown_timeout = timeout
-        self.countdown_timeout = "[color=#aaaaaa]Next track will play in: [/color] [b]%s seconds[/b]"% self._countdown_timeout
+        self.countdown_timeout = "[color=#aaaaaa]Next track will play in: [/color] [b]%s seconds[/b]" % self._countdown_timeout
         Clock.schedule_interval(self._update_countdown, 1)
-        #self.display_window.add_widget(self.countdown) #.pos = 0,0
+        # self.display_window.add_widget(self.countdown) #.pos = 0,0
 
     def dismiss_countdown(self, *args):
         Clock.unschedule(self._update_countdown)
         self.countdown_timeout = ""
-        #self.display_window.remove_widget(self.countdown)
+        # self.display_window.remove_widget(self.countdown)
 
     def display_stopped_state(self, timeout):
         pass
-        #elf.display_window.add_widget(self.player_stopped)
+        # elf.display_window.add_widget(self.player_stopped)
 
     def dismiss_stopped_state(self, *args):
         pass
-        #self.display_window.remove_widget(self.player_stopped)
+        # self.display_window.remove_widget(self.player_stopped)
 
     def _on_eos(self, *args):
         Logger.info('MainPlayer: End of stream %s', self._track)
@@ -774,14 +620,15 @@ class MainPlayerDisplay(BoxLayout):
     def play_next_track(self):
         Logger.info('MainPlayer: Skipping end of track <%s>', self._track)
         self._duration = None
-        #self.display_window.remove_widget(self.skip_to_next_overlay)
+        # self.display_window.remove_widget(self.skip_to_next_overlay)
         pydjay.bootstrap.playback_manager.play_next_track()
 
     def set_track(self, i, track):
         Logger.info('MainPlayer: Setting track')
         self._track = track
         if self._track is not None:
-            self.artist_label.text = (self._track.metadata.artist + u' - ' + self._track.metadata.album).upper()
+            self.artist_label.text = (self._track.metadata.artist +
+                                      u' - ' + self._track.metadata.album).upper()
             self.title_label.text = (self._track.metadata.title).upper()
             if self._track.metadata.album_cover is not None:
                 try:
@@ -791,9 +638,10 @@ class MainPlayerDisplay(BoxLayout):
             else:
                 self.album_art.source = 'atlas://pydjay/gui/images/resources/default_album_cover'
 
-            Logger.info('MainPlayer: Setting the waveform to the track\'s waveform, track length: %s', self._track.info.length)
+            Logger.info(
+                'MainPlayer: Setting the waveform to the track\'s waveform, track length: %s', self._track.info.length)
             if self._track.info.length is not None:
-                self.seekbar.max_value      = self._track.info.stream_length
+                self.seekbar.max_value = self._track.info.stream_length
                 self.seekbar.waveform.x_max = self._track.info.stream_length
             try:
                 f = open(self._track.metadata.waveform, 'rb')
@@ -802,15 +650,15 @@ class MainPlayerDisplay(BoxLayout):
                 arr.fromfile(f, num_points)
                 ll = arr.tolist()
                 offset = 0
-                points = [ll[offset:offset+2] for offset in range(0, len(ll) - 1, 2)]
-                points = sorted(points, cmp = lambda x,y: cmp(x[0], y[0]))
-                self.seekbar.waveform.points =  points
+                points = [ll[offset:offset + 2] for offset in range(0, len(ll) - 1, 2)]
+                points = sorted(points, cmp=lambda x, y: cmp(x[0], y[0]))
+                self.seekbar.waveform.points = points
             except EOFError:
                 ll = arr.tolist()
                 offset = 0
-                points = [ll[offset:offset+2] for offset in range(0, len(ll) - 1, 2)]
-                points = sorted(points, cmp = lambda x,y: cmp(x[0], y[0]))
-                self.seekbar.waveform.points =  points
+                points = [ll[offset:offset + 2] for offset in range(0, len(ll) - 1, 2)]
+                points = sorted(points, cmp=lambda x, y: cmp(x[0], y[0]))
+                self.seekbar.waveform.points = points
             except Exception, details:
                 print details
                 self.seekbar.waveform.points = []
@@ -823,9 +671,9 @@ class MainPlayerDisplay(BoxLayout):
     def _update(self, *a):
         self._duration = pydjay.bootstrap.playback_manager.track_duration
         if self._duration is not None:
-            t_l =  pydjay.bootstrap.playback_manager.track_length
+            t_l = pydjay.bootstrap.playback_manager.track_length
             t_l = t_l if t_l is not None else self._duration
-            self.seekbar.max_value      = t_l
+            self.seekbar.max_value = t_l
             self.seekbar.waveform.x_max = t_l
         else:
             self.seekbar.max_value = 1
@@ -836,9 +684,9 @@ class MainPlayerDisplay(BoxLayout):
             self.time_remaining_label.text = ""
         else:
             position = min(position, duration)
-            self.time_remaining_label.text = "-"+seconds_to_human_readable((duration - position) / 1000000000)
+            self.time_remaining_label.text = "-" + \
+                seconds_to_human_readable((duration - position) / 1000000000)
             self.seekbar.value = position
-
 
 
 Builder.load_string(kv_string)

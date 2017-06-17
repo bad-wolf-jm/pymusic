@@ -1,14 +1,16 @@
-import zmq
-import threading
+# import zmq
+# import threading
 
 
 from pydjay.backend.command_server import RPCServer
 from pydjay.backend.push_server import PushServer
 from pydjay.core.audio.audio_player_base import AudioPlayer
 
+
 class AudioServer(AudioPlayer, RPCServer):
     """An RPC server for the audio player class"""
-    def __init__(self, player_name = None, num_channels = 2, port = 9999, event_port = 5557):
+
+    def __init__(self, player_name=None, num_channels=2, port=9999, event_port=5557):
         RPCServer.__init__(self, player_name, port)
         AudioPlayer.__init__(self, player_name, num_channels)
         self.event = PushServer(player_name, event_port)

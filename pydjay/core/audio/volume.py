@@ -15,16 +15,16 @@
 from __future__ import with_statement
 from __future__ import division
 
-import sys
+# import sys
 import threading
-import os
-import traceback
+# import os
+# import traceback
 import jack
-import time
-import array
+# import time
+# import array
 from multiprocessing import Process, Queue
 
-from decoder import get_loop_thread, GstAudioFile
+from decoder import get_loop_thread
 try:
     import queue
 except ImportError:
@@ -33,36 +33,36 @@ except ImportError:
 QUEUE_SIZE = 100
 BUFFER_SIZE = 100
 
+
 class VolumeControllerDriver(object):
-    def __init__(self, client_name = "PYDjayJackClient", num_channels_in = 2):
+    def __init__(self, client_name="PYDjayJackClient", num_channels_in=2):
         super(VolumeControllerDriver, self).__init__()
-        self.num_channels  = num_channels_in
-        self.client_name  = client_name
+        self.num_channels = num_channels_in
+        self.client_name = client_name
 
         self.volume = 1.0
 
-        self._jack_client   = jack.Client(client_name)
-        self.client_name    = self._jack_client.name
-        self.samplerate     = self._jack_client.samplerate
-        self.block_size     = self._jack_client.blocksize
-        self._output_ports  = []
-        self._input_ports   = []
-        self._volumes       = []
-        self._outputs       = {}
-        self._inputs        = {}
-        self._input_buffers = [] #array.array('f')
-        self.stream_time    = 0
-        self.closed          = False
+        self._jack_client = jack.Client(client_name)
+        self.client_name = self._jack_client.name
+        self.samplerate = self._jack_client.samplerate
+        self.block_size = self._jack_client.blocksize
+        self._output_ports = []
+        self._input_ports = []
+        self._volumes = []
+        self._outputs = {}
+        self._inputs = {}
+        self._input_buffers = []  # array.array('f')
+        self.stream_time = 0
+        self.closed = False
 
-        self._buffer_time   = int(self.block_size * 1.0 / self.samplerate * 1000000000)
-
+        self._buffer_time = int(self.block_size * 1.0 / self.samplerate * 1000000000)
 
         for i in range(self.num_channels):
             self._volumes.append(1.0)
-            port_name = "input_%s"%(i+1)
+            port_name = "input_%s" % (i + 1)
             self._input_ports.append(self._jack_client.inports.register(port_name))
             self._inputs[port_name] = self._input_ports[i]
-            port_name = "output_%s"%(i+1)
+            port_name = "output_%s" % (i + 1)
             self._output_ports.append(self._jack_client.outports.register(port_name))
             self._outputs[port_name] = self._output_ports[i]
 
@@ -71,12 +71,10 @@ class VolumeControllerDriver(object):
         self._jack_client.set_shutdown_callback(self._on_server_shutdown)
         self._jack_client.activate()
 
-
     def connect_outputs(self, **kwargs):
         for key in kwargs:
             port = self._outputs[key]
             self._jack_client.connect(port, kwargs[key])
-
 
     def disconnect_outputs(self, **kwargs):
         for key in kwargs:
@@ -110,7 +108,7 @@ class VolumeControllerDriver(object):
         self._jack_client.close()
         self.closed = True
 
-    def set_volumes(self, value = 1.0, channels = None):
+    def set_volumes(self, value=1.0, channels=None):
         if channels is not None:
             if isinstance(channels, list):
                 for i in range(len(channels)):
@@ -123,18 +121,17 @@ class VolumeControllerDriver(object):
                     self._volumes[channels - 1] = value
 
 
-
 class VolumeControllerProcess(Process):
-    def __init__(self, name = "", num_channels = 2, in_queue = None, out_queue = None):
+    def __init__(self, name="", num_channels=2, in_queue=None, out_queue=None):
         super(VolumeControllerProcess, self).__init__()
-        self.in_queue  = in_queue
+        self.in_queue = in_queue
         self.out_queue = out_queue
-        self.client_name  = name
+        self.client_name = name
         self.num_channels = num_channels
-        self.player    = None
+        self.player = None
 
     def run(self):
-        self.output_driver    = VolumeControllerDriver(self.client_name, self.num_channels)
+        self.output_driver = VolumeControllerDriver(self.client_name, self.num_channels)
         self.out_queue.put(('_init', (), {"client_name":  self.output_driver.client_name,
                                           "block_size":   self.output_driver.block_size,
                                           "samplerate":   self.output_driver.samplerate,
@@ -156,30 +153,30 @@ class VolumeControllerProcess(Process):
                 pass
         print "Closing Queue VC"
 
+
 class VolumeController(object):
-    def __init__(self, client_name = "PYDjayJackClient", num_channels = 2, *args, **kw):
-        #print 'GGGG'
+    def __init__(self, client_name="PYDjayJackClient", num_channels=2, *args, **kw):
+        # print 'GGGG'
         #super(VolumeController, self).__init__()
         object.__init__(self)
-        #print 'FFFF'
-        self.out_queue  = Queue(maxsize = 10)
-        self.in_queue   = Queue(maxsize = 1000)
+        # print 'FFFF'
+        self.out_queue = Queue(maxsize=10)
+        self.in_queue = Queue(maxsize=1000)
         self.ready_sem = threading.Semaphore(0)
         self._output_process = VolumeControllerProcess(client_name, num_channels,
                                                        self.out_queue, self.in_queue)
         self._output_process.daemon = True
         self._output_process.start()
         self._running = True
-        self._foo = threading.Thread(target = self._print_info)
+        self._foo = threading.Thread(target=self._print_info)
         self._foo.start()
         self.stream_time = 0
         self.ready_sem.acquire()
 
-
-    def _init(self, block_size = 0, samplerate = 0, client_name = "", num_channels = 0):
-        self.block_size   = block_size
-        self.samplerate   = samplerate
-        self.client_name  = client_name
+    def _init(self, block_size=0, samplerate=0, client_name="", num_channels=0):
+        self.block_size = block_size
+        self.samplerate = samplerate
+        self.client_name = client_name
         self.num_channels = num_channels
         self.ready_sem.release()
 
@@ -210,7 +207,7 @@ class VolumeController(object):
     def flush_buffer(self):
         pass
 
-    def reset_timer(self, timestamp = 0):
+    def reset_timer(self, timestamp=0):
         self.out_queue.put(('reset_timer', (), {'timestamp': timestamp}))
 
     def set_stream_time(self, time):

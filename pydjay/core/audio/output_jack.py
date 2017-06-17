@@ -15,16 +15,16 @@
 from __future__ import with_statement
 from __future__ import division
 
-import sys
+#import sys
 import threading
-import os
-import traceback
+#import os
+#import traceback
 import jack
-import time
+#import time
 import array
 from multiprocessing import Process, Queue
 
-from decoder import get_loop_thread, GstAudioFile
+from decoder import get_loop_thread
 
 try:
     import queue
@@ -35,25 +35,26 @@ except ImportError:
 QUEUE_SIZE = 100
 BUFFER_SIZE = 100
 
-class JackOutputDriver(object):
-    def __init__(self, client_name = "PYDjayJackClient", num_channels = 2):
-        self.num_channels = num_channels
-        self.client_name  = client_name
 
-        self._jack_client   = jack.Client(client_name)
-        self.client_name    = self._jack_client.name
-        self.samplerate     = self._jack_client.samplerate
-        self.block_size     = self._jack_client.blocksize
-        self._output_ports  = []
-        self._outputs       = {}
+class JackOutputDriver(object):
+    def __init__(self, client_name="PYDjayJackClient", num_channels=2):
+        self.num_channels = num_channels
+        self.client_name = client_name
+
+        self._jack_client = jack.Client(client_name)
+        self.client_name = self._jack_client.name
+        self.samplerate = self._jack_client.samplerate
+        self.block_size = self._jack_client.blocksize
+        self._output_ports = []
+        self._outputs = {}
         self._input_buffers = []
-        self.stream_time    = 0
-        self.buffer_time    = 0
-        self.closed          = False
-        self._buffer_time   = int(self.block_size * 1.0 / self.samplerate * 1000000000)
- 
+        self.stream_time = 0
+        self.buffer_time = 0
+        self.closed = False
+        self._buffer_time = int(self.block_size * 1.0 / self.samplerate * 1000000000)
+
         for i in range(num_channels):
-            port_name = "output_%s"%(i+1)
+            port_name = "output_%s" % (i + 1)
             self._output_ports.append(self._jack_client.outports.register(port_name))
             self._outputs[port_name] = self._output_ports[i]
             self._input_buffers.append(array.array('f'))
@@ -61,35 +62,33 @@ class JackOutputDriver(object):
 
         self._left_over = None
 
-        self._buffer_not_full = threading.Lock() 
+        self._buffer_not_full = threading.Lock()
         self._max_buffer_size = self.block_size * 30
-        self._buffer_size     = 0
-        
+        self._buffer_size = 0
+
         self._jack_client.set_process_callback(self._process)
         self._jack_client.set_blocksize_callback(self._blocksize_changed)
         self._jack_client.set_shutdown_callback(self._on_server_shutdown)
         self._jack_client.activate()
 
-
     def connect_outputs(self, **kwargs):
         for key in kwargs:
             port = self._outputs[key]
             self._jack_client.connect(port, kwargs[key])
-        
 
     def disconnect_outputs(self, **kwargs):
         for key in kwargs:
             port = self._outputs[key]
             self._jack_client.disconnect(port, kwargs[key])
-    
+
     def flush_buffer(self):
-        #pass
+        # pass
         self._buffer_size = 0
-        self.buffer_time  = 0
+        self.buffer_time = 0
         for channel_index in range(self.num_channels):
             self._input_buffers[channel_index] = []
 
-    def reset_timer(self, timestamp = 0):
+    def reset_timer(self, timestamp=0):
         self.stream_time = timestamp
 
     def _process(self, length):
@@ -116,37 +115,36 @@ class JackOutputDriver(object):
     def _blocksize_changed(self, block_size):
         self.block_size = block_size
         self._max_buffer_size = self.block_size * 30
-        
+
     def _on_server_shutdown(self, *a):
         pass
-    
+
     def close(self):
         self._jack_client.deactivate()
         self._jack_client.close()
         self.closed = True
-        
+
     def send(self, data):
         if self._buffer_size >= self._max_buffer_size:
             self._buffer_not_full.acquire()
         for offset in range(0, len(data), self.num_channels):
             for channel_index in range(self.num_channels):
-                self._input_buffers[channel_index].append(data[offset+channel_index])
+                self._input_buffers[channel_index].append(data[offset + channel_index])
         self._buffer_size += int(len(data) / 2)
         self.buffer_time = int(self._buffer_size * 1.0 / self.samplerate * 1000000000)
 
 
-
 class JackOutputProcess(Process):
-    def __init__(self, name = "", num_channels = 2, in_queue = None, out_queue = None):
+    def __init__(self, name="", num_channels=2, in_queue=None, out_queue=None):
         super(JackOutputProcess, self).__init__()
-        self.in_queue  = in_queue
+        self.in_queue = in_queue
         self.out_queue = out_queue
-        self.client_name  = name
+        self.client_name = name
         self.num_channels = num_channels
-        self.player    = None
+        self.player = None
 
     def run(self):
-        self.output_driver    = JackOutputDriver(self.client_name, self.num_channels)
+        self.output_driver = JackOutputDriver(self.client_name, self.num_channels)
         self.out_queue.put(('_init', (), {"client_name":  self.output_driver.client_name,
                                           "block_size":   self.output_driver.block_size,
                                           "samplerate":   self.output_driver.samplerate,
@@ -160,35 +158,35 @@ class JackOutputProcess(Process):
                 try:
                     getattr(self.output_driver, command)(*args, **kwargs)
                 except AttributeError, details:
-                    pass 
+                    pass
                 except Exception, details:
                     print 'y', details
             except queue.Empty, details:
                 pass
-            self.out_queue.put(('set_stream_time', (self.output_driver.stream_time,self.output_driver.buffer_time), {}))
+            self.out_queue.put(
+                ('set_stream_time', (self.output_driver.stream_time, self.output_driver.buffer_time), {}))
 
-            
+
 class JackOutput(object):
-    def __init__(self, client_name = "PYDjayJackClient", num_channels = 2, *args, **kw):
+    def __init__(self, client_name="PYDjayJackClient", num_channels=2, *args, **kw):
         super(JackOutput, self).__init__()
-        self.out_queue  = Queue(maxsize = 10)
-        self.in_queue   = Queue(maxsize = 100)
+        self.out_queue = Queue(maxsize=10)
+        self.in_queue = Queue(maxsize=100)
         self.ready_sem = threading.Semaphore(0)
         self._output_process = JackOutputProcess(client_name, num_channels,
                                                  self.out_queue, self.in_queue)
         self._output_process.daemon = True
         self._output_process.start()
         self._running = True
-        self._foo = threading.Thread(target = self._print_info)
+        self._foo = threading.Thread(target=self._print_info)
         self._foo.start()
         self.stream_time = 34
         self.ready_sem.acquire()
-    
 
-    def _init(self, block_size = 0, samplerate = 0, client_name = "", num_channels = 0):
-        self.block_size   = block_size
-        self.samplerate   = samplerate
-        self.client_name  = client_name
+    def _init(self, block_size=0, samplerate=0, client_name="", num_channels=0):
+        self.block_size = block_size
+        self.samplerate = samplerate
+        self.client_name = client_name
         self.num_channels = num_channels
         self.ready_sem.release()
 
@@ -200,17 +198,17 @@ class JackOutput(object):
                     break
                 try:
                     getattr(self, command)(*args, **kwargs)
-                    #time.sleep(.1)
+                    # time.sleep(.1)
                 except AttributeError, details:
                     print details
-                    pass 
+                    pass
                 except Exception, details:
                     print 'y', details
             except queue.Empty, details:
                 pass
             finally:
                 pass
- 
+
     def connect_outputs(self, **kwargs):
         self.out_queue.put(('connect_outputs', (), kwargs))
 
@@ -220,17 +218,17 @@ class JackOutput(object):
     def flush_buffer(self):
         self.out_queue.put(('flush_buffer', (), {}))
 
-    def reset_timer(self, timestamp = 0):
+    def reset_timer(self, timestamp=0):
         self.out_queue.put(('reset_timer', (), {'timestamp': timestamp}))
 
     def set_stream_time(self, time, b_time):
         self.stream_time = time
         self.buffer_time = b_time
-            
+
     def send(self, data):
-        #print 'sending'
+        # print 'sending'
         self.out_queue.put(('send', (data,), {}))
-        
+
     def close(self):
         self.out_queue.put(('close', (), {}))
         self.out_queue.cancel_join_thread()
@@ -239,6 +237,3 @@ class JackOutput(object):
         self._foo.join()
         self.out_queue.close()
         self.in_queue.close()
-
-
-

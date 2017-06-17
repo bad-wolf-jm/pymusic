@@ -29,27 +29,26 @@ class MainWindow(FloatLayout):
             self._drag_item.center_y = event.pos[1]
             return True
 
-
     def _delete_all_drag_items(self):
         foo = []
         for x in self.children:
             if isinstance(x, DragItem):
                 foo.append(x)
         for y in foo:
-            self.remove_widget(y)        
+            self.remove_widget(y)
 
     def drop(self):
         self._drag_item = None
         self._drag_payload = None
-        
+
     def _on_touch_up(self, window, event):
         self._is_dragging = False
         self._delete_all_drag_items()
-        
+
     def _on_touch_down(self, window, event):
         self._drag_payload = None
         self._delete_all_drag_items()
-    
+
     def start_drag(self, pos, track):
         if not self._is_dragging:
             foo = DragItem(track)

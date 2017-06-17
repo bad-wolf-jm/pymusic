@@ -1,19 +1,22 @@
-import os, sys, traceback
+import os
+import sys
+import traceback
 from kivy.event import EventDispatcher
 from kivy.properties import ObjectProperty, StringProperty, BooleanProperty
 from kivy.core.window import Window
 import pydjay.core.keyboard
 from pydjay.bootstrap import play_queue, session_manager, playback_manager
 
+
 class TrackListBehaviour(EventDispatcher):
     has_focus = BooleanProperty(False)
-    dim_unavailable_tracks     = BooleanProperty(True)
-    fixed_item_positions       = BooleanProperty(True)
-    can_delete_items           = BooleanProperty(False)
+    dim_unavailable_tracks = BooleanProperty(True)
+    fixed_item_positions = BooleanProperty(True)
+    can_delete_items = BooleanProperty(False)
     can_add_selection_to_queue = BooleanProperty(True)
-    adapter   = ObjectProperty(None)
-    queue     = ObjectProperty(None)
-    window    = ObjectProperty(None)
+    adapter = ObjectProperty(None)
+    queue = ObjectProperty(None)
+    window = ObjectProperty(None)
     list_view = ObjectProperty(None)
 
     def __init__(self, *args, **kwargs):
@@ -22,10 +25,10 @@ class TrackListBehaviour(EventDispatcher):
         self._keyboard = None
         self._keyboard_handlers = {'up':              self._on_up_arrow,
                                    'down':            self._on_down_arrow,
-                                   'shift+up' :       self._on_shift_up_arrow,
-                                   'shift+down' :     self._on_shift_down_arrow,
-                                   'shift+u' :        self._make_selection_unavailable,
-                                   'shift+a' :        self._make_selection_available,
+                                   'shift+up':       self._on_shift_up_arrow,
+                                   'shift+down':     self._on_shift_down_arrow,
+                                   'shift+u':        self._make_selection_unavailable,
+                                   'shift+a':        self._make_selection_available,
                                    'enter':           self._preview_current_selection,
                                    'u':               self._move_selection_up,
                                    'd':               self._move_selection_down,
@@ -36,7 +39,7 @@ class TrackListBehaviour(EventDispatcher):
     def focus(self):
         self.has_focus = True
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self, 'text')
-        self._keyboard.bind(on_key_down = self._on_keyboard_down)
+        self._keyboard.bind(on_key_down=self._on_keyboard_down)
         if self._current_selection is not None:
             row = self._current_selection
             row = max(min(row, len(self.adapter.data) - 1), 0)
@@ -64,7 +67,7 @@ class TrackListBehaviour(EventDispatcher):
                 self._current_selection = None
 
     def _keyboard_closed(self):
-        self._keyboard.unbind(on_key_down = self._on_keyboard_down)
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None
 
     def set_keyboard_handlers(self, d):
@@ -80,16 +83,16 @@ class TrackListBehaviour(EventDispatcher):
         return None
 
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
-        key_seq = "+".join(modifiers+[keycode[1]])
+        key_seq = "+".join(modifiers + [keycode[1]])
         if key_seq in self._keyboard_handlers:
             try:
                 self._keyboard_handlers[key_seq]()
             except Exception, details:
                 print "ERROR HANDLING KEY SEQUENCE", details
                 exc_type, exc_value, exc_traceback = sys.exc_info()
-                print '-'*60
+                print '-' * 60
                 traceback.print_exc(file=sys.stdout)
-                print '-'*60
+                print '-' * 60
                 print details
         else:
             pydjay.core.keyboard.key_map.key_pressed(keycode, modifiers)

@@ -1,44 +1,45 @@
-import os
-import re
+""" Application's main screen."""
+# import os
+# import re
 import time
-import mimetypes
+# import mimetypes
 
-from functools import partial
-from threading import Thread
-from os.path import getsize
-from datetime import datetime
+# from functools import partial
+# from threading import Thread
+# from os.path import getsize
+# from datetime import datetime
 
-from kivy.clock import mainthread, Clock
+from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
-from kivy.uix.boxlayout import BoxLayout
+# from kivy.uix.boxlayout import BoxLayout
 
-from kivy.properties import ObjectProperty
-from kivy.factory import Factory
+# from kivy.properties import ObjectProperty
+# from kivy.factory import Factory
 
-from kivy.uix.popup import Popup
+# from kivy.uix.popup import Popup
 
 import main_queue
 import player_display
 import player_deck
-#import .clickable_area
+# import .clickable_area
 
 
-from kivy.animation import Animation
+# from kivy.animation import Animation
 
 from elements.main_window import MainWindow
 from track_editor import TrackEditor
-#from playlist_editor import PlaylistEditor
-#from shortlist_view import ShortListView
+# from playlist_editor import PlaylistEditor
+# from shortlist_view import ShortListView
 from dialogs.playlist_view import PlaylistView
 
 
 from dialogs.playlist_selector import PlaylistSelector
 
-#from dialogs.playlist_chooser import PlaylistChooser
-#from dialogs.session_chooser import SessionChooser
-#from dialogs.genre_chooser import GenreChooser
-#from dialogs.style_chooser import StyleChooser
+# from dialogs.playlist_chooser import PlaylistChooser
+# from dialogs.session_chooser import SessionChooser
+# from dialogs.genre_chooser import GenreChooser
+# from dialogs.style_chooser import StyleChooser
 
 #from current_session_view import CurrentSessionView
 from preview_player import PreviewPlayer
@@ -49,6 +50,7 @@ from track_short_list import TrackShortList
 from kivy.uix.treeview import TreeViewLabel
 
 import pydjay.bootstrap
+from pydjay.core.keyboard import key_map
 
 kv_string = """
 <MainScreen>:
@@ -202,38 +204,40 @@ kv_string = """
 
 """
 
-from pydjay.core.keyboard import key_map
 
 class MainScreen(MainWindow):
-    def __init__(self, main_player, preview_player, volume_control, *args, **kwargs):
+    def __init__(self, main_player, preview_player, volume_control,
+                 *args, **kwargs):
         super(MainScreen, self).__init__(*args, **kwargs)
         self.m_p = main_player
         Clock.schedule_once(self._post_init, -1)
-        Clock.schedule_interval(self._update_time, 1)
+        Clock.schedule_interval(self._update_time, 60)
         self._preview_player_visible = False
         self._anim = None
         self._volume_control = volume_control
         self._preview_player = preview_player
 
-        key_map.bind(on_edit_track = self._show_track_editor)
-        key_map.bind(on_edit_playlist = self._show_playlist_editor)
-        key_map.bind(on_display_sessions = self._show_session_chooser)
-        key_map.bind(on_display_playlists = self._show_playlist_chooser)
-        key_map.bind(on_display_genres = self._show_genre_chooser)
-        key_map.bind(on_display_styles = self._show_style_chooser)
-        key_map.bind(on_reset_playlist = self._reset_playlist)
+        key_map.bind(on_edit_track=self._show_track_editor)
+        key_map.bind(on_edit_playlist=self._show_playlist_editor)
+        key_map.bind(on_display_sessions=self._show_session_chooser)
+        key_map.bind(on_display_playlists=self._show_playlist_chooser)
+        key_map.bind(on_display_genres=self._show_genre_chooser)
+        key_map.bind(on_display_styles=self._show_style_chooser)
+        key_map.bind(on_reset_playlist=self._reset_playlist)
         self._focusable_elements = []
         self._no_cycle = False
+        self._popup = None
 
     def _post_init(self, *args):
         popup = TrackEditor(self._preview_player, self._volume_control, self)
-        popup.bind(on_dismiss = self.restore_focus)
+        popup.bind(on_dismiss=self.restore_focus)
         popup.queue = self.master_queue
         popup.window = self
         self.preview_popup = popup
         self._focus = 0
         self._focusable_elements = [self.master_list, self.master_queue]
         self.master_list.focus()
+        self._update_time()
 
     def request_focus(self, w):
         try:
@@ -254,132 +258,142 @@ class MainScreen(MainWindow):
     def restore_focus(self, *a):
         self._no_cycle = False
         self._focusable_elements[self._focus].focus()
+        self._popup = None
 
     def suspend_focus(self):
         self._focusable_elements[self._focus].unfocus()
 
     def _update_time(self, *args):
         self.current_date = time.strftime('%a, %b %d %Y')
-        self.current_time = time.strftime('%H:%M:%S')
+        self.current_time = time.strftime('%H:%M')
 
     def _show_track_editor(self, *a):
         t = self._preview_player._track
         if t is not None:
-            self.show_preview_player(t, 0,0)
+            self.show_preview_player(t, 0, 0)
 
     def _show_playlist_editor(self, *a):
         self._no_cycle = True
         foo = PlaylistView()
-        foo.bind(on_dismiss = self.restore_focus)
+        foo.bind(on_dismiss=self.restore_focus)
         foo.open()
 
     def _show_session_chooser(self, *a):
-        self._no_cycle = True
-        foo = PlaylistSelector()
-        foo.bind(on_dismiss = self.restore_focus,
-                 on_playlist_selected = self.__select_playlist)
+        if self._popup is None:
+            self._no_cycle = True
+            foo = PlaylistSelector()
+            foo.bind(on_dismiss=self.restore_focus,
+                     on_playlist_selected=self.__select_playlist)
 
-        sessions = [
-                     {'list': pydjay.bootstrap.get_current_session(),
-                      'dim_unavailable_tracks':     False,
-                      'fixed_item_positions':       True,
-                      'can_delete_items':           False,
-                      'auto_save':                  False,
-                      'sort':                       False,
-                      'can_add_selection_to_queue': True}
-                    ]
+            sessions = [
+                {'list': pydjay.bootstrap.get_current_session(),
+                 'dim_unavailable_tracks':     False,
+                 'fixed_item_positions':       True,
+                 'can_delete_items':           False,
+                 'auto_save':                  False,
+                 'sort':                       False,
+                 'can_add_selection_to_queue': True}
+            ]
 
-        sessions.extend([{'list':x,
-                          'dim_unavailable_tracks':True,
-                          'fixed_item_positions':True,
-                          'can_delete_items':False,
-                          'auto_save': False,
-                          'sort': False,
-                          'can_add_selection_to_queue':True} for x in pydjay.bootstrap.get_all_sessions()])
-        foo.open(title = 'SESSIONS', pl_list = sessions)
+            sessions.extend([{'list': x,
+                              'dim_unavailable_tracks': True,
+                              'fixed_item_positions': True,
+                              'can_delete_items': False,
+                              'auto_save': False,
+                              'sort': False,
+                              'can_add_selection_to_queue': True} for x in
+                             pydjay.bootstrap.get_all_sessions()])
+            self._popup = foo
+            foo.open(title='SESSIONS', pl_list=sessions)
 
     def __select_playlist(self, w, g):
-        params = dict(list_                      = g['list'],
-                      dim_unavailable_tracks     = g['dim_unavailable_tracks'],
-                      fixed_item_positions       = g['fixed_item_positions'],
-                      can_delete_items           = g['can_delete_items'],
-                      can_add_selection_to_queue = g['can_add_selection_to_queue'],
-                      auto_save                  = g['auto_save'],
-                      sort                       = g['sort'],
-                      context_menu               = None,
-                      editable                   = False)
+        params = dict(list_=g['list'],
+                      dim_unavailable_tracks=g['dim_unavailable_tracks'],
+                      fixed_item_positions=g['fixed_item_positions'],
+                      can_delete_items=g['can_delete_items'],
+                      can_add_selection_to_queue=g['can_add_selection_to_queue'],
+                      auto_save=g['auto_save'],
+                      sort=g['sort'],
+                      context_menu=None,
+                      editable=False)
         self.master_list.display_list(**params)
 
     def _show_playlist_chooser(self, *a):
-        self._no_cycle = True
-        foo = PlaylistSelector()
+        if self._popup is None:
+            self._no_cycle = True
+            foo = PlaylistSelector()
 
-        playlists = [{'list':pydjay.bootstrap.get_all_tracks(),
-                      'dim_unavailable_tracks':     True,
-                      'fixed_item_positions':       True,
-                      'can_delete_items':           False,
-                      'auto_save':                  False,
-                      'sort':                       False,
-                      'can_add_selection_to_queue': True},
+            playlists = [{'list': pydjay.bootstrap.get_all_tracks(),
+                          'dim_unavailable_tracks':     True,
+                          'fixed_item_positions':       True,
+                          'can_delete_items':           False,
+                          'auto_save':                  False,
+                          'sort':                       False,
+                          'can_add_selection_to_queue': True},
 
-                     {'list':pydjay.bootstrap.get_short_list_playlist(),
-                      'dim_unavailable_tracks':     True,
-                      'fixed_item_positions':       False,
-                      'can_delete_items':           True,
-                      'auto_save':                  True,
-                      'sort':                       False,
-                      'can_add_selection_to_queue': True}]
-
-
-        playlists.extend([{'list':x,
+                         {'list': pydjay.bootstrap.get_short_list_playlist(),
                           'dim_unavailable_tracks':     True,
                           'fixed_item_positions':       False,
-                          'can_delete_items':           False,
+                          'can_delete_items':           True,
                           'auto_save':                  True,
                           'sort':                       False,
-                          'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_playlists()])
-        foo.bind(on_dismiss = self.restore_focus,
-                 on_playlist_selected = self.__select_playlist)
-        foo.open(title = 'PLAYLISTS', pl_list = playlists)
+                          'can_add_selection_to_queue': True}]
+
+            playlists.extend([{'list': x,
+                               'dim_unavailable_tracks':     True,
+                               'fixed_item_positions':       False,
+                               'can_delete_items':           False,
+                               'auto_save':                  True,
+                               'sort':                       False,
+                               'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_playlists()])
+            foo.bind(on_dismiss=self.restore_focus,
+                     on_playlist_selected=self.__select_playlist)
+            self._popup = foo
+            foo.open(title='PLAYLISTS', pl_list=playlists)
 
     def _show_genre_chooser(self, *a):
-        self._no_cycle = True
-        foo = PlaylistSelector()
-        foo.bind(on_dismiss = self.restore_focus,
-                 on_playlist_selected = self.__select_playlist)
-        foo.open(title = 'GENRES',
-                 pl_list = [{'list':x,
-                             'dim_unavailable_tracks':     True,
-                             'fixed_item_positions':       True,
-                             'can_delete_items':           False,
-                             'auto_save':                  False,
-                             'sort':                       True,
-                             'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_genres()])
+        if self._popup is None:
+            self._no_cycle = True
+            foo = PlaylistSelector()
+            foo.bind(on_dismiss=self.restore_focus,
+                     on_playlist_selected=self.__select_playlist)
+            self._popup = foo
+            foo.open(title='GENRES',
+                     pl_list=[{'list': x,
+                               'dim_unavailable_tracks':     True,
+                               'fixed_item_positions':       True,
+                               'can_delete_items':           False,
+                               'auto_save':                  False,
+                               'sort':                       True,
+                               'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_genres()])
 
     def _show_style_chooser(self, *a):
-        self._no_cycle = True
-        foo = PlaylistSelector()
-        foo.bind(on_dismiss = self.restore_focus,
-                 on_playlist_selected = self.__select_playlist)
-        foo.open(title = 'STYLES',
-                 pl_list = [{'list':x,
-                             'dim_unavailable_tracks':     True,
-                             'fixed_item_positions':       True,
-                             'can_delete_items':           False,
-                             'auto_save':                  False,
-                             'sort':                       True,
-                             'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_styles()])
+        if self._popup is None:
+            self._no_cycle = True
+            foo = PlaylistSelector()
+            foo.bind(on_dismiss=self.restore_focus,
+                     on_playlist_selected=self.__select_playlist)
+            self._popup = foo
+            foo.open(title='STYLES',
+                     pl_list=[{'list': x,
+                               'dim_unavailable_tracks':     True,
+                               'fixed_item_positions':       True,
+                               'can_delete_items':           False,
+                               'auto_save':                  False,
+                               'sort':                       True,
+                               'can_add_selection_to_queue': True} for x in pydjay.bootstrap.get_all_styles()])
+
 
     def _reset_playlist(self, *a):
-        self.master_list.display_list(list_ = pydjay.bootstrap.get_all_tracks(),
-                                      dim_unavailable_tracks     = True,
-                                      fixed_item_positions       = True,
-                                      can_delete_items           = False,
-                                      can_add_selection_to_queue = True,
-                                      context_menu               = None,
-                                      editable                   = False)
+        self.master_list.display_list(list_=pydjay.bootstrap.get_all_tracks(),
+                                      dim_unavailable_tracks=True,
+                                      fixed_item_positions=True,
+                                      can_delete_items=False,
+                                      can_add_selection_to_queue=True,
+                                      context_menu=None,
+                                      editable=False)
 
-    def show_preview_player(self, track, pos, size, rel = 'right'):
+    def show_preview_player(self, track, pos, size, rel='right'):
         def _foo(*a):
             self.preview_popup.set_track(track)
             self.preview_popup.open()
@@ -390,5 +404,6 @@ class MainScreen(MainWindow):
 
     def shutdown(self):
         self.master_queue.shutdown()
+
 
 Builder.load_string(kv_string)

@@ -19,7 +19,7 @@ from kivy.properties import ObjectProperty, NumericProperty
 from kivy.factory import Factory
 from kivy.uix.popup import Popup
 from kivy.uix.modalview import ModalView
-from elements import waveform_seekbar#screen, paged_grid, paged_display
+from elements import waveform_seekbar  # screen, paged_grid, paged_display
 from elements.utils import seconds_to_human_readable
 from kivy.animation import Animation
 import pydjay.bootstrap
@@ -152,21 +152,22 @@ kv_remove_unavailable_string = """
 
 """
 
+
 class SaveCurrentSessionDialog(ModalView):
-    short_list     = ObjectProperty(None)
+    short_list = ObjectProperty(None)
     sl_track_count = ObjectProperty(None)
 
     def __init__(self, parent, *args, **kw):
         super(SaveCurrentSessionDialog, self).__init__(*args, **kw)
         self._parent = parent
+
     def save_current_session(self):
         self._parent.do_save_current_session()
         self.dismiss()
 
+
 Builder.load_string(kv_remove_unavailable_string)
 Factory.register('SaveCurrentSessionDialog', SaveCurrentSessionDialog)
-
-
 
 
 kv_string = """
@@ -288,36 +289,37 @@ kv_string = """
                 on_press: root.save_current_session()
 """
 
+
 class CurrentSessionView(ModalView):
-    short_list     = ObjectProperty(None)
+    short_list = ObjectProperty(None)
     sl_track_count = ObjectProperty(None)
 
     def __init__(self, *args, **kw):
         super(CurrentSessionView, self).__init__(*args, **kw)
-        self.bind(on_dismiss = lambda *a: pydjay.bootstrap.preview_player.stop())
+        self.bind(on_dismiss=lambda *a: pydjay.bootstrap.preview_player.stop())
         self._drag_payload = None
         Clock.schedule_once(self._post_init, -1)
 
     def _post_init(self, *a):
-        self.short_list.short_list.adapter.bind(data = self._update_sl_track_count)
+        self.short_list.short_list.adapter.bind(data=self._update_sl_track_count)
         self.short_list.mobile_selection = False
         pass
 
     def open(self):
         super(CurrentSessionView, self).open()
-        self.short_list.set_track_list(pydjay.bootstrap.session_manager.played_tracks, sort = False)
+        self.short_list.set_track_list(pydjay.bootstrap.session_manager.played_tracks, sort=False)
         self._update_sl_track_count()
         self.short_list.focus()
 
     def dismiss(self):
-        #pydjay.bootstrap.set_short_list(self.short_list.short_list.get_full_track_list())
+        # pydjay.bootstrap.set_short_list(self.short_list.short_list.get_full_track_list())
         super(CurrentSessionView, self).dismiss()
 
     def do_filter(self, window, text):
         self.short_list.short_list.do_filter(text)
 
     def _keyboard_closed(self):
-        self._keyboard.unbind(on_key_down = self._on_keyboard_down)
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None
 
     def _update_sl_track_count(self, *args):
@@ -330,8 +332,9 @@ class CurrentSessionView(ModalView):
             except:
                 pass
         track_count_text = "[color=#ffffff]" + str(num) + " tracks " + "[/color]" + \
-                            "[color=#999999] | [/color]"+ \
-                            "[color=#cccccc]" + seconds_to_human_readable(time / 1000000000) + "[/color]"
+            "[color=#999999] | [/color]" + \
+            "[color=#cccccc]" + \
+            seconds_to_human_readable(time / 1000000000) + "[/color]"
         self.sl_track_count.text = track_count_text
 
     def request_focus(self, *a):
@@ -345,6 +348,7 @@ class CurrentSessionView(ModalView):
         self._update_sl_track_count()
         self.short_list.focus()
         pass
+
 
 Builder.load_string(kv_string)
 Factory.register('CurrentSessionView', CurrentSessionView)

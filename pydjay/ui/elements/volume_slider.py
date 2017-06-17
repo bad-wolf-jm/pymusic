@@ -11,62 +11,61 @@ from kivy.clock import mainthread, Clock
 
 
 class VolumeSlider(Widget):
-    
-    value     = NumericProperty(0)
-    step      = NumericProperty(0.01)
-    min_value = NumericProperty(-1, allownone = True)
-    max_value = NumericProperty(1, allownone = True)
+
+    value = NumericProperty(0)
+    step = NumericProperty(0.01)
+    min_value = NumericProperty(-1, allownone=True)
+    max_value = NumericProperty(1, allownone=True)
 
     def __init__(self, *args, **kwargs):
         super(VolumeSlider, self).__init__(*args, **kwargs)
         self._redraw = Clock.create_trigger(self.draw_window)
-        self.bind(max_value  = self._redraw,
-                  min_value  = self._redraw,
-                  value      = self._redraw,
-                  size       = self._redraw,
-                  pos        = self._redraw)
+        self.bind(max_value=self._redraw,
+                  min_value=self._redraw,
+                  value=self._redraw,
+                  size=self._redraw,
+                  pos=self._redraw)
 
     def draw_window(self, *args):
         self.canvas.clear()
-        
-        with self.canvas:
-            Color(0,0,0,1)
-            Rectangle(size = self.size,
-                      pos = self.pos)
 
-            Color(1,1,1,1)
-            Line(points = [self.pos[0],self.pos[1],self.width+self.pos[0], self.pos[1]],
-                 width = 2)
-            Line(points = [self.pos[0],self.pos[1]+self.height,self.width+self.pos[0], self.pos[1]+self.height],
-                 width = 2)
+        with self.canvas:
+            Color(0, 0, 0, 1)
+            Rectangle(size=self.size,
+                      pos=self.pos)
+
+            Color(1, 1, 1, 1)
+            Line(points=[self.pos[0], self.pos[1], self.width + self.pos[0], self.pos[1]],
+                 width=2)
+            Line(points=[self.pos[0], self.pos[1] + self.height, self.width + self.pos[0], self.pos[1] + self.height],
+                 width=2)
             Color(.7, .7, .7, 1)
             for i in range(1, 10):
-                Line(points = [self.pos[0], self.pos[1] + i * self.height / 10 ,
-                               self.width / 3 + self.pos[0], self.pos[1] + i * self.height / 10],
-                     width = 1)
-                Line(points = [self.pos[0] + 2*self.width / 3, self.pos[1]+ i * self.height / 10 ,
-                               self.width + self.pos[0], self.pos[1] + i * self.height / 10 ],
-                     width = 1)
+                Line(points=[self.pos[0], self.pos[1] + i * self.height / 10,
+                             self.width / 3 + self.pos[0], self.pos[1] + i * self.height / 10],
+                     width=1)
+                Line(points=[self.pos[0] + 2 * self.width / 3, self.pos[1] + i * self.height / 10,
+                             self.width + self.pos[0], self.pos[1] + i * self.height / 10],
+                     width=1)
             Color(1, 1, 1, 1)
-            Line(points = [self.pos[0], self.pos[1] + 5 * self.height / 10 ,
-                           self.width / 3 + self.pos[0], self.pos[1] + 5 * self.height / 10],
-                 width = 2)
-            Line(points = [self.pos[0] + 2*self.width / 3, self.pos[1]+ 5 * self.height / 10 ,
-                           self.width + self.pos[0], self.pos[1] + 5 * self.height / 10 ],
-                 width = 2)
-                
+            Line(points=[self.pos[0], self.pos[1] + 5 * self.height / 10,
+                         self.width / 3 + self.pos[0], self.pos[1] + 5 * self.height / 10],
+                 width=2)
+            Line(points=[self.pos[0] + 2 * self.width / 3, self.pos[1] + 5 * self.height / 10,
+                         self.width + self.pos[0], self.pos[1] + 5 * self.height / 10],
+                 width=2)
+
             Color(.5, .5, .5, 1)
-            Line(points = [self.pos[0] + self.width / 2, self.pos[1] ,
-                           self.width / 2 + self.pos[0], self.pos[1] + self.height],
-                 width = 3)
+            Line(points=[self.pos[0] + self.width / 2, self.pos[1],
+                         self.width / 2 + self.pos[0], self.pos[1] + self.height],
+                 width=3)
 
-            Color(1,1,1, 1)
-            Rectangle(source = 'atlas://pydjay/gui/images/resources/volume-slider-knob',
-                      pos    = (self.pos[0] + self.width / 2 - (self.width - 5) / 2, self.value_pos[1] - 10),
-                      size   = (self.width - 5, 20))
+            Color(1, 1, 1, 1)
+            Rectangle(source='atlas://pydjay/gui/images/resources/volume-slider-knob',
+                      pos=(self.pos[0] + self.width / 2 -
+                           (self.width - 5) / 2, self.value_pos[1] - 10),
+                      size=(self.width - 5, 20))
 
-
-            
     def get_vol_value(self):
         d = -0.5 * (cos(pi * self.value_normalized) - 1.0)
         if d == 0:
@@ -74,8 +73,7 @@ class VolumeSlider(Widget):
         if d <= 0.5:
             return 2 * d
         else:
-            return 14 * (d-0.5) + 1
-        
+            return 14 * (d - 0.5) + 1
 
     def set_vol_value(self, value):
 
@@ -83,8 +81,8 @@ class VolumeSlider(Widget):
             x = value / 2
         else:
             x = (value - 1) / 14.0 + 0.5
-        
-        v_n = acos(1-2*(x)) / pi
+
+        v_n = acos(1 - 2 * (x)) / pi
         self.value_normalized = v_n
     volume = AliasProperty(get_vol_value, set_vol_value,
                            bind=('value', 'min_value', 'max_value', 'step'))
@@ -127,7 +125,6 @@ class VolumeSlider(Widget):
     value_pos = AliasProperty(get_value_pos, set_value_pos,
                               bind=('x', 'y', 'width', 'height', 'min_value',
                                     'max_value', 'value_normalized'))
-    
 
     def on_touch_down(self, touch):
         if self.disabled or not self.collide_point(*touch.pos):
@@ -162,31 +159,29 @@ class VolumeSlider(Widget):
             self.value_pos = touch.pos
             return True
 
+
 Factory.register('VolumeSlider', VolumeSlider)
 
 
 class VolumeLevel(Label):
-    
-    value     = NumericProperty(0)
-    step      = NumericProperty(0.01)
-    min_value = NumericProperty(-1, allownone = True)
-    max_value = NumericProperty(1, allownone = True)
+
+    value = NumericProperty(0)
+    step = NumericProperty(0.01)
+    min_value = NumericProperty(-1, allownone=True)
+    max_value = NumericProperty(1, allownone=True)
 
     def __init__(self, *args, **kwargs):
         super(VolumeLevel, self).__init__(*args, **kwargs)
         self._redraw = Clock.create_trigger(self.draw_window)
-        self.bind(max_value  = self._redraw,
-                  min_value  = self._redraw,
-                  value      = self._redraw,
-                  size       = self._redraw,
-                  pos        = self._redraw)
-
-
+        self.bind(max_value=self._redraw,
+                  min_value=self._redraw,
+                  value=self._redraw,
+                  size=self._redraw,
+                  pos=self._redraw)
 
     def draw_window(self, *a):
-        self.text = "%s%%"%(self.value_normalized * (self.max_value - self.min_value) * 100,)
+        self.text = "%s%%" % (self.value_normalized * (self.max_value - self.min_value) * 100,)
 
-            
     def get_vol_value(self):
         d = -0.5 * (cos(pi * self.value_normalized) - 1.0)
         if d == 0:
@@ -195,14 +190,14 @@ class VolumeLevel(Label):
         if d <= 0.5:
             return 2 * d
         else:
-            return 14 * (d-0.5) + 1
-        
+            return 14 * (d - 0.5) + 1
+
     def set_vol_value(self, value):
         if value <= 1:
             x = value / 2
         else:
             x = (value - 1) / 14.0 + 0.5
-        v_n = acos(1-2*(x)) / pi
+        v_n = acos(1 - 2 * (x)) / pi
         self.value_normalized = v_n
     volume = AliasProperty(get_vol_value, set_vol_value,
                            bind=('value', 'min_value', 'max_value', 'step'))
@@ -229,6 +224,3 @@ class VolumeLevel(Label):
 
 
 Factory.register('VolumeLevel', VolumeLevel)
-
-
-

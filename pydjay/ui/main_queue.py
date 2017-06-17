@@ -86,6 +86,7 @@ kv_string = """
     #    size_hint: 1, .75
 """
 
+
 class DragContext:
     def __init__(self, drag, drop):
         self.drag = drag
@@ -93,39 +94,39 @@ class DragContext:
 
 
 class MasterQueue(BoxLayout, TrackListBehaviour):
-    queue_view        = ObjectProperty(None)
-    track_list        = ListProperty()
-    card_list         = ListProperty()
-    queue_time        = StringProperty()
-    play_time         = StringProperty()
-    queue_end_time    = StringProperty()
-    queue_changed     = BooleanProperty(False)
-    uploading_track   = ObjectProperty(None)
-    short_list        = ObjectProperty(None)
-    player            = ObjectProperty(None)
-    deck              = ObjectProperty(None)
-    preview_player    = ObjectProperty(None)
+    queue_view = ObjectProperty(None)
+    track_list = ListProperty()
+    card_list = ListProperty()
+    queue_time = StringProperty()
+    play_time = StringProperty()
+    queue_end_time = StringProperty()
+    queue_changed = BooleanProperty(False)
+    uploading_track = ObjectProperty(None)
+    short_list = ObjectProperty(None)
+    player = ObjectProperty(None)
+    deck = ObjectProperty(None)
+    preview_player = ObjectProperty(None)
 
     def __init__(self, *args, **kwargs):
         super(MasterQueue, self).__init__(*args, **kwargs)
         self._queued_tracks = set([])
         self.drag_context = DragContext(self._start_drag, self._drop)
-        self._play_time        = 0
+        self._play_time = 0
         self._total_queue_time = 0
-        self.has_focus         = False
+        self.has_focus = False
         self._current_selection = None
         self.can_delete_items = True
         self.fixed_item_positions = False
         self.set_keyboard_handlers({'shift+up':        self._move_selection_up,
                                     'shift+down':      self._move_selection_down,
                                     'shift+t':         self._move_selection_to_top})
-                                    #'shift+backspace': self._delete_selection})
-        play_queue.bind(on_queue_content_change = self._update_queue_contents)
-        playback_manager.bind(wait_time = self._update_queue_labels,
-                              queue_length = self._update_queue_length,
-                              queue_end_time = self._update_queue_end_time)
+        #'shift+backspace': self._delete_selection})
+        play_queue.bind(on_queue_content_change=self._update_queue_contents)
+        playback_manager.bind(wait_time=self._update_queue_labels,
+                              queue_length=self._update_queue_length,
+                              queue_end_time=self._update_queue_end_time)
 
-        Clock.schedule_once(self._post_init,0)
+        Clock.schedule_once(self._post_init, 0)
 
     def _update_queue_contents(self, i, queue):
         self.set_track_list(queue)
@@ -173,15 +174,15 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         self.list_view.layout_manager.default_size = 70
         self._update_queue_contents(None, play_queue.track_list)
         self._update_queue_labels()
+        self._update_queue_length()
 
     def set_player(self, p):
         self.player = p
 
     def _convert(self, row, item):
-        return {'row': row, 'item': item, 'view':self, 'drag_context':self.drag_context, 'is_selected': False}
+        return {'row': row, 'item': item, 'view': self, 'drag_context': self.drag_context, 'is_selected': False}
 
-
-    def add_track(self, track, index = None, track_is_available = True):
+    def add_track(self, track, index=None, track_is_available=True):
         play_queue.add_track(track, index)
     enqueue = add_track
 
@@ -192,7 +193,6 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
         self.queue_view.set_track_list(list, False)
         self._queued_tracks = set([track.location for track in list])
         self._update_queue_labels()
-
 
     def _update_queue_end_time(self, *a):
         current_time = playback_manager.queue_end_time
@@ -227,7 +227,8 @@ class MasterQueue(BoxLayout, TrackListBehaviour):
 
     def shutdown(self):
         pass
-        #self.deck.shutdown()
+        # self.deck.shutdown()
+
 
 Builder.load_string(kv_string)
 Factory.register('MasterQueue', MasterQueue)

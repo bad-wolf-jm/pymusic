@@ -42,8 +42,9 @@ kv_string = """
         on_press: search_filter.text = ''
 """
 
+
 class FilterInputBox(BoxLayout):
-    short_list     = ObjectProperty(None)
+    short_list = ObjectProperty(None)
     sl_track_count = ObjectProperty(None)
 
     def __init__(self, *args, **kw):
@@ -51,6 +52,7 @@ class FilterInputBox(BoxLayout):
 
     def do_filter(self, window, text):
         self.short_list.short_list.do_filter(text)
+
 
 Builder.load_string(kv_string)
 Factory.register('FilterInputBox', FilterInputBox)

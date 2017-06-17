@@ -168,7 +168,5 @@ class SimpleDetailedListItem(TrackListItemBase):
     pass
 
 
-
-
 Builder.load_string(kv_string_item)
 Factory.register('SimpleDetailedListItem', SimpleDetailedListItem)

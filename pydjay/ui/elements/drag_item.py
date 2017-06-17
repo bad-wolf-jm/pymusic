@@ -10,7 +10,7 @@ from kivy.factory import Factory
 #from behaviors.long_press_button import LongPressButtonBehaviour
 
 
-kv_drag_widget= """
+kv_drag_widget = """
 <DragItem>:
     orientation: 'horizontal'
     size_hint: None, None
@@ -81,25 +81,25 @@ kv_drag_widget= """
 class DragItem(RelativeLayout):
     album_art = ObjectProperty(None)
     album_art_file = ObjectProperty(None)
-    title     = StringProperty("")
-    artist    = StringProperty("")
-    album     = StringProperty("")
-    bpm       = StringProperty("")
-    length    = StringProperty("")
-    bg        = ObjectProperty(None)
-    track     = ObjectProperty(None)
+    title = StringProperty("")
+    artist = StringProperty("")
+    album = StringProperty("")
+    bpm = StringProperty("")
+    length = StringProperty("")
+    bg = ObjectProperty(None)
+    track = ObjectProperty(None)
     play_time = StringProperty("")
 
-    def __init__(self, item = None, *args, **kwargs):
+    def __init__(self, item=None, *args, **kwargs):
         super(DragItem, self).__init__(*args, **kwargs)
         self._album_art = None
         self._item = item
         self.track = item
         if item is not None:
-            self.title  = unicode(item.metadata.title)
+            self.title = unicode(item.metadata.title)
             self.artist = unicode(item.metadata.artist)
-            self.album  = unicode(item.metadata.album)
-            self.bpm    = str(item.metadata.bpm)
+            self.album = unicode(item.metadata.album)
+            self.bpm = str(item.metadata.bpm)
 
             if item.metadata.album_cover is not None:
                 try:
@@ -109,18 +109,18 @@ class DragItem(RelativeLayout):
             else:
                 self.album_art.source = 'atlas://pydjay/gui/images/resources/default_album_cover'
         else:
-            self.title  = ""
+            self.title = ""
             self.artist = ""
-            self.album  = ""
-            self.bpm    = ""
+            self.album = ""
+            self.bpm = ""
             self.length = ""
 
     def update_bg(self, *args):
         pass
-        
+
     def update_album_art(self, w, h):
         if self._album_art is not None:
             self.album_art.texture = self._album_art.texture
 
+
 Builder.load_string(kv_drag_widget)
- 

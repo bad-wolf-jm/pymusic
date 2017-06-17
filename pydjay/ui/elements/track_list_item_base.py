@@ -44,19 +44,18 @@ from pydjay.ui.elements import list_view
 from pydjay.ui.elements import list_item_base
 
 
-
 class TrackListItemBase(list_item_base.ListItemBase):
-    album_art      = ObjectProperty(None)
-    favorite       = BooleanProperty(False)
-    has_waveform   = BooleanProperty(False)
-    title          = StringProperty("")
-    artist         = StringProperty("")
-    album          = StringProperty("")
-    bpm            = StringProperty("")
-    length         = StringProperty("")
-    genre          = StringProperty("")
-    rating         = NumericProperty(0)
-    style          = StringProperty("")
+    album_art = ObjectProperty(None)
+    favorite = BooleanProperty(False)
+    has_waveform = BooleanProperty(False)
+    title = StringProperty("")
+    artist = StringProperty("")
+    album = StringProperty("")
+    bpm = StringProperty("")
+    length = StringProperty("")
+    genre = StringProperty("")
+    rating = NumericProperty(0)
+    style = StringProperty("")
     #bg             = ObjectProperty(None)
     #dimmed         = BooleanProperty(True)
     #is_selected    = BooleanProperty(False)
@@ -67,8 +66,7 @@ class TrackListItemBase(list_item_base.ListItemBase):
     #selected_color_focus = ListProperty([0,.3,.7,1])
     #selected_color_no_focus = ListProperty([0,.3,.7,.3])
 
-
-    def __init__(self, row = None, item = None, view = None, drag_context = None, *args, **kwargs):
+    def __init__(self, row=None, item=None, view=None, drag_context=None, *args, **kwargs):
         super(TrackListItemBase, self).__init__(*args, **kwargs)
         self.__initialize__(row, item, view, drag_context)
 
@@ -82,11 +80,10 @@ class TrackListItemBase(list_item_base.ListItemBase):
                 The data dict used to populate this view.
         '''
 
-        self.__initialize__(data['row'], data['item'], data['view'], data['drag_context'], data['is_selected'])
+        self.__initialize__(data['row'], data['item'], data['view'],
+                            data['drag_context'], data['is_selected'])
 
-
-
-    def __initialize__(self, row = None, item = None, view = None, drag_context = None, is_selected = False, *args, **kwargs):
+    def __initialize__(self, row=None, item=None, view=None, drag_context=None, is_selected=False, *args, **kwargs):
         self.row = row
         self._album_art = None
         self._item_data = item
@@ -96,38 +93,39 @@ class TrackListItemBase(list_item_base.ListItemBase):
         self._long_press_threshold = .25
         self._preview_player_button = None
         self.is_selected = is_selected
-        self.bind(on_long_press = self._start_dragging)
+        self.bind(on_long_press=self._start_dragging)
 
         if self._item_data is not None:
             self._update_background()
-            self._item_data.bind(is_available = self._update_background)
+            self._item_data.bind(is_available=self._update_background)
 
         if self._item is not None:
-            self.title  = unicode(self._item.metadata.title)
+            self.title = unicode(self._item.metadata.title)
             self.artist = unicode(self._item.metadata.artist)
-            self.album  = unicode(self._item.metadata.album)
+            self.album = unicode(self._item.metadata.album)
             self.rating = self._item.metadata.rating if self._item.metadata.rating is not None else 0
-            self.genre  = unicode(self._item.metadata.genre) if self._item.metadata.genre is not None else ""
-            self.style  = unicode(self._item.metadata.style) if self._item.metadata.style is not None else ""
-            self.bpm    = str(self._item.metadata.bpm) if self._item.metadata.bpm is not None else ""
-            self.length = seconds_to_human_readable(int(self._item.info.length /1000000000))
-            self.has_waveform =  self._item.metadata.waveform is not None
+            self.genre = unicode(
+                self._item.metadata.genre) if self._item.metadata.genre is not None else ""
+            self.style = unicode(
+                self._item.metadata.style) if self._item.metadata.style is not None else ""
+            self.bpm = str(self._item.metadata.bpm) if self._item.metadata.bpm is not None else ""
+            self.length = seconds_to_human_readable(int(self._item.info.length / 1000000000))
+            self.has_waveform = self._item.metadata.waveform is not None
             self.rating = self._item.metadata.rating if self._item.metadata.rating is not None else 0
             self.favorite = self._item.metadata.loved if self._item.metadata.loved is not None else False
 
-
             try:
-                self._item.bind(waveform = self._update_waveform_availability)
+                self._item.bind(waveform=self._update_waveform_availability)
             except:
                 pass
         else:
-            self.title    = ""
-            self.artist   = ""
-            self.album    = ""
-            self.bpm      = ""
-            self.genre    = ""
-            self.style    = ""
-            self.length   = ""
+            self.title = ""
+            self.artist = ""
+            self.album = ""
+            self.bpm = ""
+            self.genre = ""
+            self.style = ""
+            self.length = ""
             self.favorite = False
 
 #    def _update_background(self, *value):

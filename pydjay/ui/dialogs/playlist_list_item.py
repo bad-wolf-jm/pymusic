@@ -74,14 +74,14 @@ kv_string_item = """
         ListItemLabel:
             id:    title
             bold:  root.bold
-            color: root.color
+            color: root.color if not root.is_selected else root.selected_text_color
             text: root.name
             opacity: 0.2 if root.dimmed else 1
 
         ListItemLabel:
             id: number_of_tracks
             bold: root.bold
-            color: root.n_color
+            color: root.n_color if not root.is_selected else root.selected_text_color
             text: root.number_of_tracks
             halign: 'right'
             size_hint: None, 1
@@ -91,15 +91,15 @@ kv_string_item = """
 
 
 class PlaylistItem(ModalListItemBase):
-    name              = StringProperty("")
-    number_of_tracks  = StringProperty("")
-    duration          = StringProperty("")
+    name = StringProperty("")
+    number_of_tracks = StringProperty("")
+    duration = StringProperty("")
 
     def refresh_view_attrs(self, rv, data):
-        self.__initialize__(data['row'], data['item'], data['view'], data['drag_context'], data['is_selected'])
+        self.__initialize__(data['row'], data['item'], data['view'],
+                            data['drag_context'], data['is_selected'])
 
-
-    def __initialize__(self, row = None, item = None, view = None, drag_context = None, is_selected = False, *args, **kwargs):
+    def __initialize__(self, row=None, item=None, view=None, drag_context=None, is_selected=False, *args, **kwargs):
         self.row = row
         #self._album_art = None
         self._item_data = item
@@ -111,16 +111,16 @@ class PlaylistItem(ModalListItemBase):
         self.is_selected = is_selected
         #self.bind(on_long_press = self._start_dragging)
 
-        #print self._items
+        # print self._items
 
         if self._item_data is not None:
             self._update_background()
-            self._item_data.bind(is_available = self._update_background)
+            self._item_data.bind(is_available=self._update_background)
 
         if self._item is not None:
-            self.name  = unicode(self._item['list'].name) if self._item['list'].name is not None else "N/A"
+            self.name = unicode(
+                self._item['list'].name) if self._item['list'].name is not None else "N/A"
             self.number_of_tracks = str(len(self._item['list'])) + ' tracks'
-
 
 
 Builder.load_string(kv_string_item)

@@ -136,25 +136,23 @@ kv_string = """
 """
 
 
-
 class MainPlayerDeck(BoxLayout):
     stopping_message = ObjectProperty(None)
-    wait_time_input      = ObjectProperty(None)
-    wait_toggle          = ObjectProperty(None)
-    window               = ObjectProperty(None)
+    wait_time_input = ObjectProperty(None)
+    wait_toggle = ObjectProperty(None)
+    window = ObjectProperty(None)
 
     def __init__(self, *args, **kw):
         super(MainPlayerDeck, self).__init__(*args, **kw)
-        self._track              = None
-        playback_manager.bind(queue_is_playing   = self._watch_queue_data,
-                              queue_stop_request = self._on_queue_stop_request)
-        play_queue.bind(on_queue_content_change = self._watch_queue_data)
+        self._track = None
+        playback_manager.bind(queue_is_playing=self._watch_queue_data,
+                              queue_stop_request=self._on_queue_stop_request)
+        play_queue.bind(on_queue_content_change=self._watch_queue_data)
         Clock.schedule_once(self._post_init, -1)
 
-
     def _post_init(self, *args):
-        self.wait_time_input.text = "%s"%playback_manager.wait_time
-        self.wait_time_input.bind(focus = self._toggle_keyboard_shortcuts)
+        self.wait_time_input.text = "%s" % playback_manager.wait_time
+        self.wait_time_input.bind(focus=self._toggle_keyboard_shortcuts)
 
     def _toggle_keyboard_shortcuts(self, *a):
         if not self.wait_time_input.focus:
@@ -198,7 +196,6 @@ class MainPlayerDeck(BoxLayout):
                 self.stopping_message.text = ""
                 self.start_queue_button.disabled = True
 
-
     def start_queue(self):
         if not playback_manager.queue_is_playing:
             playback_manager.start_queue()
@@ -214,11 +211,10 @@ class MainPlayerDeck(BoxLayout):
             self.start_queue_button.text = 'STOP'
             self.stopping_message.text = ""
 
-
-
     def _set_volume(self, *a):
         if self._volume_control is not None:
             self._volume_control.set_volume('main_player', self.volume)
+
 
 Builder.load_string(kv_string)
 Factory.register('MainPlayerDeck', MainPlayerDeck)

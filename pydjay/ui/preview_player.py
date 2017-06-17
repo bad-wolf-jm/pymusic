@@ -29,10 +29,6 @@ from kivy.animation import Animation
 import pydjay.bootstrap
 
 
-
-
-
-
 kv_string = """
 <PlayPauseButton@ImageButton>:
     play: 'atlas://pydjay/gui/images/resources/play_2' #get_path('play')
@@ -180,31 +176,32 @@ kv_string = """
 
 """
 
+
 class PreviewPlayer(RelativeLayout):
-    seekbar          = ObjectProperty(None)
-    turntable        = ObjectProperty(None)
-    cut_window       = ObjectProperty(None)
+    seekbar = ObjectProperty(None)
+    turntable = ObjectProperty(None)
+    cut_window = ObjectProperty(None)
     start_time_label = ObjectProperty(None)
-    end_time_label   = ObjectProperty(None)
-    album_cover      = ObjectProperty(None)
-    track            = ObjectProperty(None)
-    title_label      = ObjectProperty(None)
-    artist_label     = ObjectProperty(None)
-    queue            = ObjectProperty(None)
-    short_list       = ObjectProperty(None)
-    window           = ObjectProperty(None)
-    volume           = NumericProperty(1.0)
-    volume_controls  = ObjectProperty(None)
-    player           = ObjectProperty(None)
+    end_time_label = ObjectProperty(None)
+    album_cover = ObjectProperty(None)
+    track = ObjectProperty(None)
+    title_label = ObjectProperty(None)
+    artist_label = ObjectProperty(None)
+    queue = ObjectProperty(None)
+    short_list = ObjectProperty(None)
+    window = ObjectProperty(None)
+    volume = NumericProperty(1.0)
+    volume_controls = ObjectProperty(None)
+    player = ObjectProperty(None)
 
     def __init__(self, *args, **kwargs):
         super(PreviewPlayer, self).__init__(*args, **kwargs)
-        self._track              = None
+        self._track = None
         self.player = pydjay.bootstrap.preview_player
-        self.player.player.bind(on_end_of_stream = self._on_eos,
-                                track_duration   = self._update,
-                                track_position   = self._update)
-        self.volume_controls     = None
+        self.player.player.bind(on_end_of_stream=self._on_eos,
+                                track_duration=self._update,
+                                track_position=self._update)
+        self.volume_controls = None
         self._save_monitor_volume = 1.0
         self._duration = None
         Clock.schedule_once(self._post_init, -1)
@@ -218,14 +215,17 @@ class PreviewPlayer(RelativeLayout):
             self.end_time_label.opacity = 1
 
             self.start_time_label.text = seconds_to_human_readable(self._track.info.start_time / 1000000000) \
-                                         if self._track.info.start_time is not None \
-                                            else '0:00'
+                if self._track.info.start_time is not None \
+                else '0:00'
             self.end_time_label.text = seconds_to_human_readable(self._track.info.end_time / 1000000000) \
-                                       if self._track.info.end_time is not None \
-                                          else seconds_to_human_readable(self._track.info.stream_length / 1000000000)
-            x_factor    = float(self.cut_window.width) / self.cut_window.track_length if self.cut_window.track_length is not 0 else 1
-            self.start_time_label.center_x = self.cut_window.track_start * x_factor if self.cut_window.track_start is not None else 0
-            self.end_time_label.center_x   = self.cut_window.track_end * x_factor if self.cut_window.track_end is not None else self.width
+                if self._track.info.end_time is not None \
+                else seconds_to_human_readable(self._track.info.stream_length / 1000000000)
+            x_factor = float(self.cut_window.width) / \
+                self.cut_window.track_length if self.cut_window.track_length is not 0 else 1
+            self.start_time_label.center_x = self.cut_window.track_start * \
+                x_factor if self.cut_window.track_start is not None else 0
+            self.end_time_label.center_x = self.cut_window.track_end * \
+                x_factor if self.cut_window.track_end is not None else self.width
 
         else:
             self.start_time_label.opacity = 0
@@ -235,7 +235,6 @@ class PreviewPlayer(RelativeLayout):
         if self._track is not None:
             self._track.info.start_time = self.cut_window.track_start
         self._update_track_labels()
-
 
     def _update_track_end(self, *a):
         if self._track is not None:
@@ -269,13 +268,13 @@ class PreviewPlayer(RelativeLayout):
         self.player.stop()
         self._track = track
         self._duration = None
-        self.length_label.text   = seconds_to_human_readable(0)
+        self.length_label.text = seconds_to_human_readable(0)
         self.position_label.text = seconds_to_human_readable(0)
         self.seekbar.value = 0
         self.seekbar.max = 1
         if self._track is not None:
             self.artist_label.text = self._track.metadata.artist + u' - ' + self._track.metadata.album
-            self.title_label.text  = self._track.metadata.title
+            self.title_label.text = self._track.metadata.title
             #self.album_label.text  = self._track.metadata.album
             if self._track.metadata.album_cover is not None:
                 try:
@@ -284,7 +283,6 @@ class PreviewPlayer(RelativeLayout):
                     self.album_cover.source = 'atlas://pydjay/gui/images/resources/default_album_cover'
             else:
                 self.album_cover.source = 'atlas://pydjay/gui/images/resources/default_album_cover'
-
 
     def _update(self, *a):
         if self._duration is None:
@@ -302,6 +300,7 @@ class PreviewPlayer(RelativeLayout):
             self.position_label.text = seconds_to_human_readable(position / 1000000000)
         else:
             self.position_label.text = seconds_to_human_readable(0)
+
 
 Builder.load_string(kv_string)
 Factory.register('PreviewPlayer', PreviewPlayer)

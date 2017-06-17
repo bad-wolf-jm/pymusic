@@ -29,10 +29,6 @@ from kivy.animation import Animation
 import pydjay.bootstrap
 
 
-
-
-
-
 kv_string = """
 <Mixer>:
     main_player_volume: main_player_volume
@@ -115,24 +111,25 @@ kv_string = """
 
 """
 
+
 class Mixer(RelativeLayout):
-    main_player_volume   = ObjectProperty(None)
-    monitor_volume   = ObjectProperty(None)
-    preview_volume   = ObjectProperty(None)
-    
-    def __init__(self, *args, **kwargs): 
+    main_player_volume = ObjectProperty(None)
+    monitor_volume = ObjectProperty(None)
+    preview_volume = ObjectProperty(None)
+
+    def __init__(self, *args, **kwargs):
         super(Mixer, self).__init__(*args, **kwargs)
-        self.volume_controls     = None
+        self.volume_controls = None
         self._save_monitor_volume = 1.0
-        pydjay.bootstrap.volume_control.bind(main_player_monitor = self._update_monitor_volume,
-                                             preview_player = self._update_preview_volume,
-                                             main_player = self._update_main_player_volume)
+        pydjay.bootstrap.volume_control.bind(main_player_monitor=self._update_monitor_volume,
+                                             preview_player=self._update_preview_volume,
+                                             main_player=self._update_main_player_volume)
         self._duration = None
         Clock.schedule_once(self._post_init, -1)
 
     def _update_monitor_volume(self, *args):
         self.monitor_volume.volume = pydjay.bootstrap.volume_control.main_player_monitor
-        
+
     def _update_preview_volume(self, *args):
         self.preview_volume.volume = pydjay.bootstrap.volume_control.preview_player
 
@@ -141,18 +138,17 @@ class Mixer(RelativeLayout):
 
     def _set_monitor_volume(self, *args):
         pydjay.bootstrap.volume_control.main_player_monitor = self.monitor_volume.volume
-        
+
     def _set_preview_volume(self, *args):
         pydjay.bootstrap.volume_control.preview_player = self.preview_volume.volume
 
     def _set_main_player_volume(self, *args):
         pydjay.bootstrap.volume_control.main_player = self.main_player_volume.volume
-        
-    def _post_init(self, *a):
-        self.preview_volume.bind(volume = self._set_preview_volume)
-        self.monitor_volume.bind(volume = self._set_monitor_volume)
-        self.main_player_volume.bind(volume = self._set_main_player_volume)
 
+    def _post_init(self, *a):
+        self.preview_volume.bind(volume=self._set_preview_volume)
+        self.monitor_volume.bind(volume=self._set_monitor_volume)
+        self.main_player_volume.bind(volume=self._set_main_player_volume)
 
     def _update_track_end(self, *a):
         if self._track is not None:
@@ -161,12 +157,10 @@ class Mixer(RelativeLayout):
 
     def _on_eos(self, *a):
         pass
-        
+
     def _set_volume(self, i, value):
         self.volume_controls.set_volume('main_player_monitor', self.volume)
 
 
 Builder.load_string(kv_string)
 Factory.register('Mixer', Mixer)
-
-

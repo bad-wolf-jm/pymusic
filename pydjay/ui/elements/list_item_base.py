@@ -42,31 +42,30 @@ from kivy.graphics import *
 from pydjay.ui.elements import list_view
 
 
-
-
-class ListItemBase(RelativeLayout, #LongPressButtonBehaviour,
+class ListItemBase(RelativeLayout,  # LongPressButtonBehaviour,
                    list_view.RecycleViewMixin):
-#    album_art      = ObjectProperty(None)
-#    favorite       = BooleanProperty(False)
-#    has_waveform   = BooleanProperty(False)
-#    title          = StringProperty("")
-#    artist         = StringProperty("")
-#    album          = StringProperty("")
-#    bpm            = StringProperty("")
-#    length         = StringProperty("")
-#    genre          = StringProperty("")
-#    rating         = NumericProperty(0)
-#   style          = StringProperty("")
-    bg             = ObjectProperty(None)
-    dimmed         = BooleanProperty(True)
-    is_selected    = BooleanProperty(False)
-    even_color = ListProperty([0,0,0,0.8])
-    odd_color = ListProperty([0.1,0.1,0.1,0.8])
-    selected_color_focus = ListProperty([0,.3,.7,1])
-    selected_color_no_focus = ListProperty([0,.3,.7,.3])
+    #    album_art      = ObjectProperty(None)
+    #    favorite       = BooleanProperty(False)
+    #    has_waveform   = BooleanProperty(False)
+    #    title          = StringProperty("")
+    #    artist         = StringProperty("")
+    #    album          = StringProperty("")
+    #    bpm            = StringProperty("")
+    #    length         = StringProperty("")
+    #    genre          = StringProperty("")
+    #    rating         = NumericProperty(0)
+    #   style          = StringProperty("")
+    bg = ObjectProperty(None)
+    dimmed = BooleanProperty(True)
+    is_selected = BooleanProperty(False)
+    even_color = ListProperty([0, 0, 0, 0.8])
+    odd_color = ListProperty([0.1, 0.1, 0.1, 0.8])
+    selected_color_focus = ListProperty([0, .3, .7, 1])
+    selected_color_no_focus = ListProperty([0, .3, .7, .3])
+    selected_text_color = ListProperty([1,1,1, .9])
 
 #
-    def __init__(self, row = None, item = None, view = None, drag_context = None, *args, **kwargs):
+    def __init__(self, row=None, item=None, view=None, drag_context=None, *args, **kwargs):
         super(ListItemBase, self).__init__(*args, **kwargs)
         self.__initialize__(row, item, view, drag_context)
 
@@ -80,11 +79,10 @@ class ListItemBase(RelativeLayout, #LongPressButtonBehaviour,
                 The data dict used to populate this view.
         '''
 
-        self._initialize_(data['row'], data['item'], data['view'], data['drag_context'], data['is_selected'])
+        self._initialize_(data['row'], data['item'], data['view'],
+                          data['drag_context'], data['is_selected'])
 
-
-
-    def _initialize_(self, row = None, item = None, view = None, drag_context = None, is_selected = False, *args, **kwargs):
+    def _initialize_(self, row=None, item=None, view=None, drag_context=None, is_selected=False, *args, **kwargs):
         pass
 #        self.row = row
 #        self._album_art = None
@@ -133,20 +131,21 @@ class ListItemBase(RelativeLayout, #LongPressButtonBehaviour,
         value = self._item_data.is_selected if self._item_data is not None else False
         self.bg.canvas.clear()
         if value:
+            #self.color =
             with self.bg.canvas:
                 if self._view.has_focus:
-                    Color(*self.selected_color_focus)#0,.3,.7,1)
+                    Color(*self.selected_color_focus)  # 0,.3,.7,1)
                 else:
-                    Color(*self.selected_color_no_focus) #0,.3,.7,.3)
-                Rectangle(size = self.bg.size, pos = self.bg.pos)
+                    Color(*self.selected_color_no_focus)  # 0,.3,.7,.3)
+                Rectangle(size=self.bg.size, pos=self.bg.pos)
         else:
             with self.bg.canvas:
                 if self.row is not None:
                     with self.bg.canvas:
                         if self.row % 2 == 0:
-                            Color(*self.even_color) #0,0,0,0.8)
+                            Color(*self.even_color)  # 0,0,0,0.8)
                         else:
-                            Color(*self.odd_color)  #.1,.1,.1,.8)
+                            Color(*self.odd_color)  # .1,.1,.1,.8)
                         Rectangle(pos=self.bg.pos, size=self.bg.size)
 
         if self._item_data is not None and not self._item_data.is_available:
@@ -157,7 +156,7 @@ class ListItemBase(RelativeLayout, #LongPressButtonBehaviour,
     def _start_dragging(self, foo, x, y):
         if self._drag_context is not None:
             try:
-                self._drag_context.drag(self.to_window(x,y), self._item_data)
+                self._drag_context.drag(self.to_window(x, y), self._item_data)
             except Exception, details:
                 print 'BAR', details
 

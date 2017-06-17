@@ -3,22 +3,22 @@ import mutagen.id3
 import mutagen.mp4
 import os
 
+
 class TrackInfo(object):
     def __init__(self, info):
         super(TrackInfo, self).__init__()
         self._metadata = info
 
-
-    def __get(self, field_name, default = None):
+    def __get(self, field_name, default=None):
         return self._metadata.get(field_name, None)
 
     def __set(self, field_name, value):
         self._metadata[field_name] = value
 
-    bitrate       = property(lambda self: self.__get('bitrate'))
-    samplerate    = property(lambda self: self.__get('samplerate'))
-    channels      = property(lambda self: self.__get('channels'))
-    file_type     = property(lambda self: self.__get('file_type'))
+    bitrate = property(lambda self: self.__get('bitrate'))
+    samplerate = property(lambda self: self.__get('samplerate'))
+    channels = property(lambda self: self.__get('channels'))
+    file_type = property(lambda self: self.__get('file_type'))
 
     @property
     def length(self):
@@ -54,7 +54,6 @@ class TrackInfo(object):
     def encoder(self):
         return self._metadata.get('encoder', None)
 
-
     def get_start_time(self):
 
         foo = self._metadata.get('start_time', None)
@@ -65,7 +64,7 @@ class TrackInfo(object):
         return foo
 
     def set_start_time(self, value):
-        #print value
+        # print value
         self._metadata['start_time'] = value
     start_time = property(get_start_time, set_start_time)
 
@@ -87,27 +86,26 @@ class TrackMetadata(object):
         object.__init__(self)
         self._metadata = metadata
 
-    def __get(self, field_name, default = None):
+    def __get(self, field_name, default=None):
         return self._metadata.get(field_name, None)
 
     def __set(self, field_name, value):
         self._metadata[field_name] = value
 
-
-    title       = property(lambda self: self.__get('title'))
-    artist      = property(lambda self: self.__get('artist'))
-    album       = property(lambda self: self.__get('album'))
+    title = property(lambda self: self.__get('title'))
+    artist = property(lambda self: self.__get('artist'))
+    album = property(lambda self: self.__get('album'))
     album_cover = property(lambda self: self.__get('album_art'))
-    genre       = property(lambda self: self.__get('genre'))
-    style       = property(lambda self: self.__get('style'))
-    play_at     = property(lambda self: self.__get('play_at'))
-    vocal       = property(lambda self: self.__get('vocal'))
-    rating      = property(lambda self: self.__get('rating'))
-    bpm         = property(lambda self: self.__get('bpm'))
-    comments    = property(lambda self: self.__get('comments'))
-    loved       = property(lambda self: self.__get('loved'),
-                           lambda self, value: self.__get('loved', value))
-    play_times  = property(lambda self: self.__get('play_times'))
+    genre = property(lambda self: self.__get('genre'))
+    style = property(lambda self: self.__get('style'))
+    play_at = property(lambda self: self.__get('play_at'))
+    vocal = property(lambda self: self.__get('vocal'))
+    rating = property(lambda self: self.__get('rating'))
+    bpm = property(lambda self: self.__get('bpm'))
+    comments = property(lambda self: self.__get('comments'))
+    loved = property(lambda self: self.__get('loved'),
+                     lambda self, value: self.__get('loved', value))
+    play_times = property(lambda self: self.__get('play_times'))
 
     @property
     def album_artist(self):
@@ -170,6 +168,7 @@ class TrackMetadata(object):
 
     def get_waveform(self):
         return self._metadata.get('waveform', None)
+
     def set_waveform(self, value):
         self._metadata['waveform'] = value
     waveform = property(get_waveform, set_waveform)
@@ -188,9 +187,9 @@ class TrackMetadata(object):
 class Track:
     def __init__(self, filename, info, metadata):
         self.location = filename
-        self.info     = TrackInfo(info)
+        self.info = TrackInfo(info)
         self.metadata = TrackMetadata(metadata)
-        self._index   = []
+        self._index = []
         fields = ['artist', 'album', 'album_artist', 'genre', 'title',
                   'grouping', 'category', 'description',
                   'comments', 'mood', 'style',
@@ -201,7 +200,7 @@ class Track:
             except:
                 pass
             if self.metadata.rating is not None:
-                self._index.append('@rat=%s'%self.metadata.rating)
+                self._index.append('@rat=%s' % self.metadata.rating)
             if self.metadata.loved:
                 self._index.append('@loved')
             self._index.extend(['@bpm~', '@bpm<', '@bpm>'])
@@ -243,7 +242,7 @@ class Track:
         return True
 
     def __lt__(self, other):
-        #print 'cmp'
+        # print 'cmp'
         if other is None:
             return False
 
@@ -256,7 +255,7 @@ class Track:
         return False
 
     def __le__(self, other):
-        #print 'cmpe'
+        # print 'cmpe'
         if other is None:
             return False
 
@@ -269,7 +268,7 @@ class Track:
         return False
 
     def __gt__(self, other):
-        #print 'cmp'
+        # print 'cmp'
         if other is None:
             return True
 
@@ -281,7 +280,7 @@ class Track:
         return False
 
     def __ge__(self, other):
-        #pint 'cmpe'
+        # pint 'cmpe'
         if other is None:
             return True
         for key in ['title', 'artist', 'album']:
@@ -292,7 +291,7 @@ class Track:
         return False
 
     def __eq__(self, other):
-        #print 'cmpe'
+        # print 'cmpe'
         if other is None:
             return False
         value = True
@@ -301,30 +300,28 @@ class Track:
                 return False
         return True
 
-
     def __repr__(self):
         return unicode(self.metadata.title).encode('ascii', 'xmlcharrefreplace') + ' - ' + unicode(self.metadata.artist).encode('ascii', 'xmlcharrefreplace')
-
 
 
 def load_mp4_file(filename):
     try:
         if not (filename.endswith('.mp4') or filename.endswith('.m4a')):
             print "NOT THE RIGHT EXTENSION"
-            print "'"+filename+"'"
+            print "'" + filename + "'"
             return None
     except UnicodeDecodeError:
         if not (filename.decode('utf-8').endswith('.mp4') or filename.decode('utf-8').endswith('.m4a')):
             print "NOT THE RIGHT EXTENSION"
-            print "'"+filename+"'"
+            print "'" + filename + "'"
             return None
 
     try:
         bar = mutagen.mp4.MP4(filename)
-        #print bar.tags.pprint()
-        #print bar.tags.keys()
+        # print bar.tags.pprint()
+        # print bar.tags.keys()
         info = {
-            'length':     int(bar.info.length*1000),
+            'length':     int(bar.info.length * 1000),
             #'location':   yy,
             'bitrate':    bar.info.bitrate,
             'samplerate': bar.info.sample_rate,
@@ -332,10 +329,9 @@ def load_mp4_file(filename):
             #'encoder':    bar.tags['TENC'] if 'TENC' in bar.tags else ""
         }
 
-        #get metadata
+        # get metadata
 
         metadata = {}
-
 
         text_fields = [
             ('\xa9grp', 'grouping'),
@@ -352,7 +348,7 @@ def load_mp4_file(filename):
 
         for id3, field in text_fields:
             foo = bar.tags.get(id3)
-            #print foo
+            # print foo
             metadata[field] = None
             if foo is not None and len(foo) > 0:
                 metadata[field] = unicode(foo[0])
@@ -367,13 +363,12 @@ def load_mp4_file(filename):
         if foo is not None and len(foo) > 0:
             metadata['year'] = foo[0]
 
-
         foo = bar.tags.get('\xa9cmt')
         metadata['comments'] = None
         if foo is not None and len(foo) > 0:
             com = ''
             for comment in foo:
-                #if comment.desc == '':
+                # if comment.desc == '':
                 com += unicode(comment)
             metadata['comments'] = com
 
@@ -381,26 +376,30 @@ def load_mp4_file(filename):
         metadata['album_art'] = None
         if foo is not None and len(foo) > 0:
             for image in foo:
-                formats = {mutagen.mp4.AtomDataType.JPEG : "image/jpeg",
-                           mutagen.mp4.AtomDataType.PNG  : "image/png"}
+                formats = {mutagen.mp4.AtomDataType.JPEG: "image/jpeg",
+                           mutagen.mp4.AtomDataType.PNG: "image/png"}
                 metadata['album_art'] = (formats[image.imageformat], str(image))
-                #print image.imageformat, formats[image.imageformat]
-                    #break
+                # print image.imageformat, formats[image.imageformat]
+                # break
         return Track(filename, info, metadata)
     except Exception, details:
         print details
         return Track(filename, {}, {})
+
+
 """
 
 """
+
+
 def save_mp4_file(track):
-    #print filename
+    # print filename
     if not track.location.endswith('.mp3'):
         return None
     try:
         bar = mutagen.mp4.MP4(track.location)
         info = {
-            'length':     int(bar.info.length*1000),
+            'length':     int(bar.info.length * 1000),
             #'location':   yy,
             'bitrate':    bar.info.bitrate,
             'samplerate': bar.info.sample_rate,
@@ -408,56 +407,54 @@ def save_mp4_file(track):
             #'encoder':    bar.tags['TENC'] if 'TENC' in bar.tags else ""
         }
 
-        #get metadata
+        # get metadata
 
         metadata = {}
 
-
         text_fields = [
-            ('grouping',     '\xa9grp'), #mutagen.id3.TIT1),
-            ('title',        '\xa9nam'), #mutagen.id3.TIT2),
-            ('artist',       '\xa9ART'), #mutagen.id3.TPE1),
-            ('album_artist', 'aArt'), #mutagen.id3.TPE2),
-            ('album',        '\xa9alb'), #mutagen.id3.TALB),
+            ('grouping',     '\xa9grp'),  # mutagen.id3.TIT1),
+            ('title',        '\xa9nam'),  # mutagen.id3.TIT2),
+            ('artist',       '\xa9ART'),  # mutagen.id3.TPE1),
+            ('album_artist', 'aArt'),  # mutagen.id3.TPE2),
+            ('album',        '\xa9alb'),  # mutagen.id3.TALB),
             #('mood',         ''), #mutagen.id3.TMOO),
             #('language',     ''), #mutagen.id3.TLAN),
-            ('category',     'catg'), #mutagen.id3.TCAT),
-            ('description',  'desc'), #mutagen.id3.TDES),
-            ('genre',        '\xa9gen'), #mutagen.id3.TCON)
+            ('category',     'catg'),  # mutagen.id3.TCAT),
+            ('description',  'desc'),  # mutagen.id3.TDES),
+            ('genre',        '\xa9gen'),  # mutagen.id3.TCON)
             ('bpm',          'tmpo'),
             ('comments',     '\xa9cmy'),
             ('year',         '\xa9day')
         ]
-        #print bar
+        # print bar
         for id3, field in text_fields:
             foo = track.metadata._metadata.get(id3, None)
             if foo is not None:
                 bar.tags[field] = [unicode(foo)]
             #metadata[field] = None
-            ##print foo
-            #if len(foo) > 0:
+            # print foo
+            # if len(foo) > 0:
             #    metadata[field] = unicode(foo[0])
 
         #foo = bar.tags.getall('TBPM')
-        #if track.metadata.bpm is not None:
+        # if track.metadata.bpm is not None:
         #    bar.tags.add(mutagen.id3.TBPM(encoding = 3, text = str(track.metadata.bpm)))
         #metadata['bpm'] = None
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    metadata['bpm'] = +foo[0]
 
         #foo = bar.tags.getall('TDRC')
         #metadata['year'] = None
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    metadata['year'] = unicode(foo[0].text[0])
 
-        #if track.metadata.year is not None:
+        # if track.metadata.year is not None:
         #    bar.tags.add(mutagen.id3.TDRC(encoding = 3, text = str(track.metadata.year)))
 
-
-        ##$foo = bar.tags.getall('COMM')
+        # $foo = bar.tags.getall('COMM')
         #$metadata['comments'] = None
-        ##print foo
-        #if len(foo) > 0:
+        # print foo
+        # if len(foo) > 0:
         #    com = ''
         #    for comment in foo:
         #        #print 'COMMENT::', comment
@@ -465,110 +462,103 @@ def save_mp4_file(track):
         #            com += unicode(comment)
         #        #print com
         #    metadata['comments'] = com
-        #if track.metadata.comments is not None:
+        # if track.metadata.comments is not None:
         #    bar.tags.add(mutagen.id3.COMM(encoding = 3, text = track.metadata.comments))
 
-
-        #pydjay specific tags stored as comments:
-        #special_string_tags = [#('COMM:MOOD',      'mood'),
+        # pydjay specific tags stored as comments:
+        # special_string_tags = [#('COMM:MOOD',      'mood'),
         #                       ('COMM:STYLE',     'style'),
         #                       ('COMM:PLAY_AT',   'play_at'),
         #                       ('COMM:VOCAL',     'vocal'),
         #                       ('COMM:SPEED-FEEL','speed_feel')]
-        #if track.metadata.style is not None:
+        # if track.metadata.style is not None:
         #    bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "STYLE", text = track.metadata.style))
 
-        #if track.metadata.play_at is not None:
+        # if track.metadata.play_at is not None:
         #    bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "PLAY_AT", text = track.metadata.play_at))
 
-        #if track.metadata.vocal is not None:
+        # if track.metadata.vocal is not None:
         #    bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "VOCAL", text =track.metadata.vocal))
-        #if track.metadata.speed_feel is not None:
+        # if track.metadata.speed_feel is not None:
         #    bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "SPEED_FEEL", text = track.metadata.speed_feel))
 
-
-        #for t, field in special_string_tags:
+        # for t, field in special_string_tags:
         #    foo = bar.tags.getall(t)
         #    if len(foo) > 0:
         #        value = foo.text[0]
         #        metadata[field] = value
 
         #foo = bar.tags.getall('COMM:LOVED')
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    metadata['loved'] = True
-        #else:
+        # else:
         #    metadata['loved'] = False
 
-        #special_int_tags = [('COMM:NUM-PHRASES',   'num_phrases'),
+        # special_int_tags = [('COMM:NUM-PHRASES',   'num_phrases'),
         #                    ('COMM:RATING',        'rating'),
         #                    ('COMM:PHRASE-LENGTH', 'phrase_length')]
-        #for t, field in special_int_tags:
+        # for t, field in special_int_tags:
         #    foo = bar.tags.getall(t)
         #    if len(foo) > 0:
         #        value = foo.text[0]
         #        metadata[field] = int(value)
 
         #special_list_tags = ['COMM:PLAY-TIMES', 'COMM:PHRASING']
-        #if track.metadata.loved:
+        # if track.metadata.loved:
         #    bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "LOVED", text = "TRUE"))
-        #else:
+        # else:
         #    bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "LOVED", text = "FALSE"))
 
         #foo = bar.tags.getall('COMM:PLAY-TIMES')
-        #if track.metadata.play_times is not None:
+        # if track.metadata.play_times is not None:
         #    bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "PLAY_TIMES", text = ";".join(track.metadata.play_times)))
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    data = foo[0].split(";")
         #    metadata['play_times'] = data
-        #else:
+        # else:
         #    metadata['loved'] = []
 
         #foo = bar.tags.getall('COMM:PHRASING')
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    data = foo[0].split(";")
         #    metadata['play_times'] = [float(x) for x in data]
-        #else:
+        # else:
         #    metadata['loved'] = []
-
 
         #foo = bar.tags.getall('APIC')
         #metadata['album_art'] = None
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    #com = ''
         #    for image in foo:
         #        if image.type in [0, 3]:
         #            metadata['album_art'] = (image.mime, image.data)
         #            break
-        #try:
+        # try:
         #    del bar.tags['APIC:']
-        #except:
+        # except:
         #    pass
-        #print bar
-        #return Track(filename, info, metadata)
+        # print bar
+        # return Track(filename, info, metadata)
         bar.tags.save(track.location)
     except Exception, details:
         print details
-        #return Track(filename, {}, {})
-
-
-
-
+        # return Track(filename, {}, {})
 
 
 def load_mp3_file(filename):
-    #print filename
+    # print filename
     if not filename.endswith('.mp3'):
         return None
     try:
         bar = mutagen.mp3.MP3(filename)
-        #try:
+        # try:
         #    del bar['APIC']
-        #except:
+        # except:
         #    pass
-        #print bar.pprint()
-        #print bar
+        # print bar.pprint()
+        # print bar
         info = {
-            'length':     int(bar.info.length*1000),
+            'length':     int(bar.info.length * 1000),
             #'location':   yy,
             'bitrate':    bar.info.bitrate,
             'samplerate': bar.info.sample_rate,
@@ -576,10 +566,9 @@ def load_mp3_file(filename):
             #'encoder':    bar.tags['TENC'] if 'TENC' in bar.tags else ""
         }
 
-        #get metadata
+        # get metadata
 
         metadata = {}
-
 
         text_fields = [
             ('TIT1', 'grouping'),
@@ -593,11 +582,11 @@ def load_mp3_file(filename):
             ('TDES', 'description'),
             ('TCON', 'genre')
         ]
-        #print bar
+        # print bar
         for id3, field in text_fields:
             foo = bar.tags.getall(id3)
             metadata[field] = None
-            #print foo
+            # print foo
             if len(foo) > 0:
                 metadata[field] = unicode(foo[0])
 
@@ -611,26 +600,24 @@ def load_mp3_file(filename):
         if len(foo) > 0:
             metadata['year'] = unicode(foo[0].text[0])
 
-
         foo = bar.tags.getall('COMM')
         metadata['comments'] = None
-        #print foo
+        # print foo
         if len(foo) > 0:
             com = ''
             for comment in foo:
-                #print 'COMMENT::', comment
+                # print 'COMMENT::', comment
                 if comment.desc == '':
                     com += unicode(comment)
-                #print com
+                # print com
             metadata['comments'] = com
 
-
-        #pydjay specific tags stored as comments:
-        special_string_tags = [#('COMM:MOOD',      'mood'),
-                               ('COMM:STYLE',     'style'),
-                               ('COMM:PLAY_AT',   'play_at'),
-                               ('COMM:VOCAL',     'vocal'),
-                               ('COMM:SPEED-FEEL','speed_feel')]
+        # pydjay specific tags stored as comments:
+        special_string_tags = [  # ('COMM:MOOD',      'mood'),
+            ('COMM:STYLE',     'style'),
+            ('COMM:PLAY_AT',   'play_at'),
+            ('COMM:VOCAL',     'vocal'),
+            ('COMM:SPEED-FEEL', 'speed_feel')]
         for t, field in special_string_tags:
             foo = bar.tags.getall(t)
             if len(foo) > 0:
@@ -668,7 +655,6 @@ def load_mp3_file(filename):
         else:
             metadata['phrasing'] = []
 
-
         foo = bar.tags.getall('APIC')
         metadata['album_art'] = None
         if len(foo) > 0:
@@ -679,26 +665,25 @@ def load_mp3_file(filename):
                     break
                 else:
                     print image.type
-        #try:
+        # try:
         #    del bar.tags['APIC:']
-        #except:
+        # except:
         #    pass
-        #print bar
+        # print bar
         return Track(filename, info, metadata)
     except Exception, details:
         print "FOOBAR", details
         return Track(filename, {}, {})
 
 
-
 def save_mp3_file(track):
-    #print filename
+    # print filename
     if not track.location.endswith('.mp3'):
         return None
     try:
         bar = mutagen.mp3.MP3(track.location)
         info = {
-            'length':     int(bar.info.length*1000),
+            'length':     int(bar.info.length * 1000),
             #'location':   yy,
             'bitrate':    bar.info.bitrate,
             'samplerate': bar.info.sample_rate,
@@ -706,10 +691,9 @@ def save_mp3_file(track):
             #'encoder':    bar.tags['TENC'] if 'TENC' in bar.tags else ""
         }
 
-        #get metadata
+        # get metadata
 
         metadata = {}
-
 
         text_fields = [
             ('grouping',     mutagen.id3.TIT1),
@@ -723,36 +707,35 @@ def save_mp3_file(track):
             ('description',  mutagen.id3.TDES),
             ('genre',        mutagen.id3.TCON)
         ]
-        #print bar
+        # print bar
         for id3, field in text_fields:
             foo = track.metadata._metadata.get(id3, None)
             if foo is not None:
-                bar.tags.add(field(encoding = 3, text = foo))
+                bar.tags.add(field(encoding=3, text=foo))
             #metadata[field] = None
-            ##print foo
-            #if len(foo) > 0:
+            # print foo
+            # if len(foo) > 0:
             #    metadata[field] = unicode(foo[0])
 
         #foo = bar.tags.getall('TBPM')
         if track.metadata.bpm is not None:
-            bar.tags.add(mutagen.id3.TBPM(encoding = 3, text = str(track.metadata.bpm)))
+            bar.tags.add(mutagen.id3.TBPM(encoding=3, text=str(track.metadata.bpm)))
         #metadata['bpm'] = None
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    metadata['bpm'] = +foo[0]
 
         #foo = bar.tags.getall('TDRC')
         #metadata['year'] = None
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    metadata['year'] = unicode(foo[0].text[0])
 
         if track.metadata.year is not None:
-            bar.tags.add(mutagen.id3.TDRC(encoding = 3, text = str(track.metadata.year)))
+            bar.tags.add(mutagen.id3.TDRC(encoding=3, text=str(track.metadata.year)))
 
-
-        ##$foo = bar.tags.getall('COMM')
+        # $foo = bar.tags.getall('COMM')
         #$metadata['comments'] = None
-        ##print foo
-        #if len(foo) > 0:
+        # print foo
+        # if len(foo) > 0:
         #    com = ''
         #    for comment in foo:
         #        #print 'COMMENT::', comment
@@ -761,43 +744,42 @@ def save_mp3_file(track):
         #        #print com
         #    metadata['comments'] = com
         if track.metadata.comments is not None:
-            bar.tags.add(mutagen.id3.COMM(encoding = 3, text = track.metadata.comments))
+            bar.tags.add(mutagen.id3.COMM(encoding=3, text=track.metadata.comments))
 
-
-        #pydjay specific tags stored as comments:
-        #special_string_tags = [#('COMM:MOOD',      'mood'),
+        # pydjay specific tags stored as comments:
+        # special_string_tags = [#('COMM:MOOD',      'mood'),
         #                       ('COMM:STYLE',     'style'),
         #                       ('COMM:PLAY_AT',   'play_at'),
         #                       ('COMM:VOCAL',     'vocal'),
         #                       ('COMM:SPEED-FEEL','speed_feel')]
         if track.metadata.style is not None:
-            bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "STYLE", text = track.metadata.style))
+            bar.tags.add(mutagen.id3.COMM(encoding=3, desc="STYLE", text=track.metadata.style))
 
         if track.metadata.play_at is not None:
-            bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "PLAY_AT", text = track.metadata.play_at))
+            bar.tags.add(mutagen.id3.COMM(encoding=3, desc="PLAY_AT", text=track.metadata.play_at))
 
         if track.metadata.vocal is not None:
-            bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "VOCAL", text =track.metadata.vocal))
+            bar.tags.add(mutagen.id3.COMM(encoding=3, desc="VOCAL", text=track.metadata.vocal))
         if track.metadata.speed_feel is not None:
-            bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "SPEED_FEEL", text = track.metadata.speed_feel))
+            bar.tags.add(mutagen.id3.COMM(encoding=3, desc="SPEED_FEEL",
+                                          text=track.metadata.speed_feel))
 
-
-        #for t, field in special_string_tags:
+        # for t, field in special_string_tags:
         #    foo = bar.tags.getall(t)
         #    if len(foo) > 0:
         #        value = foo.text[0]
         #        metadata[field] = value
 
         #foo = bar.tags.getall('COMM:LOVED')
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    metadata['loved'] = True
-        #else:
+        # else:
         #    metadata['loved'] = False
 
-        #special_int_tags = [('COMM:NUM-PHRASES',   'num_phrases'),
+        # special_int_tags = [('COMM:NUM-PHRASES',   'num_phrases'),
         #                    ('COMM:RATING',        'rating'),
         #                    ('COMM:PHRASE-LENGTH', 'phrase_length')]
-        #for t, field in special_int_tags:
+        # for t, field in special_int_tags:
         #    foo = bar.tags.getall(t)
         #    if len(foo) > 0:
         #        value = foo.text[0]
@@ -805,69 +787,71 @@ def save_mp3_file(track):
 
         #special_list_tags = ['COMM:PLAY-TIMES', 'COMM:PHRASING']
         if track.metadata.loved:
-            bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "LOVED", text = "TRUE"))
+            bar.tags.add(mutagen.id3.COMM(encoding=3, desc="LOVED", text="TRUE"))
         else:
-            bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "LOVED", text = "FALSE"))
+            bar.tags.add(mutagen.id3.COMM(encoding=3, desc="LOVED", text="FALSE"))
 
         if track.metadata.rating is not None:
-            bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "RATING", text = str(track.metadata.rating)))
+            bar.tags.add(mutagen.id3.COMM(encoding=3, desc="RATING",
+                                          text=str(track.metadata.rating)))
         else:
-            bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "RATING", text = "0"))
+            bar.tags.add(mutagen.id3.COMM(encoding=3, desc="RATING", text="0"))
 
         #foo = bar.tags.getall('COMM:PLAY-TIMES')
         if track.metadata.play_times is not None:
-            bar.tags.add(mutagen.id3.COMM(encoding = 3, desc = "PLAY_TIMES", text = ";".join(track.metadata.play_times)))
-        #if len(foo) > 0:
+            bar.tags.add(mutagen.id3.COMM(encoding=3, desc="PLAY_TIMES",
+                                          text=";".join(track.metadata.play_times)))
+        # if len(foo) > 0:
         #    data = foo[0].split(";")
         #    metadata['play_times'] = data
-        #else:
+        # else:
         #    metadata['loved'] = []
 
         #foo = bar.tags.getall('COMM:PHRASING')
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    data = foo[0].split(";")
         #    metadata['play_times'] = [float(x) for x in data]
-        #else:
+        # else:
         #    metadata['loved'] = []
-
 
         #foo = bar.tags.getall('APIC')
         #metadata['album_art'] = None
         if track.metadata.album_cover is not None:
             type_ = track.metadata.album_cover[0]
-            data  = track.metadata.album_cover[1]
-            bar.tags.add(mutagen.id3.APIC(mime = type_, data = data))
-        #else:
+            data = track.metadata.album_cover[1]
+            bar.tags.add(mutagen.id3.APIC(mime=type_, data=data))
+        # else:
         #    print "NO COVER"
-        #if len(foo) > 0:
+        # if len(foo) > 0:
         #    #com = ''
         #    for image in foo:
         #        if image.type in [0, 3]:
         #            metadata['album_art'] = (image.mime, image.data)
         #            break
-        #try:
+        # try:
         #    del bar.tags['APIC:']
-        #except:
+        # except:
         #    pass
-        #print bar
-        #return Track(filename, info, metadata)
-        #print track.location
+        # print bar
+        # return Track(filename, info, metadata)
+        # print track.location
         bar.tags.save(track.location)
         #bar = mutagen.mp3.MP3(track.location)
-        #print bar.pprint()
-        #print track.location
-        #print bar.pprint()
-        #print
+        # print bar.pprint()
+        # print track.location
+        # print bar.pprint()
+        # print
     except Exception, details:
         print 'FOOFOO', details
-        #return Track(filename, {}, {})
+        # return Track(filename, {}, {})
+
 
 def load_file(filename):
     if filename.endswith('.mp3'):
         return load_mp3_file(filename)
     elif (filename.endswith('.mp4') or filename.endswith('.m4a')):
         return load_mp4_file(filename)
-    return None #Track(filename, {}, {})
+    return None  # Track(filename, {}, {})
 
 
 if __name__ == '__main__':
@@ -876,27 +860,26 @@ if __name__ == '__main__':
         del tr.metadata._metadata['album_art']
     except:
         pass
-    tr.metadata._metadata['grouping']     = 'NEW GROUPING 2'
-    tr.metadata._metadata['title']        = 'NEW TITLE 2'
-    tr.metadata._metadata['artist']       = 'NEW ARTIST 2'
+    tr.metadata._metadata['grouping'] = 'NEW GROUPING 2'
+    tr.metadata._metadata['title'] = 'NEW TITLE 2'
+    tr.metadata._metadata['artist'] = 'NEW ARTIST 2'
     tr.metadata._metadata['album_artist'] = 'NEW ALBUM_ARTIST 2'
-    tr.metadata._metadata['album']        = 'NEW ALBUM 2'
-    tr.metadata._metadata['mood']         = 'NEW MOOD 2'
-    tr.metadata._metadata['language']     = 'NEW LANGUAGE 2'
-    tr.metadata._metadata['category']     = 'NEW CATEGORY 2'
-    tr.metadata._metadata['description']  = 'NEW DESCRIPTION 2'
-    tr.metadata._metadata['genre']        = 'NEW GENRE 2'
+    tr.metadata._metadata['album'] = 'NEW ALBUM 2'
+    tr.metadata._metadata['mood'] = 'NEW MOOD 2'
+    tr.metadata._metadata['language'] = 'NEW LANGUAGE 2'
+    tr.metadata._metadata['category'] = 'NEW CATEGORY 2'
+    tr.metadata._metadata['description'] = 'NEW DESCRIPTION 2'
+    tr.metadata._metadata['genre'] = 'NEW GENRE 2'
 
-    tr.metadata._metadata['bpm']          = '000'
-    tr.metadata._metadata['year']         = '9999'
-    tr.metadata._metadata['comments']     = 'NEW comments'
-    tr.metadata._metadata['syle']         = 'NEW style'
-    tr.metadata._metadata['play_at']      = 'NEW PLAY_AT'
-    tr.metadata._metadata['vocal']        = 'NEW VOCAL'
-    tr.metadata._metadata['speed_feel']   = 'slow'
-    tr.metadata._metadata['loved']        = False
-    tr.metadata._metadata['play_times']   = ['12:30', '11:23']
-
+    tr.metadata._metadata['bpm'] = '000'
+    tr.metadata._metadata['year'] = '9999'
+    tr.metadata._metadata['comments'] = 'NEW comments'
+    tr.metadata._metadata['syle'] = 'NEW style'
+    tr.metadata._metadata['play_at'] = 'NEW PLAY_AT'
+    tr.metadata._metadata['vocal'] = 'NEW VOCAL'
+    tr.metadata._metadata['speed_feel'] = 'slow'
+    tr.metadata._metadata['loved'] = False
+    tr.metadata._metadata['play_times'] = ['12:30', '11:23']
 
     save_mp4_file(tr)
     tr = load_mp4_file('test_mp4_tag.mp4')
@@ -907,7 +890,7 @@ if __name__ == '__main__':
 
     print tr.metadata._metadata
 
-    #for xx in os.listdir('/Volumes/Media/Blues MP3'):
+    # for xx in os.listdir('/Volumes/Media/Blues MP3'):
     #    zz = load_file(os.path.join('/Volumes/Media/Blues MP3', xx))
     #    if zz is not None:
     #        del zz.metadata._metadata['album_art']

@@ -1,15 +1,16 @@
 import os
 
+
 class Playlist(object):
-    def __init__(self, library, name, auto_save = False):
+    def __init__(self, library, name, auto_save=False):
         super(Playlist, self).__init__()
-        self._tracks        = None
-        self._name          = name
-        self._library       = library
-        self._is_editable   = True
+        self._tracks = None
+        self._name = name
+        self._library = library
+        self._is_editable = True
         self._is_modifiable = True
-        self._is_modified   = False
-        self._auto_save     = auto_save
+        self._is_modified = False
+        self._auto_save = auto_save
         self._track_indices = {}
 
     @property
@@ -92,6 +93,7 @@ class Playlist(object):
 
     @property
     def length(self):
+        self.load()
         total_length = 0
         for track in self._tracks:
             total_length += track.info.length
@@ -115,14 +117,15 @@ class Playlist(object):
 
 
 class FilePlaylist(Playlist):
-    def __init__(self, library, path, file_name, display_name = None, auto_save = False):
-        super(FilePlaylist, self).__init__(library, display_name if display_name is not None else file_name, auto_save)
+    def __init__(self, library, path, file_name, display_name=None, auto_save=False):
+        super(FilePlaylist, self).__init__(
+            library, display_name if display_name is not None else file_name, auto_save)
         self._path = path
         self._file_name = file_name
 
     def load(self):
         if self._tracks is None:
-            path = os.path.join(self._path, self._file_name+'.m3u')
+            path = os.path.join(self._path, self._file_name + '.m3u')
             self._tracks = []
             if os.path.exists(path):
                 file_ = open(path, 'rU')
@@ -134,12 +137,13 @@ class FilePlaylist(Playlist):
 
     def save(self):
         if self._tracks is not None:
-            path = os.path.join(self._path, self._file_name+'.m3u')
+            path = os.path.join(self._path, self._file_name + '.m3u')
             file_ = open(path, 'w')
             for bar in self._tracks:
-                file_.write(bar.location+"\n")
+                file_.write(bar.location + "\n")
             file_.close()
         super(FilePlaylist, self).save()
+
 
 class MainPlaylist(Playlist):
     def load(self):
@@ -148,6 +152,7 @@ class MainPlaylist(Playlist):
     def save(self):
         pass
 
+
 class TrackList(Playlist):
     def __init__(self, name, tracks):
         super(TrackList, self).__init__(None, name)
@@ -155,7 +160,7 @@ class TrackList(Playlist):
 
 
 class FilteredPlaylist(Playlist):
-    def __init__(self, library, field = None, comparison = None, value = None, num = None):
+    def __init__(self, library, field=None, comparison=None, value=None, num=None):
         super(FilteredPlaylist, self).__init__(library, value)
         self._field = field
         self._comparison = comparison
@@ -173,11 +178,11 @@ class FilteredPlaylist(Playlist):
         if self._tracks is None:
             self._tracks = []
             try:
-                cmpr = getattr(self, "_"+self._comparison)
+                cmpr = getattr(self, "_" + self._comparison)
             except Exception, details:
                 print details
                 return None
-            ret_val = []
+            # ret_val = []
             for t in self._library.iterate_tracks():
                 try:
                     if cmpr(t):
@@ -194,7 +199,7 @@ class FilteredPlaylist(Playlist):
                 if i > -1:
                     return True
                 return False
-            except Exception, details:
+            except Exception:
                 return False
 
     def _equals(self, track):
@@ -202,7 +207,7 @@ class FilteredPlaylist(Playlist):
             try:
                 foo = getattr(track.metadata, self._field)
                 return foo == self._value
-            except Exception, details:
+            except Exception:
                 return False
 
     def _true(self, track):

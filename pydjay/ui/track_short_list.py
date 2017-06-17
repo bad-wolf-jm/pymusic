@@ -1,11 +1,11 @@
-import os
-from os.path import getsize
-from datetime import datetime
+# import os
+# from os.path import getsize
+# from datetime import datetime
 
-from kivy.event import EventDispatcher
-from kivy.clock import mainthread, Clock
+# from kivy.event import EventDispatcher
+from kivy.clock import Clock
 from kivy.lang import Builder
-from kivy.properties import ObjectProperty, StringProperty, BooleanProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.factory import Factory
 #from pydjay.gui.utils import seconds_to_human_readable
@@ -13,9 +13,8 @@ from kivy.factory import Factory
 from elements.utils import seconds_to_human_readable
 
 
-
-from kivy.core.window import Window
-from elements import large_track_list
+# from kivy.core.window import Window
+# from elements import large_track_list
 from behaviors.track_list_behaviour import TrackListBehaviour
 from pydjay.bootstrap import play_queue, session_manager
 
@@ -82,6 +81,7 @@ kv_string = """
             on_touch_down: root._on_list_touch_down(*args)
 """
 
+
 class DragContext:
     def __init__(self, drag, drop):
         self.drag = drag
@@ -90,7 +90,7 @@ class DragContext:
 
 class TrackShortList(BoxLayout, TrackListBehaviour):
     master_list = ObjectProperty(None)
-    short_list  = ObjectProperty(None)
+    short_list = ObjectProperty(None)
     preview_player = ObjectProperty(None)
     search_filter = ObjectProperty(None)
     total_track_count = StringProperty("")
@@ -98,7 +98,7 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
 
     def __init__(self, *args, **kwargs):
         super(TrackShortList, self).__init__(*args, **kwargs)
-        Clock.schedule_once(self._post_init,-1)
+        Clock.schedule_once(self._post_init, -1)
         self.drag_context_sl = DragContext(self._start_drag_sl, self._drop_sl)
         self.has_focus = False
         self._current_selection = None
@@ -108,12 +108,11 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
                                     'shift+backspace': self._delete_selection,
                                     'shift+q':         self._add_selection_to_queue})
 
-
     def _post_init(self, *args):
-        self.short_list.adapter.bind(data = self._update_sl_track_count)
-        self.short_list.bind(adapter = self._update_sl_track_count)
-        play_queue.bind(on_queue_content_change =  self._update_availability)
-        session_manager.bind(on_current_session_changed = self._update_availability)
+        self.short_list.adapter.bind(data=self._update_sl_track_count)
+        self.short_list.bind(adapter=self._update_sl_track_count)
+        play_queue.bind(on_queue_content_change=self._update_availability)
+        session_manager.bind(on_current_session_changed=self._update_availability)
         self.preview_player.window = self.window
         self.preview_player.player = self.window._preview_player
         self.preview_player.volume_controls = self.window._volume_control
@@ -126,7 +125,6 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
 
     def show_preview_player(self, track, pos, size):
         self.window.show_preview_player(track, pos, size, 'left')
-
 
     def preview_track(self, track):
         self.preview_player.play(track)
@@ -193,14 +191,14 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
                     self.add_shortlist_track(self.window._drag_payload)
                     self.window.drop()
 
-    def add_shortlist_track(self, track, index = None):
+    def add_shortlist_track(self, track, index=None):
         self.short_list.add_track(track, index, self._track_is_available)
 
     def _convert_sl(self, row, item):
         return {'row': row,
                 'item': item,
-                'view':self,
-                'drag_context':self.drag_context_sl,
+                'view': self,
+                'drag_context': self.drag_context_sl,
                 'is_selected': False}
 
     def _update_sl_track_count(self, *args):
@@ -210,22 +208,23 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
         track_count_text = self.title
         if num > 0 and track_count_text != "":
             track_count_text += " - "
-        #else:
+        # else:
         for t in self.short_list.adapter.data:
             try:
                 time += t['item'].track.info.length
             except:
                 pass
         track_count_text += "[color=#ffffff]" + str(num) + " tracks " + "[/color]" + \
-                            "[color=#444444] | [/color]"+ \
-                            "[color=#888888]" + seconds_to_human_readable(time / 1000000000) + "[/color]"
+                            "[color=#444444] | [/color]" + \
+                            "[color=#888888]" + \
+            seconds_to_human_readable(time / 1000000000) + "[/color]"
         self.sl_track_count.text = track_count_text
         return True
 
     def _on_list_touch_down(self, window, event):
         pass
 
-    def set_track_list(self, list, sort = True):
+    def set_track_list(self, list, sort=True):
         self.short_list.set_track_list(list, sort, self._track_is_available)
         self._update_sl_track_count()
         num = len(self.short_list.adapter.data)
@@ -239,8 +238,9 @@ class TrackShortList(BoxLayout, TrackListBehaviour):
                 except:
                     pass
             self.total_track_count = "[color=#ffffff]" + str(num) + " tracks " + "[/color]" + \
-                                     "[color=#444444] | [/color]"+ \
-                                     "[color=#888888]" + seconds_to_human_readable(time / 1000) + "[/color]"
+                                     "[color=#444444] | [/color]" + \
+                                     "[color=#888888]" + \
+                seconds_to_human_readable(time / 1000) + "[/color]"
 
 
 Builder.load_string(kv_string)
