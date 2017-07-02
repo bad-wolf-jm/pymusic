@@ -4,16 +4,24 @@ from pydjay.core.audio.volume import VolumeController
 from pydjay.core.precue import PreviewPlayer
 from pydjay.core.keyboard import key_map
 
+from pydjay.core.library import init, save, get_track_by_name, get_tracks, get_playlists, get_playlist_by_name as F, get_sessions, get_session_by_name as G
+from pydjay.core.library import get_genre_by_name, get_style_by_name
+from pydjay.core.library.playlist import TrackList, Playlist
+
+import os
+from pydjay.core.library.library import MusicLibrary
+from pydjay.core.playback_manager import PlaybackManager
+from pydjay.core.queue import PlayQueue
+from pydjay.core.session import SessionManager
+
+
 main_player = AudioPlayer("MainPlayer", 2)
 preview_player_o = AudioPlayer("PreviewPlayer", 2)
 volume_control_o = VolumeController("VolumeControl", num_channels=6)
-#preview_volume_control = VolumeController("PrecuePlayerVolume")
 
 preview_player_o.connect_outputs(output_1="VolumeControl:input_5",
                                  output_2="VolumeControl:input_6")
 
-# preview_volume_control.connect_outputs(output_1 = "system:playback_5",
-#                                       output_2 = "system:playback_6")
 main_player.connect_outputs(output_1="VolumeControl:input_1",
                             output_2="VolumeControl:input_2")
 
@@ -75,13 +83,9 @@ volume_control.set_volume('main_player_monitor_mute', .07)
 
 def set_volume(channel, volume):
     volume_control.set_volume(channel, volume)
-    # pass
-
 
 def get_volume(channel):
     return volume_control.get_volume(channel)
-    # pass
-
 
 def _increase_main_volume(*a):
     v = volume_control.main_player
@@ -89,17 +93,14 @@ def _increase_main_volume(*a):
     v = min(v, 8)
     volume_control.main_player = v
 
-
 def _decrease_main_volume(*a):
     v = volume_control.main_player
     v -= .1
     v = max(v, 0)
     volume_control.main_player = v
 
-
 key_map.bind(on_main_volume_up=_increase_main_volume,
              on_main_volume_down=_decrease_main_volume)
-
 
 def _increase_monitor_volume(*a):
     v = volume_control.main_player_monitor
@@ -163,11 +164,6 @@ def close_keyboard():
     pass
 
 
-import os
-from pydjay.core.library.library import MusicLibrary
-from pydjay.core.playback_manager import PlaybackManager
-from pydjay.core.queue import PlayQueue
-from pydjay.core.session import SessionManager
 
 
 HOME = os.path.expanduser('~')
@@ -179,40 +175,14 @@ PLAYLISTS = os.path.join(PYDJAY_CACHE, 'playlists')
 
 music_library = MusicLibrary(PYDJAY_CACHE)
 
-session_manager = SessionManager(music_library)  # , os.path.join(SESSIONS, "Current Session.m3u"))
+session_manager = SessionManager(music_library)
 play_queue = PlayQueue(music_library._main_queue)
 playback_manager = PlaybackManager(main_player, play_queue, session_manager)
-
-# print "DONE"
-#short_list_indices = set([])
 short_list = music_library._short_list
-
-# def set_short_list(q):
-#    global short_list, short_list_indices
-#    print 'setting'
-#    short_list_indices = set([])
-#    short_list = []
-#    for e in q:
-#        if e.location not in short_list_indices:
-#            short_list_indices.add(e.location) #set([[x.location for x in q]])
-#            short_list.append(e)# = [x for x in q]
-
-# print [x.metadata.title for x in short_list]
-
-
-# def get_all_tracks():
-#    return TrackList('All tracks', get_tracks())
 
 def add_shortlist_track(track, index=None):
     global short_list, short_list_indices
     short_list.add_track(track)
-#    if track.location not in short_list_indices:
-#        if index is not None:
-#            short_list.insert(index, track)
-#        else:
-#            short_list.append(track)
-#        short_list_indices.add(track.location)
-
 
 def track_is_available(track):
     is_available = True
@@ -223,89 +193,29 @@ def track_is_available(track):
     return is_available
 
 
-from pydjay.core.library import init, save, get_track_by_name, get_tracks, get_playlists, get_playlist_by_name as F, get_sessions, get_session_by_name as G
-from pydjay.core.library import get_genre_by_name, get_style_by_name
-from pydjay.core.library.playlist import TrackList, Playlist
-
-# class ShortList(TrackList):
-#    def insert(self, track, index):
-#        short_list.insert(track.location, index)
-#
-#    def remove(self, track):
-#        short_list.remove(track)
-#
-#    def save(self):
-#        set_short_list(self.get_tracks())
-
 
 def get_short_list_playlist():
     global short_list
     return short_list
 
-# def get_short_list():
-#    global short_list
-#    return [x for x in short_list.track_list]
-
-
 def get_all_tracks():
     return music_library.get_main_playlist('All songs')
-    # return TrackList('All songs', get_tracks())
-
 
 def get_current_session():
-    # TrackList('Current session', session_manager.played_tracks)
     return music_library.get_current_session('Current session')
 
 
 def get_all_genres():
     return music_library.get_all_genres()
-#
-#    genres = set([])
-#    for track in get_tracks():
-#        genres.add(track.metadata.genre)
-#    genres = sorted(list(genres))
-#
-#    return [get_genre_by_name(g) for g in genres]
-
-# def get_genre(name):
-#    return [x for x in get_tracks() if x.metadata.genre == name]
-
-# def get_style(name):
-#    return [x for x in get_tracks() if x.metadata.style == name]
-
-# def get_all_tracks():
-#    return get_tracks()
-
 
 def get_all_styles():
     return music_library.get_all_styles()
-#    genres = set([])
-#    for track in get_tracks():
-#        genres.add(track.metadata.style)
-#    genres = sorted(list(genres))
-#    #for g in genres:
-#    return [get_style_by_name(g) for g in genres]
-
 
 def get_all_playlists():
     return music_library.get_all_playlists()
-#    genres = []
-#    for p in get_playlists():
-#        genres.append(get_playlist_by_name(p))
-#    return sorted(list(genres))
-
-# def get_playlist_by_name(name):
-#    return F(name)
-
 
 def get_all_sessions():
     return music_library.get_all_sessions()
-    #genres = []
-    # for p in get_sessions():
-    #    genres.append(get_session_by_name(p))
-    # print genres
-    # return sorted(list(genres))
-
 
 def get_session_by_name(name):
     return G(name)

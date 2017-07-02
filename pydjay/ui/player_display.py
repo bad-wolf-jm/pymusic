@@ -13,16 +13,13 @@ from kivy.uix.button import Button
 
 from kivy.properties import ObjectProperty
 from kivy.factory import Factory
-
-#from pydjay.core.library import save_to_current_session
-
 from kivy.uix.modalview import ModalView
 from elements import widgets, waveform_seekbar
 from elements.utils import seconds_to_human_readable
-#from pydjay.gui import volume_slider
-#from pydjay.utils.protocol import MAGIC
-
 from kivy.logger import Logger
+
+from pydjay.ui.dialogs.stopping_options import StopOptionsDialog
+from pydjay.ui.dialogs.playback_settings import PlaybackSettingsDialog
 import pydjay.bootstrap
 
 
@@ -46,9 +43,6 @@ kv_string = """
             size: self.parent.size
             pos: self.parent.pos
             id: display_window
-
-
-
             BoxLayout:
                 orientation: 'horizontal'
                 Image:
@@ -171,314 +165,11 @@ kv_string = """
                         id: seekbar
 """
 
-
-stop_options_kv = """
-<StopOptionsDialog>:
-    size_hint: .5,.35
-    id: skip_to_next_overlay
-    canvas:
-        Color:
-            rgba: .7,0.7,0.7,.98
-        Rectangle:
-            size: self.size
-            pos: self.pos
-    BoxLayout:
-        orientation: 'vertical'
-
-        Label:
-            canvas.before:
-                Color:
-                    rgba: .3,0.3,0.3,.98
-                Rectangle:
-                    size: self.size
-                    pos: self.pos
-            size_hint: 1,None
-            height: 50
-            font_size: 25
-            markup: True
-            halign: 'center'
-            valign: 'middle'
-            text_size: self.size
-            text: "STOP/SKIP THE CURRENT SONG"
-
-        Widget:
-            size_hint: 1,1
-
-        Button:
-            size_hint: .5, None
-            size: 100,60
-            pos_hint:{'center_x':.5, 'center_y':.5}
-            text: "STOP the current song"
-            #disabled: not root.show_force_skip
-            on_press: root.immediate_stop()
-        Widget:
-            size_hint: 1,1
-        Button:
-            size_hint: .5, None
-            size: 100,60
-            pos_hint:{'center_x':.5, 'center_y':.5}
-            text: "SKIP to the next song"
-            #disabled: not root.show_force_skip
-            on_press: root.play_next_track()
-        Widget:
-            size_hint: 1,1
-        Label:
-            size_hint: 1,None
-            height: 50
-            font_size: 15
-            markup: True
-            halign: 'center'
-            valign: 'middle'
-            text_size: self.size
-            text: "[color=#333333]Tap of click anywhere outside the dialog to dismiss.[/color]"
-        Widget:
-            size_hint: 1,1
-
-"""
-
-
-class StopOptionsDialog(ModalView):
-
-    def play_next_track(self):
-        pydjay.bootstrap.playback_manager.play_next_track()
-        self.dismiss()
-
-    def immediate_stop(self):
-        pydjay.bootstrap.playback_manager.immediate_stop(True)
-        self.dismiss()
-
-
-Builder.load_string(stop_options_kv)
-Factory.register('StopOptionsDialog', StopOptionsDialog)
-
-
-settings_dialog_kv = """
-<PlaybackSettingsDialog>:
-    #deck:                 deck
-    #wait_toggle: wait_toggle
-    wait_time_input: wait_time
-    #start_queue_button:   start_queue_button
-    #stopping_message: stopping_message
-    #orientation: 'horizontal'
-    size_hint: .5, .5
-
-    canvas:
-        Color:
-            rgba: .7,0.7,0.7,.98
-        Rectangle:
-            size: self.size
-            pos: self.pos
-    BoxLayout:
-        orientation: 'vertical'
-
-        Label:
-            canvas.before:
-                Color:
-                    rgba: .3,0.3,0.3,.98
-                Rectangle:
-                    size: self.size
-                    pos: self.pos
-            size_hint: 1,None
-            height: 50
-            font_size: 25
-            markup: True
-            halign: 'center'
-            valign: 'middle'
-            text_size: self.size
-            text: "PLAYBACK SETTINGS"
-
-
-        BoxLayout:
-            orientation: 'vertical'
-            size_hint: 1,1
-            padding:[10,10,10,10]
-            Label:
-                size_hint: 1,None
-                height: 20
-                font_size: 20
-                color: .2,.2,.2,1
-                markup: True
-                halign: 'left'
-                valign: 'middle'
-                text_size: self.size
-                text: "Queue Management:"
-            Widget:
-                size_hint: None, None
-                height:15
-            VerticalBox:
-                size_hint: 1,1
-                HorizontalBox:
-                    size_hint: 1, None
-                    height: 15
-                    padding: [20,0,0,0]
-                    CheckBox:
-                        id: wait_toggle
-                        size_hint: None, 1
-                        width: self.height
-
-                    HorizontalBox:
-                        Label:
-                            size_hint: None, None
-                            pos_hint: {'center_y': .5}
-                            color: .2,.2,.2,1
-
-                            halign: 'center'
-                            valign: 'middle'
-                            size: 50,20
-                            text_size: self.size
-                            text: 'Wait'
-                            font_size: 15
-                            #pos: self.parent.width - 130, 65
-                        BoxLayout:
-                            orientation: 'horizontal'
-                            size_hint: None, None
-                            pos_hint: {'center_y': .5}
-                            width: 30
-                            height: 30
-                            spacing: 0
-                            canvas.before:
-                                Color:
-                                    rgba: .6,.6,.6,1
-                                Rectangle:
-                                    pos:  self.pos
-                                    size: self.size
-
-                            TextInput:
-                                id: wait_time
-                                size_hint: 1,1
-                                font_size: 15
-                                pos_hint: {'center_y':.5}
-                                multiline: False
-                                color: .2,.2,.2,1
-                                halign: 'center'
-                                valign: 'middle'
-                                text_size: self.width, self.height
-                                text: '' #####tr(pydjay.bootstrap.playback_manager.wait_time)
-                                foreground_color: 1,1,1,.8
-                                background_color: 0,0,0,0
-                                on_text_validate: root.set_wait_time(*args)
-                                on_focus: root.set_wait_time_by_focus(*args)
-                        Label:
-                            size_hint: 1, None
-                            height: 20
-                            pos_hint: {'center_y': .5}
-                            color: .2,.2,.2,1
-                            halign: 'left'
-                            valign: 'middle'
-                            #size: 125,75
-                            text_size: self.size
-                            text: 'seconds between songs'
-                            font_size: 15
-                            pos: self.parent.width - 130, 65
-                Widget:
-                    size_hint: 1,1
-                Label:
-                    size_hint: 1,None
-                    height: 50
-                    font_size: 15
-                    markup: True
-                    halign: 'center'
-                    valign: 'middle'
-                    text_size: self.size
-                    text: "[color=#333333]Tap of click anywhere outside the dialog to dismiss.[/color]"
-#                        Widget:
-#                            size_hint: 1,1
-
-"""
-
-
-class PlaybackSettingsDialog(ModalView):
-    #stopping_message = ObjectProperty(None)
-    #wait_time_input      = ObjectProperty(None)
-    #wait_toggle          = ObjectProperty(None)
-    #window               = ObjectProperty(None)
-
-    def __init__(self, *args, **kw):
-        super(PlaybackSettingsDialog, self).__init__(*args, **kw)
-#        self._track              = None
-#        playback_manager.bind(queue_is_playing   = self._watch_queue_data,
-#                              queue_stop_request = self._on_queue_stop_request)
-#        play_queue.bind(on_queue_content_change = self._watch_queue_data)
-        Clock.schedule_once(self._post_init, -1)
-
-    def _post_init(self, *args):
-        self.wait_time_input.text = "%s" % pydjay.bootstrap.playback_manager.wait_time
-        #self.wait_time_input.bind(focus = self._toggle_keyboard_shortcuts)
-
-#    def _toggle_keyboard_shortcuts(self, *a):
-#        if not self.wait_time_input.focus:
-#            self.window.restore_focus()
-#        else:
-#            self.window.suspend_focus()
-
-    def set_volume_control(self, volume_control):
-        self._volume_control = volume_control
-
-    def set_wait_time(self, *args):
-        try:
-            t = int(self.wait_time_input.text)
-            pydjay.bootstrap.playback_manager.wait_time = t
-        except:
-            self.wait_time_input.text = '2'
-            pydjay.bootstrap.playback_manager.wait_time = 2
-        #self.wait_toggle.active = False
-
-    def set_wait_time_by_focus(self, i, value):
-        if not value:
-            self.set_wait_time()
-
-#    def shutdown(self):
-#        pass
-
-#    def _watch_queue_data(self, *q):
-#        if not play_queue.is_empty:
-#            if not playback_manager.queue_is_playing:
-#                self.start_queue_button.text = "START"
-#                self.stopping_message.text = ""
-#                self.start_queue_button.disabled = False
-#            else:
-#                self.start_queue_button.text = "STOP"
-#                self.stopping_message.text = ""
-#                self.start_queue_button.disabled = False
-#
-#        else:
-#            if not playback_manager.queue_is_playing:
-#                self.start_queue_button.text = "EMPTY"
-#                self.stopping_message.text = ""
-#                self.start_queue_button.disabled = True
-
-#
-#    def start_queue(self):
-#        if not playback_manager.queue_is_playing:
-#            playback_manager.start_queue()
-#        else:
-#            playback_manager.queue_stop_request = not playback_manager.queue_stop_request
-
-#    def _on_queue_stop_request(self, *a):
-#        if playback_manager.queue_stop_request:
-#            self.start_queue_button.text = 'CANCEL'
-#            self.stopping_message.text = "Queue will stop after this song"
-#        else:
-#            self._stop_counter = True
-#            self.start_queue_button.text = 'STOP'
-#            self.stopping_message.text = ""
-
-
-#    def _set_volume(self, *a):
-#        if self._volume_control is not None:
-#            self._volume_control.set_volume('main_player', self.volume)
-
-
-Builder.load_string(settings_dialog_kv)
-Factory.register('PlaybackSettingsDialog', PlaybackSettingsDialog)
-
-
 class MainPlayerDisplay(BoxLayout):
     seekbar = ObjectProperty(None)
     title_label = ObjectProperty(None)
     artist_label = ObjectProperty(None)
     album_art = ObjectProperty(None)
-    #skip_to_next_overlay = ObjectProperty(None)
     display_window = ObjectProperty(None)
     countdown = ObjectProperty(None)
     countdown_timeout = StringProperty("")
@@ -504,32 +195,21 @@ class MainPlayerDisplay(BoxLayout):
         Clock.schedule_once(self._post_init, -1)
 
     def _post_init(self, *args):
-        # self.display_window.remove_widget(self.skip_to_next_overlay)
-        # self.display_window.remove_widget(self.countdown)
-        #self.player_stopped.pos = 0,0
         pass
 
     def _watch_queue_data(self, *q):
         if not pydjay.bootstrap.play_queue.is_empty:
             if not pydjay.bootstrap.playback_manager.queue_is_playing:
-                #self.start_queue_button.text = "START"
-                #self.stopping_message.text = ""
                 self.countdown_timeout = ""
                 self._stop_blink_indicator()
-
                 self.start_queue_button.disabled = False
             else:
-                #self.start_queue_button.text = "STOP"
-                #self.stopping_message.text = ""
                 self.countdown_timeout = ""
                 self._stop_blink_indicator()
-
                 self.start_queue_button.disabled = False
 
         else:
             if not pydjay.bootstrap.playback_manager.queue_is_playing:
-                #self.start_queue_button.text = "EMPTY"
-                #self.stopping_message.text = ""
                 self.start_queue_button.disabled = True
 
     def start_queue(self):
@@ -550,12 +230,9 @@ class MainPlayerDisplay(BoxLayout):
 
     def _on_queue_stop_request(self, *a):
         if pydjay.bootstrap.playback_manager.queue_stop_request:
-            #self.start_queue_button.text = 'CANCEL'
             self.countdown_timeout = "Queue will stop after this song"
             self._start_blink_indicator()
         else:
-            #self._stop_counter = True
-            #self.start_queue_button.text = 'STOP'
             self.countdown_timeout = ""
             self._stop_blink_indicator()
 
@@ -566,10 +243,6 @@ class MainPlayerDisplay(BoxLayout):
     def show_settings_panel(self, *a):
         foo = PlaybackSettingsDialog()
         foo.open()
-        # self.display_window.add_widget(self.skip_to_next_overlay)
-
-    # def dismiss_eject_panel(self, *a):
-    #    self.display_window.remove_widget(self.skip_to_next_overlay)
 
     def _update_volume(self, *args):
         self.main_player_volume.volume = pydjay.bootstrap.volume_control.main_player
@@ -585,33 +258,28 @@ class MainPlayerDisplay(BoxLayout):
 
     def immediate_stop(self):
         pydjay.bootstrap.playback_manager.immediate_stop(True)
-        # self.display_window.remove_widget(self.skip_to_next_overlay)
 
     def _update_countdown(self, *a):
         self._countdown_timeout -= 1
         if self._countdown_timeout > 0:
             self.countdown_timeout = '[color=#aaaaaa]Next track will play in [/color] [b]%s seconds[/b]' % self._countdown_timeout
         else:
-            self.countdown_timeout = ""  # s[b]The next track should be playing now...[/b]"
+            self.countdown_timeout = ""
 
     def display_countdown(self, timeout):
         self._countdown_timeout = timeout
         self.countdown_timeout = "[color=#aaaaaa]Next track will play in: [/color] [b]%s seconds[/b]" % self._countdown_timeout
         Clock.schedule_interval(self._update_countdown, 1)
-        # self.display_window.add_widget(self.countdown) #.pos = 0,0
 
     def dismiss_countdown(self, *args):
         Clock.unschedule(self._update_countdown)
         self.countdown_timeout = ""
-        # self.display_window.remove_widget(self.countdown)
 
     def display_stopped_state(self, timeout):
         pass
-        # elf.display_window.add_widget(self.player_stopped)
 
     def dismiss_stopped_state(self, *args):
         pass
-        # self.display_window.remove_widget(self.player_stopped)
 
     def _on_eos(self, *args):
         Logger.info('MainPlayer: End of stream %s', self._track)
@@ -620,7 +288,6 @@ class MainPlayerDisplay(BoxLayout):
     def play_next_track(self):
         Logger.info('MainPlayer: Skipping end of track <%s>', self._track)
         self._duration = None
-        # self.display_window.remove_widget(self.skip_to_next_overlay)
         pydjay.bootstrap.playback_manager.play_next_track()
 
     def set_track(self, i, track):

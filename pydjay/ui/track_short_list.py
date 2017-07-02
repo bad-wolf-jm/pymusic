@@ -1,20 +1,9 @@
-# import os
-# from os.path import getsize
-# from datetime import datetime
-
-# from kivy.event import EventDispatcher
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.factory import Factory
-#from pydjay.gui.utils import seconds_to_human_readable
-
 from elements.utils import seconds_to_human_readable
-
-
-# from kivy.core.window import Window
-# from elements import large_track_list
 from behaviors.track_list_behaviour import TrackListBehaviour
 from pydjay.bootstrap import play_queue, session_manager
 

@@ -104,29 +104,6 @@ kv_string = """
                     shorten: True
                     ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
 
-                #Label:
-                #    id: album_label
-                #    size_hint: 1,1
-                #    text_size: self.size
-                #    text: ""
-                #    color: .7,.7,.7,1
-                #    halign: 'left'
-                #    valign: 'middle'
-                #    shorten: True
-                #    ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
-                #    text: ""
-                #    font_size: 15
-            #ImageButton:
-            #    size_hint: None, None
-            #    size: 50,50
-            #    pos_hint: {'top': 1}
-            #    image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
-            #    on_press:
-            #        root.stop()
-            #        root.window.show_preview_player(root._track, None, None, None)  #short_list.add_shortlist_track(root._track) if root._track is not None else None
-            #    Widget:
-            #        size_hint: 1,.5
-
                 BoxLayout:
                     orientation: 'vertical'
                     size_hint: 1,None

@@ -51,25 +51,16 @@ kv_string = """
 
 <TrackEditor>:
     size_hint: .6,.4
-    #seekbar: seekbar
     waveform: waveform
     cut_window: cut_window
-    #tick_line: tick_line
     cue_point_window: cue_point_window
     start_time_label: start_time_label
     end_time_label: end_time_label
-    #turntable:turntable
     album_cover: album_art
     artist_label: artist_label
     title_label:  title_label
     album_label:  album_label
-    #length_label:  length_label
-    #position_label:  position_label
     title: "PREVIEW"
-    #time_remaining_label: time_remaining
-    #orientation: 'horizontal'
-    #size_hint: 1, 1
-    #height:75
 
     canvas:
         Color:
@@ -81,16 +72,6 @@ kv_string = """
 
     BoxLayout:
         orientation: 'vertical'
-
-        #padding: [15,0,15,7]
-        #Label:
-        #    size_hint: 1, None
-        #    height: 50
-        #    font_size: 20
-        #    text: 'Track edit'
-        #    text_size: self.size
-        #    valign: 'middle'
-        #    halign: 'center'
 
         Label:
             canvas.before:
@@ -107,14 +88,6 @@ kv_string = """
             valign: 'middle'
             text_size: self.size
             text: "TRACK EDITOR"
-
-
-        #HDivider:
-
-
-        #Widget:
-        #    size_hint: None, None
-        #    height: 20
         BoxLayout:
             orientation: 'vertical'
             size_hint: 1,1
@@ -188,21 +161,6 @@ kv_string = """
                             ellipsis_options: {'color':(1,0.5,0.5,1),'underline':True}
                             text: ""
                             font_size: 15
-                    #ImageButton:
-                    #    size_hint: None, None
-                    #    size: 75,75
-                    #    pos_hint: {'top': 1}
-                    #    #text: 'SL'
-                    #    image:'atlas://pydjay/gui/images/resources/add_to_shortlist'
-                    #    on_press: root.short_list.add_shortlist_track(root._track) if root._track is not None else None
-                    #ImageButton:
-                    #    size_hint: None, None
-                    #    size: 75,75
-                    #    pos_hint: {'top': 1}
-                    #    #text: 'queue'
-                    #    image:'atlas://pydjay/gui/images/resources/add_to_queue'
-                    #    on_press: root.queue.add_track(root._track) if root._track is not None else None
-
             Widget:
                 size_hint: None, 1
             BoxLayout:
@@ -253,8 +211,6 @@ kv_string = """
 
             Widget:
                 size_hint: None, 1
-            #Widget:
-            #    size_hint: 1,1
             BoxLayout:
                 orientation: 'horizontal'
                 size_hint: 1, None
@@ -269,19 +225,6 @@ kv_string = """
                     size_hint:1,1
                     text: "CANCEL"
                     on_press: root.dismiss()
-
-#            Label:
-#                size_hint: 1,None
-#                height: 50
-#                font_size: 15
-#                markup: True
-#                halign: 'center'
-#                valign: 'middle'
-#                text_size: self.size
-#                text: "[color=#333333]Tap of click anywhere outside the dialog to dismiss.[/color]"
-#            Widget:
-#                size_hint: 1,1
-
 """
 
 

@@ -277,17 +277,7 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
         self.can_add_selection_to_queue = can_add_selection_to_queue
         self.set_track_list(list_.get_tracks(), sort=sort)
 
-    # def _reset_playlist(self, *a):
-    #    self.display_list(list_ = pydjay.bootstrap.get_all_tracks(),
-    #                      dim_unavailable_tracks = True,
-    #                      context_menu    = None,
-    #                      editable        = False)
-
     def _reset_playlist(self, *a):
-        # self.display_list(list_ = pydjay.bootstrap.get_all_tracks(),
-        #                  dim_unavailable = True,
-        #                  context_menu    = None,
-        #                  editable        = False)
         self.display_list(list_=pydjay.bootstrap.get_all_tracks(),
                           dim_unavailable_tracks=True,
                           fixed_item_positions=True,
@@ -301,14 +291,6 @@ class MainTrackList(BoxLayout, TrackListBehaviour):
     def add_track(self, track, index=None, is_available=None):
         foo = self.track_list.insert(track.location, index)
         self.master_list.add_track(foo, index, is_available)
-        #foo = TrackData(track)
-        # if is_available is not None:
-    #        foo.is_available = is_available(track)
-    #    if index is not None:
-    #        self._unfiltered_list.insert(index, foo)
-    #    else:
-    #        self._unfiltered_list.append(foo)
-    #    self.do_filter(self._filter_text)
 
     def remove_track(self, track_data):
         self.master_list.remove_track(track_data)

@@ -1,4 +1,4 @@
-from pydjay.library import init, load_file, save
+from pydjay.core.library import init, load_file, save
 import os, sys, io
 from PIL import Image
 import urllib

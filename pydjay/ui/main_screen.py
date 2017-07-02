@@ -1,47 +1,15 @@
 """ Application's main screen."""
-# import os
-# import re
 import time
-# import mimetypes
-
-# from functools import partial
-# from threading import Thread
-# from os.path import getsize
-# from datetime import datetime
-
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
-# from kivy.uix.boxlayout import BoxLayout
-
-# from kivy.properties import ObjectProperty
-# from kivy.factory import Factory
-
-# from kivy.uix.popup import Popup
-
 import main_queue
 import player_display
-import player_deck
-# import .clickable_area
-
-
-# from kivy.animation import Animation
-
+#import player_deck
 from elements.main_window import MainWindow
 from track_editor import TrackEditor
-# from playlist_editor import PlaylistEditor
-# from shortlist_view import ShortListView
 from dialogs.playlist_view import PlaylistView
-
-
 from dialogs.playlist_selector import PlaylistSelector
-
-# from dialogs.playlist_chooser import PlaylistChooser
-# from dialogs.session_chooser import SessionChooser
-# from dialogs.genre_chooser import GenreChooser
-# from dialogs.style_chooser import StyleChooser
-
-#from current_session_view import CurrentSessionView
 from preview_player import PreviewPlayer
 from mixer import Mixer
 
@@ -78,10 +46,6 @@ kv_string = """
     BoxLayout:
         orientation: 'vertical'
 
-        #BoxLayout:
-        #    orientation: 'vertical'
-        #    size_hint: .25,1
-
         BoxLayout:
             orientation: 'horizontal'
             size_hint: 1, None
@@ -115,26 +79,6 @@ kv_string = """
         BoxLayout:
             orientation: 'horizontal'
             size_hint: 1,1
-
-            #ScrollView:
-            #    size_hint: .3,1
-            #    do_scroll:True
-            #    canvas.before:
-            #        Color:
-            #            rgba: 0.1,0.1,0.1,1
-            #        Rectangle:
-            #            size: self.size
-            #            pos: self.pos
-#
-#                TreeView:
-#                    id: side_view
-#                    size_hint_y: None
-#                    hide_root: True
-#                    item_height: 25
-#                    load_func: root._load_tree_node
-#                    odd_color: .1,.1,.1,1
-#                    minimum_height: self.height
-#            VDivider:
             MainTrackList:
                 id: master_list
                 window: root
@@ -143,7 +87,6 @@ kv_string = """
                 #main_player: deck
                 preview_player: preview_player
                 size_hint: (1.0, 1.0)
-                #text: "Browser goes here"
             VDivider:
             BoxLayout:
                 orientation: 'vertical'
@@ -200,8 +143,6 @@ kv_string = """
                                 size_hint: 1, None
                                 #width: 220
                                 height: 40
-
-
 """
 
 

@@ -5,7 +5,6 @@ class ShortList(FilePlaylist):
     def __init__(self, library, path, name, display_name, *args, **kwargs):
         super(ShortList, self).__init__(library, path, name, display_name, True)
         self._queued_tracks_indices = set([])
-        #self._track_list    = []
 
     def contains(self, location):
         return location in self._queued_tracks_indices
