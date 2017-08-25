@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<title>PYMUSIC DJ App</title>
+<style>
+body {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "nav article ads"
+    "footer footer footer";
+  grid-template-rows: 60px 1fr 60px;
+  grid-template-columns: 15% 1fr 30%;
+  grid-gap: 1px;
+  height: 100vh;
+  margin: 0;
+  }
+#pageHeader {
+  grid-area: header;
+}
+
+#pageFooter {
+  grid-area: footer;
+}
+
+#mainArticle {
+  grid-area: article;
+  }
+
+#mainNav {
+  grid-area: nav;
+  }
+
+#siteAds {
+  grid-area: ads;
+  }
+
+header, footer, article, nav, div {
+  padding: 20px;
+  background: grey;
+}
+</style>
+<script src="../node_modules/semantic-ui/dist/semantic.min.js"></script>
+<link rel="stylesheet" href="../node_modules/semantic-ui/dist/semantic.min.css">
+
+<body>
+  <header id="pageHeader">Header</header>
+  <article id="mainArticle">
+    <div class="ui segment">
+      <div class="ui right floated category search">
+        <div class="ui icon input">
+          <input class="prompt" type="text" placeholder="Search animals...">
+          <i class="search icon"></i>
+        </div>
+        <div class="results"></div>
+      </div>
+
+    </div>
+    <table class="ui single line table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Registration Date</th>
+          <th>E-mail address</th>
+          <th>Premium Plan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>John Lilki</td>
+          <td>September 14, 2013</td>
+          <td>jhlilk22@yahoo.com</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>Jamie Harington</td>
+          <td>January 11, 2014</td>
+          <td>jamieharingonton@yahoo.com</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>Jill Lewis</td>
+          <td>May 11, 2014</td>
+          <td>jilsewris22@yahoo.com</td>
+          <td>Yes</td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="ui striped table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date Joined</th>
+          <th>E-mail</th>
+          <th>Called</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>John Lilki</td>
+          <td>September 14, 2013</td>
+          <td>jhlilk22@yahoo.com</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>Jamie Harington</td>
+          <td>January 11, 2014</td>
+          <td>jamieharingonton@yahoo.com</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>Jill Lewis</td>
+          <td>May 11, 2014</td>
+          <td>jilsewris22@yahoo.com</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>John Lilki</td>
+          <td>September 14, 2013</td>
+          <td>jhlilk22@yahoo.com</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>John Lilki</td>
+          <td>September 14, 2013</td>
+          <td>jhlilk22@yahoo.com</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>Jamie Harington</td>
+          <td>January 11, 2014</td>
+          <td>jamieharingonton@yahoo.com</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>Jill Lewis</td>
+          <td>May 11, 2014</td>
+          <td>jilsewris22@yahoo.com</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>John Lilki</td>
+          <td>September 14, 2013</td>
+          <td>jhlilk22@yahoo.com</td>
+          <td>No</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </article>
+  <nav id="mainNav">Navigation</nav>
+  <div id="siteAds">
+    <div class="ui middle aligned divided list">
+      <div class="item">
+        <div class="right floated content">
+          <div class="ui button">Add</div>
+        </div>
+        <img class="ui avatar image" src="/images/avatar2/small/lena.png">
+        <div class="content">
+          Lena
+        </div>
+      </div>
+      <div class="item">
+        <div class="right floated content">
+          <div class="ui button">Add</div>
+        </div>
+        <img class="ui avatar image" src="/images/avatar2/small/lindsay.png">
+        <div class="content">
+          Lindsay
+        </div>
+      </div>
+      <div class="item">
+        <div class="right floated content">
+          <div class="ui button">Add</div>
+        </div>
+        <img class="ui avatar image" src="/images/avatar2/small/mark.png">
+        <div class="content">
+          Mark
+        </div>
+      </div>
+      <div class="item">
+        <div class="right floated content">
+          <div class="ui button">Add</div>
+        </div>
+        <img class="ui avatar image" src="/images/avatar2/small/molly.png">
+        <div class="content">
+          Molly
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer id="pageFooter">Footer</footer>
+</body>
