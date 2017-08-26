@@ -1,0 +1,16 @@
+<table  style="width: 100%" id="batch-results">
+  {% for table_row in result_list %}
+    <tr style="width: 100%; border-bottom: 2px">
+      <td class='{{ class }}' style='text-align: left;'>
+        <div style="display: inline-block; float: left">
+          <p>{{table_row['name']}}</p>
+          <p>Loss: {{ table_row['loss'] }} - Accuracy: {{ table_row['accuracy'] }}</p>
+        </div>
+        <div style="display: inline-block; float: right">
+          <p>Test performed on:</p>
+          <p>{{ table_row['time'] }}</p>
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+</table>

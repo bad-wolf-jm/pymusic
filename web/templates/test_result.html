@@ -1,0 +1,20 @@
+<table style="width: 100%" id="batch-results">
+  <tr class="result-table-header">
+    <th style="text-align: left; width: 70%">Text</th>
+    <th style="text-align: right; width: 15%">True</th>
+    <th style="text-align: right; width: 15%">Predicted</th>
+  </tr>
+  {% set labels={0:'Negative', 1:'Neutral', 2:'positive'}%}
+  {% for table_row in table_rows %}
+    <tr>
+      {% if (table_row.truth == table_row.predicted) %}
+        {% set class = "correct-prediction"%}
+      {% else %}
+        {% set class = "incorrect-prediction"%}
+      {% endif %}
+      <td class='{{ class }}' style='text-align: left;'>{{table_row.string}}</td>
+      <td class='{{ class }}' style='text-align: right;'>{{labels[table_row.truth]}}</td>
+      <td class='{{ class }}' style='text-align: right;'>{{labels[table_row.predicted]}}</td>
+    </tr>
+  {% endfor %}
+</table>

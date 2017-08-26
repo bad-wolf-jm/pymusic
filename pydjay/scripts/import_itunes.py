@@ -110,11 +110,11 @@ for n in tracks:
         'title':         tracks[n].get('Name', None),
         'artist':        tracks[n].get('Artist', None),
         'album':         tracks[n].get('Album', None),
-        'album_artist':  None, 
+        'album_artist':  None,
         'category':      None,
-        'description':   None, 
+        'description':   None,
         'genre':         tracks[n].get('Genre', None),
-        'grouping':      None, 
+        'grouping':      None,
         'rating':        int(tracks[n].get('Rating', None) / 20),
         'bpm':           tracks[n].get('BPM', None),
         'year':          tracks[n].get('Year', None),
@@ -123,6 +123,9 @@ for n in tracks:
         'play_at':       tracks[n].get('Album Artist', None),
         'vocal':         tracks[n].get('Composer', None),
         'loved':         tracks[n].get('Loved', None),
+        'date_added':    tracks[n].get('Date Added', None),
+        'date_modified': tracks[n].get('Date Modified', None),
+        'kind':          tracks[n].get('Kind', None),
         'location':      urllib.unquote(tracks[n].get('Location','file://')[7:])
         }
     #pprint.pprint(new_track_metadata)
@@ -143,7 +146,7 @@ files = sorted(track_list, key= lambda x: x['location'])
 
 
 
-                               
+
     #print f
 def load_track(f):
     track = Track(f['location'], {}, {})
@@ -152,14 +155,14 @@ def load_track(f):
     #account for my funny tagging
     del f['location']
     track.metadata._metadata = f
-    
+
 
     #track.metadata._metadata['play_at'] = track.metadata._metadata.get('album_artist', None)
     #track.metadata._metadata['vocal']   = track.metadata._metadata.get('composer', None)
     #track.metadata._metadata['style']   = track.metadata._metadata.get('grouping', None)
     #track.metadata_metadata['speed_feel'] = track.metadata._metadata['']
     #track.metadata_metadata['mood'] = track.metadata._metadata['']
-    
+
     #if track.metadata.album_cover is not None:
     ##    cover = track.metadata.album_cover
     #    im_type = cover[0]
@@ -187,7 +190,7 @@ def load_track(f):
     #        track.metadata._metadata['album_art'] = cover_art_data
             #im   = CoreImage(data, ext = ext)
             #self._album_art = im
-            
+
     #print track.metadata.album_cover
     #db[f] = track
     return track
@@ -252,7 +255,7 @@ def process_track_queue(*args):
         print f['location']
         track = load_track(f)
 
-        
+
         mp3_file = quote("%s - %s (%s).mp3"% (track.metadata.title, track.metadata.artist, track.metadata.album))
         mp3_path = os.path.join('/Users/jihemme/Music/Blues MP3', mp3_file)
 
@@ -278,10 +281,10 @@ def process_track_queue(*args):
         track.metadata._metadata['album_art'] = album_art
         track.location = mp3_path
         #if album_art is not None:
-        ##    
+        ##
         #    sys.exit()
         save_mp3_file(track)
-        
+
         #if track is not None:
         #    #print 'file://' + urllib.quote(os.path.abspath(f))
         #    path = os.path.join(_root_folder, 'wave_cache', quote(str(track), "")+".wf")
@@ -303,7 +306,7 @@ def process_track_queue(*args):
         #    Clock.schedule_once(process_track_queue, 0)#
 ##
 #                #GLib.timeout_add(1, process_track_queue)
-                    
+
 #        else:
 #            #process_track_queue()
 #            #db[track.location] = track
@@ -318,7 +321,7 @@ def process_track_queue(*args):
 
 
 
-    
+
 def _do_next_track(*data_points):
     wave_points = wg.get_data_points()
     path = os.path.join(_root_folder, 'wave_cache', quote(str(track), "")+".wf")

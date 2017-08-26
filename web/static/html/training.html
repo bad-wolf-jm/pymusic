@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>NN Training Monitor</title>
+    </head>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="../js/highcharts.js"></script>
+    <script src="../js/semantic.min.js"></script>
+    <script src="../js/train_update.js"></script>
+    <script src="../js/training_graphs.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../css/semantic.min.css">
+    <link rel="stylesheet" href="../css/highcharts.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <body>
+
+  <div class='ui container' style="height:200px">
+      <h1 class="ui center align icon header" style="width:100%; padding:40px">
+      <i class="desktop icon"></i>
+      <div class="content">
+        Training monitor
+      </div>
+    </h1>
+  </div>
+
+
+<div class='ui container'>
+    <div class="ui message">
+      <div class="ui three column grid">
+        <div class="two wide column">
+          <div class="progress-meter", id='progress-meter' style="width:100px; height:100px;margin:0px;padding:0px"></div>
+
+          <div class="progress-text" style="width:100px; text-align:center; font-size:10px"><b>EPOCH</b>
+              <div id="epoch-number" style="display: inline">2534</div> of <div id='total-epochs' style="display: inline">5000</div>
+            </div>
+
+        </div>
+            <div class='seven wide column'>
+                    Elapsed time
+                <div class="value" id='elapsed-time'>
+                  22
+                </div>
+              </div>
+              <div class='seven wide column'>
+                    Remaining time
+                <div class="value" id='remaining-time'>
+                  31,200
+                </div>
+              </div>
+            </div>
+          </div>
+    <div class="ui two column equal height grid">
+        <div class="four wide column stretched">
+              <h4 class="ui top attached block header">
+                Loss
+              </h4>
+              <div class="ui bottom attached segment">
+                  <table>
+                      <tr><td class="stats-label">Training:</td><td class="stats-value" id="stats-training-loss">NAN</td></tr>
+                      <tr><td class="stats-label">Validation:</td><td class="stats-value" id="stats-validation-loss">NAN</td></tr>
+                  </table>
+              </div>
+
+              <h4 class="ui top attached block header">
+                Accuracy
+              </h4>
+              <div class="ui bottom attached segment">
+                  <table>
+                      <tr><td class="stats-label">Training:</td><td class="stats-value" id="stats-training-accuracy">NAN</td></tr>
+                      <tr><td class="stats-label">Validation:</td><td class="stats-value" id="stats-validation-accuracy">NAN</td></tr>
+                  </table>
+              </div>
+
+              <h4 class="ui top attached block header">
+                Time
+              </h4>
+              <div class="ui bottom attached segment">
+                  <table>
+                      <tr><td class="stats-label" style="width:25%">Batch:</td><td class="stats-value" id="stats-batch-time" style="width:75%">NAN</td></tr>
+                      <tr><td class="stats-label" style="width:25%">Epoch:</td><td class="stats-value" id="stats-epoch-time" style="width:75%">NAN</td></tr>
+                  </table>
+              </div>
+
+              <h4 class="ui top attached block header">
+                System
+              </h4>
+              <div class="ui bottom attached segment">
+                  <table>
+                      <tr><td class="stats-label" style="width:20%">CPU:</td><td class="stats-value" id="stats-cpu-usage" style="width:80%">NAN</td></tr>
+                      <tr><td class="stats-label" style="width:20%">Memory:</td><td class="stats-value" id="stats-memory-usage" style="width:80%">NAN</td></tr>
+                  </table>
+              </div>
+        </div>
+        <div class="column twelve wide">
+            <h4 class="ui top attached small block header">
+                Loss
+              </h4>
+              <div class="ui bottom attached segment", id="loss-graph-content" style="height:300px">
+                Segment
+              </div>
+
+              <h4 class="ui top attached block header">
+                  Accuracy
+                </h4>
+                <div class="ui bottom attached segment", id="acc-graph-content" style="height:300px">
+                  Segment
+                </div>
+        </div>
+
+    </div>
+</div>
+    </body>
+<script type="text/javascript">
+setInterval(update_stats, 2000);
+setInterval(update_progress, 2000);
+setInterval(update_graphs, 2000);
+setInterval(update_cpuinfo, 2000);
+
+$(document).ready(
+    function ()
+    {
+        loss_graph = make_graph($('#graph').height(), 'loss-graph-content');
+        accuracy_graph = make_graph($('#graph').height(), 'acc-graph-content');
+    }
+);
+</script>
+</html>

@@ -1,0 +1,17 @@
+{% set labels = ['POSITIVE', "NEGATIVE", "NEUTRAL"] %}
+<table style="width:100%; border: 3px solid black;">
+    <tr>
+    <td></td>
+    {% for label in labels %}
+      <td  class="confusion-matrix-label" style="border: .5px solid black; text-align:center"><b>{{ label }}</b></td>
+    {% endfor%}
+  </tr>
+  {% for label_r in [0,1,2] %}
+    <tr class="confusion-matrix-label" style="border: .5px solid black;">
+      <td><b>{{ labels[label_r] }}</b></td>
+      {% for label_c in [0,1,2] %}
+        <td class="confusion-matrix-entry" style="border: .5px solid black; text-align:center">{{ matrix_entries[label_r,label_c] }}</td>
+      {% endfor%}
+    </tr>
+  {% endfor%}
+</table>

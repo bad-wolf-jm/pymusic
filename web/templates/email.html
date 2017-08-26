@@ -1,0 +1,93 @@
+{% macro render_result_table(table_rows)%}
+  <table style="width: 100%" id="batch-results">
+    <tr class="result-table-header">
+      <th style="text-align: left; width: 70%">Text</th>
+      <th style="text-align: right; width: 15%">True</th>
+      <th style="text-align: right; width: 15%">Predicted</th>
+    </tr>
+    {% set labels={0:'Negative', 1:'Neutral', 2:'positive'}%}
+    {% for table_row in table_rows %}
+      <tr>
+        {% if (table_row.truth == table_row.predicted) %}
+          {% set class = "correct-prediction"%}
+        {% else %}
+          {% set class = "incorrect-prediction"%}
+        {% endif %}
+        <td class='{{ class }}' style='text-align: left;'>{{table_row.string}}</td>
+        <td class='{{ class }} prediction-value' style='text-align: right;'>{{labels[table_row.truth]}}</td>
+        <td class='{{ class }} prediction-value' style='text-align: right;'>{{labels[table_row.predicted]}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endmacro%}
+
+{% macro render_confusion_matrix(matrix_entries) %}
+  {% set labels = ['NEGATIVE', "NEUTRAL", "POSITIVE"] %}
+  <table style="width:100%; border: 2px solid black;">
+      <tr>
+      <td class="empty-cell"></td>
+      {% for label in labels %}
+        <td  class="confusion-matrix-label-cell" style="text-align:center"><b>{{ label }}</b></td>
+      {% endfor%}
+    </tr>
+    {% for label_r in [0,1,2] %}
+      <tr>
+        <td class="confusion-matrix-label-cell"><b>{{ labels[label_r] }}</b></td>
+        {% for label_c in [0,1,2] %}
+          <td class="confusion-matrix-entry-cell">{{ matrix_entries[label_r,label_c] }}</td>
+        {% endfor%}
+      </tr>
+    {% endfor%}
+  </table>
+{% endmacro %}
+
+{% macro render_batch_statistics(loss, accuracy)%}
+  <table>
+    <tr>
+    <td><b>LOSS:</b> {{ loss }}</td>
+    <td style='text-align: right'>
+      <b>ACCURACY:</b> {{ accuracy }}%
+    </td>
+    </tr>
+  </table>
+{% endmacro %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title >Training Report for {{ name }}</title>
+  </head>
+  <style>
+    {% include "css/style.css" %}
+  </style>
+  <body>
+    <h1>Training Report for {{ name  }}</h1>
+    <table>
+      <tr>
+        <td>TRAINING PROGRESS</td>
+        <td>ELAPSED TIME</td>
+        <td>REMAINING TIME</td>
+      </tr>
+      <tr>
+        <td>Epoch {{epoch_number}} of {{total_epochs}} ({{ epoch_percent }}%) complete</td>
+        <td>{{elapsed_time}}</td>
+        <td>{{remaining_time}}</td>
+      </tr>
+      </table>
+
+    <h2>Results of the testing batch</h2>
+      {{ render_batch_statistics(test_loss, test_accuracy)}}
+      <p></p>
+      {{ render_confusion_matrix(test_confusion_matrix)}}
+      <p></p>
+      {{ render_result_table(test_table_rows) }}
+
+    <h2>Results of the training batch</h2>
+      {{ render_batch_statistics(train_loss, train_accuracy)}}
+      <p></p>
+      {{ render_confusion_matrix(train_confusion_matrix)}}
+      <p></p>
+      {{ render_result_table(train_table_rows) }}
+  </body>
+</html>

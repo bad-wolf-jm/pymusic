@@ -1,2 +1,4 @@
 *.pyc
 *.py~
+electron/node_modules/*
+electron/semantic/*
