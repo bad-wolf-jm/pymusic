@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Major Version</key><integer>1</integer>
+	<key>Minor Version</key><integer>1</integer>
+	<key>Date</key><date>2017-08-26T04:19:07Z</date>
+	<key>Application Version</key><string>12.6.2.20</string>
+	<key>Features</key><integer>5</integer>
+	<key>Show Content Ratings</key><true/>
+	<key>Music Folder</key><string>file:///Volumes/Media/iTunes/</string>
+	<key>Library Persistent ID</key><string>E246B49C8F09A953</string>
+	<key>Tracks</key>
+	<dict>
+		<key>16608</key>
+		<dict>
+			<key>Track ID</key><integer>16608</integer>
+			<key>Name</key><string>Layla</string>
+			<key>Artist</key><string>Gypsy Flamenco Masters</string>
+			<key>Album Artist</key><string>Late night</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>Romantic Flamenco Music, Spanish Guitar Love Songs, Acoustic Guitar Music</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>19677157</integer>
+			<key>Total Time</key><integer>225280</integer>
+			<key>Track Number</key><integer>9</integer>
+			<key>Year</key><integer>2012</integer>
+			<key>BPM</key><integer>99</integer>
+			<key>Date Modified</key><date>2016-11-08T17:45:25Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>676</integer>
+			<key>Comments</key><string>8/8, straight rhythm, flamenco guitar, instrumental, late night</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:14:00Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Late night</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>BED113837CF75F58</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Layla%20-%20Gypsy%20Flamenco%20Masters%20(Romantic%20Flamenco%20Music,%20Spanish%20Guitar%20Love%20Songs)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16656</key>
+		<dict>
+			<key>Track ID</key><integer>16656</integer>
+			<key>Name</key><string>Hound Dog</string>
+			<key>Artist</key><string>Big Mama Thornton</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Ball And Chain</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>16425842</integer>
+			<key>Total Time</key><integer>175957</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>5</integer>
+			<key>Track Count</key><integer>16</integer>
+			<key>Year</key><integer>1968</integer>
+			<key>BPM</key><integer>137</integer>
+			<key>Date Modified</key><date>2016-11-08T19:26:36Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>723</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, straight rhythm fast feel, female voice, early night, middle night</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-03-11T15:15:55Z</date>
+			<key>Rating</key><integer>60</integer>
+			<key>Album Rating</key><integer>60</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Early to middle of the night</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>B243DB21A9C14D01</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Hound%20Dog%20-%20Big%20Mama%20Thornton%20(Ball%20And%20Chain)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16750</key>
+		<dict>
+			<key>Track ID</key><integer>16750</integer>
+			<key>Name</key><string>Billie Jean</string>
+			<key>Artist</key><string>The Civil Wars</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Between the Bars</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>24387459</integer>
+			<key>Total Time</key><integer>255914</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>3</integer>
+			<key>Track Count</key><integer>4</integer>
+			<key>Year</key><integer>2014</integer>
+			<key>BPM</key><integer>93</integer>
+			<key>Date Modified</key><date>2016-11-08T17:20:55Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>6/8, straight rhythm, male voice, female voice, middle night, late night</string>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Artist</key><string>Civil Wars</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>09A84966C613B971</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Bille%20Jean%20-%20The%20Civil%20Wars%20(Between%20the%20Bars)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16876</key>
+		<dict>
+			<key>Track ID</key><integer>16876</integer>
+			<key>Name</key><string>Cash City</string>
+			<key>Artist</key><string>Garou</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Rhythm and Blues</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>31791160</integer>
+			<key>Total Time</key><integer>287818</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>9</integer>
+			<key>Track Count</key><integer>12</integer>
+			<key>Year</key><integer>2012</integer>
+			<key>BPM</key><integer>230</integer>
+			<key>Date Modified</key><date>2016-11-15T23:36:04Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, straight rhythm, fast</string>
+			<key>Rating</key><integer>40</integer>
+			<key>Album Rating</key><integer>40</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>6B9D82DB93007A78</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Cash%20City%20-%20Garou%20(Rhythm%20and%20Blues)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17048</key>
+		<dict>
+			<key>Track ID</key><integer>17048</integer>
+			<key>Name</key><string>Black Coffee</string>
+			<key>Artist</key><string>Sinéad O'Connor</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Am I Not Your Girl</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>20494970</integer>
+			<key>Total Time</key><integer>198229</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>4</integer>
+			<key>Track Count</key><integer>12</integer>
+			<key>Year</key><integer>1992</integer>
+			<key>BPM</key><integer>69</integer>
+			<key>Date Modified</key><date>2016-11-08T18:31:39Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>802</integer>
+			<key>Comments</key><string>8/8, slow feel, shuffle, sad feel, female voice, middle night, late night</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3575209127</integer>
+			<key>Play Date UTC</key><date>2017-04-16T21:38:47Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>FDFA4E0E7D993133</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Black%20Coffee%20-%20Sine%CC%81ad%20O'Connor%20(Am%20I%20Not%20Your%20Girl)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17206</key>
+		<dict>
+			<key>Track ID</key><integer>17206</integer>
+			<key>Name</key><string>Careless Love</string>
+			<key>Artist</key><string>Janis Joplin</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Janis</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>12562704</integer>
+			<key>Total Time</key><integer>187637</integer>
+			<key>Disc Number</key><integer>2</integer>
+			<key>Track Number</key><integer>16</integer>
+			<key>Year</key><integer>2008</integer>
+			<key>BPM</key><integer>135</integer>
+			<key>Date Modified</key><date>2016-11-08T19:54:50Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, female voice, solo guitar, faster version, tempo changes, early night, middle night, late night</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:39:46Z</date>
+			<key>Release Date</key><date>2008-01-23T12:00:00Z</date>
+			<key>Rating</key><integer>40</integer>
+			<key>Album Rating</key><integer>40</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>1B8B90AE882CD7D9</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Careless%20Love%20-%20Janis%20Joplin%20(Janis)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17284</key>
+		<dict>
+			<key>Track ID</key><integer>17284</integer>
+			<key>Name</key><string>Am I Wrong</string>
+			<key>Artist</key><string>Guy Bélanger</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Dusty Trails</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>16887010</integer>
+			<key>Total Time</key><integer>167851</integer>
+			<key>BPM</key><integer>113</integer>
+			<key>Date Modified</key><date>2016-11-08T19:44:43Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>775</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, straight rhythm, subdivisions, male voice, early night, middle night, late night</string>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3574718209</integer>
+			<key>Play Date UTC</key><date>2017-04-11T05:16:49Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>ADB704549F102BF4</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Am%20I%20Wrong%20-%20Guy%20Be%CC%81langer%20(Dusty%20Trails)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17290</key>
+		<dict>
+			<key>Track ID</key><integer>17290</integer>
+			<key>Name</key><string>Boodle-De-Bum-Bum</string>
+			<key>Artist</key><string>Carolina Chocolate Drops</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Leaving Eden</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Acoustic Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>22630105</integer>
+			<key>Total Time</key><integer>242944</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>4</integer>
+			<key>Track Count</key><integer>15</integer>
+			<key>Year</key><integer>2012</integer>
+			<key>BPM</key><integer>114</integer>
+			<key>Date Modified</key><date>2016-11-08T19:29:43Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>721</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, straight rhythm, male voice, middle night, late night</string>
+			<key>Rating</key><integer>40</integer>
+			<key>Album Rating</key><integer>40</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>46A80CC7AD2454D4</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Boodle-De-Bum-Bum%20-%20Carolina%20Chocolate%20Drops%20(Leaving%20Eden)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17292</key>
+		<dict>
+			<key>Track ID</key><integer>17292</integer>
+			<key>Name</key><string>Got My Mojo Workin'</string>
+			<key>Artist</key><string>Brother Yusef</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Blues By Request</string>
+			<key>Grouping</key><string>Struttin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>21940918</integer>
+			<key>Total Time</key><integer>192683</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>3</integer>
+			<key>Track Count</key><integer>15</integer>
+			<key>Year</key><integer>2008</integer>
+			<key>BPM</key><integer>153</integer>
+			<key>Date Modified</key><date>2016-12-29T21:44:20Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>884</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, straight feel, acoustic guitar</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-26T23:28:27Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>D610916548661DBA</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Got%20My%20Mojo%20Workin'%20-%20Brother%20Yusef%20(Blues%20by%20Request)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17294</key>
+		<dict>
+			<key>Track ID</key><integer>17294</integer>
+			<key>Name</key><string>This Train</string>
+			<key>Artist</key><string>Brother Yusef</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Blues By Request</string>
+			<key>Grouping</key><string>Struttin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>22507468</integer>
+			<key>Total Time</key><integer>173098</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Track Number</key><integer>4</integer>
+			<key>Track Count</key><integer>4</integer>
+			<key>Year</key><integer>2008</integer>
+			<key>BPM</key><integer>157</integer>
+			<key>Date Modified</key><date>2016-12-29T21:44:21Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, straight feel, acoustic guitar</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2016-10-27T03:43:00Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>F5D31FD0792C8B54</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/This%20Train%20-%20Brother%20Yusef%20(Blues%20by%20Request)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17324</key>
+		<dict>
+			<key>Track ID</key><integer>17324</integer>
+			<key>Name</key><string>West End Blues</string>
+			<key>Artist</key><string>Carolina Chocolate Drops</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Leaving Eden</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Acoustic Blues</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>18609454</integer>
+			<key>Total Time</key><integer>180021</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Track Number</key><integer>10</integer>
+			<key>Track Count</key><integer>15</integer>
+			<key>Year</key><integer>2012</integer>
+			<key>BPM</key><integer>128</integer>
+			<key>Date Modified</key><date>2016-11-08T19:29:40Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, shuffle rhythm, female voice, fiddle &#38; banjo, early night, middle night, late night</string>
+			<key>Release Date</key><date>2012-02-27T12:00:00Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>0535BB0262DA3FE0</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/West%20End%20Blues%20-%20Carolina%20Chocolate%20Drops%20(Leaving%20Eden)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18388</key>
+		<dict>
+			<key>Track ID</key><integer>18388</integer>
+			<key>Name</key><string>Sweet Home Chicago</string>
+			<key>Artist</key><string>C.C Productions</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>The Blues Brothers</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>57343436</integer>
+			<key>Total Time</key><integer>447147</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>10</integer>
+			<key>Track Count</key><integer>14</integer>
+			<key>Year</key><integer>1981</integer>
+			<key>BPM</key><integer>131</integer>
+			<key>Date Modified</key><date>2016-11-08T21:46:24Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>997</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, shuffle rhythm, struttin'</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574770752</integer>
+			<key>Play Date UTC</key><date>2017-04-11T19:52:32Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-29T02:08:44Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>60</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Blues Brothers</string>
+			<key>Persistent ID</key><string>558773BFBA006661</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Sweet%20Home%20Chicago%20-%20C.C%20Productions%20(The%20Blues%20Brothers)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18852</key>
+		<dict>
+			<key>Track ID</key><integer>18852</integer>
+			<key>Name</key><string>Hit 'Em Up Style</string>
+			<key>Artist</key><string>Carolina Chocolate Drops</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Carolina Chocolate Drops / Luminescent Orchestrii</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Hip Hop/Rap</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>33318303</integer>
+			<key>Total Time</key><integer>291157</integer>
+			<key>BPM</key><integer>99</integer>
+			<key>Date Modified</key><date>2016-12-14T00:44:14Z</date>
+			<key>Date Added</key><date>2016-12-13T21:13:55Z</date>
+			<key>Bit Rate</key><integer>893</integer>
+			<key>Comments</key><string>8/8, straight rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574722630</integer>
+			<key>Play Date UTC</key><date>2017-04-11T06:30:30Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-12-14T00:44:15Z</date>
+			<key>Rating</key><integer>40</integer>
+			<key>Album Rating</key><integer>40</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Persistent ID</key><string>84864F6277E5948E</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Hit%20'Em%20Up%20Style%20-%20Carolina%20Chocolate%20Drops%20(Carolina%20Chocolate%20Drops%20:%20Luminescent%20Orchestrii)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19076</key>
+		<dict>
+			<key>Track ID</key><integer>19076</integer>
+			<key>Name</key><string>These Arms Of Mine</string>
+			<key>Artist</key><string>Colin James</string>
+			<key>Album Artist</key><string>Late night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>National Steel</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>26749388</integer>
+			<key>Total Time</key><integer>281600</integer>
+			<key>BPM</key><integer>108</integer>
+			<key>Date Modified</key><date>2017-02-28T20:14:13Z</date>
+			<key>Date Added</key><date>2016-12-29T19:14:10Z</date>
+			<key>Bit Rate</key><integer>741</integer>
+			<key>Comments</key><string>/8, straight rhythm, waltz</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-02-24T03:46:57Z</date>
+			<key>Rating</key><integer>20</integer>
+			<key>Album Rating</key><integer>20</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Sort Album Artist</key><string>Late night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>D25CF2D7922EA413</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/These%20Arms%20Of%20Mine%20-%20Colin%20James%20(National%20Steel)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+	</dict>
+	<key>Playlists</key>
+	<array>
+		<dict>
+			<key>Name</key><string>Île Noire - Sept 12th</string>
+			<key>Description</key><string>Missing: Hit'em up style &#38; these arms of mine, colin james</string>
+			<key>Playlist ID</key><integer>37607</integer>
+			<key>Playlist Persistent ID</key><string>9CD0874533403537</string>
+			<key>Parent Persistent ID</key><string>544274569355FAF0</string>
+			<key>All Items</key><true/>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>17324</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18388</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17294</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16656</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17284</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18852</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16608</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19076</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16750</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17048</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16876</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17292</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17290</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17206</integer>
+				</dict>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

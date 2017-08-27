@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Major Version</key><integer>1</integer>
+	<key>Minor Version</key><integer>1</integer>
+	<key>Date</key><date>2017-08-26T18:22:00Z</date>
+	<key>Application Version</key><string>12.6.2.20</string>
+	<key>Features</key><integer>5</integer>
+	<key>Show Content Ratings</key><true/>
+	<key>Music Folder</key><string>file:///Volumes/Media/iTunes/</string>
+	<key>Library Persistent ID</key><string>E246B49C8F09A953</string>
+	<key>Tracks</key>
+	<dict>
+		<key>16522</key>
+		<dict>
+			<key>Track ID</key><integer>16522</integer>
+			<key>Name</key><string>Blue Drag</string>
+			<key>Artist</key><string>Allen Toussaint</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>The Bright Mississippi</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>21972384</integer>
+			<key>Total Time</key><integer>260789</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>7</integer>
+			<key>Track Count</key><integer>12</integer>
+			<key>Year</key><integer>2009</integer>
+			<key>BPM</key><integer>111</integer>
+			<key>Date Modified</key><date>2016-12-29T21:46:16Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, straight rhythm, jazzy feel, fast</string>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Bright Mississippi</string>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>306CD07A4CDADDD3</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Blue%20Drag%20-%20Allen%20Toussaint%20(The%20Bright%20Mississippi)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16666</key>
+		<dict>
+			<key>Track ID</key><integer>16666</integer>
+			<key>Name</key><string>My Daddy Rocks Me</string>
+			<key>Artist</key><string>Blue Harlem</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Talk to Me</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>38782453</integer>
+			<key>Total Time</key><integer>351648</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Track Number</key><integer>3</integer>
+			<key>Year</key><integer>2005</integer>
+			<key>BPM</key><integer>86</integer>
+			<key>Date Modified</key><date>2016-11-09T03:37:56Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, shuffle rhythm, female voice, middle night, late night</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3578848513</integer>
+			<key>Play Date UTC</key><date>2017-05-29T00:35:13Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>3BB668D2D33EBBD9</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/My%20Daddy%20Rocks%20Me%20-%20Blue%20Harlem%20(Talk%20to%20Me)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16690</key>
+		<dict>
+			<key>Track ID</key><integer>16690</integer>
+			<key>Name</key><string>Ne me quitte pas</string>
+			<key>Artist</key><string>Nina Simone</string>
+			<key>Album Artist</key><string>Late night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Ne me quitte pas</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>18816573</integer>
+			<key>Total Time</key><integer>214549</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>4</integer>
+			<key>Track Count</key><integer>12</integer>
+			<key>Year</key><integer>1999</integer>
+			<key>BPM</key><integer>84</integer>
+			<key>Date Modified</key><date>2016-11-08T18:18:53Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, rubato feel, female voice, late night</string>
+			<key>Rating</key><integer>60</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Late night</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>9275D61F4E848AAC</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Ne%20me%20quitte%20pas%20-%20Nina%20Simone%20(Ne%20me%20quitte%20pas)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16704</key>
+		<dict>
+			<key>Track ID</key><integer>16704</integer>
+			<key>Name</key><string>I Ain't Gonna Let Nobody Steel My Jellyroll</string>
+			<key>Artist</key><string>Taj Mahal</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>The Natch'l Blues</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>21489080</integer>
+			<key>Total Time</key><integer>192597</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>3</integer>
+			<key>Track Count</key><integer>12</integer>
+			<key>Year</key><integer>1968</integer>
+			<key>BPM</key><integer>98</integer>
+			<key>Date Modified</key><date>2016-12-29T21:45:05Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>865</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, male voice,  shuffle rhythm, early night, middle night</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:24:15Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Natch'l Blues</string>
+			<key>Sort Album Artist</key><string>Early to middle of the night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>7F77F874923FF4CE</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/I%20Ain't%20Gonna%20Let%20Nobody%20Steel%20My%20Jellyroll%20-%20Taj%20Mahal%20(The%20Natch'l%20Blues)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16714</key>
+		<dict>
+			<key>Track ID</key><integer>16714</integer>
+			<key>Name</key><string>Mercy</string>
+			<key>Artist</key><string>The Downtown Shimmy</string>
+			<key>Album Artist</key><string>Early in the night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Any Time, Any Place</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>39340121</integer>
+			<key>Total Time</key><integer>374784</integer>
+			<key>Year</key><integer>2013</integer>
+			<key>BPM</key><integer>124</integer>
+			<key>Date Modified</key><date>2016-11-08T19:04:03Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>814</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, shuffle rhythm, male voice, slow struttin', early night, middle might</string>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Early in the night</string>
+			<key>Sort Artist</key><string>Downtown Shimmy</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>2A121EA3AEA1D7C6</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Mercy%20-%20The%20Downtown%20Shimmy%20(Any%20Time,%20Any%20Place)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16724</key>
+		<dict>
+			<key>Track ID</key><integer>16724</integer>
+			<key>Name</key><string>La honte</string>
+			<key>Artist</key><string>Bernard Adamus</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>La honte</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>14930251</integer>
+			<key>Total Time</key><integer>132267</integer>
+			<key>BPM</key><integer>128</integer>
+			<key>Date Modified</key><date>2016-11-08T19:56:45Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>872</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, straight rhythm, male voice, early night, middle night</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-01-13T05:08:31Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Early to middle of the night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>5A8EE3FF6A61A670</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/La%20honte%20-%20Bernard%20Adamus%20(La%20honte)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17134</key>
+		<dict>
+			<key>Track ID</key><integer>17134</integer>
+			<key>Name</key><string>Nobody Knows You When You're Down and Out</string>
+			<key>Artist</key><string>Eric Clapton</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Unplugged</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>28497706</integer>
+			<key>Total Time</key><integer>235936</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>6</integer>
+			<key>Track Count</key><integer>14</integer>
+			<key>Year</key><integer>2013</integer>
+			<key>BPM</key><integer>93</integer>
+			<key>Date Modified</key><date>2016-11-08T20:08:08Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, male voice, shuffle rhythm, early night, middle night, late night</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574761680</integer>
+			<key>Play Date UTC</key><date>2017-04-11T17:21:20Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:02:51Z</date>
+			<key>Release Date</key><date>2013-10-11T12:00:00Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>EAEDB4AB620FEC59</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Nobody%20Knows%20You%20When%20You're%20Down%20and%20Out%20-%20Eric%20Clapton%20(Unplugged)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17786</key>
+		<dict>
+			<key>Track ID</key><integer>17786</integer>
+			<key>Name</key><string>I'm Not Drunk, I'm Just Drinking</string>
+			<key>Artist</key><string>Di Anne Price</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Barrel House Queen</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>22284474</integer>
+			<key>Total Time</key><integer>198229</integer>
+			<key>BPM</key><integer>117</integer>
+			<key>Date Modified</key><date>2016-11-08T15:35:55Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>873</integer>
+			<key>Comments</key><string>4/8, shuffle rhythm</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2016-10-29T01:42:40Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>8EE4D08F1C70C88D</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/I'm%20Not%20Drunk,%20I'm%20Just%20Drinking%20-%20Di%20Anne%20Price%20(Barrel%20House%20Queen)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18012</key>
+		<dict>
+			<key>Track ID</key><integer>18012</integer>
+			<key>Name</key><string>Tonight's The Night</string>
+			<key>Artist</key><string>Di Anne Price</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Barrel House Queen</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>17485989</integer>
+			<key>Total Time</key><integer>182443</integer>
+			<key>BPM</key><integer>110</integer>
+			<key>Date Modified</key><date>2016-11-08T19:35:11Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>743</integer>
+			<key>Comments</key><string>8/8, swing rhythm, slow swing</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2016-10-29T02:28:01Z</date>
+			<key>Rating</key><integer>60</integer>
+			<key>Album Rating</key><integer>60</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>1C2769F7E037A24C</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Tonight's%20The%20Night%20-%20Di%20Anne%20Price%20(Barrel%20House%20Queen)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18030</key>
+		<dict>
+			<key>Track ID</key><integer>18030</integer>
+			<key>Name</key><string>Walk Of Shame</string>
+			<key>Artist</key><string>Eight To The Bar</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Calling All Ickeroos!</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>23852059</integer>
+			<key>Total Time</key><integer>217088</integer>
+			<key>BPM</key><integer>109</integer>
+			<key>Date Modified</key><date>2016-11-08T19:38:46Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>851</integer>
+			<key>Comments</key><string>4/8, shuffle rhythm</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-29T01:43:00Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>B02689ACA0760994</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Walk%20Of%20Shame%20-%20Eight%20To%20The%20Bar%20(Calling%20All%20Ickeroos!)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18220</key>
+		<dict>
+			<key>Track ID</key><integer>18220</integer>
+			<key>Name</key><string>Sweat</string>
+			<key>Artist</key><string>Popa Chubby</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Booty and the Beast</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>36448619</integer>
+			<key>Total Time</key><integer>350688</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>14</integer>
+			<key>Track Count</key><integer>15</integer>
+			<key>Year</key><integer>1995</integer>
+			<key>BPM</key><integer>87</integer>
+			<key>Date Modified</key><date>2016-12-10T04:00:25Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>4/8, shuffle rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3578843790</integer>
+			<key>Play Date UTC</key><date>2017-05-28T23:16:30Z</date>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2016-12-10T04:00:27Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>42DDF8893A3925D8</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Sweat%20-%20Popa%20Chubby%20(Booty%20and%20the%20Beast)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18324</key>
+		<dict>
+			<key>Track ID</key><integer>18324</integer>
+			<key>Name</key><string>Slow Walk</string>
+			<key>Artist</key><string>Sil Austin</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>Tease! The Beat of Burlesque</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>9203218</integer>
+			<key>Total Time</key><integer>157525</integer>
+			<key>Disc Number</key><integer>2</integer>
+			<key>Disc Count</key><integer>5</integer>
+			<key>Track Number</key><integer>5</integer>
+			<key>Track Count</key><integer>18</integer>
+			<key>Year</key><integer>2013</integer>
+			<key>BPM</key><integer>99</integer>
+			<key>Date Modified</key><date>2016-12-10T04:06:51Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>448</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, shuffle rhythm, triplets</string>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3574737534</integer>
+			<key>Play Date UTC</key><date>2017-04-11T10:38:54Z</date>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2016-12-10T04:06:52Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Tease! The Beat of Burlesque</string>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>78201543C388AA71</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Slow%20Walk%20-%20Sil%20Austin%20(Tease:%20The%20Best%20of%20Burlesque)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18942</key>
+		<dict>
+			<key>Track ID</key><integer>18942</integer>
+			<key>Name</key><string>Deep in the Delta</string>
+			<key>Artist</key><string>Brother Yusef</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Blues By Request</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>24792170</integer>
+			<key>Total Time</key><integer>234837</integer>
+			<key>BPM</key><integer>112</integer>
+			<key>Date Modified</key><date>2017-01-10T20:43:55Z</date>
+			<key>Date Added</key><date>2016-12-24T18:31:22Z</date>
+			<key>Bit Rate</key><integer>823</integer>
+			<key>Comments</key><string>/8, straight rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3569675893</integer>
+			<key>Play Date UTC</key><date>2017-02-11T21:38:13Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-12-26T17:08:56Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>F02D9E98A4A926B4</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Deep%20in%20the%20Delta%20-%20Brother%20Yusef%20(Blues%20By%20Request)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19460</key>
+		<dict>
+			<key>Track ID</key><integer>19460</integer>
+			<key>Name</key><string>Black-Eyed Blues</string>
+			<key>Artist</key><string>Asylum Street Spankers</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Spanks for the Memories</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>21188019</integer>
+			<key>Total Time</key><integer>207360</integer>
+			<key>BPM</key><integer>114</integer>
+			<key>Date Modified</key><date>2017-02-12T17:48:16Z</date>
+			<key>Date Added</key><date>2017-02-11T23:09:01Z</date>
+			<key>Bit Rate</key><integer>797</integer>
+			<key>Comments</key><string>/8, straight rhythm</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-02-11T23:27:30Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>6A31E5BD9B507974</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Black-Eyed%20Blues%20-%20Asylum%20Street%20Spankers%20(Spanks%20for%20the%20Memories)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19472</key>
+		<dict>
+			<key>Track ID</key><integer>19472</integer>
+			<key>Name</key><string>Tchoupitoulas St. Rag</string>
+			<key>Artist</key><string>Joe Krown Trio</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>Old Friends</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>23363111</integer>
+			<key>Total Time</key><integer>211029</integer>
+			<key>BPM</key><integer>85</integer>
+			<key>Date Modified</key><date>2017-02-28T20:14:57Z</date>
+			<key>Date Added</key><date>2017-02-23T20:47:37Z</date>
+			<key>Bit Rate</key><integer>863</integer>
+			<key>Comments</key><string>/8, swing rhythm</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-02-24T00:47:11Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>820E513D87985F86</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Tchoupitoulas%20St.%20Rag%20-%20Joe%20Krown%20Trio%20(Old%20Friends)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19528</key>
+		<dict>
+			<key>Track ID</key><integer>19528</integer>
+			<key>Name</key><string>Bubbly Kisses</string>
+			<key>Artist</key><string>Ina Forsman</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Ina Forsman</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>37249361</integer>
+			<key>Total Time</key><integer>321109</integer>
+			<key>BPM</key><integer>99</integer>
+			<key>Date Modified</key><date>2017-03-11T22:08:37Z</date>
+			<key>Date Added</key><date>2017-02-23T20:47:37Z</date>
+			<key>Bit Rate</key><integer>900</integer>
+			<key>Comments</key><string>/8, straight rhythm</string>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3581867477</integer>
+			<key>Play Date UTC</key><date>2017-07-02T23:11:17Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-02-24T00:44:23Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>8E9E11BB3A1D38F7</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Bubbly%20Kisses%20-%20Ina%20Forsman%20(Ine%20Forsman)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19558</key>
+		<dict>
+			<key>Track ID</key><integer>19558</integer>
+			<key>Name</key><string>Chocolate Jesus</string>
+			<key>Artist</key><string>The Sugar Thieves</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Plywood Palace</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>29979698</integer>
+			<key>Total Time</key><integer>267435</integer>
+			<key>BPM</key><integer>122</integer>
+			<key>Date Modified</key><date>2017-03-11T21:29:34Z</date>
+			<key>Date Added</key><date>2017-03-10T17:41:13Z</date>
+			<key>Bit Rate</key><integer>874</integer>
+			<key>Comments</key><string>shuffle rhythm</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-03-10T18:10:59Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Artist</key><string>Sugar Thieves</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>3D81901853729AC3</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Chocolate%20Jesus%20-%20The%20Sugar%20Thieves%20(Plywood%20Palace)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19576</key>
+		<dict>
+			<key>Track ID</key><integer>19576</integer>
+			<key>Name</key><string>Friday The 13th</string>
+			<key>Artist</key><string>Royal Crown Revue</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>The Contender</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>28834109</integer>
+			<key>Total Time</key><integer>256853</integer>
+			<key>BPM</key><integer>116</integer>
+			<key>Date Modified</key><date>2017-03-11T21:31:12Z</date>
+			<key>Date Added</key><date>2017-03-10T17:41:13Z</date>
+			<key>Bit Rate</key><integer>876</integer>
+			<key>Comments</key><string>swing rhythm</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-03-11T19:45:00Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album</key><string>Contender</string>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Persistent ID</key><string>E5C6991B2F3C1A72</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Friday%20The%2013th%20-%20Royal%20Crown%20Revue%20(The%20Contender)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19676</key>
+		<dict>
+			<key>Track ID</key><integer>19676</integer>
+			<key>Name</key><string>Walking In The Lion's Den</string>
+			<key>Artist</key><string>Selwyn Birchwood</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Don't Call No Ambulance</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>24348294</integer>
+			<key>Total Time</key><integer>217344</integer>
+			<key>BPM</key><integer>93</integer>
+			<key>Date Modified</key><date>2017-03-11T21:29:44Z</date>
+			<key>Date Added</key><date>2017-03-10T17:41:13Z</date>
+			<key>Bit Rate</key><integer>874</integer>
+			<key>Comments</key><string>straight rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574729537</integer>
+			<key>Play Date UTC</key><date>2017-04-11T08:25:37Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-03-10T18:31:46Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>ED201CFE9D97AB5F</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Walking%20In%20The%20Lion's%20Den%20-%20Selwyn%20Birchwood%20(Don't%20Call%20No%20Ambulance)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+	</dict>
+	<key>Playlists</key>
+	<array>
+		<dict>
+			<key>Name</key><string>Yisst--2017-08-20-11-20</string>
+			<key>Description</key><string>started 11:20</string>
+			<key>Playlist ID</key><integer>54846</integer>
+			<key>Playlist Persistent ID</key><string>934ED1D6E6BEE999</string>
+			<key>Parent Persistent ID</key><string>544274569355FAF0</string>
+			<key>All Items</key><true/>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>16704</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16724</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19558</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18942</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16714</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17134</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16690</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18220</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17786</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19472</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19528</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19576</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19676</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18030</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16522</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18324</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19460</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18012</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16666</integer>
+				</dict>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

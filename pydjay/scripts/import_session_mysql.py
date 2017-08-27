@@ -1,80 +1,195 @@
-from pydjay.core.library import init, load_file as lib_load_file, save
-from pydjay.core.library.track import Track, save_mp3_file
+#from pydjay.core.library import init, load_file as lib_load_file, save
+#from pydjay.core.library.track import Track, save_mp3_file
 import os, sys, io
 from PIL import Image
 import urllib
 import array
-import cPickle as pickle
+#import cPickle as pickle
 from gi.repository import GObject, GLib
 
-from pydjay.core.audio.wavegen import WaveformGenerator
-from kivy.clock import mainthread, Clock
-from kivy.support import install_gobject_iteration
-from kivy.base import EventLoop, runTouchApp
-from kivy.uix.label import Label
+#from pydjay.core.audio.wavegen import WaveformGenerator
+#from kivy.clock import mainthread, Clock
+#from kivy.support import install_gobject_iteration
+#from kivy.base import EventLoop, runTouchApp
+#from kivy.uix.label import Label
 import pprint
-import subprocess
+#import subprocess
 import datetime
 
-from pydjay.utils.xml import Parser
+#from pydjay.utils.xml import Parser
 import plistlib
 
-foo = plistlib.readPlist("Music.xml")
-#print foo
+import pymysql
+from mp3hash import mp3hash
+
+# install_gobject_iteration()
+
+connection = pymysql.connect(host="localhost",
+                             user='root',
+                             password='root',
+                             db='pymusic',
+                             charset='utf8mb4',
+                             cursorclass=pymysql.cursors.DictCursor)
+
+
+
+def addslashes(s):
+    if s == None:
+        return None
+    d = {u'"': u'\\"',
+         u"'": u"\\'",
+         u"\0": u"\\\0",
+         u"\\": u"\\\\"}
+    return u''.join([d.get(c, c) for c in s])
+
+
+def none_to_null(v):
+    return v if v is not None else u'NULL'
+
+def none_to_zero(v):
+    return v if v is not None else 0
+
+def bool_to_int(b):
+    return 1 if b else 0
+
+
+def STRING(v):
+    return u"'{}'".format(v) if v is not None else 'NULL'
+
+
+def DATE(v):
+    fo = "'{}'".format(v.strftime("%Y-%m-%d %H:%M:%S")) if v is not None else 'NULL'
+    return fo
+
+
+with connection.cursor() as c:
+    c.execute("SELECT max(id) as M FROM sessions")
+    d = c.fetchone()
+    d = d['M']+1 if d['M'] is not None else 1
+
+
+    import glob
+    for fil in glob.glob("sessions/*.xml"):
+        print fil
+        foo = plistlib.readPlist(fil)
+
+        p_tracks = foo['Tracks']
+        tracks   = {}
+        for t in p_tracks:
+            tracks[int(t)] = urllib.unquote(p_tracks[t].get('Location','file://')[7:]).decode('utf8')
+        playlist = [x['Track ID'] for x in foo['Playlists'][0]['Playlist Items']]
+
+
+        name, _ = os.path.splitext(os.path.basename(fil))
+        location, date = name.split('--')
+        date = datetime.datetime.strptime(date, "%Y-%m-%d-%H-%M")
+
+        session_start_date = date
+        session_data = {'id': d, 'name':location, 'start_date': session_start_date}
+
+        play_date = session_start_date
+        db_indices = []
+        for i, index in enumerate(playlist):
+            sql = u"select id, title, stream_length from tracks where original_file_name='{}'".format(addslashes(tracks[index]))
+            #with connection.cursor() as c:
+            c.execute(sql)
+            x = c.fetchone()
+            s_dur = datetime.timedelta(seconds=x['stream_length'] / 1000000000)
+            session_track = {'position':i,
+                             'session_id': d,
+                             'track_id': x['id'],
+                             'start_time': play_date,
+                             'end_time': play_date+s_dur}
+            db_indices.append(x['id'])
+
+            sql_insert = """INSERT INTO session_tracks (position, session_id, track_id, start_time, end_time)
+                        VALUES ({position}, {session_id}, {track_id}, {start_time}, {end_time})"""
+            session_track['start_time'] = DATE(session_track['start_time'])
+            session_track['end_time'] = DATE(session_track['end_time'])
+            sql_insert = sql_insert.format(**session_track)
+            c.execute(sql_insert)
+            play_date += s_dur+datetime.timedelta(seconds=3)
+
+        for i in range(len(db_indices)-1):
+            id_1 = db_indices[i]
+            id_2 = db_indices[i+1]
+            sql = """INSERT INTO track_relations (track_id, related_track_id, count)
+                        VALUES ({track_id}, {related_track_id}, 1)
+                        ON DUPLICATE KEY UPDATE count=count+1"""
+            sql=sql.format(track_id=id_1, related_track_id=id_2)
+            c.execute(sql)
+
+        session_data['end_date'] = play_date
+        print session_data
+        sql_insert = """INSERT INTO sessions (id, name, start_date, end_date)
+                    VALUES ({id}, '{name}', {start_date}, {end_date})"""
+        session_data['start_date'] = DATE(session_data['start_date'])
+        session_data['end_date'] = DATE(session_data['end_date'])
+        session_data['name'] = addslashes(session_data['name'])
+        sql_insert = sql_insert.format(**session_data)
+        c.execute(sql_insert)
+
+        d += 1
+
+connection.commit()
+#pprint.pprint (foo)
+sys.exit(0)
+
+
 
 #Parser.parse(open('Music.xml').read())
 
 
-def _get_string(list):
-    return ''.join([x.text for x in list])
-
-def node_to_dict(node):
-    result = {"__tag__":node.tag}
-    for attribute in node.children:
-        if attribute.tag != 'CharData':
-            result[attribute.tag] = _get_string(attribute.children)
-                #print attribute.tag, result[attribute.tag]
-    return result
+#def _get_string(list):
+#    return ''.join([x.text for x in list])
+#
+#def node_to_dict(node):
+#    result = {"__tag__":node.tag}
+#    for attribute in node.children:
+#        if attribute.tag != 'CharData':
+#            result[attribute.tag] = _get_string(attribute.children)
+#                #print attribute.tag, result[attribute.tag]
+#    return result
 
 
 
 
 #install_gobject_iteration()
-
-_root_folder = os.path.abspath(os.path.expanduser('~/.pydjay'))
-init(_root_folder)
-
-loop = GLib.MainLoop()
-
+#
+#_root_folder = os.path.abspath(os.path.expanduser('~/.pydjay'))
+#init(_root_folder)
+#
+#loop = GLib.MainLoop()
+#
 #scan_root = sys.argv[1]
-
-timeout_time = 10
+#
+#timeout_time = 10
 
 #if not os.path.exists(scan_root):
 #    sys.exit(1)
 
 
-db = {}
+#db = {}
+#
+#def quote(str_, i = None):
+#    bar = str_.replace("/", "-")
+#    bar = bar.replace(":", "-")
+#    bar = bar.replace("\"", "-")
+#    bar = bar.replace("?", "-")
+#    return bar
 
-def quote(str_, i = None):
-    bar = str_.replace("/", "-")
-    bar = bar.replace(":", "-")
-    bar = bar.replace("\"", "-")
-    bar = bar.replace("?", "-")
-    return bar
-
-def create_thumbnail(track, image, size, type):
-    new_path = os.path.join(_root_folder, 'image_cache', type+'_' + quote(str(track), "") + ".png")
-    image.thumbnail(size, Image.ANTIALIAS)
-    image.save(new_path)
-    return new_path
-
-
-files = []
-
-
-tracks = foo.get("Tracks", {})
-track_list = []
+#def create_thumbnail(track, image, size, type):
+#    new_path = os.path.join(_root_folder, 'image_cache', type+'_' + quote(str(track), "") + ".png")
+#    image.thumbnail(size, Image.ANTIALIAS)
+#    image.save(new_path)
+#    return new_path
+#
+#
+#files = []
+#
+#
+#tracks = foo.get("Tracks", {})
+#track_list = []
 
 #{#'Album': 'Coney Island Washboard Melody',
 # #'Skip Date': datetime.datetime(2016, 12, 14, 1, 0, 14),
@@ -105,17 +220,6 @@ track_list = []
 # 'Track ID': 18731,
 # 'Size': 23408299}
 
-import pymysql
-from mp3hash import mp3hash
-
-# install_gobject_iteration()
-
-connection = pymysql.connect(host="localhost",
-                             user='root',
-                             password='root',
-                             db='pymusic',
-                             charset='utf8mb4',
-                             cursorclass=pymysql.cursors.DictCursor)
 
 
 insert_track_sql = u"""
@@ -123,35 +227,18 @@ INSERT INTO tracks (
 -- id,
 title, artist, album, year, genre, style, bpm, rating, favorite, comments, last_played, waveform,
 cover_medium, cover_small, cover_large, cover_original, track_length, stream_start, stream_end, stream_length,
-date_added, date_modified, bitrate, samplerate, file_name, file_size, hash, play_at, kind, category, description, disabled, original_file_name, vocals
+date_added, date_modified, bitrate, samplerate, file_name, file_size, hash, play_at, kind, category, description, disabled, original_file_name
 )
 VALUES (
 -- {id},
 {title}, {artist}, {album}, {year}, {genre}, {style}, {bpm}, {rating}, {favorite}, {comments},
 {last_played}, {waveform}, {cover_medium}, {cover_small}, {cover_large}, {cover_original}, {track_length},
 {stream_start}, {stream_end}, {stream_length}, {date_added}, {date_modified}, {bitrate}, {samplerate},
-{file_name}, {file_size}, {hash}, {play_at}, {kind}, {category}, {description}, {disabled}, {original_file_name}, {vocals}
+{file_name}, {file_size}, {hash}, {play_at}, {kind}, {category}, {description}, {disabled}, {original_file_name}
 )
 """
 
-def addslashes(s):
-    if s == None:
-        return None
-    d = {u'"': u'\\"',
-         u"'": u"\\'",
-         u"\0": u"\\\0",
-         u"\\": u"\\\\"}
-    return u''.join([d.get(c, c) for c in s])
 
-
-def none_to_null(v):
-    return v if v is not None else u'NULL'
-
-def none_to_zero(v):
-    return v if v is not None else 0
-
-def bool_to_int(b):
-    return 1 if b else 0
 #    if s == None:
 #        return ''
 #    d = {'"': '\\"', "'": "\\'", "\0": "\\\0", "\\": "\\\\"}
@@ -163,7 +250,7 @@ def STRING(v):
 
 
 def DATE(v):
-    fo = "'{}'".format(v.strftime("%Y-%m-%d %H:%M:%S")) if v is not None else 'NULL'
+    fo = "date('{}')".format(v.strftime("%Y-%m-%d %H:%M:%S")) if v is not None else 'NULL'
     return fo
 
 
@@ -181,7 +268,6 @@ for n in tracks:
         'favorite': tracks[n].get('Loved', None),
         'comments': tracks[n].get('Comments', None),
         'disabled': tracks[n].get('Disabled', False),
-        'vocals': tracks[n].get('Composer', None),
         'last_played': None,
         'waveform': None,
         'cover_medium': None, #cover_art_data['small'],
@@ -312,7 +398,6 @@ def add_track(i, track):
             'year': none_to_null(track['year']),
             'genre': STRING(addslashes(track['genre'])),
             'style': STRING(addslashes(track['style'])),
-            'vocals': STRING(addslashes(track['vocals'])),
             'bpm': none_to_null(track['bpm']),
             'rating': none_to_null(track['rating']),  # track.metadata.rating,
             'disabled': bool_to_int(track['disabled']),  # track.metadata.loved,

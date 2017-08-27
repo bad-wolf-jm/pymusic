@@ -1,0 +1,1893 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Major Version</key><integer>1</integer>
+	<key>Minor Version</key><integer>1</integer>
+	<key>Date</key><date>2017-08-26T04:23:47Z</date>
+	<key>Application Version</key><string>12.6.2.20</string>
+	<key>Features</key><integer>5</integer>
+	<key>Show Content Ratings</key><true/>
+	<key>Music Folder</key><string>file:///Volumes/Media/iTunes/</string>
+	<key>Library Persistent ID</key><string>E246B49C8F09A953</string>
+	<key>Tracks</key>
+	<dict>
+		<key>16516</key>
+		<dict>
+			<key>Track ID</key><integer>16516</integer>
+			<key>Name</key><string>Dark Sunshine</string>
+			<key>Artist</key><string>Dr. Michael White</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>Blue Crescent</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>24978264</integer>
+			<key>Total Time</key><integer>341418</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Track Number</key><integer>7</integer>
+			<key>Year</key><integer>2008</integer>
+			<key>BPM</key><integer>85</integer>
+			<key>Date Modified</key><date>2016-11-08T15:37:55Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, straight rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574740688</integer>
+			<key>Play Date UTC</key><date>2017-04-11T11:31:28Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-29T18:44:54Z</date>
+			<key>Release Date</key><date>2008-06-10T12:00:00Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>1BBC945CD69156C2</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Dark%20Sunshine%20-%20Dr.%20Michael%20White%20(Blue%20Crescent)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16554</key>
+		<dict>
+			<key>Track ID</key><integer>16554</integer>
+			<key>Name</key><string>Witching Hour Blues</string>
+			<key>Artist</key><string>Glenn Crytzer and his Syncopators</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>Harlem Mad</string>
+			<key>Grouping</key><string>Slow drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>19041937</integer>
+			<key>Total Time</key><integer>284480</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Track Number</key><integer>4</integer>
+			<key>Track Count</key><integer>20</integer>
+			<key>Year</key><integer>2011</integer>
+			<key>BPM</key><integer>71</integer>
+			<key>Date Modified</key><date>2016-11-08T19:49:55Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, straight rhythm, new orleans</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574754870</integer>
+			<key>Play Date UTC</key><date>2017-04-11T15:27:50Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-02-15T20:52:25Z</date>
+			<key>Release Date</key><date>2011-05-27T12:00:00Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>4EC8237D17A7AF65</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Witching%20Hour%20Blues%20-%20Glenn%20Crytzer%20and%20his%20Syncopators%20(Harlem%20Mad)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16556</key>
+		<dict>
+			<key>Track ID</key><integer>16556</integer>
+			<key>Name</key><string>Blue Leaf Clover</string>
+			<key>Artist</key><string>Firecracker Jazz Band</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>Hot Vintage Jazz</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>28118984</integer>
+			<key>Total Time</key><integer>293162</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Track Number</key><integer>3</integer>
+			<key>Year</key><integer>2004</integer>
+			<key>BPM</key><integer>112</integer>
+			<key>Date Modified</key><date>2016-11-08T15:57:51Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, straight rhythm, instrumental, early night, middle night, late night</string>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>3E4400CF34B945BE</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Blue%20Leaf%20Clover%20-%20Firecracker%20Jazz%20Band%20(Hot%20Vintage%20Jazz)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16650</key>
+		<dict>
+			<key>Track ID</key><integer>16650</integer>
+			<key>Name</key><string>Save Me For Later</string>
+			<key>Artist</key><string>Suzie Vinnick</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Me 'n' Mabel</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>19807595</integer>
+			<key>Total Time</key><integer>202667</integer>
+			<key>BPM</key><integer>95</integer>
+			<key>Date Modified</key><date>2016-12-29T21:44:44Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>756</integer>
+			<key>Comments</key><string>6/8, shuffle rhythm, female voice, early night, middle night</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574760112</integer>
+			<key>Play Date UTC</key><date>2017-04-11T16:55:12Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T03:56:51Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Early to middle of the night</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>A97BCF17A76F7CE8</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Save%20Me%20For%20Later%20-%20Suzie%20Vinnick%20(Me%20'n'%20Mabel)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16666</key>
+		<dict>
+			<key>Track ID</key><integer>16666</integer>
+			<key>Name</key><string>My Daddy Rocks Me</string>
+			<key>Artist</key><string>Blue Harlem</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Talk to Me</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>38782453</integer>
+			<key>Total Time</key><integer>351648</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Track Number</key><integer>3</integer>
+			<key>Year</key><integer>2005</integer>
+			<key>BPM</key><integer>86</integer>
+			<key>Date Modified</key><date>2016-11-09T03:37:56Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, shuffle rhythm, female voice, middle night, late night</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3578848513</integer>
+			<key>Play Date UTC</key><date>2017-05-29T00:35:13Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>3BB668D2D33EBBD9</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/My%20Daddy%20Rocks%20Me%20-%20Blue%20Harlem%20(Talk%20to%20Me)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16680</key>
+		<dict>
+			<key>Track ID</key><integer>16680</integer>
+			<key>Name</key><string>Summertime</string>
+			<key>Artist</key><string>Doc Watson</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Third Generation Blues</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Country</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>19869734</integer>
+			<key>Total Time</key><integer>205056</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>13</integer>
+			<key>Track Count</key><integer>14</integer>
+			<key>Year</key><integer>1999</integer>
+			<key>BPM</key><integer>108</integer>
+			<key>Date Modified</key><date>2016-11-08T17:47:26Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>748</integer>
+			<key>Comments</key><string>4/8, medium speed, straight rhythm, male voice, middle night, late night</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574730241</integer>
+			<key>Play Date UTC</key><date>2017-04-11T08:37:21Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-12-10T16:08:00Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>6E398FCA2898D1E1</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Summertime%20-%20Doc%20Watson%20(Third%20Generation%20Blues)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16734</key>
+		<dict>
+			<key>Track ID</key><integer>16734</integer>
+			<key>Name</key><string>I Don't Need No Doctor</string>
+			<key>Artist</key><string>The Downtown Shimmy</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Any Time, Any Place</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>30510547</integer>
+			<key>Total Time</key><integer>310784</integer>
+			<key>Year</key><integer>2013</integer>
+			<key>BPM</key><integer>77</integer>
+			<key>Date Modified</key><date>2016-11-08T19:04:44Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>762</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, straight rhythm, rubato feel, male voice, middle night, late night</string>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Artist</key><string>Downtown Shimmy</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>28246D571A049426</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/I%20Don't%20Need%20No%20Doctor%20-%20The%20Downtown%20Shimmy%20(Any%20Time,%20Any%20Place)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16738</key>
+		<dict>
+			<key>Track ID</key><integer>16738</integer>
+			<key>Name</key><string>Hot Potato</string>
+			<key>Artist</key><string>Circus Contraption</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Grand American Traveling Dime Museum</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>31349923</integer>
+			<key>Total Time</key><integer>292490</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>9</integer>
+			<key>Track Count</key><integer>20</integer>
+			<key>Year</key><integer>2005</integer>
+			<key>BPM</key><integer>90</integer>
+			<key>Date Modified</key><date>2016-11-09T04:20:00Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, slow feel, swing rhythm, male voice, early night, middle night, late night</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:25:28Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>B612125CDF28C62D</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Hot%20Potato%20-%20Circus%20Contraption%20(Grand%20American%20Travel%20Dime%20Museum)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16760</key>
+		<dict>
+			<key>Track ID</key><integer>16760</integer>
+			<key>Name</key><string>I Heard The Marchin of the Drum</string>
+			<key>Artist</key><string>C.W. Stoneking</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Jungle Blues</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>18676473</integer>
+			<key>Total Time</key><integer>231936</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>7</integer>
+			<key>Track Count</key><integer>10</integer>
+			<key>Year</key><integer>2008</integer>
+			<key>BPM</key><integer>104</integer>
+			<key>Date Modified</key><date>2016-11-08T19:56:00Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>623</integer>
+			<key>Comments</key><string>8/8, straight rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3578842990</integer>
+			<key>Play Date UTC</key><date>2017-05-28T23:03:10Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:22:51Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Early to middle of the night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>A43703F3BCC8DA81</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/I%20Heard%20The%20Marchin%20of%20the%20Drum%20-%20C.W%20Stoneking%20(Jungle%20Blues)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16770</key>
+		<dict>
+			<key>Track ID</key><integer>16770</integer>
+			<key>Name</key><string>Got My Mojo Workin'</string>
+			<key>Artist</key><string>Asylum Street Spankers</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Mercurial</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>27998607</integer>
+			<key>Total Time</key><integer>266325</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>6</integer>
+			<key>Track Count</key><integer>14</integer>
+			<key>Year</key><integer>2004</integer>
+			<key>BPM</key><integer>100</integer>
+			<key>Date Modified</key><date>2016-11-08T23:38:23Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>816</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, straight rhythm, female voice, early night, middle night</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-01-13T05:07:31Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Early to middle of the night</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>CA2651A6A3A2429B</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Got%20my%20Mojo%20Workin'%20-%20Asylum%20Street%20Spankers%20(Mercurial)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16772</key>
+		<dict>
+			<key>Track ID</key><integer>16772</integer>
+			<key>Name</key><string>Get Back Temptation</string>
+			<key>Artist</key><string>Ollabelle</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Ollabelle</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>19835253</integer>
+			<key>Total Time</key><integer>169301</integer>
+			<key>BPM</key><integer>85</integer>
+			<key>Date Modified</key><date>2016-11-08T18:20:33Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>905</integer>
+			<key>Comments</key><string>6/8, straight rhythm, male voice, early night, middle night</string>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3574768196</integer>
+			<key>Play Date UTC</key><date>2017-04-11T19:09:56Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:29:26Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Early to middle of the night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>BB6B26E1D741D307</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Get%20Back%20Temptation%20-%20Ollabelle%20(Ollabelle)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16774</key>
+		<dict>
+			<key>Track ID</key><integer>16774</integer>
+			<key>Name</key><string>Everybody knows</string>
+			<key>Artist</key><string>Garou</string>
+			<key>Album Artist</key><string>Late night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Gentleman Cambrioleur</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>29247159</integer>
+			<key>Total Time</key><integer>351189</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>13</integer>
+			<key>Track Count</key><integer>13</integer>
+			<key>Year</key><integer>2009</integer>
+			<key>BPM</key><integer>57</integer>
+			<key>Date Modified</key><date>2016-11-08T17:34:35Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, rubato feel, male voice, late night</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:32:10Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Late night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>D47B8C9D45CAEBA7</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Everybody%20knows%20-%20Garou%20(Gentleman%20cambrioleur)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16790</key>
+		<dict>
+			<key>Track ID</key><integer>16790</integer>
+			<key>Name</key><string>Back To Black</string>
+			<key>Artist</key><string>Amy Winehouse</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Frank &#38; Back To Black</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>25277539</integer>
+			<key>Total Time</key><integer>239189</integer>
+			<key>BPM</key><integer>122</integer>
+			<key>Date Modified</key><date>2016-11-09T03:35:39Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>823</integer>
+			<key>Comments</key><string>8/8, straight rhythm, fast, female voice, early night, middle night</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:45:53Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Early to middle of the night</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>905638BDC9C04600</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Back%20To%20Black%20-%20Amy%20Winehouse%20(Frank%20&#38;%20Back%20To%20Black)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16930</key>
+		<dict>
+			<key>Track ID</key><integer>16930</integer>
+			<key>Name</key><string>Death Came A-Knockin' (Travellin' Shoes)</string>
+			<key>Artist</key><string>Ruthie Foster</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Runaway Soul</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>19696585</integer>
+			<key>Total Time</key><integer>203264</integer>
+			<key>Track Number</key><integer>20</integer>
+			<key>BPM</key><integer>98</integer>
+			<key>Date Modified</key><date>2016-12-29T21:45:29Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>6/8, straight rhythm, subdivisions, early night, middle night</string>
+			<key>Skip Count</key><integer>3</integer>
+			<key>Skip Date</key><date>2017-05-17T01:08:04Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Early to middle of the night</string>
+			<key>Sort Artist</key><string>Ruthie Foster</string>
+			<key>Persistent ID</key><string>0DA9741A10646240</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Death%20Came%20A-Knockin'%20(Travellin'%20Shoes)%20-%20Rutie%20Foster%20(Runaway%20Soul)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16964</key>
+		<dict>
+			<key>Track ID</key><integer>16964</integer>
+			<key>Name</key><string>Crawling the Walls</string>
+			<key>Artist</key><string>Dave Gross</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Crawling the Walls</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>27721101</integer>
+			<key>Total Time</key><integer>266346</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>4</integer>
+			<key>Track Count</key><integer>11</integer>
+			<key>Year</key><integer>2008</integer>
+			<key>BPM</key><integer>83</integer>
+			<key>Date Modified</key><date>2016-11-08T15:45:13Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>6/8, swing rhythm</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:37:18Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>FF14DA5A191EA712</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Crawling%20the%20Walls%20-%20Dave%20Gross%20(Crawling%20the%20Walls)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>16996</key>
+		<dict>
+			<key>Track ID</key><integer>16996</integer>
+			<key>Name</key><string>Fever</string>
+			<key>Artist</key><string>Elvis Presley</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Elvis is Back</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>19770217</integer>
+			<key>Total Time</key><integer>211797</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>5</integer>
+			<key>Track Number</key><integer>7</integer>
+			<key>Track Count</key><integer>27</integer>
+			<key>Year</key><integer>1993</integer>
+			<key>BPM</key><integer>119</integer>
+			<key>Date Modified</key><date>2016-11-08T19:45:24Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>8/8, not so fast, male voice, straight rhythm, middle night, late night</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:31:10Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>4CF208E8EA60C18C</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Fever%20-%20Elvis%20Presley%20(Elvis%20is%20Back)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17040</key>
+		<dict>
+			<key>Track ID</key><integer>17040</integer>
+			<key>Name</key><string>Wandering Heart</string>
+			<key>Artist</key><string>Danielle Nicole</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Danielle Nicole</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>29770618</integer>
+			<key>Total Time</key><integer>299605</integer>
+			<key>Year</key><integer>2015</integer>
+			<key>BPM</key><integer>92</integer>
+			<key>Date Modified</key><date>2016-11-08T15:46:40Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>772</integer>
+			<key>Comments</key><string>8/8, slow heavy feel</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3565013716</integer>
+			<key>Play Date UTC</key><date>2016-12-19T22:35:16Z</date>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-01-19T21:37:24Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>4C46BE86EC3BC66D</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Wandering%20Heart%20-%20Danielle%20Nicole%20(Danielle%20Nicole)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17094</key>
+		<dict>
+			<key>Track ID</key><integer>17094</integer>
+			<key>Name</key><string>Your Heart is as Black as Night</string>
+			<key>Artist</key><string>Chloé</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Chloé</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>14737179</integer>
+			<key>Total Time</key><integer>161024</integer>
+			<key>BPM</key><integer>73</integer>
+			<key>Date Modified</key><date>2016-11-08T19:41:06Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>711</integer>
+			<key>Comments</key><string>8/8, sad, triplet feel</string>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>3FE78B09E73363D6</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Your%20Heart%20is%20as%20Black%20as%20Night%20-%20Chloe%CC%81%20(Chloe%CC%81)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17130</key>
+		<dict>
+			<key>Track ID</key><integer>17130</integer>
+			<key>Name</key><string>(Sittin' On) The Dock Of The Bay</string>
+			<key>Artist</key><string>Otis Redding</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>The Dock Of The Bay</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>17171967</integer>
+			<key>Total Time</key><integer>159829</integer>
+			<key>BPM</key><integer>106</integer>
+			<key>Date Modified</key><date>2016-11-08T15:47:17Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>832</integer>
+			<key>Comments</key><string>8/8, slower feel</string>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Dock Of The Bay</string>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>2C7D708AAB12E616</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/(Sittin'%20On)%20The%20Dock%20Of%20The%20Bay%20-%20Otis%20Redding%20(The%20Dock%20Of%20The%20Bay)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17162</key>
+		<dict>
+			<key>Track ID</key><integer>17162</integer>
+			<key>Name</key><string>No Man's Mama</string>
+			<key>Artist</key><string>Carolina Chocolate Drops</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Leaving Eden</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Acoustic Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>22602185</integer>
+			<key>Total Time</key><integer>239872</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>13</integer>
+			<key>Track Count</key><integer>15</integer>
+			<key>Year</key><integer>2012</integer>
+			<key>BPM</key><integer>131</integer>
+			<key>Date Modified</key><date>2016-11-08T19:29:41Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>729</integer>
+			<key>Comments</key><string>8/8, guitar &#38; banjo, female voice, change in rhythm, struttin', early night, middle night</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:03:21Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Early to middle of the night</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>3CC6579F66B2E6A7</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/No%20Man's%20Mama%20-%20Carolina%20Chocolate%20Drops%20(Leaving%20Eden)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17226</key>
+		<dict>
+			<key>Track ID</key><integer>17226</integer>
+			<key>Name</key><string>La Fille Aux Cheveux Roux</string>
+			<key>Artist</key><string>The Hot Sardines</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>French Fries &#38; Champagne</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>23358534</integer>
+			<key>Total Time</key><integer>263424</integer>
+			<key>BPM</key><integer>103</integer>
+			<key>Date Modified</key><date>2016-11-08T15:51:40Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>686</integer>
+			<key>Comments</key><string>8/8,  swing, female, french, Weed Smoker's Dream, early night, middle night, late night</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3585068273</integer>
+			<key>Play Date UTC</key><date>2017-08-09T00:17:53Z</date>
+			<key>Skip Count</key><integer>4</integer>
+			<key>Skip Date</key><date>2016-12-19T22:25:44Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Artist</key><string>Hot Sardines</string>
+			<key>Persistent ID</key><string>B2966EDDFDE6D757</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/La%20Fille%20Aux%20Cheveux%20Roux%20-%20The%20Hot%20Sardines%20(French%20Fries%20&#38;%20Champagne)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17264</key>
+		<dict>
+			<key>Track ID</key><integer>17264</integer>
+			<key>Name</key><string>Baby Please Make a Change</string>
+			<key>Artist</key><string>Hugh Laurie</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Let Them Talk</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>31311395</integer>
+			<key>Total Time</key><integer>294485</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>14</integer>
+			<key>Track Count</key><integer>16</integer>
+			<key>Year</key><integer>2011</integer>
+			<key>BPM</key><integer>94</integer>
+			<key>Date Modified</key><date>2016-11-08T17:39:55Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>827</integer>
+			<key>Comments</key><string>6/8, male voice, straight rhythm, middle night, late night</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574728162</integer>
+			<key>Play Date UTC</key><date>2017-04-11T08:02:42Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-11-12T19:32:26Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>B0A22659B59C3C39</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Baby%20Please%20Make%20a%20Change%20-%20Hugh%20Laurie%20(Let%20Them%20Talk)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17276</key>
+		<dict>
+			<key>Track ID</key><integer>17276</integer>
+			<key>Name</key><string>(They Call It) Stormy Monday</string>
+			<key>Artist</key><string>Nancy Wilson</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Something Wonderful</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Electric Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>12166456</integer>
+			<key>Total Time</key><integer>144555</integer>
+			<key>BPM</key><integer>68</integer>
+			<key>Date Modified</key><date>2016-11-08T16:22:10Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>647</integer>
+			<key>Comments</key><string>6/8, female voice, slow feel, subtle shuffle rhythm, early night, middle night, late night</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-01-19T21:17:20Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>B1EB0900F3B51666</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/(They%20Call%20It)%20Stormy%20Monday%20-%20Nancy%20Wilson%20(Something%20Wonderful)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17284</key>
+		<dict>
+			<key>Track ID</key><integer>17284</integer>
+			<key>Name</key><string>Am I Wrong</string>
+			<key>Artist</key><string>Guy Bélanger</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Dusty Trails</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>16887010</integer>
+			<key>Total Time</key><integer>167851</integer>
+			<key>BPM</key><integer>113</integer>
+			<key>Date Modified</key><date>2016-11-08T19:44:43Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>775</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, straight rhythm, subdivisions, male voice, early night, middle night, late night</string>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3574718209</integer>
+			<key>Play Date UTC</key><date>2017-04-11T05:16:49Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>ADB704549F102BF4</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Am%20I%20Wrong%20-%20Guy%20Be%CC%81langer%20(Dusty%20Trails)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17298</key>
+		<dict>
+			<key>Track ID</key><integer>17298</integer>
+			<key>Name</key><string>Back at the Crossroads</string>
+			<key>Artist</key><string>Brother Yusef</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Back at the Crossroads Project</string>
+			<key>Grouping</key><string>Struttin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>23063966</integer>
+			<key>Total Time</key><integer>224171</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>6</integer>
+			<key>Track Count</key><integer>13</integer>
+			<key>Year</key><integer>1999</integer>
+			<key>BPM</key><integer>122</integer>
+			<key>Date Modified</key><date>2016-11-08T15:35:26Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>797</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, straight feel, acoustic guitar</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2016-10-27T04:46:07Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>E4C04888BC79D2D9</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Back%20at%20the%20Crossroads%20-%20Brother%20Yusef%20(Back%20at%20the%20Crossroads%20Project)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17336</key>
+		<dict>
+			<key>Track ID</key><integer>17336</integer>
+			<key>Name</key><string>Baby Scratch My Back</string>
+			<key>Artist</key><string>Slim Harpo</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Mellow Jazzy Blues</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>15128333</integer>
+			<key>Total Time</key><integer>171093</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>91</integer>
+			<key>Track Count</key><integer>100</integer>
+			<key>Year</key><integer>1997</integer>
+			<key>BPM</key><integer>113</integer>
+			<key>Date Modified</key><date>2016-11-09T01:32:05Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>685</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, male voice, straight rhythm, early night, middle night, late night</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-02-24T03:24:13Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>AC639C08562747BA</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Baby%20Sctratch%20My%20Back%20-%20Slim%20Harpo%20(Mellow%20Jazzy%20Blues)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>17820</key>
+		<dict>
+			<key>Track ID</key><integer>17820</integer>
+			<key>Name</key><string>Jail House Blues</string>
+			<key>Artist</key><string>Gaye Adegbalola</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Bitter Sweet Blues</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>28473830</integer>
+			<key>Total Time</key><integer>288853</integer>
+			<key>BPM</key><integer>79</integer>
+			<key>Date Modified</key><date>2017-01-19T20:22:23Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>763</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, work song, straight rhythm</string>
+			<key>Skip Count</key><integer>3</integer>
+			<key>Skip Date</key><date>2017-03-14T19:00:09Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>779B9954CAECD377</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Jail%20House%20Blues%20-%20Gaye%20Adegbalola%20(Bitter%20Sweet%20Blues)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18056</key>
+		<dict>
+			<key>Track ID</key><integer>18056</integer>
+			<key>Name</key><string>A Whiskey Too Far</string>
+			<key>Artist</key><string>The Great Malarkey</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Badly Stuffed Animal</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>25536609</integer>
+			<key>Total Time</key><integer>243029</integer>
+			<key>BPM</key><integer>69</integer>
+			<key>Date Modified</key><date>2016-12-14T00:52:01Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>813</integer>
+			<key>Comments</key><string>/8, straight rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574769293</integer>
+			<key>Play Date UTC</key><date>2017-04-11T19:28:13Z</date>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2016-12-14T00:52:02Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Artist</key><string>Great Malarkey</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Sort Name</key><string>Whiskey Too Far</string>
+			<key>Persistent ID</key><string>4114C5C2A1C4F00C</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/A%20Whiskey%20Too%20Far%20-%20The%20Great%20Malarkey%20(Badly%20Stuffed%20Animal)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18382</key>
+		<dict>
+			<key>Track ID</key><integer>18382</integer>
+			<key>Name</key><string>That's Alright</string>
+			<key>Artist</key><string>Keb' Mo'</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Bluesamericana</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>27601909</integer>
+			<key>Total Time</key><integer>251136</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>7</integer>
+			<key>Track Count</key><integer>10</integer>
+			<key>Year</key><integer>2014</integer>
+			<key>BPM</key><integer>79</integer>
+			<key>Date Modified</key><date>2016-11-08T16:32:39Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>853</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, shuffle rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574738755</integer>
+			<key>Play Date UTC</key><date>2017-04-11T10:59:15Z</date>
+			<key>Skip Count</key><integer>3</integer>
+			<key>Skip Date</key><date>2016-10-29T02:07:14Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>2B2C20A1D5504632</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/That's%20Alright%20-%20Keb'%20Mo'%20(Bluesamericana)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18578</key>
+		<dict>
+			<key>Track ID</key><integer>18578</integer>
+			<key>Name</key><string>Bottom of the River</string>
+			<key>Artist</key><string>Delta Rae</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Carry The Fire</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>Apple Lossless audio file</string>
+			<key>Size</key><integer>21835823</integer>
+			<key>Total Time</key><integer>194144</integer>
+			<key>Disc Number</key><integer>1</integer>
+			<key>Disc Count</key><integer>1</integer>
+			<key>Track Number</key><integer>5</integer>
+			<key>Track Count</key><integer>14</integer>
+			<key>Year</key><integer>2012</integer>
+			<key>BPM</key><integer>74</integer>
+			<key>Date Modified</key><date>2016-11-30T16:41:17Z</date>
+			<key>Date Added</key><date>2016-10-26T22:13:49Z</date>
+			<key>Bit Rate</key><integer>1536</integer>
+			<key>Sample Rate</key><integer>48000</integer>
+			<key>Comments</key><string>4/8, straight rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574715422</integer>
+			<key>Play Date UTC</key><date>2017-04-11T04:30:22Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-10-27T04:41:54Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>EB05AB6C379D2D98</string>
+			<key>Track Type</key><string>File</string>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Bottom%20of%20the%20River%20-%20Delta%20Rae%20(Carry%20The%20Fire)%20.m4a</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18826</key>
+		<dict>
+			<key>Track ID</key><integer>18826</integer>
+			<key>Name</key><string>Dust My Broom</string>
+			<key>Artist</key><string>Taj Mahal</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Taj Mahal</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>15941870</integer>
+			<key>Total Time</key><integer>154624</integer>
+			<key>Year</key><integer>1968</integer>
+			<key>BPM</key><integer>117</integer>
+			<key>Date Modified</key><date>2016-12-29T21:44:04Z</date>
+			<key>Date Added</key><date>2016-12-10T07:03:02Z</date>
+			<key>Bit Rate</key><integer>804</integer>
+			<key>Comments</key><string>6/8, 12 bar blues, shuffle rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3569667401</integer>
+			<key>Play Date UTC</key><date>2017-02-11T19:16:41Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-12-12T21:11:02Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>0B6D3DF42B19F894</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Dust%20My%20Broom%20-%20Taj%20Mahal%20(Taj%20Mahal)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18846</key>
+		<dict>
+			<key>Track ID</key><integer>18846</integer>
+			<key>Name</key><string>Black Rattler</string>
+			<key>Artist</key><string>Carl Sonny Leyland Trio</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>Carl Sonny Leyland Trio Meets Nathan James &#38; Ben Hernandez</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>19752524</integer>
+			<key>Total Time</key><integer>244309</integer>
+			<key>BPM</key><integer>80</integer>
+			<key>Date Modified</key><date>2016-12-14T00:43:46Z</date>
+			<key>Date Added</key><date>2016-12-12T20:26:21Z</date>
+			<key>Bit Rate</key><integer>628</integer>
+			<key>Comments</key><string>8/8, straight rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3575209558</integer>
+			<key>Play Date UTC</key><date>2017-04-16T21:45:58Z</date>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2016-12-14T00:43:47Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>A24844066AF0DB02</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Black%20Rattler%20-%20Carl%20Sonny%20Leyland%20Trio%20(Carl%20Sonny%20Leyland%20Trio%20Meets%20Nathan%20James%20&#38;%20Ben%20Hernandez)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18854</key>
+		<dict>
+			<key>Track ID</key><integer>18854</integer>
+			<key>Name</key><string>J'attendrai</string>
+			<key>Artist</key><string>Swing de Gitanes</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>Muza</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>25143859</integer>
+			<key>Total Time</key><integer>259840</integer>
+			<key>BPM</key><integer>120</integer>
+			<key>Date Modified</key><date>2016-12-29T21:45:14Z</date>
+			<key>Date Added</key><date>2016-12-17T00:31:13Z</date>
+			<key>Bit Rate</key><integer>731</integer>
+			<key>Comments</key><string>/8, swing rhythm</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3574777427</integer>
+			<key>Play Date UTC</key><date>2017-04-11T21:43:47Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-12-26T17:52:59Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Persistent ID</key><string>C0105488AC7171E0</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/J'attendrai%20-%20Swing%20de%20gitane%20(Muza).mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18862</key>
+		<dict>
+			<key>Track ID</key><integer>18862</integer>
+			<key>Name</key><string>John The Revelator</string>
+			<key>Artist</key><string>Ski-King</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Sketchbook II: Watching The Sons</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>31451583</integer>
+			<key>Total Time</key><integer>275200</integer>
+			<key>BPM</key><integer>109</integer>
+			<key>Date Modified</key><date>2017-01-10T20:44:00Z</date>
+			<key>Date Added</key><date>2016-12-24T18:31:22Z</date>
+			<key>Bit Rate</key><integer>891</integer>
+			<key>Comments</key><string>/8, straight rhythm, 12 bar blues</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-02-11T23:34:17Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>7D31F02F5E715989</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/John%20The%20Revelator%20-%20Ski-King%20(Sketchbook%20II:%20Watching%20The%20Sons)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18874</key>
+		<dict>
+			<key>Track ID</key><integer>18874</integer>
+			<key>Name</key><string>Si tu savais</string>
+			<key>Artist</key><string>Stéphane Wrembel</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>Introducing Stephane Wrembel</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Gypsy Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>9080045</integer>
+			<key>Total Time</key><integer>163669</integer>
+			<key>BPM</key><integer>98</integer>
+			<key>Date Modified</key><date>2017-01-10T20:43:23Z</date>
+			<key>Date Added</key><date>2016-12-24T18:31:22Z</date>
+			<key>Bit Rate</key><integer>432</integer>
+			<key>Comments</key><string>/8, straight rhythm</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-01-13T05:02:10Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>BCCFA0FD4690FB55</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Si%20tu%20savais%20-%20Ste%CC%81phane%20Wrembel%20(Introducing%20Stephane%20Wrembel)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>18948</key>
+		<dict>
+			<key>Track ID</key><integer>18948</integer>
+			<key>Name</key><string>Dear Old Southland</string>
+			<key>Artist</key><string>Normert Susemihl, Erika Lewis, Shayne Cohn</string>
+			<key>Album Artist</key><string>Middle to late night</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>New Orleans Blues - Erika, Norbert &#38; Shaye</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>22510592</integer>
+			<key>Total Time</key><integer>284501</integer>
+			<key>BPM</key><integer>102</integer>
+			<key>Date Modified</key><date>2017-01-10T20:43:20Z</date>
+			<key>Date Added</key><date>2016-12-24T18:31:22Z</date>
+			<key>Bit Rate</key><integer>612</integer>
+			<key>Comments</key><string>/8, straight rhythm, tango feel</string>
+			<key>Play Count</key><integer>1</integer>
+			<key>Play Date</key><integer>3569672542</integer>
+			<key>Play Date UTC</key><date>2017-02-11T20:42:22Z</date>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-12-26T17:45:28Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Middle to late night</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>301B04A439B8E99D</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Dear%20Old%20Southland%20-%20Normert%20Susemihl,%20Erika%20Lewis,%20Shayne%20Cohn%20(New%20Orleans%20Blues,%20Erika,%20Norbert%20&#38;%20Shaye)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19054</key>
+		<dict>
+			<key>Track ID</key><integer>19054</integer>
+			<key>Name</key><string>Bad Bad Whiskey</string>
+			<key>Artist</key><string>Jimmy Witherspoon</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Jazz Me Blues, The Best Of Jimmy Witherspoon</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>20191133</integer>
+			<key>Total Time</key><integer>184747</integer>
+			<key>BPM</key><integer>128</integer>
+			<key>Date Modified</key><date>2017-01-10T20:43:51Z</date>
+			<key>Date Added</key><date>2016-12-24T18:31:22Z</date>
+			<key>Bit Rate</key><integer>852</integer>
+			<key>Comments</key><string>/8, swing rhythm, slow lindy hop</string>
+			<key>Skip Count</key><integer>3</integer>
+			<key>Skip Date</key><date>2017-02-24T02:37:36Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>6176A6B0A538122A</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Bad%20Bad%20Whiskey%20-%20Jimmy%20Witherspoon%20(Jazz%20Me%20Blues,%20The%20Best%20Of%20Jimmy%20Witherspoon)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19238</key>
+		<dict>
+			<key>Track ID</key><integer>19238</integer>
+			<key>Name</key><string>A Poor Man's Plea</string>
+			<key>Artist</key><string>Buddy Guy, Junior Wells</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Buddy Guy &#38; Junior Wells Play The Blues</string>
+			<key>Grouping</key><string>Struttin'</string>
+			<key>Genre</key><string>Chicago Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>19940516</integer>
+			<key>Total Time</key><integer>188160</integer>
+			<key>BPM</key><integer>148</integer>
+			<key>Date Modified</key><date>2017-01-10T20:44:41Z</date>
+			<key>Date Added</key><date>2016-12-29T19:14:10Z</date>
+			<key>Bit Rate</key><integer>822</integer>
+			<key>Comments</key><string>/8, straight rhythm</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-01-10T20:34:44Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Sort Name</key><string>Poor Man's Plea</string>
+			<key>Persistent ID</key><string>4E6ED1F077D727BF</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/A%20Poor%20Man's%20Plea%20-%20Buddy%20Guy,%20Junoir%20Wells%20(Buddy%20Guy%20&#38;%20Junior%20Wells%20Play%20The%20Blues)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19328</key>
+		<dict>
+			<key>Track ID</key><integer>19328</integer>
+			<key>Name</key><string>Joy</string>
+			<key>Artist</key><string>Ruthie Foster</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Runaway Soul</string>
+			<key>Grouping</key><string>Struttin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>31120412</integer>
+			<key>Total Time</key><integer>294997</integer>
+			<key>Year</key><integer>2002</integer>
+			<key>BPM</key><integer>136</integer>
+			<key>Date Modified</key><date>2017-01-10T20:44:40Z</date>
+			<key>Date Added</key><date>2016-12-29T19:14:10Z</date>
+			<key>Bit Rate</key><integer>816</integer>
+			<key>Comments</key><string>/8, straight rhythm</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2016-12-29T21:08:35Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>287BCB6A6560696E</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Joy%20-%20Ruthie%20Foster%20(Runaway%20Soul)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19406</key>
+		<dict>
+			<key>Track ID</key><integer>19406</integer>
+			<key>Name</key><string>When I Get Low I Get High</string>
+			<key>Artist</key><string>The Bumper Jacksons</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Sweet Mama, Sweet Daddy, Come In</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>16599988</integer>
+			<key>Total Time</key><integer>205568</integer>
+			<key>BPM</key><integer>101</integer>
+			<key>Date Modified</key><date>2017-01-30T02:33:11Z</date>
+			<key>Date Added</key><date>2017-01-29T00:18:51Z</date>
+			<key>Bit Rate</key><integer>629</integer>
+			<key>Comments</key><string>/8, straight rhythm</string>
+			<key>Play Count</key><integer>3</integer>
+			<key>Play Date</key><integer>3575906089</integer>
+			<key>Play Date UTC</key><date>2017-04-24T23:14:49Z</date>
+			<key>Skip Count</key><integer>3</integer>
+			<key>Skip Date</key><date>2017-03-02T16:09:16Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>80</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Artist</key><string>Bumper Jacksons</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>A7DB928139B8D130</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/When%20I%20Get%20Low%20I%20Get%20High%20-%20The%20Bumper%20Jacksons%20(Sweet%20Mama,%20Sweet%20Daddy,%20Come%20In)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19426</key>
+		<dict>
+			<key>Track ID</key><integer>19426</integer>
+			<key>Name</key><string>The Well</string>
+			<key>Artist</key><string>Scarecrow Blues Hip Hop</string>
+			<key>Album Artist</key><string>Late night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>The Well</string>
+			<key>Grouping</key><string>Struttin'</string>
+			<key>Genre</key><string>Hip Hop/Rap</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>18566059</integer>
+			<key>Total Time</key><integer>188075</integer>
+			<key>BPM</key><integer>125</integer>
+			<key>Date Modified</key><date>2017-03-11T21:37:11Z</date>
+			<key>Date Added</key><date>2017-02-11T23:09:01Z</date>
+			<key>Bit Rate</key><integer>753</integer>
+			<key>Comments</key><string>/8, shuffle rhythm</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-02-11T23:26:26Z</date>
+			<key>Rating</key><integer>80</integer>
+			<key>Album Rating</key><integer>60</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Artwork Count</key><integer>1</integer>
+			<key>Sort Album</key><string>Well</string>
+			<key>Sort Album Artist</key><string>Late night</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Sort Name</key><string>Well</string>
+			<key>Persistent ID</key><string>C4550AAA20C2C80F</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/The%20Well%20-%20Scarecrow%20Blues%20Hip%20Hop%20(The%20Well)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19472</key>
+		<dict>
+			<key>Track ID</key><integer>19472</integer>
+			<key>Name</key><string>Tchoupitoulas St. Rag</string>
+			<key>Artist</key><string>Joe Krown Trio</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Instrumental</string>
+			<key>Album</key><string>Old Friends</string>
+			<key>Grouping</key><string>Slow Drag</string>
+			<key>Genre</key><string>Slow Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>23363111</integer>
+			<key>Total Time</key><integer>211029</integer>
+			<key>BPM</key><integer>85</integer>
+			<key>Date Modified</key><date>2017-02-28T20:14:57Z</date>
+			<key>Date Added</key><date>2017-02-23T20:47:37Z</date>
+			<key>Bit Rate</key><integer>863</integer>
+			<key>Comments</key><string>/8, swing rhythm</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-02-24T00:47:11Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Instrumental</string>
+			<key>Persistent ID</key><string>820E513D87985F86</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Tchoupitoulas%20St.%20Rag%20-%20Joe%20Krown%20Trio%20(Old%20Friends)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19520</key>
+		<dict>
+			<key>Track ID</key><integer>19520</integer>
+			<key>Name</key><string>The Devil Wears A Suit And Tie</string>
+			<key>Artist</key><string>Colter Wall</string>
+			<key>Album Artist</key><string>Early to middle of the night</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Imaginary Appalachia</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>22494520</integer>
+			<key>Total Time</key><integer>232875</integer>
+			<key>BPM</key><integer>117</integer>
+			<key>Date Modified</key><date>2017-02-28T20:14:24Z</date>
+			<key>Date Added</key><date>2017-02-23T20:47:37Z</date>
+			<key>Bit Rate</key><integer>753</integer>
+			<key>Comments</key><string>/8, straight rhythm</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-02-24T00:42:00Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Sort Name</key><string>Devil Wears A Suit And Tie</string>
+			<key>Persistent ID</key><string>9745265406D5D30C</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/The%20Devil%20Wears%20A%20Suit%20And%20Tie%20-%20Colter%20Wall%20(Imaginary%20Appalachia)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19558</key>
+		<dict>
+			<key>Track ID</key><integer>19558</integer>
+			<key>Name</key><string>Chocolate Jesus</string>
+			<key>Artist</key><string>The Sugar Thieves</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Plywood Palace</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>29979698</integer>
+			<key>Total Time</key><integer>267435</integer>
+			<key>BPM</key><integer>122</integer>
+			<key>Date Modified</key><date>2017-03-11T21:29:34Z</date>
+			<key>Date Added</key><date>2017-03-10T17:41:13Z</date>
+			<key>Bit Rate</key><integer>874</integer>
+			<key>Comments</key><string>shuffle rhythm</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-03-10T18:10:59Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Artist</key><string>Sugar Thieves</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>3D81901853729AC3</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Chocolate%20Jesus%20-%20The%20Sugar%20Thieves%20(Plywood%20Palace)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19564</key>
+		<dict>
+			<key>Track ID</key><integer>19564</integer>
+			<key>Name</key><string>Death Row</string>
+			<key>Artist</key><string>Mike Zito</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>Gone To Texas</string>
+			<key>Grouping</key><string>Jookin'</string>
+			<key>Genre</key><string>Delta Blues</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>27423496</integer>
+			<key>Total Time</key><integer>247211</integer>
+			<key>BPM</key><integer>71</integer>
+			<key>Date Modified</key><date>2017-03-11T21:29:34Z</date>
+			<key>Date Added</key><date>2017-03-10T17:41:13Z</date>
+			<key>Bit Rate</key><integer>865</integer>
+			<key>Comments</key><string>straight rhythm</string>
+			<key>Skip Count</key><integer>1</integer>
+			<key>Skip Date</key><date>2017-03-10T18:11:54Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (male)</string>
+			<key>Persistent ID</key><string>00CC7C5622BADC8D</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Death%20Row%20-%20Mike%20Zito%20(Gone%20To%20Texas)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19576</key>
+		<dict>
+			<key>Track ID</key><integer>19576</integer>
+			<key>Name</key><string>Friday The 13th</string>
+			<key>Artist</key><string>Royal Crown Revue</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (male)</string>
+			<key>Album</key><string>The Contender</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>28834109</integer>
+			<key>Total Time</key><integer>256853</integer>
+			<key>BPM</key><integer>116</integer>
+			<key>Date Modified</key><date>2017-03-11T21:31:12Z</date>
+			<key>Date Added</key><date>2017-03-10T17:41:13Z</date>
+			<key>Bit Rate</key><integer>876</integer>
+			<key>Comments</key><string>swing rhythm</string>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-03-11T19:45:00Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album</key><string>Contender</string>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Persistent ID</key><string>E5C6991B2F3C1A72</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Friday%20The%2013th%20-%20Royal%20Crown%20Revue%20(The%20Contender)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+		<key>19630</key>
+		<dict>
+			<key>Track ID</key><integer>19630</integer>
+			<key>Name</key><string>Satan Your Kingdom Must Come Down</string>
+			<key>Artist</key><string>Her Name &#38; Mine</string>
+			<key>Album Artist</key><string>Any time</string>
+			<key>Composer</key><string>Vocal (female)</string>
+			<key>Album</key><string>Live In Copenhagen</string>
+			<key>Grouping</key><string>Ballroom</string>
+			<key>Genre</key><string>Jazz</string>
+			<key>Kind</key><string>MPEG-4 video file</string>
+			<key>Size</key><integer>16531475</integer>
+			<key>Total Time</key><integer>189525</integer>
+			<key>BPM</key><integer>122</integer>
+			<key>Date Modified</key><date>2017-03-11T21:29:22Z</date>
+			<key>Date Added</key><date>2017-03-10T17:41:13Z</date>
+			<key>Bit Rate</key><integer>680</integer>
+			<key>Comments</key><string>straight rhythm, speeds up</string>
+			<key>Play Count</key><integer>2</integer>
+			<key>Play Date</key><integer>3572348405</integer>
+			<key>Play Date UTC</key><date>2017-03-14T19:00:05Z</date>
+			<key>Skip Count</key><integer>2</integer>
+			<key>Skip Date</key><date>2017-03-14T19:04:21Z</date>
+			<key>Rating</key><integer>100</integer>
+			<key>Album Rating</key><integer>100</integer>
+			<key>Album Rating Computed</key><true/>
+			<key>Loved</key><true/>
+			<key>Sort Album Artist</key><string>Any time</string>
+			<key>Sort Composer</key><string>Vocal (female)</string>
+			<key>Persistent ID</key><string>680D2A35D079334D</string>
+			<key>Track Type</key><string>File</string>
+			<key>File Type</key><integer>1297101856</integer>
+			<key>Location</key><string>file:///Volumes/Media/Blues%20Music/Satan%20Your%20Kingdom%20Must%20Come%20Down%20-%20Her%20Name%20&#38;%20Mine%20(Live%20In%20Copenhagen)%20.mp4</string>
+			<key>File Folder Count</key><integer>2</integer>
+			<key>Library Folder Count</key><integer>1</integer>
+		</dict>
+	</dict>
+	<key>Playlists</key>
+	<array>
+		<dict>
+			<key>Name</key><string>Yïsst - April 2nd</string>
+			<key>Description</key><string>Start 10pm</string>
+			<key>Playlist ID</key><integer>37734</integer>
+			<key>Playlist Persistent ID</key><string>C1180569B6B4EC8D</string>
+			<key>Parent Persistent ID</key><string>544274569355FAF0</string>
+			<key>All Items</key><true/>
+			<key>Playlist Items</key>
+			<array>
+				<dict>
+					<key>Track ID</key><integer>19406</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17276</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19576</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17284</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18826</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19054</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19564</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19630</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17226</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16930</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16738</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16556</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18874</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19472</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17264</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18846</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16996</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19558</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16772</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18862</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17336</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17162</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16770</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19328</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19238</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17298</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16760</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18854</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16516</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18056</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16554</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16650</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16680</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16964</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19520</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17130</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16734</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18382</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17040</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17094</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16774</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18948</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>18578</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>17820</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16666</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>16790</integer>
+				</dict>
+				<dict>
+					<key>Track ID</key><integer>19426</integer>
+				</dict>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

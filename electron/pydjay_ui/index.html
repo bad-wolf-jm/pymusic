@@ -1,191 +1,153 @@
 <!DOCTYPE html>
 <title>PYMUSIC DJ App</title>
-<style>
-body {
-  display: grid;
-  grid-template-areas:
-    "header header header"
-    "nav article ads"
-    "footer footer footer";
-  grid-template-rows: 60px 1fr 60px;
-  grid-template-columns: 15% 1fr 30%;
-  grid-gap: 1px;
-  height: 100vh;
-  margin: 0;
-  }
-#pageHeader {
-  grid-area: header;
-}
-
-#pageFooter {
-  grid-area: footer;
-}
-
-#mainArticle {
-  grid-area: article;
-  }
-
-#mainNav {
-  grid-area: nav;
-  }
-
-#siteAds {
-  grid-area: ads;
-  }
-
-header, footer, article, nav, div {
-  padding: 20px;
-  background: grey;
-}
-</style>
 <script src="../node_modules/semantic-ui/dist/semantic.min.js"></script>
+<script src="../node_modules/webix/webix.js"></script>
+<script src="http://cdn.webix.com/components/sidebar/sidebar.js"  type="text/javascript"></script>
+
+<!-- css files -->
+<link rel="stylesheet" href="http://cdn.webix.com/components/sidebar/sidebar.css"
+    type="text/css">
+<link rel="stylesheet" href="../node_modules/webix/webix.css">
+<link rel="stylesheet" href="../node_modules/webix/webix.css">
 <link rel="stylesheet" href="../node_modules/semantic-ui/dist/semantic.min.css">
 
 <body>
   <header id="pageHeader">Header</header>
   <article id="mainArticle">
-    <div class="ui segment">
-      <div class="ui right floated category search">
-        <div class="ui icon input">
-          <input class="prompt" type="text" placeholder="Search animals...">
-          <i class="search icon"></i>
-        </div>
-        <div class="results"></div>
-      </div>
-
-    </div>
-    <table class="ui single line table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Registration Date</th>
-          <th>E-mail address</th>
-          <th>Premium Plan</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>John Lilki</td>
-          <td>September 14, 2013</td>
-          <td>jhlilk22@yahoo.com</td>
-          <td>No</td>
-        </tr>
-        <tr>
-          <td>Jamie Harington</td>
-          <td>January 11, 2014</td>
-          <td>jamieharingonton@yahoo.com</td>
-          <td>Yes</td>
-        </tr>
-        <tr>
-          <td>Jill Lewis</td>
-          <td>May 11, 2014</td>
-          <td>jilsewris22@yahoo.com</td>
-          <td>Yes</td>
-        </tr>
-      </tbody>
-    </table>
-    <table class="ui striped table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Date Joined</th>
-          <th>E-mail</th>
-          <th>Called</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>John Lilki</td>
-          <td>September 14, 2013</td>
-          <td>jhlilk22@yahoo.com</td>
-          <td>No</td>
-        </tr>
-        <tr>
-          <td>Jamie Harington</td>
-          <td>January 11, 2014</td>
-          <td>jamieharingonton@yahoo.com</td>
-          <td>Yes</td>
-        </tr>
-        <tr>
-          <td>Jill Lewis</td>
-          <td>May 11, 2014</td>
-          <td>jilsewris22@yahoo.com</td>
-          <td>Yes</td>
-        </tr>
-        <tr>
-          <td>John Lilki</td>
-          <td>September 14, 2013</td>
-          <td>jhlilk22@yahoo.com</td>
-          <td>No</td>
-        </tr>
-        <tr>
-          <td>John Lilki</td>
-          <td>September 14, 2013</td>
-          <td>jhlilk22@yahoo.com</td>
-          <td>No</td>
-        </tr>
-        <tr>
-          <td>Jamie Harington</td>
-          <td>January 11, 2014</td>
-          <td>jamieharingonton@yahoo.com</td>
-          <td>Yes</td>
-        </tr>
-        <tr>
-          <td>Jill Lewis</td>
-          <td>May 11, 2014</td>
-          <td>jilsewris22@yahoo.com</td>
-          <td>Yes</td>
-        </tr>
-        <tr>
-          <td>John Lilki</td>
-          <td>September 14, 2013</td>
-          <td>jhlilk22@yahoo.com</td>
-          <td>No</td>
-        </tr>
-      </tbody>
-    </table>
-
   </article>
-  <nav id="mainNav">Navigation</nav>
-  <div id="siteAds">
-    <div class="ui middle aligned divided list">
-      <div class="item">
-        <div class="right floated content">
-          <div class="ui button">Add</div>
-        </div>
-        <img class="ui avatar image" src="/images/avatar2/small/lena.png">
-        <div class="content">
-          Lena
-        </div>
-      </div>
-      <div class="item">
-        <div class="right floated content">
-          <div class="ui button">Add</div>
-        </div>
-        <img class="ui avatar image" src="/images/avatar2/small/lindsay.png">
-        <div class="content">
-          Lindsay
-        </div>
-      </div>
-      <div class="item">
-        <div class="right floated content">
-          <div class="ui button">Add</div>
-        </div>
-        <img class="ui avatar image" src="/images/avatar2/small/mark.png">
-        <div class="content">
-          Mark
-        </div>
-      </div>
-      <div class="item">
-        <div class="right floated content">
-          <div class="ui button">Add</div>
-        </div>
-        <img class="ui avatar image" src="/images/avatar2/small/molly.png">
-        <div class="content">
-          Molly
-        </div>
-      </div>
-    </div>
-  </div>
-  <footer id="pageFooter">Footer</footer>
+  <footer id="pageFooter" onClick="function(x) {
+                            datatable.data = { id:1, title:'TTTThe Shawshank Redemption', year:1994, votes:678790, rank:1},
+  { id:2, title:'The Godfather', year:1972, votes:511495, rank:2}}">Footer</footer>
 </body>
+<script type="text/javascript">
+
+function format_nanoseconds (ts) {
+    var sec_num = Math.round(ts / 1000000000);
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+
+    if (hours == 0){
+        return minutes+':'+seconds;
+    }
+    return hours+':'+minutes+':'+seconds;
+}
+
+function custom_checkbox(obj, common, value){
+    if (value)
+        return "<div class='webix_table_checkbox checked'><img src='../resources/images/love-focus.png' height='13'> </div>";
+    else
+        return "<div class='webix_table_checkbox notchecked'><img src='../resources/images/love.png' height='13'> </div>";
+};
+//
+// var datatable = webix.ui({
+//     container:"mainArticle",
+//     view:"datatable",
+//     select:"row",
+//     //height:"100%",
+//     css:{height:"1000px"},
+//     columns:[
+//         { id:"id",            header:"",  width:30, template:"<img src='../resources/images/precue.png' style='filter: invert(1);' height='20'>", checkValue:1, uncheckValue:0},
+//         { id:"favorite",      header:"",  width:30, template:custom_checkbox, checkValue:1, uncheckValue:0, sort:'int'},
+//         { id:"enabled",       header:"",  width:30, template:"{common.checkbox()}", checkValue:0, uncheckValue:1, sort:'int'},
+//         { id:"title",         header:"<b>Title</b>",  fillspace:true, sort:'string'},
+//         { id:"artist",        header:"<b>Artist</b>", fillspace:true, sort:'string'},
+//         { id:"album",         header:"<b>Album</b>",  fillspace:true, sort:'string'},
+//         { id:"genre",         header:"<b>Genre</b>",  width:150, sort:'string'},
+//         { id:"date_added",    header:{text:"<b>Added</b>", css:{"text-align":'center'}},   format:webix.Date.dateToStr("%Y-%m-%d"), css:{"text-align":'right'}, sort:'date'},
+//         { id:"date_modified", header:{text:"<b>Modified</b>", css:{"text-align":'center'}},   format:webix.Date.dateToStr("%Y-%m-%d"), css:{"text-align":'right'}, sort:'date'},
+//         { id:"play_count",    header:{text:"<b>Plays</b>", css:{"text-align":'center'}},  width:50,     template:"<div class='ui right floated label' style='text-align: right'>#play_count#</div>", sort:'int'},
+//         { id:"last_played",   header:{text:"<b>Last Played</b>", css:{"text-align":'center'}},     format:webix.Date.dateToStr("%Y-%m-%d"), css:{"text-align":'right'}, header_css:{"text-align":'right'}, sort:'date'},
+//         { id:"rating",        header:{text:"<b>Rating</b>", css:{"text-align":'center'}}, width:75,  template:"<img src='../resources/images/rating#rating#.png' style='filter: invert(1);' height='10'>", css:{"text-align":'right'}, sort:'int'},
+//         { id:"bpm",           header:{text:"<b>BPM</b>", css:{"text-align":'center'}},    width:50,     css:{"text-align":'right'}, sort:'int'},
+//         { id:"stream_length",      header:{text:"<b>Length</b>", css:{"text-align":'center'}},   width:75,       format:format_nanoseconds, css:{"text-align":'right'}},
+//     ],
+// });
+
+// var tree = webix.ui({
+//     view:"tree",
+//     select:true,
+//     data: [
+//         { id:"all_songs", open:true, value:"<b>ALL SONGS</b>", data:[
+//             { id:"1.1", value:"Avalon" },
+//             { id:"1.2", value:"Corolla" },
+//             { id:"1.3", value:"Camry" }
+//         ]},
+//         { id:"sessions", open:true, value:"<b>GENRES</b>", data:[
+//             { id:"2.1", value:"Avalon" },
+//             { id:"2.2", value:"Corolla" },
+//             { id:"2.3", value:"Camry" }
+//         ]},
+//
+//         { id:"sessions", open:true, value:"<b>SESSIONS</b>", data:[
+//             { id:"3.1", value:"Avalon" },
+//             { id:"3.2", value:"Corolla" },
+//             { id:"3.3", value:"Camry" }
+//         ]},
+//
+//             { id:"playlists", open:true, value:"<b>PLAYLISTS</b>", data:[
+//                 { id:"4.1", value:"Avalon" },
+//                 { id:"4.2", value:"Corolla" },
+//                 { id:"4.3", value:"Camry" }
+//             ]},
+//
+//             { id:"Labels", value:"Skoda", open:true, data:[
+//                 { id:"5.1", value:"Octavia" },
+//                 { id:"5.2", value:"Superb" }
+//             ]}
+//         ]});
+// //    ]
+// //});
+webix.ready(function(){
+    // object constructor
+    webix.ui({
+        rows: [
+            {view:'button', label:'<b>ALL SONGS</b>',  type:'icon', icon:'database'},
+            {view:'button', label:'<b>RECENTLY ADDED</b>', type:'icon', icon:'calendar'},
+            {view:'button', label:'<b>GENIUS</b>',  type:'icon', icon:'cog'},
+            //{view:'button', label:'<b>RARELY PLAYED</b>',  type:'icon', icon:'hourglass-3'},
+            {view:'button', label:'<b>GENRES</b>', type:'icon', icon:'folder'},
+            {view:'button', label:'<b>STYLES</b>', type:'icon', icon:'folder'},
+            {view:'button', label:'<b>PLAYLISTS</b>',  type:'icon', icon:'folder'},
+            {view:'button', label:'<b>SESSIONS</b>', type:'icon', icon:'folder'},
+            {view:'button', label:'<b>TAGS</b>', type:'icon', icon:'tags'}
+        ]
+        //view: "sidebar",
+        // setting the data source
+        //data: menu_data
+    });
+});
+
+
+var mysql = require('mysql');
+
+var db_connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "root",
+  database:'pymusic'
+});
+
+db_connection.connect(
+  function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+});
+
+//datatable.clearAll()
+
+var sql = "SELECT title, artist, album, date_added, last_played, rating, bpm, stream_length FROM tracks LIMIT 200";
+var sql = "SELECT id, favorite, disabled as enabled, title, artist, album, genre, date_added, date_modified, rating, bpm, stream_length, max(session_tracks.start_time) as last_played, count(session_tracks.track_id) as play_count FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id"
+// db_connection.query(sql, function (err, result) {
+//     if (err) throw err;
+//     for(var i=0; i < result.length; i++){
+//         datatable.add(result[i])
+//     }
+//   });
+//
+
+</script>
