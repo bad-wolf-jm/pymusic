@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<title>PYMUSIC DJ App</title>
+<script src="../node_modules/semantic-ui/dist/semantic.min.js"></script>
+<script src="../node_modules/webix/webix.js"></script>
+<script src="../lib/utils.js"></script>
+<script src="../lib/main_list_display.js"></script>
+<script src="../lib/queue_display.js"></script>
+<link rel="stylesheet" href="../node_modules/webix/webix.css">
+<link rel="stylesheet" href="../node_modules/semantic-ui/dist/semantic.min.css">
+
+<body>
+  <article id="mainArticle">
+  </article>
+</body>
+<script type="text/javascript">
+
+main_list_display_template.gravity = 3;
+var datatable = webix.ui({
+    type:"line",
+    rows:[
+        {height:150},
+        {
+            type:"line",
+            cols:[main_list_display_template, queue_display_template]}
+    ]
+});
+
+var mysql = require('mysql');
+
+var db_connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "root",
+  database:'pymusic'
+});
+
+db_connection.connect(
+  function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+});
+
+$$('display_list').clearAll()
+
+var sql = "SELECT title, artist, album, date_added, last_played, rating, bpm, stream_length FROM tracks LIMIT 200";
+var sql = "SELECT id, favorite, disabled as enabled, title, artist, album, genre, date_added, date_modified, rating, bpm, stream_length, max(session_tracks.start_time) as last_played, count(session_tracks.track_id) as play_count FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id"
+db_connection.query(sql, function (err, result) {
+    if (err) throw err;
+    for(var i=0; i < result.length; i++){
+        $$('display_list').add(result[i])
+    }
+  });
+
+$$('queue_list').clearAll()
+
+var sql = `SELECT session_queue.position, tracks.title, tracks.artist,
+                tracks.album, tracks.bpm, tracks.stream_length,
+                settings.db_image_cache as image_root, tracks.cover_small as cover
+         FROM
+             (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
+         ON
+             tracks.id=session_queue.track_id WHERE session_queue.status='pending'
+         ORDER BY position`
+
+db_connection.query(sql, function (err, result) {
+  if (err) throw err;
+  for(var i=0; i < result.length; i++){
+      //console.log(result[i].cover);
+      //console.log(result[i].image_root);
+      $$('queue_list').add(result[i])
+  }
+});
+
+
+
+</script>
