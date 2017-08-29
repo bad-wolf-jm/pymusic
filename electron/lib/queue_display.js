@@ -18,6 +18,8 @@ function queue_element_template(element) {
 
 
 var queue_display_template = {
+    //view:'template',
+    type:'line',
     rows:[
         {height:7},
         {

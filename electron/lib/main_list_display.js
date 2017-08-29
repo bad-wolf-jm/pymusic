@@ -9,32 +9,32 @@ var main_list_display_template = {
 //container:"mainArticle",
 rows:
 [
-    {height:7},
-    {
-        cols: [
-            {
-                rows:[
-                {
-                    view: 'label',
-                    label: '<b>ALL SONGS</b>',
-                    height: 20
-                },
-                {
-                    view: 'label',
-                    css: {'text-align':'left'},
-                    label: 'Ends at:',
-                    height: 20
-                }
-                ]
-            },
-            {
-                view: 'search',
-                placeholder:"Filter list..."
-            },
-            {width:10}
-        ]
-    },
-    {height:5},
+    // {height:7},
+    // {
+    //     cols: [
+    //         {
+    //             rows:[
+    //             {
+    //                 view: 'label',
+    //                 label: '<b>ALL SONGS</b>',
+    //                 height: 20
+    //             },
+    //             {
+    //                 view: 'label',
+    //                 css: {'text-align':'left'},
+    //                 label: 'Ends at:',
+    //                 height: 20
+    //             }
+    //             ]
+    //         },
+    //         {
+    //             view: 'search',
+    //             placeholder:"Filter list..."
+    //         },
+    //         {width:10}
+    //     ]
+    // },
+    // {height:5},
     {
         view:"datatable",
         id:"display_list",

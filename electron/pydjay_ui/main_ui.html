@@ -14,14 +14,68 @@
 </body>
 <script type="text/javascript">
 
+
+var player_window = {
+    height:58,
+    gravity:1,
+    //border: 'space',
+    //css:{'border-color':'red'},
+    cols:[
+        {
+            view: 'template',
+            width:58,
+            height:58,
+            template: "FOO"
+        },
+        {
+            rows:[
+                {
+                    view: 'label',
+                    css:{'text-align':'center'},
+                    label: 'Title Of Song',
+                    height:20
+                },
+                {
+                    view: 'label',
+                    css:{'text-align':'center'},
+                    label: 'Artist - Album',
+                    height:20
+                }
+
+            ]
+        }
+    ]
+}
+
+
 main_list_display_template.gravity = 3;
 var datatable = webix.ui({
     type:"line",
     rows:[
-        {height:150},
+        // {height:150,
+        //     cols: [
+        //
+        //     ]
+        //
+        // },
+        {cols:[{}, player_window,
+        {
+            cols: [
+                {},
+                {
+                    rows:[{
+                    height:35,
+                    view: 'search',
+                    placeholder:"Filter list..."}]
+                }
+            ]
+        }]},
         {
             type:"line",
-            cols:[main_list_display_template, queue_display_template]}
+            cols:[
+                main_list_display_template,
+                queue_display_template
+            ]}
     ]
 });
 

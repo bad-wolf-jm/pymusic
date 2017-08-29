@@ -29,11 +29,11 @@ app.on('ready', function() {
         //transparent: true, frame: false
     });
 
-    mainWindow2 = new BrowserWindow({
-      width: 1728,
-      height: 1152
-        //transparent: true, frame: false
-    });
+    // mainWindow2 = new BrowserWindow({
+    //   width: 1728,
+    //   height: 1152
+    //     //transparent: true, frame: false
+    // });
 
     //mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/index.html');
     //mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/index_queue.html');
