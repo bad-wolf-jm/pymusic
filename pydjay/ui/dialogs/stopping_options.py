@@ -17,6 +17,8 @@ from kivy.factory import Factory
 from kivy.uix.modalview import ModalView
 from pydjay.ui.elements import widgets, waveform_seekbar
 from pydjay.ui.elements.utils import seconds_to_human_readable
+import pydjay.bootstrap
+
 
 stop_options_kv = """
 <StopOptionsDialog>:

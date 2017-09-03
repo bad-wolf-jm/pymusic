@@ -35,10 +35,10 @@ app.on('ready', function() {
     //     //transparent: true, frame: false
     // });
 
-    //mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/index.html');
+    //mainWindow2.loadURL('file://' + __dirname + '/pydjay_ui/index.html');
     //mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/index_queue.html');
     mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/main_ui.html');
     //mainWindow2.loadURL('file://' + __dirname + '/pydjay_ui/index_big_table_simple.html');
 
-    mainWindow.webContents.openDevTools()
+    //mainWindow.webContents.openDevTools()
 });

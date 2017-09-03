@@ -1,3 +1,7 @@
+
+var cover_size = 55
+
+
 function queue_element_template(element) {
     var cover_source = null;
     if (element.cover == null) {
@@ -5,20 +9,19 @@ function queue_element_template(element) {
     } else {
         cover_source = `${element.image_root}/${element.cover}`
     }
-    return `<img class="ui left floated image"  style="float:left; width:auto;" src="${cover_source}" height='75' width='75'></img>
-                <div style="float:left; width:200px">
-                    <div style="height:20px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis;"><b>${element.title}</b></div>
-                    <div style="height:20px; white-space:nowrap; overflow: hidden; text-overflow: 'ellipsis'"><i>${element.artist}</i></div>
-                    <div style="width:85px; height:20px">${element.bpm} BPM</div>
-                </div>
-                <div class="ui grey label" style="float:right; font-size:12px; flex-grow:0; position:relative; top:50%; transform: translateY(-50%)">
-                    ${format_nanoseconds(element.stream_length)}
-                </div>`
+    return `<img class="ui left floated image"  style="float:left; width:auto;" src="${cover_source}" height='${cover_size}' width='${cover_size}'></img>
+            <div style="margin:0px; padding:0px; float:left; width:250px">
+                <div style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis;"><b>${element.title}</b></div>
+                <div style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis"><i>${element.artist}</i></div>
+            </div>
+            <div style="margin:0px; padding:0px; width:85px; font_size:8px; float:left; text-align:right; position:relative; top:50%; transform: translateY(-50%)">${element.bpm} BPM</div>
+            <div style="float:right; position:relative; top:50%; transform: translateY(-50%)">
+                <b>${format_nanoseconds(element.stream_length)}</b>
+            </div>`
 }
 
 
 var queue_display_template = {
-    //view:'template',
     type:'line',
     rows:[
         {height:7},
@@ -50,9 +53,12 @@ var queue_display_template = {
         {
             view:"list",
             id:'queue_list',
-            itemHeight:40,
-            css:{height:"1000px"},
+            itemHeight:35,
+            //css:{height:"1000px"},
+            select:true,
             template: queue_element_template,
-            type: { height: 75  },
+            type: { height: cover_size  },
         }]
 }
+
+//$$('queue_list').focus()

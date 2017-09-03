@@ -1,6 +1,6 @@
 #import os
 import threading
-from decoder import GstAudioFile
+from decoder_no_thread import GstAudioFile
 from output_jack import JackOutput
 
 
@@ -15,8 +15,11 @@ class AudioPlayer(object):
         self._decoder = None
         self._output = JackOutput(self.player_name, self.num_channels)
         self.state = None
-        self.track_duration = None
-        self.track_position = None
+        self._track_duration = None
+        self._track_position = None
+        self._track_length = None
+        self._pause_track = None
+        self._file = None
 
     def connect_outputs(self, **kwargs):
         self._output.connect_outputs(**kwargs)
@@ -25,24 +28,30 @@ class AudioPlayer(object):
         self._output.disconnect_outputs(**kwargs)
 
     def on_track_length(self, length):
+        self._track_length = length
         pass
 
     def on_track_duration(self, duration):
+        self._track_duration = duration
         pass
 
     def on_track_position(self, position):
+        self._track_position = position
         pass
 
     def on_track_remaining_time(self, position):
         pass
 
     def on_end_of_stream(self):
+        self.on_track_length(None)
+        self.on_track_duration(None)
+        self.on_track_position(None)
+
         pass
 
     def _player_loop(self):
         eos = False
         has_duration = False
-        #iteration = 0
         while self._is_playing:
             try:
                 timestamp, samples = self._decoder.next()
@@ -64,11 +73,12 @@ class AudioPlayer(object):
     def play(self, filename, start_time=None, end_time=None):
         self.stop(flush=True)
         self._file = filename
+        self._start_time = start_time
+        self._end_time = end_time
         try:
             self._decoder = GstAudioFile(
-                self._file, self._output.num_channels, self._output.samplerate, 'F32LE', None, start_time, end_time)
+                self._file, self._output.num_channels, self._output.samplerate, 'F32LE', None, start_time, end_time, use_threaded_gloop=False)
             if start_time is not None:
-                self._decoder.set_start_time(start_time)
                 self._output.reset_timer(start_time)
             else:
                 self._output.reset_timer(0)
@@ -76,13 +86,14 @@ class AudioPlayer(object):
             self._is_playing = True
             self._player_thread.start()
             self.state = "playing"
-        except IOError:
+        except IOError, e:
             self.state = 'stopped'
+            print('error', e)
         except Exception, details:
             print details
             self.state = 'stopped'
 
-    def stop(self, flush=False):
+    def stop(self, flush=False, pause=False):
         self._is_playing = False
         if flush:
             self._output.flush_buffer()
@@ -91,6 +102,9 @@ class AudioPlayer(object):
             self._player_thread.join()
         self._player_thread = None
         self._decoder = None
+        if not pause:
+            self._pause_track = None
+            self._pause_track_timestamp = None
         self.on_track_length(None)
         self.on_track_duration(None)
         self.on_track_position(None)
@@ -98,6 +112,23 @@ class AudioPlayer(object):
 
     def pause(self):
         self.state = "paused"
+        if self._is_playing:
+            if self._file is not None:
+                self._pause_track_timestamp = self._track_position
+                self._pause_track = self._file
+                # print self._pause_track_timestamp
+                self.stop(flush=True, pause=True)
+            self._is_playing = False
+        else:
+            if self._pause_track is not None:
+                if self._pause_track == self._file:
+                    s_t = self._pause_track_timestamp if self._pause_track_timestamp is not None else self._start_time
+                    # print s_t
+                    self.play(self._file, s_t, self._end_time)
+                    self._is_playing = True
+                    return
+            if self._file is not None:
+                self.play(self._file, self._start_time, self._end_time)
 
     def seek(self, timestamp):
         if self._decoder is not None:
@@ -107,9 +138,9 @@ class AudioPlayer(object):
 
     def seek_relative(self, time):
         if self._is_playing:
-            p = self.track_position
+            p = self._track_position
             if p is not None:
-                d = self.track_duration
+                d = self._track_duration
                 if d is not None:
                     p += time
                     p = max(min(p, d), 0)

@@ -17,16 +17,17 @@ class AudioServer(AudioPlayer, RPCServer):
         self.event.start()
 
     def on_end_of_stream(self):
+        AudioPlayer.on_end_of_stream(self, value)
         self.event.push('end_of_stream')
-        self.on_track_length(None)
-        self.on_track_duration(None)
-        self.on_track_position(None)
 
     def on_track_position(self, value):
+        AudioPlayer.on_track_position(self, value)
         self.event.push('track_position_notice', value)
 
     def on_track_duration(self, value):
+        AudioPlayer.on_track_duration(self, value)
         self.event.push('track_duration_notice', value)
 
     def on_track_length(self, value):
+        AudioPlayer.on_track_length(self, value)
         self.event.push('track_length_notice', value)

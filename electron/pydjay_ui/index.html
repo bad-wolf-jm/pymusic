@@ -103,22 +103,15 @@ function custom_checkbox(obj, common, value){
 // //    ]
 // //});
 webix.ready(function(){
-    // object constructor
     webix.ui({
         rows: [
             {view:'button', label:'<b>ALL SONGS</b>',  type:'icon', icon:'database'},
             {view:'button', label:'<b>RECENTLY ADDED</b>', type:'icon', icon:'calendar'},
             {view:'button', label:'<b>GENIUS</b>',  type:'icon', icon:'cog'},
-            //{view:'button', label:'<b>RARELY PLAYED</b>',  type:'icon', icon:'hourglass-3'},
             {view:'button', label:'<b>GENRES</b>', type:'icon', icon:'folder'},
-            {view:'button', label:'<b>STYLES</b>', type:'icon', icon:'folder'},
             {view:'button', label:'<b>PLAYLISTS</b>',  type:'icon', icon:'folder'},
             {view:'button', label:'<b>SESSIONS</b>', type:'icon', icon:'folder'},
-            {view:'button', label:'<b>TAGS</b>', type:'icon', icon:'tags'}
         ]
-        //view: "sidebar",
-        // setting the data source
-        //data: menu_data
     });
 });
 
