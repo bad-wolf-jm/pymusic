@@ -28,6 +28,9 @@ if __name__ == '__main__':
         def main_play(self, filename, start_time=None, end_time=None):
             pydjay.bootstrap_audio_server.main_player.play(filename, start_time, end_time)
 
+        def main_stop(self):
+            pydjay.bootstrap_audio_server.main_player.stop()
+
     poll_zmq = RemoteController()
 
     try:

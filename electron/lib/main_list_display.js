@@ -57,3 +57,12 @@ var main_list_display_template = {
             ],
     }    ]
 }
+
+
+function update_list_labels() {
+    var count = $$('display_list').data.count(); //$$('display_list').data.length;
+    var length = 0;
+    $$('display_list').data.each((row) => {length += row.stream_length})
+    $$('playlist_track_count').define('label', `${count} tracks - ${format_seconds_long(length / 1000000000)}`);
+    $$('playlist_track_count').refresh();
+}

@@ -17,7 +17,7 @@ class AudioServer(AudioPlayer, RPCServer):
         self.event.start()
 
     def on_end_of_stream(self):
-        AudioPlayer.on_end_of_stream(self, value)
+        AudioPlayer.on_end_of_stream(self)
         self.event.push('end_of_stream')
 
     def on_track_position(self, value):

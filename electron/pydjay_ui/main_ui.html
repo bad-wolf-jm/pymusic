@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <title>PYMUSIC DJ App</title>
+<script src="../node_modules/jquery/dist/jquery.min.js"></script>
 <script src="../node_modules/semantic-ui/dist/semantic.min.js"></script>
 <script src="../node_modules/webix/webix.js"></script>
 <script src="../lib/utils.js"></script>
+<script src="../lib/progressbar.js"></script>
+<script src="../lib/seekbar.js"></script>
 <script src="../lib/main_list_display.js"></script>
 <script src="../lib/queue_display.js"></script>
 <script src="../lib/sidebar.js"></script>
 <script src="../lib/playback.js"></script>
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
 <link rel="stylesheet" href="../node_modules/semantic-ui/dist/semantic.min.css">
+
+<style>
+    .webix_template {
+        margin: 0px;
+        padding: 0px;
+    }
+</style>
 
 <body>
   <article id="mainArticle">
@@ -25,32 +35,43 @@ var player_window = {
          border: '1px solid #CCCCCC',
      },
     cols:[
-        {
-            view: 'template',
-            width:58,
-            height:58,
-            template: "FOO"
-        },
+        {id:'main-cover-image', view: 'template', width:58, height:58, template: "FOO"},
         {
             rows:[
-                {
-                    view: 'label',
-                    css:{'text-align':'center'},
-                    label: 'Title Of Song',
-                    height:20
-                },
-                {
-                    view: 'label',
-                    css:{'text-align':'center'},
-                    label: 'Artist - Album',
-                    height:20
-                }
+                {view: 'label', id:'main-title', css:{'text-align':'center', 'text-transform':'uppercase', 'font-weight':'bold'}, label: 'Title Of Song', height:20},
+                {view: 'label', id:'main-artist', css:{'text-align':'center'}, label: 'Artist - Album', height:20},
 
+                {cols:[
+                    {
+                        view: 'label',
+                        id:'main_track_time',
+                        css:{'text-align':'left', 'font-size':'12px'},
+                        label: '00:00',
+                        height:20,
+                        width:37
+                    },
+                    {height:15,
+                        css:{margin:0, padding:0},
+                        template:'<div id="main-player-progress">'},
+                    {
+                        view: 'label',
+                        id:'main_track_length',
+                        css:{'text-align':'right', 'font-size':'12px'},
+                        label: '00:00',
+                        height:20,
+                        width:37
+                    }
+
+                ]}
             ]
         }
     ]
 }
-
+var main_player_progress =undefined;
+$(document).ready( () => {
+    main_player_progress = new ProgressBar.Line('#main-player-progress');
+    main_player_progress.animate(0);
+});
 
 var preview_player_window = {
     height:125,
@@ -63,6 +84,7 @@ var preview_player_window = {
                 cols:[
                     {
                         view: 'template',
+                        id:'preview-cover-image',
                         width:58,
                         height:58,
                         template: "FOO"
@@ -70,6 +92,7 @@ var preview_player_window = {
                     {width:10},
                     {
                         rows:[
+                            {},
                             {
                                 view: 'label',
                                 id:'preview_title',
@@ -83,13 +106,13 @@ var preview_player_window = {
                                 css:{'text-align':'left', 'white-space':'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'},
                                 label: 'Artist - Album',
                                 height:20
-                            }
+                            },{}
 
                         ]
                     },
                     {width:10}
                 ]},
-            {},
+            {height:12, template:'<div id="preview-progress" style="margin:0px; padding:0px">'},
             {cols:[
                 {
                     view: 'label',
@@ -111,7 +134,12 @@ var preview_player_window = {
             {}]
 }
 
-
+var preview_seek = undefined;
+webix.ready( () => {
+    preview_seek = new Seekbar.Seekbar({renderTo:'#preview-progress', minValue:0, maxValue:100, barSize:5});
+    preview_seek.setValue(0);
+    preview_seek.render()
+});
 
 genres_list_popup = webix.ui(genres_list_popup)
 genres_list_popup.hide();
@@ -150,7 +178,7 @@ sessions_list_popup.attachEvent('onShow', function () {
 })
 $$('sessions_list_view').attachEvent("onItemClick", function(id, e, node){
     var item = this.getItem(id);
-    console.log(item);
+    //console.log(item);
     display_session(item.id)();
     sessions_list_popup.hide()
 });
@@ -243,7 +271,8 @@ var popup = webix.ui({
                         type:'icon',
                         icon:'stop',
                         label:'STOP QUEUE',
-                        maxHeight:35
+                        maxHeight:35,
+                        click: stop_queue_now,
                     },
                     {
                         //gravity:.5,
@@ -251,7 +280,8 @@ var popup = webix.ui({
                         type:'icon',
                         icon:'step-forward',
                         label:'SKIP SONG',
-                        maxHeight:35
+                        maxHeight:35,
+                        click: skip_to_next_track,
                     }
                 ]
             }
@@ -259,6 +289,25 @@ var popup = webix.ui({
     }
 })
 popup.hide();
+
+function stop_queue_now() {
+    mark_as_played(current_queue_position, (t) => {main_stop()});
+    queue_playing = false;
+    stop_request = false;
+    $$('start-stop-button').define('label', 'START');
+    $$('start-stop-button').define('icon', 'play');
+    $$('start-stop-button').refresh();
+    $$('queue_stop_message').hide()
+}
+
+function skip_to_next_track() {
+    if (queue_playing && !stop_request){
+        main_stop()
+        mark_as_played(current_queue_position, play_next_track_after_time);
+    }
+    //queue_playing = false;
+}
+
 
 var datatable = webix.ui({
     type:"line",
@@ -284,13 +333,26 @@ var datatable = webix.ui({
                 }, player_window,
         {
             cols:[
-                {},
+                {
+                    width:250,
+                    cols: [{gravity:.5,
+                    view:'template',
+                    id: 'queue_stop_message',
+                    //type:'icon',
+                    //icon:'stop',
+                    template:'Queue will stop after this song',
+                    //click: start_queue,
+                    maxHeight:35}]
+                },
+                //{},
                 {
                     gravity:.5,
+                    id:'start-stop-button',
                     view:'button',
                     type:'icon',
                     icon:'play',
                     label:'START',
+                    click: start_queue,
                     maxHeight:35
                 },
                 {
@@ -317,10 +379,16 @@ var datatable = webix.ui({
             cols:[
                 sidebar_template,
                 main_list_display_template,
-                {rows: [queue_display_template, preview_player_window]}
+                {rows: [queue_display_template,
+                        {height:15},
+                        preview_player_window]}
             ]}
     ]
 });
+$$('queue_stop_message').hide()
+//var line = new Seekbar.Seekbar({renderTo:'#preview-progress', minValue:0, maxValue:100, barSize:5});
+//line.setValue(10);
+//$(document).ready(line.render);
 
 var mysql = require('mysql');
 
@@ -346,9 +414,10 @@ var sql = `SELECT id, favorite, disabled as enabled, title, artist,
            FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id`
 
 var track_list = [];
-$$('display_list').load = function(url) {
-    console.log('loading', this)
-}
+// $$('display_list').load = function(url) {
+//     console.log('loading', this)
+// }
+
 db_connection.query(sql, function (err, result) {
     if (err) throw err;
     $$('display_list').define('data', result);
@@ -543,6 +612,7 @@ webix.UIManager.addHotKey("shift+backspace", function () {
                                         `DELETE FROM session_queue WHERE position=0`,
                                         function (err, result) {
                                             $$('queue_list').remove(selected_queue_element.id)
+                                            update_queue_labels();
                                         }
                                     )
                                 }
@@ -557,7 +627,7 @@ webix.UIManager.addHotKey("shift+backspace", function () {
 
 
 function preview_play_track_id(id) {
-    console.log('preview play current song');
+    //console.log('preview play current song');
     db_connection.query(
         `SELECT title, artist, album, bpm, file_name, cover_small,
                 stream_start, stream_end, settings.db_music_cache as music_root,
@@ -573,6 +643,16 @@ function preview_play_track_id(id) {
             $$('preview_title').refresh()
             $$('preview_artist').define('label', `${result.artist} - ${result.album}`)
             $$('preview_artist').refresh()
+            if (result.cover_small == null) {
+                cover_source = "../resources/images/default_album_cover.png"
+            } else {
+                cover_source = `${result.image_root}/${result.cover_small}`;
+            }
+
+            var cover_image = `<img
+                                style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
+            $$('preview-cover-image').define('template', cover_image);
+            $$('preview-cover-image').refresh();
             preview_play(file_name, result.stream_start, result.stream_end)
         }
     )
@@ -599,14 +679,14 @@ webix.UIManager.addHotKey("shift+space", function () {
 
 
 webix.UIManager.addHotKey("shift+q", function () {
-    console.log('add to queue', $$('display_list').getSelectedId());
+    //console.log('add to queue', $$('display_list').getSelectedId());
     var id = $$('display_list').getSelectedId().id;
     sql = `SELECT 1 FROM session_queue WHERE track_id=${id} LIMIT 1`;
     db_connection.query(sql,
     function (err, result){
-        console.log(err);
-        console.log(sql);
-        console.log(result);
+        //console.log(err);
+        //console.log(sql);
+        //console.log(result);
         if (result.length == 0){
             pos_id_sql = 'SELECT max(id) + 1 as new_id, max(position)+1 as new_position FROM session_queue';
             db_connection.query(pos_id_sql, function (err, result) {
@@ -615,7 +695,7 @@ webix.UIManager.addHotKey("shift+q", function () {
                     var new_position = result[0].new_id ? result[0].new_position :1;
                     insert_sql = `INSERT INTO session_queue (id, track_id, status, position)
                                   VALUES (${new_id}, ${id}, 'pending', ${new_position})`;
-                    console.log(insert_sql);
+                    //console.log(insert_sql);
                     db_connection.query(insert_sql, function (err, result) {
                         if (err) throw err;
                         sql = `SELECT tracks.id as track_id, session_queue.position, tracks.title, tracks.artist,
@@ -629,10 +709,11 @@ webix.UIManager.addHotKey("shift+q", function () {
                                 AND
                                     session_queue.track_id=${id}
                                  ORDER BY session_queue.position`;
-                        console.log(sql);
+                        //console.log(sql);
                         db_connection.query(sql, function (err, result) {
                             if (err) throw err;
                             $$('queue_list').add(result[0]);
+                            update_queue_labels();
                         });
                     });
                 }
@@ -642,14 +723,14 @@ webix.UIManager.addHotKey("shift+q", function () {
 }, $$('display_list'));
 
 webix.UIManager.addHotKey("shift+s", function () {
-    console.log('add to short list');
+    //console.log('add to short list');
     var id = $$('display_list').getSelectedId().id;
     sql = `SELECT 1 FROM short_listed_tracks WHERE track_id=${id} LIMIT 1`;
     db_connection.query(sql,
         function (err, result){
-            console.log(err);
-            console.log(sql);
-            console.log(result);
+            // console.log(err);
+            // console.log(sql);
+            // console.log(result);
             if (result.length == 0){
                 insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
                 //console.log(insert_sql);
@@ -675,5 +756,57 @@ webix.UIManager.addHotKey("shift+a", function () {
     console.log('make track available');
 }, $$('display_list'));
 
+
+// webix.UIManager.addHotKey("ctrl+g", function () {
+//     $$('show_genres').click();
+//     $$('genres_list_view').focus();
+//     $$('genres_list_view').select(0);
+//
+// });
+
+$$('genres_list_popup').attachEvent('onShow',
+function () {
+    webix.UIManager.setFocus($$('genres_list_view'));
+});
+webix.UIManager.addHotKey("enter", function () {
+    var foo = $$('genres_list_view')
+    var g = foo.getSelectedItem();
+    display_genre(g.name)();
+    $$('genres_list_popup').hide()
+}, $$('genres_list_view'));
+
+
+$$('sessions_list_popup').attachEvent('onShow',
+function () {
+    webix.UIManager.setFocus($$('sessions_list_view'));
+});
+webix.UIManager.addHotKey("enter", function () {
+//    console.log('make track available');
+    var foo = $$('sessions_list_view')
+    var g = foo.getSelectedItem();
+    display_session(g.id)();
+    $$('sessions_list_popup').hide()
+}, $$('sessions_list_view'));
+
+
+$$('track_list_popup').attachEvent('onShow',
+function () {
+    webix.UIManager.setFocus($$('track_list_view'));
+});
+webix.UIManager.addHotKey("enter", function () {
+    console.log('make track available');
+}, $$('track_list_popup'));
+webix.UIManager.addHotKey("enter", function () {
+//    console.log('make track available');
+    var foo = $$('track_list_view')
+    var g = foo.getSelectedItem();
+    //display_session(g.id)();
+    $$('track_list_popup').hide()
+}, $$('track_list_view'));
+
+
+update_queue_labels();
+
+$$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})
 
 </script>

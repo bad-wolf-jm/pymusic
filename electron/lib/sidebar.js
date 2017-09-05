@@ -50,10 +50,10 @@ function display_genre(name){
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
             $$('display_list').clearAll()
-            $$('playlist_name').define('label', name);
-            $$('playlist_name').refresh();
             $$('display_list').define('data', result);
             $$('display_list').refresh();
+            $$('playlist_name').define('label', name);
+            $$('playlist_name').refresh();
           });
     }
 }
@@ -62,10 +62,8 @@ function display_genre(name){
 
 function display_session(id){
     return function () {
-        var sql = `SELECT
-id, favorite, disabled as enabled, title, artist,
-album, genre, rating, bpm, stream_length,
-foo.play_count
+        var sql = `SELECT id, favorite, disabled as enabled, title, artist,
+                   album, genre, rating, bpm, stream_length, foo.play_count
 FROM session_tracks JOIN
 (SELECT * FROM tracks JOIN (SELECT
   id as id_2, count(session_tracks.track_id) as play_count
@@ -74,58 +72,20 @@ GROUP BY id) play_counts ON tracks.id=play_counts.id_2) foo
 ON session_tracks.track_id=foo.id WHERE session_tracks.session_id=${id}`;
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
-            $$('display_list').clearAll()
-            $$('playlist_name').define('label', name);
-            $$('playlist_name').refresh();
-            $$('display_list').define('data', result);
-            $$('display_list').refresh();
+            db_connection.query(
+                `SELECT event_name FROM sessions WHERE id=${id}`,
+                function (e, r) {
+                    $$('display_list').clearAll();
+                    $$('display_list').define('data', result);
+                    $$('display_list').refresh();
+                    $$('playlist_name').define('label', r[0].event_name);
+                    $$('playlist_name').refresh();
+                }
+            );
           });
     }
 }
-//
 
-//
-// genres_dropdown = {
-//     rows: [
-//         {view:'button', label:'<b>GENRES</b>', type:'icon', icon:'folder',
-//             click: function (){
-//                 if (!genres_dropdown_collapsed) {
-//                     $$('genre_dropdown_elmt').removeView('genre_dropdown');
-//                     $$('genre_dropdown_elmt').hide();
-//                     genres_dropdown_collapsed = true;
-//                     return false;
-//                 }
-//                 db_connection.query(genres_query,
-//                 function (err, result) {
-//                     if (err) throw err;
-//                     var x = $$('genre_dropdown_elmt').addView({
-//                             id:'genre_dropdown',
-//                             rows:[]
-//                         });
-//                     // console.log(x);
-//                     for(var i=0; i < result.length; i++){
-//                         var v = {
-//                             view:'button',
-//                             type:'icon',
-//                             icon:'cog',
-//                             height:25,
-//                             click:display_genre(result[i].genre),
-//                             label:result[i].genre
-//                         };
-//                         $$('genre_dropdown').addView(v)
-//                     }
-//                     $$('genre_dropdown_elmt').show();
-//                     genres_dropdown_collapsed = false;
-//                 })
-//             }
-//         },
-//         {
-//             id:'genre_dropdown_elmt',
-//             hidden:true,
-//             cols:[{width:15}]
-//         }
-//     ]
-// }
 
 function genre_template(element) {
     var cover_source = null;
@@ -237,45 +197,18 @@ var track_list_popup = //webix.ui(
         }
 }
 
-
-
-
-//);
-//genres_list_popup.hide();
-//
-// genres_list_popup.attachEvent('onShow', function () {
-//     var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist,
-//                     tracks.album, tracks.bpm, tracks.stream_length,
-//                     settings.db_image_cache as image_root, tracks.cover_small as cover,
-//                     session_queue.position as position
-//              FROM
-//                  (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
-//              ON
-//                  tracks.id=session_queue.track_id WHERE session_queue.status='played'
-//              ORDER BY session_queue.position`
-//
-//     db_connection.query(sql, function (err, result) {
-//       if (err) throw err;
-//       $$('session_list_view').clearAll();
-//       for(var i=0; i < result.length; i++){
-//           $$('session_list_view').add(result[i])
-//       }
-//     });
-// })
-
-
 var sidebar_template = {
     css:{'background-color':'#EEEEEE',
          'padding':'0px',
          'margin':'0px'},
     width:125,
     rows: [
-        {view:'button', label:'<b>ALL SONGS</b>',  type:'icon', icon:'database', click:display_all_songs()},
-        {view:'button', label:'<b>SHORT LIST</b>', type:'icon', icon:'calendar', click:display_short_listed_songs()},
-        {view:'button', label:'<b>RELATIONS</b>',  type:'icon', icon:'cog'},
-        {view:'button', label:'<b>GENRES</b>',     type:'icon', icon:'folder', popup:'genres_list_popup'}, //genres_dropdown,
-        {view:'button', label:'<b>LISTS</b>',    type:'icon', icon:'folder', popup:'track_list_popup'},
-        {view:'button', label:'<b>SESSIONS</b>',   type:'icon', icon:'folder', popup:'sessions_list_popup'},
+        {id: 'show_all_songs', view:'button', label:'<b>ALL SONGS</b>',  type:'icon', icon:'database', click:display_all_songs()},
+        {id: 'show_short_list', view:'button', label:'<b>SHORT LIST</b>', type:'icon', icon:'calendar', click:display_short_listed_songs(), hotkey:'ctrl+shift+s'},
+        {id: 'show_remations', view:'button', label:'<b>RELATIONS</b>',  type:'icon', icon:'cog'},
+        {id: 'show_genres', view:'button', label:'<b>GENRES</b>',     type:'icon', icon:'folder', popup:'genres_list_popup', hotkey:'ctrl+g'}, //genres_dropdown,
+        {id: 'show_lists', view:'button', label:'<b>LISTS</b>',      type:'icon', icon:'folder', popup:'track_list_popup', hotkey:'ctrl+l'},
+        {id: 'show_sessions', view:'button', label:'<b>SESSIONS</b>',   type:'icon', icon:'folder', popup:'sessions_list_popup', hotkey:'ctrl+s'},
         {}
     ]
 }

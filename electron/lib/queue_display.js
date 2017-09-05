@@ -20,6 +20,36 @@ function queue_element_template(element) {
             </div>`
 }
 
+function update_queue_labels() {
+    db_connection.query(
+        `SELECT SUM(duration) as duration, COUNT(id) as count, AVG(wait_time) as wait_time FROM
+         (SELECT 1 as id, tracks.stream_length as duration, session_queue.id as count, settings.wait_time as wait_time
+         FROM tracks JOIN session_queue ON tracks.id=session_queue.track_id LEFT JOIN settings on 1
+         WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`,
+         function (error, result) {
+             console.log(error);
+             if (result.length == 0) {
+                 $$('queue_duration').define('label', `Duration: ${format_nanoseconds(total_time)}`);
+                 $$('queue_duration').refresh();
+                 d = new Date(current_time)
+                 $$('queue_ends_at').define('label', `Ends at: ${webix.Date.dateToStr('%H:%i:%s')(d)}`);
+                 $$('queue_ends_at').refresh();
+             } else {
+                 queue_duration = result[0].duration;
+                 queue_count = result[0].count;
+                 wait_time = result[0].wait_time;
+                 current_time = new Date().getTime();
+                 total_time = queue_duration + (queue_count-1)*wait_time*1000000000;
+                 $$('queue_duration').define('label', `Duration: ${format_nanoseconds(total_time)}`);
+                 $$('queue_duration').refresh();
+                 current_time += (total_time / 1000000);
+                 d = new Date(current_time)
+                 $$('queue_ends_at').define('label', `Ends at: ${webix.Date.dateToStr('%H:%i:%s')(d)}`);
+                 $$('queue_ends_at').refresh();
+             }
+         }
+    )
+}
 
 var queue_display_template = {
     type:'line',
@@ -36,11 +66,13 @@ var queue_display_template = {
                     cols:[
                     {
                         view: 'label',
+                        id: 'queue_duration',
                         label: 'Duration:',
                         height: 20
                     },
                     {
                         view: 'label',
+                        id:'queue_ends_at',
                         css: {'text-align':'right'},
                         label: 'Ends at:',
                         height: 20
