@@ -62,80 +62,144 @@ def DATE(v):
     return fo
 
 
+
+
+
+
+
+
+
+
+
+
 with connection.cursor() as c:
-    c.execute("SELECT max(id) as M FROM sessions")
-    d = c.fetchone()
-    d = d['M']+1 if d['M'] is not None else 1
+    list_id = 1
+    c.execute('SELECT DISTINCT style FROM tracks')
+    dance_styles = c.fetchall()
+    for style in dance_styles:
+        c.execute("INSERT INTO playlists (id, name) VALUES ({id}, '{name}')".format(id=list_id, name=addslashes(style['style'])))
+        connection.commit()
+        c.execute("SELECT id FROM tracks WHERE style='{style}'".format(style=addslashes(style['style'])))
+        tr = c.fetchall()
+        for track_id in tr:
+            c.execute('INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ({playlist_id}, {track_id})'.format(playlist_id=list_id, track_id=track_id['id']))
+        connection.commit()
+        list_id += 1
+
+    c.execute('SELECT DISTINCT vocals FROM tracks')
+    dance_styles = c.fetchall()
+    for style in dance_styles:
+        c.execute("INSERT INTO playlists (id, name) VALUES ({id}, '{name}')".format(id=list_id, name=addslashes(style['vocals'])))
+        connection.commit()
+        c.execute("SELECT id FROM tracks WHERE vocals='{style}'".format(style=addslashes(style['vocals'])))
+        tr = c.fetchall()
+        for track_id in tr:
+            c.execute('INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ({playlist_id}, {track_id})'.format(playlist_id=list_id, track_id=track_id['id']))
+        connection.commit()
+        list_id += 1
+
+    c.execute('SELECT DISTINCT play_at FROM tracks')
+    dance_styles = c.fetchall()
+    for style in dance_styles:
+        c.execute("INSERT INTO playlists (id, name) VALUES ({id}, '{name}')".format(id=list_id, name=addslashes(style['play_at'])))
+        connection.commit()
+        c.execute("SELECT id FROM tracks WHERE play_at='{style}'".format(style=addslashes(style['play_at'])))
+        tr = c.fetchall()
+        for track_id in tr:
+            c.execute('INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ({playlist_id}, {track_id})'.format(playlist_id=list_id, track_id=track_id['id']))
+        connection.commit()
+        list_id += 1
 
 
-    import glob
-    for fil in glob.glob("sessions/*.xml"):
-        print fil
-        foo = plistlib.readPlist(fil)
-
-        p_tracks = foo['Tracks']
-        tracks   = {}
-        for t in p_tracks:
-            tracks[int(t)] = urllib.unquote(p_tracks[t].get('Location','file://')[7:]).decode('utf8')
-        playlist = [x['Track ID'] for x in foo['Playlists'][0]['Playlist Items']]
 
 
-        name, _ = os.path.splitext(os.path.basename(fil))
-        location, date = name.split('--')
-        date = datetime.datetime.strptime(date, "%Y-%m-%d-%H-%M")
-
-        session_start_date = date
-        session_data = {'id': d, 'name':location, 'start_date': session_start_date}
-
-        play_date = session_start_date
-        db_indices = []
-        for i, index in enumerate(playlist):
-            sql = u"select id, title, stream_length from tracks where original_file_name='{}'".format(addslashes(tracks[index]))
-            #with connection.cursor() as c:
-            c.execute(sql)
-            x = c.fetchone()
-            s_dur = datetime.timedelta(seconds=x['stream_length'] / 1000000000)
-            session_track = {'position':i,
-                             'session_id': d,
-                             'track_id': x['id'],
-                             'start_time': play_date,
-                             'end_time': play_date+s_dur}
-            db_indices.append(x['id'])
-
-            sql_insert = """INSERT INTO session_tracks (position, session_id, track_id, start_time, end_time)
-                        VALUES ({position}, {session_id}, {track_id}, {start_time}, {end_time})"""
-            session_track['start_time'] = DATE(session_track['start_time'])
-            session_track['end_time'] = DATE(session_track['end_time'])
-            sql_insert = sql_insert.format(**session_track)
-            c.execute(sql_insert)
-            play_date += s_dur+datetime.timedelta(seconds=3)
-
-        for i in range(len(db_indices)-1):
-            id_1 = db_indices[i]
-            id_2 = db_indices[i+1]
-            sql = """INSERT INTO track_relations (track_id, related_track_id, count)
-                        VALUES ({track_id}, {related_track_id}, 1)
-                        ON DUPLICATE KEY UPDATE count=count+1"""
-            sql=sql.format(track_id=id_1, related_track_id=id_2)
-            c.execute(sql)
-
-        session_data['end_date'] = play_date
-        print session_data
-        sql_insert = """INSERT INTO sessions (id, name, start_date, end_date)
-                    VALUES ({id}, '{name}', {start_date}, {end_date})"""
-        session_data['start_date'] = DATE(session_data['start_date'])
-        session_data['end_date'] = DATE(session_data['end_date'])
-        session_data['name'] = addslashes(session_data['name'])
-        sql_insert = sql_insert.format(**session_data)
-        c.execute(sql_insert)
-
-        d += 1
-
-connection.commit()
-#pprint.pprint (foo)
-sys.exit(0)
 
 
+
+
+
+
+
+
+
+#
+#
+#
+#
+#
+#     c.execute("SELECT max(id) as M FROM playlists")
+#     d = c.fetchone()
+#     d = d['M']+1 if d['M'] is not None else 1
+#
+#
+#     import glob
+#     for fil in glob.glob("sessions/*.xml"):
+#         print fil
+#         foo = plistlib.readPlist(fil)
+#
+#         p_tracks = foo['Tracks']
+#         tracks   = {}
+#         for t in p_tracks:
+#             tracks[int(t)] = urllib.unquote(p_tracks[t].get('Location','file://')[7:]).decode('utf8')
+#         playlist = [x['Track ID'] for x in foo['Playlists'][0]['Playlist Items']]
+#
+#
+#         name, _ = os.path.splitext(os.path.basename(fil))
+#         location, date = name.split('--')
+#         date = datetime.datetime.strptime(date, "%Y-%m-%d-%H-%M")
+#
+#         session_start_date = date
+#         session_data = {'id': d, 'name':location, 'start_date': session_start_date}
+#
+#         play_date = session_start_date
+#         db_indices = []
+#         for i, index in enumerate(playlist):
+#             sql = u"select id, title, stream_length from tracks where original_file_name='{}'".format(addslashes(tracks[index]))
+#             #with connection.cursor() as c:
+#             c.execute(sql)
+#             x = c.fetchone()
+#             s_dur = datetime.timedelta(seconds=x['stream_length'] / 1000000000)
+#             session_track = {'position':i,
+#                              'session_id': d,
+#                              'track_id': x['id'],
+#                              'start_time': play_date,
+#                              'end_time': play_date+s_dur}
+#             db_indices.append(x['id'])
+#
+#             sql_insert = """INSERT INTO session_tracks (position, session_id, track_id, start_time, end_time)
+#                         VALUES ({position}, {session_id}, {track_id}, {start_time}, {end_time})"""
+#             session_track['start_time'] = DATE(session_track['start_time'])
+#             session_track['end_time'] = DATE(session_track['end_time'])
+#             sql_insert = sql_insert.format(**session_track)
+#             c.execute(sql_insert)
+#             play_date += s_dur+datetime.timedelta(seconds=3)
+#
+#         for i in range(len(db_indices)-1):
+#             id_1 = db_indices[i]
+#             id_2 = db_indices[i+1]
+#             sql = """INSERT INTO track_relations (track_id, related_track_id, count)
+#                         VALUES ({track_id}, {related_track_id}, 1)
+#                         ON DUPLICATE KEY UPDATE count=count+1"""
+#             sql=sql.format(track_id=id_1, related_track_id=id_2)
+#             c.execute(sql)
+#
+#         session_data['end_date'] = play_date
+#         print session_data
+#         sql_insert = """INSERT INTO sessions (id, name, start_date, end_date)
+#                     VALUES ({id}, '{name}', {start_date}, {end_date})"""
+#         session_data['start_date'] = DATE(session_data['start_date'])
+#         session_data['end_date'] = DATE(session_data['end_date'])
+#         session_data['name'] = addslashes(session_data['name'])
+#         sql_insert = sql_insert.format(**session_data)
+#         c.execute(sql_insert)
+#
+#         d += 1
+#
+# connection.commit()
+# #pprint.pprint (foo)
+# sys.exit(0)
+#
+#
 #
 # #Parser.parse(open('Music.xml').read())
 #

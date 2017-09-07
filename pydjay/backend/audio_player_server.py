@@ -15,6 +15,7 @@ class AudioServer(AudioPlayer, RPCServer):
         AudioPlayer.__init__(self, player_name, num_channels)
         self.event = PushServer(player_name, event_port)
         self.event.start()
+        self._position_notice_index = 0
 
     def on_end_of_stream(self):
         AudioPlayer.on_end_of_stream(self)
@@ -22,6 +23,9 @@ class AudioServer(AudioPlayer, RPCServer):
 
     def on_track_position(self, value):
         AudioPlayer.on_track_position(self, value)
+        self._position_notice_index += 1
+        self._position_notice_index %= 15
+        #if self._position_notice_index == 0:
         self.event.push('track_position_notice', value)
 
     def on_track_duration(self, value):

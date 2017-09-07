@@ -20,7 +20,7 @@ if __name__ == '__main__':
     Window.clearcolor = (0.1, 0.1, 0.1, 1)
     Window.size = (1728, 1152)
 
-    init(pydjay.bootstrap.PYDJAY_CACHE)
+    #init(pydjay.bootstrap.PYDJAY_CACHE)
 
     bar = MainScreen(pydjay.bootstrap.main_player,
                      pydjay.bootstrap.preview_player,

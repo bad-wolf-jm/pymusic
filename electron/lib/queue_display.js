@@ -29,9 +29,9 @@ function update_queue_labels() {
          function (error, result) {
              console.log(error);
              if (result.length == 0) {
-                 $$('queue_duration').define('label', `Duration: ${format_nanoseconds(total_time)}`);
+                 $$('queue_duration').define('label', `Duration: ${format_nanoseconds(0)}`);
                  $$('queue_duration').refresh();
-                 d = new Date(current_time)
+                 d = new Date()
                  $$('queue_ends_at').define('label', `Ends at: ${webix.Date.dateToStr('%H:%i:%s')(d)}`);
                  $$('queue_ends_at').refresh();
              } else {

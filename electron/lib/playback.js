@@ -28,6 +28,16 @@ function main_stop(file_name, start_time, end_time){
     command_socket.send(JSON.stringify({'name': 'main_stop', 'args': [], 'kwargs': {}}));
 }
 
+var preview_track_duration = 1;
+var main_track_seconds_elapsed = 0;
+var next_track_delay = 5;
+var current_track_id = undefined;
+var current_queue_position = undefined;
+var queue_playing = false;
+var stop_request = false;
+var current_track_length = 1
+
+
 
 preview_time_socket = zmq.socket('pull');
 preview_time_socket.connect('tcp://127.0.0.1:5556');
@@ -36,14 +46,21 @@ preview_time_socket.on("message", function( payload ) {
    if (data.event == 'track_position_notice') {
        $$('preview_time').define('label', format_nanoseconds(data.args[0]))
        $$('preview_time').refresh();
-       preview_seek.setValue(data.args[0]);
-       preview_seek.render();
+       preview_seek.animate(data.args[0] / preview_track_duration);
+       //console.log(data.args[0] / preview_track_duration)
+       //preview_seek.setValue(data.args[0]);
+       //preview_seek.render();
    } else if (data.event == 'track_duration_notice') {
        $$('preview_length').define('label', format_nanoseconds(data.args[0]))
        $$('preview_length').refresh();
-       preview_seek.maxValue = data.args[0];
+       preview_track_duration = data.args[0];
+       //preview_seek.maxValue = data.args[0];
+   } else if (data.event == 'end_of_stream') {
+       preview_track_duration = 1;
    }
 });
+
+
 
 main_time_socket = zmq.socket('pull');
 main_time_socket.connect('tcp://127.0.0.1:5557');
@@ -51,19 +68,39 @@ main_time_socket.on("message", function( payload ) {
     //console.log("Received reply", payload);
     data = JSON.parse(payload.toString());
     if (data.event == 'track_position_notice') {
+        //position_seconds = data.args[0] / 1000000000;
+        //if (position_seconds != main_track_seconds_elapsed) {
         $$('main_track_time').define('label', format_nanoseconds(data.args[0]))
         $$('main_track_time').refresh()
         //console.log(data.args[0] / current_track_length);
         main_player_progress.animate(data.args[0] / current_track_length);
         //line.setValue(data.args[0] / 1000000000);
     } else if (data.event == 'track_duration_notice') {
-        $$('main_track_length').define('label', format_nanoseconds(data.args[0]))
-        $$('main_track_length').refresh()
-        current_track_length = data.args[0];
+            //main_track_seconds_elapsed = dura
+            $$('main_track_length').define('label', format_nanoseconds(data.args[0]))
+            $$('main_track_length').refresh();
+            current_track_length = data.args[0];
+            //console.log(current_track_length);
+    //    }
         //line.maxValue = data.args[0] / 1000000000;
     } else if (data.event == 'end_of_stream') {
         if (!stop_request){
-            mark_as_played(current_queue_position, play_next_track_after_time);
+            db_connection.query(
+                'SELECT COUNT(id) as queue_count FROM session_queue WHERE status="pending"',
+                function (error, result) {
+                    if (error) throw error;
+                    if (result[0].queue_count > 0) {
+                        mark_as_played(current_queue_position, play_next_track_after_time);
+                    } else {
+                        mark_as_played(current_queue_position, false);
+                        queue_playing = false;
+                        $$('start-stop-button').define('label', 'START');
+                        $$('start-stop-button').define('icon', 'play');
+                        $$('start-stop-button').refresh();
+                        $$('queue_stop_message').hide()
+                    }
+                }
+            )
         } else {
             mark_as_played(current_queue_position, false);
             queue_playing = false;
@@ -74,14 +111,6 @@ main_time_socket.on("message", function( payload ) {
         }
     }
 });
-
-
-var next_track_delay = 5;
-var current_track_id = undefined;
-var current_queue_position = undefined;
-var queue_playing = false;
-var stop_request = false;
-var current_track_length = 1
 
 
 //var next_track_delay_id
@@ -159,8 +188,7 @@ function play_next_track() {
                                         cover_source = `${result.image_root}/${result.cover_small}`;
                                     }
 
-                                    var cover_image = `<img
-                                                        style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
+                                    var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
                                     $$('main-cover-image').define('template', cover_image);
                                     $$('main-cover-image').refresh();
 
@@ -183,14 +211,21 @@ function play_next_track() {
 
 function start_queue() {
     if (!queue_playing) {
-        play_next_track()
-        queue_playing = true;
-        stop_request = false;
-        $$('queue_stop_message').hide()
-        $$('start-stop-button').define('label', 'STOP');
-        $$('start-stop-button').define('icon', 'stop');
-        $$('start-stop-button').refresh();
-
+        db_connection.query(
+            `SELECT count(id) as queue_count FROM session_queue WHERE status='pending'`,
+            function (error, result) {
+                if (error) throw error;
+                if (result[0].queue_count > 0) {
+                    play_next_track()
+                    queue_playing = true;
+                    stop_request = false;
+                    $$('queue_stop_message').hide()
+                    $$('start-stop-button').define('label', 'STOP');
+                    $$('start-stop-button').define('icon', 'stop');
+                    $$('start-stop-button').refresh();
+                }
+            }
+        )
     } else {
         if (!stop_request){
             stop_request = true;

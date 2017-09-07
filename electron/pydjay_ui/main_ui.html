@@ -47,18 +47,19 @@ var player_window = {
                         id:'main_track_time',
                         css:{'text-align':'left', 'font-size':'12px'},
                         label: '00:00',
-                        height:20,
+                        height:15,
                         width:37
                     },
-                    {height:15,
+                    {
+                        height:5,
                         css:{margin:0, padding:0},
-                        template:'<div id="main-player-progress">'},
+                        template:'<div id="main-player-progress" style="width:100%; height:75%; position:relative; top:0%; transform: translateY(-50%)"></div>'},
                     {
                         view: 'label',
                         id:'main_track_length',
                         css:{'text-align':'right', 'font-size':'12px'},
                         label: '00:00',
-                        height:20,
+                        height:15,
                         width:37
                     }
 
@@ -69,7 +70,15 @@ var player_window = {
 }
 var main_player_progress =undefined;
 $(document).ready( () => {
-    main_player_progress = new ProgressBar.Line('#main-player-progress');
+    main_player_progress = new ProgressBar.Line('#main-player-progress',
+    {
+     strokeWidth: 1,
+     easing: 'easeInOut',
+     duration: 50,
+     color: '#5a5a5a',
+     trailColor: '#eee',
+     trailWidth: 1,
+     svgStyle: {width: '100%', height: '50%'}});
     main_player_progress.animate(0);
 });
 
@@ -112,7 +121,7 @@ var preview_player_window = {
                     },
                     {width:10}
                 ]},
-            {height:12, template:'<div id="preview-progress" style="margin:0px; padding:0px">'},
+            {height:5, template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%; transform: translateY(-200%)"></div>'},
             {cols:[
                 {
                     view: 'label',
@@ -136,10 +145,24 @@ var preview_player_window = {
 
 var preview_seek = undefined;
 webix.ready( () => {
-    preview_seek = new Seekbar.Seekbar({renderTo:'#preview-progress', minValue:0, maxValue:100, barSize:5});
-    preview_seek.setValue(0);
-    preview_seek.render()
+    preview_seek = new ProgressBar.Line('#preview-progress',
+    {
+     strokeWidth: 1,
+     //easing: 'easeInOut',
+     duration: 50,
+     color: '#5a5a5a',
+     trailColor: '#eee',
+     trailWidth: 1,
+     svgStyle: {width: '100%', height: '100%'}}); //new Seekbar.Seekbar({renderTo:'#preview-progress', minValue:0, maxValue:100, barSize:5});
+    preview_seek.animate(0);
+    //preview_seek.render()
 });
+//
+// var main_player_progress =undefined;
+// $(document).ready( () => {
+//     main_player_progress = new ProgressBar.Line('#main-player-progress');
+//     main_player_progress.animate(0);
+// });
 
 genres_list_popup = webix.ui(genres_list_popup)
 genres_list_popup.hide();
@@ -188,7 +211,6 @@ track_list_popup = webix.ui(track_list_popup)
 track_list_popup.hide();
 track_list_popup.attachEvent('onShow', function () {
     var sql = `SELECT id as id, name as name FROM playlists ORDER BY name`
-
     db_connection.query(sql, function (err, result) {
       if (err) throw err;
       $$('track_list_view').clearAll()
@@ -200,7 +222,7 @@ track_list_popup.attachEvent('onShow', function () {
 $$('track_list_view').attachEvent("onItemClick", function(id, e, node){
     var item = this.getItem(id);
     //console.log(item);
-    //display_session(item.id)();
+    display_tag(item.id)();
     track_list_popup.hide()
 });
 
@@ -218,7 +240,8 @@ var session_popup = webix.ui(
         body:{
             rows:[
                 {
-                    template:"<b>PLAYED SONGS</b>",
+                    view:'label',
+                    label:"<b>PLAYED SONGS</b>",
                     height:30
                 },
                 {
@@ -256,7 +279,6 @@ var popup = webix.ui({
     id:"skip_stop_dialog",
     height:650,
     width:400,
-    // position:"center",
     body:{
         rows: [
             {
@@ -266,7 +288,6 @@ var popup = webix.ui({
             {
                 cols: [
                     {
-                        //gravity:.5,
                         view:'button',
                         type:'icon',
                         icon:'stop',
@@ -275,7 +296,6 @@ var popup = webix.ui({
                         click: stop_queue_now,
                     },
                     {
-                        //gravity:.5,
                         view:'button',
                         type:'icon',
                         icon:'step-forward',
@@ -297,15 +317,42 @@ function stop_queue_now() {
     $$('start-stop-button').define('label', 'START');
     $$('start-stop-button').define('icon', 'play');
     $$('start-stop-button').refresh();
-    $$('queue_stop_message').hide()
+    $$('queue_stop_message').hide();
+    $$('skip_stop_dialog').hide();
 }
 
 function skip_to_next_track() {
     if (queue_playing && !stop_request){
         main_stop()
-        mark_as_played(current_queue_position, play_next_track_after_time);
+        db_connection.query(
+            `SELECT count(id) as queue_count FROM session_queue WHERE status='pending'`,
+            function (error, result) {
+                if (error) throw error;
+                if (result[0].queue_count > 0) {
+                    mark_as_played(current_queue_position, (t) => {play_next_track()});
+                    // play_next_track()
+                    // queue_playing = true;
+                    // stop_request = false;
+                    // $$('queue_stop_message').hide()
+                    // $$('start-stop-button').define('label', 'STOP');
+                    // $$('start-stop-button').define('icon', 'stop');
+                    // $$('start-stop-button').refresh();
+                } else {
+                    $$('start-stop-button').define('label', 'START');
+                    $$('start-stop-button').define('icon', 'play');
+                    $$('start-stop-button').refresh();
+                    $$('queue_stop_message').hide();
+                    queue_playing = false;
+                    stop_request = false;
+                }
+
+            }
+        )
+
+
     }
     //queue_playing = false;
+    $$('skip_stop_dialog').hide()
 }
 
 
@@ -318,10 +365,30 @@ var datatable = webix.ui({
                  'border-bottom': "1px solid #CCCCCC"},
             cols:[{
                 cols:[
-
+                    {
+                        view:'button',
+                        type:'icon',
+                        icon:'volume-up',
+                        label:'100%',
+                        width:75
+                    },
+                    {
+                        view:'button',
+                        type:'icon',
+                        icon:'volume-control-phone',
+                        label:'100%',
+                        width:75
+                    },
+                    {
+                        view:'button',
+                        type:'icon',
+                        icon:'headphones',
+                        label:'100%',
+                        width:75
+                    },
                     {},
                     {
-                        gravity:.25,
+                        gravity:.3,
                         view:'button',
                         type:'icon',
                         icon:'list',
@@ -338,10 +405,7 @@ var datatable = webix.ui({
                     cols: [{gravity:.5,
                     view:'template',
                     id: 'queue_stop_message',
-                    //type:'icon',
-                    //icon:'stop',
                     template:'Queue will stop after this song',
-                    //click: start_queue,
                     maxHeight:35}]
                 },
                 //{},
@@ -380,7 +444,7 @@ var datatable = webix.ui({
                 sidebar_template,
                 main_list_display_template,
                 {rows: [queue_display_template,
-                        {height:15},
+                        {height:10},
                         preview_player_window]}
             ]}
     ]
@@ -649,8 +713,7 @@ function preview_play_track_id(id) {
                 cover_source = `${result.image_root}/${result.cover_small}`;
             }
 
-            var cover_image = `<img
-                                style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
+            var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
             $$('preview-cover-image').define('template', cover_image);
             $$('preview-cover-image').refresh();
             preview_play(file_name, result.stream_start, result.stream_end)
@@ -800,7 +863,7 @@ webix.UIManager.addHotKey("enter", function () {
 //    console.log('make track available');
     var foo = $$('track_list_view')
     var g = foo.getSelectedItem();
-    //display_session(g.id)();
+    display_tag(g.id)();
     $$('track_list_popup').hide()
 }, $$('track_list_view'));
 
@@ -808,5 +871,5 @@ webix.UIManager.addHotKey("enter", function () {
 update_queue_labels();
 
 $$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})
-
+webix.UIManager.setFocus($$('display_list'));
 </script>
