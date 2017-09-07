@@ -26,6 +26,7 @@
 </body>
 <script type="text/javascript">
 
+var path = require('path');
 
 var player_window = {
     height:58,
@@ -148,21 +149,14 @@ webix.ready( () => {
     preview_seek = new ProgressBar.Line('#preview-progress',
     {
      strokeWidth: 1,
-     //easing: 'easeInOut',
      duration: 50,
      color: '#5a5a5a',
      trailColor: '#eee',
      trailWidth: 1,
-     svgStyle: {width: '100%', height: '100%'}}); //new Seekbar.Seekbar({renderTo:'#preview-progress', minValue:0, maxValue:100, barSize:5});
+     svgStyle: {width: '100%', height: '100%'}});
     preview_seek.animate(0);
-    //preview_seek.render()
 });
-//
-// var main_player_progress =undefined;
-// $(document).ready( () => {
-//     main_player_progress = new ProgressBar.Line('#main-player-progress');
-//     main_player_progress.animate(0);
-// });
+
 
 genres_list_popup = webix.ui(genres_list_popup)
 genres_list_popup.hide();
@@ -330,13 +324,6 @@ function skip_to_next_track() {
                 if (error) throw error;
                 if (result[0].queue_count > 0) {
                     mark_as_played(current_queue_position, (t) => {play_next_track()});
-                    // play_next_track()
-                    // queue_playing = true;
-                    // stop_request = false;
-                    // $$('queue_stop_message').hide()
-                    // $$('start-stop-button').define('label', 'STOP');
-                    // $$('start-stop-button').define('icon', 'stop');
-                    // $$('start-stop-button').refresh();
                 } else {
                     $$('start-stop-button').define('label', 'START');
                     $$('start-stop-button').define('icon', 'play');
@@ -450,9 +437,6 @@ var datatable = webix.ui({
     ]
 });
 $$('queue_stop_message').hide()
-//var line = new Seekbar.Seekbar({renderTo:'#preview-progress', minValue:0, maxValue:100, barSize:5});
-//line.setValue(10);
-//$(document).ready(line.render);
 
 var mysql = require('mysql');
 
@@ -469,18 +453,13 @@ db_connection.connect(
     console.log("Connected!");
 });
 
-//$$('display_list').clearAll()
 
-// var sql = "SELECT title, artist, album, date_added, last_played, rating, bpm, stream_length FROM tracks LIMIT 200";
 var sql = `SELECT id, favorite, disabled as enabled, title, artist,
             album, genre, date_added, date_modified, rating, bpm, stream_length,
             max(session_tracks.start_time) as last_played, count(session_tracks.track_id) as play_count
            FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id`
 
 var track_list = [];
-// $$('display_list').load = function(url) {
-//     console.log('loading', this)
-// }
 
 db_connection.query(sql, function (err, result) {
     if (err) throw err;
@@ -691,7 +670,6 @@ webix.UIManager.addHotKey("shift+backspace", function () {
 
 
 function preview_play_track_id(id) {
-    //console.log('preview play current song');
     db_connection.query(
         `SELECT title, artist, album, bpm, file_name, cover_small,
                 stream_start, stream_end, settings.db_music_cache as music_root,
@@ -700,7 +678,9 @@ function preview_play_track_id(id) {
         function(error, result) {
             if (error) throw error;
             result = result[0];
-            file_name = `${result.music_root}/${result.file_name}`;
+            file_name = path.join(result.music_root, result.file_name);
+            console.log(file_name);
+            //file_name = `${result.music_root}/${result.file_name}`;
             cover_file_name = `${result.image_root}/${result.cover_small}`;
             stream_length = (result.stream_end-result.stream_start) / 1000000000;
             $$('preview_title').define('label', result.title)
@@ -710,7 +690,7 @@ function preview_play_track_id(id) {
             if (result.cover_small == null) {
                 cover_source = "../resources/images/default_album_cover.png"
             } else {
-                cover_source = `${result.image_root}/${result.cover_small}`;
+                cover_source = `file://${result.image_root}/${result.cover_small}`;
             }
 
             var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
@@ -742,14 +722,10 @@ webix.UIManager.addHotKey("shift+space", function () {
 
 
 webix.UIManager.addHotKey("shift+q", function () {
-    //console.log('add to queue', $$('display_list').getSelectedId());
     var id = $$('display_list').getSelectedId().id;
     sql = `SELECT 1 FROM session_queue WHERE track_id=${id} LIMIT 1`;
     db_connection.query(sql,
     function (err, result){
-        //console.log(err);
-        //console.log(sql);
-        //console.log(result);
         if (result.length == 0){
             pos_id_sql = 'SELECT max(id) + 1 as new_id, max(position)+1 as new_position FROM session_queue';
             db_connection.query(pos_id_sql, function (err, result) {
@@ -791,15 +767,9 @@ webix.UIManager.addHotKey("shift+s", function () {
     sql = `SELECT 1 FROM short_listed_tracks WHERE track_id=${id} LIMIT 1`;
     db_connection.query(sql,
         function (err, result){
-            // console.log(err);
-            // console.log(sql);
-            // console.log(result);
             if (result.length == 0){
                 insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
-                //console.log(insert_sql);
                 db_connection.query(insert_sql, function(error, result){
-                    //webix.message({type:"default",
-                    //               text:"Form Data is Invalid"});
                 });
                 }
             }
@@ -820,13 +790,6 @@ webix.UIManager.addHotKey("shift+a", function () {
 }, $$('display_list'));
 
 
-// webix.UIManager.addHotKey("ctrl+g", function () {
-//     $$('show_genres').click();
-//     $$('genres_list_view').focus();
-//     $$('genres_list_view').select(0);
-//
-// });
-
 $$('genres_list_popup').attachEvent('onShow',
 function () {
     webix.UIManager.setFocus($$('genres_list_view'));
@@ -844,7 +807,6 @@ function () {
     webix.UIManager.setFocus($$('sessions_list_view'));
 });
 webix.UIManager.addHotKey("enter", function () {
-//    console.log('make track available');
     var foo = $$('sessions_list_view')
     var g = foo.getSelectedItem();
     display_session(g.id)();

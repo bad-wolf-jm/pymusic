@@ -1,4 +1,5 @@
-zmq = require('zmq');
+zmq = require('zeromq');
+path = require('path');
 
 command_socket = zmq.socket('req');
 command_socket.connect('tcp://127.0.0.1:9898');
@@ -47,14 +48,10 @@ preview_time_socket.on("message", function( payload ) {
        $$('preview_time').define('label', format_nanoseconds(data.args[0]))
        $$('preview_time').refresh();
        preview_seek.animate(data.args[0] / preview_track_duration);
-       //console.log(data.args[0] / preview_track_duration)
-       //preview_seek.setValue(data.args[0]);
-       //preview_seek.render();
    } else if (data.event == 'track_duration_notice') {
        $$('preview_length').define('label', format_nanoseconds(data.args[0]))
        $$('preview_length').refresh();
        preview_track_duration = data.args[0];
-       //preview_seek.maxValue = data.args[0];
    } else if (data.event == 'end_of_stream') {
        preview_track_duration = 1;
    }
@@ -65,24 +62,15 @@ preview_time_socket.on("message", function( payload ) {
 main_time_socket = zmq.socket('pull');
 main_time_socket.connect('tcp://127.0.0.1:5557');
 main_time_socket.on("message", function( payload ) {
-    //console.log("Received reply", payload);
     data = JSON.parse(payload.toString());
     if (data.event == 'track_position_notice') {
-        //position_seconds = data.args[0] / 1000000000;
-        //if (position_seconds != main_track_seconds_elapsed) {
         $$('main_track_time').define('label', format_nanoseconds(data.args[0]))
         $$('main_track_time').refresh()
-        //console.log(data.args[0] / current_track_length);
         main_player_progress.animate(data.args[0] / current_track_length);
-        //line.setValue(data.args[0] / 1000000000);
     } else if (data.event == 'track_duration_notice') {
-            //main_track_seconds_elapsed = dura
             $$('main_track_length').define('label', format_nanoseconds(data.args[0]))
             $$('main_track_length').refresh();
             current_track_length = data.args[0];
-            //console.log(current_track_length);
-    //    }
-        //line.maxValue = data.args[0] / 1000000000;
     } else if (data.event == 'end_of_stream') {
         if (!stop_request){
             db_connection.query(
@@ -112,8 +100,6 @@ main_time_socket.on("message", function( payload ) {
     }
 });
 
-
-//var next_track_delay_id
 
 function mark_as_played(queue_position, continuation) {
     current_time = webix.Date.dateToStr('%Y-%m-%d %H:%i:%s')(new Date());
@@ -175,7 +161,7 @@ function play_next_track() {
                                 function (error, result) {
                                     if (error) throw error;
                                     result = result[0];
-                                    file_name = `${result.music_root}/${result.file_name}`;
+                                    file_name = path.join(result.music_root, result.file_name);
                                     //cover_file_name = `${result.image_root}/${result.cover_small}`;
                                     stream_length = (result.stream_end-result.stream_start) / 1000000000;
                                     $$('main-title').define('label', result.title)
@@ -185,7 +171,7 @@ function play_next_track() {
                                     if (result.cover_small == null) {
                                         cover_source = "../resources/images/default_album_cover.png"
                                     } else {
-                                        cover_source = `${result.image_root}/${result.cover_small}`;
+                                        cover_source = `file://${result.image_root}/${result.cover_small}`;
                                     }
 
                                     var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`

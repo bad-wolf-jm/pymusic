@@ -7,7 +7,7 @@ function queue_element_template(element) {
     if (element.cover == null) {
         cover_source = "../resources/images/default_album_cover.png"
     } else {
-        cover_source = `${element.image_root}/${element.cover}`
+        cover_source = `file://${element.image_root}/${element.cover}`
     }
     return `<img class="ui left floated image"  style="float:left; width:auto;" src="${cover_source}" height='${cover_size}' width='${cover_size}'></img>
             <div style="margin:0px; padding:0px; float:left; width:250px">
