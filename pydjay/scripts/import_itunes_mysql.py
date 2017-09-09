@@ -1,30 +1,25 @@
-from pydjay.core.library import init, load_file as lib_load_file, save
-from pydjay.core.library.track import Track, save_mp3_file
+#!/usr/bin/python
 import os
+import sys
+print os.getcwd()
+sys.path.append('.')
+from pydjay.core.library import load_file as lib_load_file
+#from pydjay.core.library.track import Track, save_mp3_file
+#import os.getcwd()
 import sys
 import io
 from PIL import Image
 import urllib
 import array
-import cPickle as pickle
-from gi.repository import GObject, GLib
 
 from pydjay.core.audio.wavegen import WaveformGenerator
-from kivy.clock import mainthread, Clock
-from kivy.support import install_gobject_iteration
-from kivy.base import EventLoop, runTouchApp
-from kivy.uix.label import Label
 import pprint
 import subprocess
 import datetime
 
-from pydjay.utils.xml import Parser
 import plistlib
 
 foo = plistlib.readPlist("Music.xml")
-# print foo
-
-# Parser.parse(open('Music.xml').read())
 
 
 def _get_string(list):
@@ -40,23 +35,7 @@ def node_to_dict(node):
     return result
 
 
-# install_gobject_iteration()
-
-
 _root_folder = os.path.abspath(os.path.expanduser('~/.pydjay'))
-init(_root_folder)
-
-loop = GLib.MainLoop()
-
-#scan_root = sys.argv[1]
-
-timeout_time = 10
-
-# if not os.path.exists(scan_root):
-#    sys.exit(1)
-
-
-db = {}
 
 
 def quote(str_, i=None):
@@ -65,13 +44,6 @@ def quote(str_, i=None):
     bar = bar.replace("\"", "-")
     bar = bar.replace("?", "-")
     return bar
-
-
-def create_thumbnail(track, image, size, type):
-    new_path = os.path.join(_root_folder, 'image_cache', type + '_' + quote(str(track), "") + ".png")
-    image.thumbnail(size, Image.ANTIALIAS)
-    image.save(new_path)
-    return new_path
 
 
 files = []
@@ -190,9 +162,9 @@ def load_track(f):
     return track
 
 
-def _next_track(data_points):
-    Clock.schedule_once(_do_next_track, 0)
-    Clock.unschedule(force_process_next)
+#def _next_track(data_points):
+#    Clock.schedule_once(_do_next_track, 0)
+#    Clock.unschedule(force_process_next)
 
 
 last_time = None
@@ -203,14 +175,9 @@ def _print_time(total, time, point):
     global timeout_time
     cur_time = time / 1000000000
     timeout_time = 10
-    # print time, total
-    # if time > total:
-    #    Glib.timeout_add
     if last_time is None or cur_time - last_time > 2:
         printProgress(time, total, "Generating Waveform", "completed")
         last_time = cur_time
-
-# loop.run()
 
 
 def printProgress(iteration, total, prefix='', suffix='', decimals=0, barLength=30):
@@ -253,48 +220,41 @@ def add_track(i, track):
             'style': STRING(addslashes(track['style'])),
             'vocals': STRING(addslashes(track['vocals'])),
             'bpm': none_to_null(track['bpm']),
-            'rating': none_to_null(track['rating']),  # track.metadata.rating,
-            'disabled': bool_to_int(track['disabled']),  # track.metadata.loved,
-            'favorite': none_to_zero(track['favorite']),  # track.metadata.loved,
-            'comments': STRING(addslashes(track['comments'])),  # track.metadata.comments,
-            'last_played': DATE(track['last_played']),  # None,
-            'waveform': STRING(addslashes(track['waveform'])),  # None,
-            'cover_medium': STRING(addslashes(track['cover_medium'])),  # cover_art_data['small'],
-            'cover_small': STRING(addslashes(track['cover_small'])),  # cover_art_data['tiny'],
-            'cover_large': STRING(addslashes(track['cover_large'])),  # cover_art_data['medium'],
-            'cover_original': STRING(addslashes(track['cover_original'])),  # cover_art_data['original'],
-            'track_length': none_to_null(track['track_length']),  # track.info.stream_length,
-            'stream_start': none_to_null(track['stream_start']),  # 0,
-            'stream_end': none_to_null(track['stream_end']),  # track.info.stream_length,
-            'stream_length': none_to_null(track['stream_length']),  # track.info.stream_length,
-            'date_added': DATE(track['date_added']),  # None,
-            'date_modified': DATE(track['date_modified']),  # None,
-            'bitrate': none_to_null(track['bitrate']),  # track.info.bitrate,
-            'samplerate': none_to_null(track['samplerate']),  # track.info.samplerate,
-            'file_name': STRING(addslashes(track['file_name'])),  # f,
-            'original_file_name': STRING(addslashes(track['original_file_name'])),  # f,
-            'file_size': track['file_size'],  # file_size,
+            'rating': none_to_null(track['rating']),
+            'disabled': bool_to_int(track['disabled']),
+            'favorite': none_to_zero(track['favorite']),
+            'comments': STRING(addslashes(track['comments'])),
+            'last_played': DATE(track['last_played']),
+            'waveform': STRING(addslashes(track['waveform'])),
+            'cover_medium': STRING(addslashes(track['cover_medium'])),
+            'cover_small': STRING(addslashes(track['cover_small'])),
+            'cover_large': STRING(addslashes(track['cover_large'])),
+            'cover_original': STRING(addslashes(track['cover_original'])),
+            'track_length': none_to_null(track['track_length']),
+            'stream_start': none_to_null(track['stream_start']),
+            'stream_end': none_to_null(track['stream_end']),
+            'stream_length': none_to_null(track['stream_length']),
+            'date_added': DATE(track['date_added']),
+            'date_modified': DATE(track['date_modified']),
+            'bitrate': none_to_null(track['bitrate']),
+            'samplerate': none_to_null(track['samplerate']),
+            'file_name': STRING(addslashes(track['file_name'])),
+            'original_file_name': STRING(addslashes(track['original_file_name'])),
+            'file_size': track['file_size'],
             'hash': STRING(track['hash']),
             'play_at': STRING(track['play_at']),
             'kind': STRING(track['kind']),
             'category': STRING(track['category']),
-            'description': STRING(track['description']),  # mp3hash(f)
+            'description': STRING(track['description']),
         }
-        # print i
         sql = insert_track_sql.format(**track_info)
-        # print sql
         cursor.execute(sql)
 
 
-def create_thumbnail(track, image, size, type, name):
-    new_name = type + '_' + name + ".png"
-    new_path = os.path.join('sql_image_cache', new_name)  # type + '_' +
-    # name  # quote(str(track), "")
-    #+ ".png")
-    if not os.path.exists(new_path):
-        image.thumbnail(size, Image.ANTIALIAS)
-        image.save(os.path.join(_root_folder, new_path))
-    return new_name
+def create_thumbnail(track, image, size, folder, name):
+    image.thumbnail(size, Image.ANTIALIAS)
+    image.save(os.path.join(os.path.expanduser('~/.pydjay/sql_image_cache'), name))
+    return name
 
 
 def quote(str_, *i):
@@ -304,6 +264,17 @@ def quote(str_, *i):
     bar = bar.replace(u"?", u"-")
     return bar
 
+
+def make_unique_filename(folder, prefix, extension):
+    template_name = prefix+"_{index}.{ext}"
+    index = 1
+    name = template_name.format(index = index, ext=extension)
+    p = os.path.join(folder, name)
+    while os.path.exists(p):
+        index += 1
+        name = template_name.format(index = index, ext=extension)
+        p = os.path.join(folder, name)
+    return name
 
 def process_track_queue(*args):
     global wg
@@ -323,12 +294,14 @@ def process_track_queue(*args):
         else:
             print track.location
 
-        mp3_file = quote("%s - %s (%s).mp3" % (f['title'],  f['artist'], f['album']))
+        #mp3_file = quote("%s - %s (%s).mp3" % (f['title'],  f['artist'], f['album']))
+        #mp3_path = os.path.join(os.path.expanduser('~/.pydjay/sql_music_cache'), mp3_file)
+        mp3_file= make_unique_filename(os.path.expanduser('~/.pydjay/sql_music_cache'), 'track', 'mp3')
         mp3_path = os.path.join(os.path.expanduser('~/.pydjay/sql_music_cache'), mp3_file)
 
-        def _f(x): return x if ord(x) < 128 else '__'
-        x = [_f(x) for x in mp3_file]
-        cover_art_filename = quote("".join(x))
+        #def _f(x): return x if ord(x) < 128 else '__'
+        #x = [_f(x) for x in mp3_file]
+        #cover_art_filename = quote("".join(x))
 
         if not os.path.exists(mp3_path):
             subprocess.call(['avconv', '-y', '-i', f['file_name'], '-acodec', 'libmp3lame', '-ab',  '320k', '-vn', '-r', '48000', mp3_path])
@@ -348,7 +321,7 @@ def process_track_queue(*args):
         }
         f.update(foo)
 
-        wave_file = quote("%s - %s (%s).wv" % (f['title'],  f['artist'], f['album']))
+        wave_file = make_unique_filename(os.path.expanduser('~/.pydjay/sql_wave_cache'), 'waveform', 'wv')  #quote("%s - %s (%s).wv" % (f['title'],  f['artist'], f['album']))
         wave_path = os.path.join(os.path.expanduser('~/.pydjay/sql_wave_cache'), wave_file)
         if not os.path.exists(wave_path):
             try:
@@ -385,142 +358,33 @@ def process_track_queue(*args):
                 data = io.BytesIO(im_data)
                 image = Image.open(data)
                 cover_art_data = {}
-                cover_art_filename = quote(u'cover_im_{}-{}'.format(f['album'], f['artist']))
+                cover_art_filename_original = make_unique_filename(os.path.expanduser('~/.pydjay/sql_image_cache'), 'cover_original', 'png')
+                cover_art_filename_small = make_unique_filename(os.path.expanduser('~/.pydjay/sql_image_cache'), 'cover_small', 'png')
+                cover_art_filename_medium = make_unique_filename(os.path.expanduser('~/.pydjay/sql_image_cache'), 'cover_medium', 'png')
+                cover_art_filename_large = make_unique_filename(os.path.expanduser('~/.pydjay/sql_image_cache'), 'cover_large', 'png')
+                #quote(u'cover_im_{}-{}'.format(f['album'], f['artist']))
 
-                def _f(x): return x if ord(x) < 128 else '__'
-                x = [_f(x) for x in cover_art_filename]
-                cover_art_filename = "".join(x)
-                or_image_filename = 'original_' + cover_art_filename + ".png"
-                or_image_path = os.path.join('sql_image_cache', or_image_filename)
-                PPPP = os.path.join(_root_folder, 'sql_image_cache', or_image_filename)
-                if not os.path.exists(PPPP):
-                    image.save(PPPP)
-                f['cover_original'] = or_image_filename
-                f['cover_large'] = create_thumbnail(track, image, (320, 320), 'large', cover_art_filename)
-                f['cover_medium'] = create_thumbnail(track, image, (160, 160), 'medium', cover_art_filename)
-                f['cover_small'] = create_thumbnail(track, image, (100, 100), 'small', cover_art_filename)
+                def P(name):
+                    return os.path.join(os.path.expanduser('~/.pydjay/sql_image_cache'), name)
+                #def _f(x): return x if ord(x) < 128 else '__'
+                #x = [_f(x) for x in cover_art_filename]
+                #cover_art_filename = "".join(x)
+                #or_image_filename = 'original_' + cover_art_filename + ".png"
+                #or_image_path = os.path.join('sql_image_cache', or_image_filename)
+                #PPPP = os.path.join(_root_folder, 'sql_image_cache', or_image_filename)
+                #if not os.path.exists(PPPP):
+                image.save(P(cover_art_filename_original))
+                folder = os.path.expanduser('~/.pydjay/sql_image_cache')
+                track = None
+                f['cover_original'] = cover_art_filename_original
+                f['cover_large'] = create_thumbnail(track, image, (320, 320), folder, cover_art_filename_large)
+                f['cover_medium'] = create_thumbnail(track, image, (160, 160), folder, cover_art_filename_medium)
+                f['cover_small'] = create_thumbnail(track, image, (100, 100), folder, cover_art_filename_small)
                 index += 1
+            else:
+                print ("")
 
         add_track(0, f)
+        connection.commit()
 
-    connection.commit()
-
-
-# def REST():
-#         mp3_file = quote("%s - %s (%s).mp3"% (track.metadata.title, track.metadata.artist, track.metadata.album))
-#
-#
-#         mp3_path = os.path.join('/Users/jihemme/Music/Blues MP3', mp3_file)
-#
-#         if not os.path.exists(mp3_path):
-#             #subprocess.call(['avconv', '-y',
-#             #                 '-i',
-#             #                 track.location,
-#             #                 '-acodec', 'libmp3lame',
-#             #                 '-ab',  '320k',
-#             #                 '-vn',
-#             #                 '-r', '48000',
-#             #                 mp3_path])
-#             pass
-#         #print 'Converting'
-#         #print 'XXXXXXXXXXXXXX', track.location
-#         file_meta = lib_load_file(track.location)
-#         if file_meta is not None:
-#             album_art = file_meta.metadata.album_cover
-#         else:
-#             print track.location
-#             #sys.exit(0)
-#             print album_art
-#         #sys.exit(0)
-#         track.metadata._metadata['album_art'] = album_art
-#         track.location = mp3_path
-#         #if album_art is not None:
-#         ##
-#         #    sys.exit()
-#         save_mp3_file(track)
-#
-#         #if track is not None:
-#         #    #print 'file://' + urllib.quote(os.path.abspath(f))
-#         #    path = os.path.join(_root_folder, 'wave_cache', quote(str(track), "")+".wf")
-#         #    #if not os.path.exists(path):
-#         #    #    try:
-#         #    #        wg.generate_waveform(track.location) #= WaveformGenerator(f, 35000)
-#         #    #        #Clock.schedule_interval(force_process_next, 1)
-#         #    #    except Exception, details:
-#         #    #        print "BRABRA", details
-#         #    #        track.metadata._metadata['waveform'] = None
-#         #    #        db[track.location] = track
-#         #    #        Clock.schedule_once(process_track_queue, 0)
-#         #    #        #GLib.timeout_add(1,process_track_queue)
-#         #    #
-#         #    #        else:
-#         #    #            print 'WAVEFORM EXISTS'
-#         #    #            track.metadata._metadata['waveform'] = path
-#         #    #            db[track.location] = track
-#         #    Clock.schedule_once(process_track_queue, 0)#
-# ##
-# #                #GLib.timeout_add(1, process_track_queue)
-#
-# #        else:
-# #            #process_track_queue()
-# #            #db[track.location] = track
-# #            Clock.schedule_once(process_track_queue, 0)
-# #            #GLib.timeout_add(1, process_track_queue)
-#
-#
-#
-#
-#
-#
-#
-#
-# #def _do_next_track(*data_points):
-# #    wave_points = wg.get_data_points()
-# #    path = os.path.join(_root_folder, 'wave_cache', quote(str(track), "")+".wf")
-# #    #file_ = open(path, 'w')
-# #    print path
-# #    flat_wave = [num for pair in wave_points for num in pair]
-# #    arr = array.array('f', flat_wave)
-# #    #print flat_wave[0:10]
-# #    #print wave[0:5]
-# #    #file_.close()
-# #    try:
-# #        file_ = open(path, 'wb')
-# #        arr.tofile(file_)
-# #        file_.close()
-# #        track.metadata._metadata['waveform'] = path
-# #    except Exception, details:
-# #        print details
-# #        track.metadata._metadata['waveform'] = None
-# #    db[track.location] = track
-# #    #GLib.timeout_add(1, process_track_queue)
-# #
-# #    Clock.schedule_once(process_track_queue, 0)
-#
-#
-# #wg = WaveformGenerator(35000)
-# #wg.set_process_done_callback(_next_track)
-# #wg.set_data_point_callback(_print_time)
-# track = None
-# Clock.schedule_once(process_track_queue, 0)
-#
-# #GLib.timeout_add(0, process_track_queue)
-# xxx = Label()
-
-
-# try:
-runTouchApp(xxx)
-# EventLoop.run()
-print 'running main loop'
-# loop.run()
-print 'stopped main loop'
-
-# if _root_folder is not None:
-#    foo = open(os.path.join(_root_folder, "library__2.data"), "w")
-#    tracks = [(key, db[key].location, db[key].info._metadata, db[key].metadata._metadata) for key in db]
-#    #print tracks
-#    pickle.dump(tracks, foo)
-# db = json.dumps(tracks, indent=4)
-#    #foo.write(db)
-#    #foo.close()
-# save()
+process_track_queue()

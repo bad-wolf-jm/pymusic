@@ -53,9 +53,18 @@ function update_queue_labels() {
 
 var queue_display_template = {
     type:'line',
+    css:{
+        //'background-color':'#5c5c5c',
+        //'padding':'5px',
+        border: '0px solid #3c3c3c'
+    },
     rows:[
-        {height:7},
         {
+            css:{
+                'background-color':'#5c5c5c',
+                'padding':'5px',
+                border: '1px solid #3c3c3c'
+             },
             rows: [
                 {
                     view: 'label',
@@ -81,11 +90,16 @@ var queue_display_template = {
                 }
             ]
         },
-        {height:3},
+        //{height:3},
         {
             view:"list",
             id:'queue_list',
             itemHeight:35,
+            css:{
+                //'background-color':'#5c5c5c',
+                //'padding':'5px',
+                border: '1px solid #5c5c5c'
+             },
             //css:{height:"1000px"},
             select:true,
             template: queue_element_template,

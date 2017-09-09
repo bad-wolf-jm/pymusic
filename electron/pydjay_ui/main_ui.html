@@ -1,25 +1,40 @@
 <!DOCTYPE html>
 <title>PYMUSIC DJ App</title>
-<script src="../node_modules/jquery/dist/jquery.min.js"></script>
-<script src="../node_modules/semantic-ui/dist/semantic.min.js"></script>
+<!-- <script src="../node_modules/jquery/dist/jquery.min.js"></script> -->
+<!-- <script src="../node_modules/semantic-ui/dist/semantic.min.js"></script> -->
 <script src="../node_modules/webix/webix.js"></script>
-<script src="../lib/utils.js"></script>
 <script src="../lib/progressbar.js"></script>
-<script src="../lib/seekbar.js"></script>
-<script src="../lib/main_list_display.js"></script>
-<script src="../lib/queue_display.js"></script>
-<script src="../lib/sidebar.js"></script>
-<script src="../lib/playback.js"></script>
+<!-- <script src="../lib/seekbar.js"></script> -->
+<script src="./utils.js"></script>
+<script src="./main_list_display.js"></script>
+<script src="./queue_display.js"></script>
+<script src="./sidebar.js"></script>
+<script src="./playback.js"></script>
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
+<link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">
+<link rel="stylesheet" href="../node_modules/webix/skins/contrast.css">
 <link rel="stylesheet" href="../node_modules/semantic-ui/dist/semantic.min.css">
 
 <style>
     .webix_template {
         margin: 0px;
         padding: 0px;
+        background-color:'#3c3c3c';
+        border: '0px solid #3c3c3c'
     }
     .unavailable_track {
         opacity:0.25;
+    }
+    .webix_img_btn {
+        color: #cccccc;
+    }
+
+    .webix_el_button {
+        color: #cccccc;
+    }
+    .webix_icon_btn, .webix_el_button .webix_img_btn  {
+        color: #cccccc;
+
     }
 </style>
 
@@ -28,23 +43,39 @@
   </article>
 </body>
 <script type="text/javascript">
-
+$ = require('jquery')
 var path = require('path');
 
 var player_window = {
     height:58,
     gravity:1,
-    css:{'background-color':'#EEEEEE',
-         'margin':'3px',
-         border: '1px solid #CCCCCC',
+    css:{
+        'background-color':'#3c3c3c',
+        'padding':'0px',
+        border: '1px solid #CCCCCC',
      },
     cols:[
         {id:'main-cover-image', view: 'template', width:58, height:58, template: "FOO"},
         {
             rows:[
-                {view: 'label', id:'main-title', css:{'text-align':'center', 'text-transform':'uppercase', 'font-weight':'bold'}, label: 'Title Of Song', height:20},
-                {view: 'label', id:'main-artist', css:{'text-align':'center'}, label: 'Artist - Album', height:20},
-
+                {
+                    view: 'label',
+                    id:'main-title',
+                    css: {
+                        'text-align':'center',
+                        'text-transform':'uppercase',
+                        'font-weight':'bold'
+                    },
+                    label: 'Title Of Song', height:20
+                },
+                {
+                    view: 'label',
+                    id:'main-artist',
+                    css: {
+                        'text-align':'center'
+                    },
+                    label: 'Artist - Album', height:20
+                },
                 {cols:[
                     {
                         view: 'label',
@@ -56,8 +87,8 @@ var player_window = {
                     },
                     {
                         height:5,
-                        css:{margin:0, padding:0},
-                        template:'<div id="main-player-progress" style="width:100%; height:75%; position:relative; top:0%; transform: translateY(-50%)"></div>'},
+                        css:{margin:0, padding:0, border: '0px solid #3c3c3c'},
+                        template:'<div id="main-player-progress" style="border: \'0px solid black\'; width:100%; height:75%; position:relative; top:0%; transform: translateY(-50%)"></div>'},
                     {
                         view: 'label',
                         id:'main_track_length',
@@ -88,9 +119,10 @@ $(document).ready( () => {
 var preview_player_window = {
     height:125,
     gravity:1,
-    css:{'background-color':'#EEEEEE',
-         'margin':'3px',
-         border: '1px solid #CCCCCC',
+    css:{
+        'background-color':'#5c5c5c',
+        'padding':'1px',
+        border: '1px solid #3c3c3c'
      },
      rows: [{
                 cols:[
@@ -108,23 +140,39 @@ var preview_player_window = {
                             {
                                 view: 'label',
                                 id:'preview_title',
-                                css:{'text-align':'left', 'font-weight':'bold', 'text-transform':'uppercase',  'white-space':'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'},
+                                css: {
+                                    'text-align':'left',
+                                    'font-weight':'bold',
+                                    'text-transform':'uppercase',
+                                    'white-space':'nowrap',
+                                    'overflow': 'hidden',
+                                    'text-overflow': 'ellipsis'
+                                },
                                 label: 'Title Of Song',
                                 height:20
                             },
                             {
                                 view: 'label',
                                 id:'preview_artist',
-                                css:{'text-align':'left', 'white-space':'nowrap', 'overflow': 'hidden', 'text-overflow': 'ellipsis'},
+                                css: {
+                                    'text-align':'left',
+                                    'white-space':'nowrap',
+                                    'overflow': 'hidden',
+                                    'text-overflow': 'ellipsis'
+                                },
                                 label: 'Artist - Album',
                                 height:20
-                            },{}
-
+                            },
+                            {}
                         ]
                     },
                     {width:10}
-                ]},
-            {height:5, template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%; transform: translateY(-200%)"></div>'},
+                ]
+            },
+            {
+                height:5,
+                template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%; transform: translateY(-200%)"></div>'
+            },
             {cols:[
                 {
                     view: 'label',
@@ -177,8 +225,25 @@ $$('genres_list_view').attachEvent("onItemClick", function(id, e, node){
     var item = this.getItem(id);
     //console.log(item);
     display_genre(item.name)();
-    genres_list_popup.hide()
+    $$('genres_list_popup').hide()
 });
+$$('genres_list_popup').attachEvent('onShow',
+function () {
+    webix.UIManager.setFocus($$('genres_list_view'));
+});
+$$('genres_list_popup').attachEvent('onHide',
+function () {
+    webix.UIManager.setFocus($$('display_list'));
+});
+webix.UIManager.addHotKey("enter", function () {
+    var foo = $$('genres_list_view')
+    var g = foo.getSelectedItem();
+    display_genre(g.name)();
+    $$('genres_list_popup').hide();
+    webix.UIManager.setFocus($$('display_list'));
+}, $$('genres_list_view'));
+
+
 
 sessions_list_popup = webix.ui(sessions_list_popup)
 sessions_list_popup.hide();
@@ -196,8 +261,24 @@ sessions_list_popup.attachEvent('onShow', function () {
 $$('sessions_list_view').attachEvent("onItemClick", function(id, e, node){
     var item = this.getItem(id);
     display_session(item.id)();
-    sessions_list_popup.hide()
+    $$('sessions_list_popup').hide();
 });
+$$('sessions_list_popup').attachEvent('onShow',
+function () {
+    webix.UIManager.setFocus($$('sessions_list_view'));
+});
+$$('sessions_list_popup').attachEvent('onHide',
+function () {
+    webix.UIManager.setFocus($$('display_list'));
+});
+webix.UIManager.addHotKey("enter", function () {
+    var foo = $$('sessions_list_view')
+    var g = foo.getSelectedItem();
+    display_session(g.id)();
+    $$('sessions_list_popup').hide();
+    webix.UIManager.setFocus($$('display_list'));
+}, $$('sessions_list_view'));
+
 
 
 track_list_popup = webix.ui(track_list_popup)
@@ -214,12 +295,27 @@ track_list_popup.attachEvent('onShow', function () {
 })
 $$('track_list_view').attachEvent("onItemClick", function(id, e, node){
     var item = this.getItem(id);
-    //console.log(item);
     display_tag(item.id)();
-    track_list_popup.hide()
+    $$('track_list_popup').hide()
 });
-
-
+$$('track_list_popup').attachEvent('onShow',
+function () {
+    webix.UIManager.setFocus($$('track_list_view'));
+});
+$$('track_list_popup').attachEvent('onHide',
+function () {
+    webix.UIManager.setFocus($$('display_list'));
+});
+webix.UIManager.addHotKey("enter", function () {
+    console.log('make track available');
+}, $$('track_list_popup'));
+webix.UIManager.addHotKey("enter", function () {
+    var foo = $$('track_list_view')
+    var g = foo.getSelectedItem();
+    display_tag(g.id)();
+    $$('track_list_popup').hide();
+    webix.UIManager.setFocus($$('display_list'));
+}, $$('track_list_view'));
 
 
 
@@ -358,7 +454,8 @@ function volume_popup(id, title, on_change){
                     max: 200,
                     value:100,
                     on: {
-                        onSliderDrag: function () {on_change(this.getValue() / 100.0)}
+                        onSliderDrag: function () {on_change(this.getValue() / 100.0)},
+                        onChange: function () {on_change(this.getValue() / 100.0); $$(id).hide()}
                     }
                 }
             ]
@@ -380,8 +477,8 @@ var datatable = webix.ui({
     rows:[
         {
             css:{
-                'background-color':'#DDDDDD',
-                'margin':'3px',
+                'background-color':'#515151',
+                'padding':'0px',
                 'border-bottom': "1px solid #CCCCCC"
             },
             cols:[
@@ -439,7 +536,8 @@ var datatable = webix.ui({
                             template:'Queue will stop after this song',
                             maxHeight:35
                         }
-                    ]},
+                    ]
+                },
                 {
                     gravity:.5,
                     id:'start-stop-button',
@@ -474,7 +572,7 @@ var datatable = webix.ui({
             cols:[
                 sidebar_template,
                 main_list_display_template,
-                {rows: [queue_display_template,{height:10},preview_player_window]}
+                {rows: [queue_display_template,{height:3},preview_player_window]}
             ]}
     ]
 });
@@ -508,8 +606,6 @@ var track_list = [];
 db_connection.query(sql, function (err, result) {
     if (err) throw err;
     display_track_list('ALL SONGS', result);
-    //$$('display_list').define('data', result);
-    //$$('display_list').refresh();
   });
 
 $$('queue_list').clearAll()
@@ -685,6 +781,7 @@ webix.UIManager.addHotKey("t", function () {
 webix.UIManager.addHotKey("shift+backspace", function () {
     selected_queue_element = $$('queue_list').getSelectedItem();
     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
+    console.log(selected_queue_element.position);
     get_queue_boundary_positions(
         function (min, max) {
             get_track_info_for_queue(selected_queue_element.id,
@@ -699,11 +796,26 @@ webix.UIManager.addHotKey("shift+backspace", function () {
                                     db_connection.query(
                                         `DELETE FROM session_queue WHERE position=0`,
                                         function (err, result) {
-                                            $$('queue_list').remove(selected_queue_element.id)
-                                            update_queue_labels();
+                                            var next_item = $$('queue_list').getNextId(selected_queue_element.id);
+                                            if (next_item == undefined) {
+                                                next_item = $$('queue_list').getPrevId(selected_queue_element.id);
+                                            }
+                                            $$('queue_list').remove(selected_queue_element.id);
+                                            $$('queue_list').data.each(
+                                                function (element) {
+                                                    if (element.position > selected_queue_element_position) {
+                                                        element.position--;
+                                                    }
+                                                }
+                                            );
+                                            if (next_item != undefined) {
+                                                $$('queue_list').select(next_item)
+                                            }
+                                            console.log(next_item);
                                             $$('display_list').removeRowCss(selected_queue_element.track_id, 'unavailable_track');
                                             $$('display_list').getItem(selected_queue_element.track_id).$css="";
                                             $$('display_list').refresh();
+                                            update_queue_labels();
                                         }
                                     )
                                 }
@@ -715,9 +827,6 @@ webix.UIManager.addHotKey("shift+backspace", function () {
         }
     )
 }, $$('queue_list'));
-
-
-
 
 
 function preview_play_track_id(id) {
@@ -742,7 +851,6 @@ function preview_play_track_id(id) {
             } else {
                 cover_source = `file://${result.image_root}/${result.cover_small}`;
             }
-
             var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
             $$('preview-cover-image').define('template', cover_image);
             $$('preview-cover-image').refresh();
@@ -799,6 +907,7 @@ webix.UIManager.addHotKey("shift+q", function () {
                                  ORDER BY session_queue.position`;
                         db_connection.query(sql, function (err, result) {
                             if (err) throw err;
+                            //result[0].id = id;
                             $$('queue_list').add(result[0]);
                             $$('display_list').addRowCss(id, 'unavailable_track');
                             update_queue_labels();
@@ -870,44 +979,10 @@ webix.UIManager.addHotKey("shift+a", function () {
 }, $$('display_list'));
 
 
-$$('genres_list_popup').attachEvent('onShow',
-function () {
-    webix.UIManager.setFocus($$('genres_list_view'));
-});
-webix.UIManager.addHotKey("enter", function () {
-    var foo = $$('genres_list_view')
-    var g = foo.getSelectedItem();
-    display_genre(g.name)();
-    $$('genres_list_popup').hide()
-}, $$('genres_list_view'));
 
 
-$$('sessions_list_popup').attachEvent('onShow',
-function () {
-    webix.UIManager.setFocus($$('sessions_list_view'));
-});
-webix.UIManager.addHotKey("enter", function () {
-    var foo = $$('sessions_list_view')
-    var g = foo.getSelectedItem();
-    display_session(g.id)();
-    $$('sessions_list_popup').hide()
-}, $$('sessions_list_view'));
 
 
-$$('track_list_popup').attachEvent('onShow',
-function () {
-    webix.UIManager.setFocus($$('track_list_view'));
-});
-webix.UIManager.addHotKey("enter", function () {
-    console.log('make track available');
-}, $$('track_list_popup'));
-webix.UIManager.addHotKey("enter", function () {
-//    console.log('make track available');
-    var foo = $$('track_list_view')
-    var g = foo.getSelectedItem();
-    display_tag(g.id)();
-    $$('track_list_popup').hide()
-}, $$('track_list_view'));
 
 
 update_queue_labels();

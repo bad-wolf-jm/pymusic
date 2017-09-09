@@ -131,10 +131,10 @@ function genre_template(element) {
         cover_source = `${element.image_root}/${element.cover}`
     }
     return `<div>
-                <i class="ui left floated list icon"></i>
-                <div style="float:left; margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:70%">${element.name}</div>
-                <div class='ui right floated grey label' style="height:22px; font_size:12px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:20%; text-align:right">${element.count}</div>
-                </div>`
+            <i class="ui left floated list icon"></i>
+            <div style="float:left; margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:70%">${element.name}</div>
+            <div class='ui right floated grey label' style="height:22px; font_size:12px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:20%; text-align:right">${element.count}</div>
+            </div>`
     }
 
 var genres_list_popup =
@@ -237,18 +237,80 @@ var track_list_popup =
 }
 
 var sidebar_template = {
-    css:{'background-color':'#EEEEEE',
-         'padding':'0px',
-         'margin':'0px'},
+    css: {
+        'background-color':'#3f3f3f',
+        'padding':'0px',
+        'margin':'0px',
+        //'color':'#232323'
+    },
     width:125,
     rows: [
-        {id: 'show_all_songs', view:'button', label:'<b>ALL SONGS</b>', type:'icon', icon:'database', click:display_all_songs()},
-        {id: 'show_short_list', view:'button', label:'<b>SHORT LIST</b>', type:'icon', icon:'calendar', click:display_short_listed_songs(), hotkey:'ctrl+shift+s'},
-        {id: 'show_unavailable', view:'button', label:'<b>UNAVAILABLE</b>', type:'icon', icon:'close', click:display_unavailable_songs(), hotkey:'ctrl+shift+u'},
-        {id: 'show_remations', view:'button', label:'<b>RELATIONS</b>', type:'icon', icon:'cog'},
-        {id: 'show_genres', view:'button', label:'<b>GENRES</b>', type:'icon', icon:'folder', popup:'genres_list_popup', hotkey:'ctrl+g'},
-        {id: 'show_lists', view:'button', label:'<b>LISTS</b>', type:'icon', icon:'folder', popup:'track_list_popup', hotkey:'ctrl+l'},
-        {id: 'show_sessions', view:'button', label:'<b>SESSIONS</b>', type:'icon', icon:'folder', popup:'sessions_list_popup', hotkey:'ctrl+s'},
+        {
+            id: 'show_all_songs',
+            // css: {
+            //     'background-color':'#3f3f3f',
+            //     'padding':'0px',
+            //     'margin':'0px',
+            //     'color':'#232323'
+            // },
+            view:'button',
+            label:'<b>ALL SONGS</b>',
+            type:'icon',
+            icon:'database',
+            click:display_all_songs()
+        },
+        {
+            id: 'show_short_list',
+            view:'button',
+            label:'<b>SHORT LIST</b>',
+            type:'icon',
+            icon:'calendar',
+            click:display_short_listed_songs(),
+            hotkey:'ctrl+shift+s'
+        },
+        {
+            id: 'show_unavailable',
+            view:'button',
+            label:'<b>UNAVAILABLE</b>',
+            type:'icon',
+            icon:'close',
+            click:display_unavailable_songs(),
+            hotkey:'ctrl+shift+u'
+        },
+        {
+            id: 'show_remations',
+            view:'button',
+            label:'<b>RELATIONS</b>',
+            type:'icon',
+            icon:'cog'
+        },
+        {
+            id: 'show_genres',
+            view:'button',
+            label:'<b>GENRES</b>',
+            type:'icon',
+            icon:'folder',
+            popup:'genres_list_popup',
+            hotkey:'ctrl+g'
+        },
+        {
+            id: 'show_lists',
+            view:'button',
+            label:'<b>TAGS</b>',
+            type:'icon',
+            icon:'folder',
+            popup:'track_list_popup',
+            hotkey:'ctrl+l'
+        },
+        {
+            id: 'show_sessions',
+            view:'button',
+            label:'<b>SESSIONS</b>',
+            type:'icon',
+            icon:'folder',
+            popup:'sessions_list_popup',
+            hotkey:'ctrl+s'
+        },
         {}
     ]
 }

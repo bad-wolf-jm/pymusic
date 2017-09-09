@@ -97,18 +97,15 @@ volume_control_socket.on("message", function( payload ) {
    if (data.event == 'volume_set_notice') {
        switch (data.kwargs.channels[0]) {
             case 1:
-                console.log('main player volume', data.kwargs.value);
                 $$('main-player-volume').define('label', `${value}%`);
                 $$('main-player-volume').refresh();
                 break;
             case 3:
-                console.log('monitor player volume', data.kwargs.value);
                 monitor_volume = data.kwargs.value;
                 $$('monitor-volume').define('label', `${value}%`)
                 $$('monitor-volume').refresh();
                 break;
             case 5:
-                console.log('precue player volume', data.kwargs.value);
                 $$('precue-player-volume').define('label', `${value}%`)
                 $$('precue-player-volume').refresh();
                 break;

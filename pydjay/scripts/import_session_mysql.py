@@ -1,28 +1,15 @@
-#from pydjay.core.library import init, load_file as lib_load_file, save
-#from pydjay.core.library.track import Track, save_mp3_file
 import os, sys, io
 from PIL import Image
 import urllib
 import array
-#import cPickle as pickle
 from gi.repository import GObject, GLib
-
-#from pydjay.core.audio.wavegen import WaveformGenerator
-#from kivy.clock import mainthread, Clock
-#from kivy.support import install_gobject_iteration
-#from kivy.base import EventLoop, runTouchApp
-#from kivy.uix.label import Label
 import pprint
-#import subprocess
 import datetime
 
-#from pydjay.utils.xml import Parser
 import plistlib
 
 import pymysql
 from mp3hash import mp3hash
-
-# install_gobject_iteration()
 
 connection = pymysql.connect(host="localhost",
                              user='root',
@@ -30,8 +17,6 @@ connection = pymysql.connect(host="localhost",
                              db='pymusic',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
-
-
 
 def addslashes(s):
     if s == None:
@@ -121,7 +106,7 @@ with connection.cursor() as c:
 
         session_data['end_date'] = play_date
         print session_data
-        sql_insert = """INSERT INTO sessions (id, name, start_date, end_date)
+        sql_insert = """INSERT INTO sessions (id, event_name, start_date, end_date)
                     VALUES ({id}, '{name}', {start_date}, {end_date})"""
         session_data['start_date'] = DATE(session_data['start_date'])
         session_data['end_date'] = DATE(session_data['end_date'])
@@ -132,7 +117,6 @@ with connection.cursor() as c:
         d += 1
 
 connection.commit()
-#pprint.pprint (foo)
 sys.exit(0)
 
 
