@@ -667,6 +667,8 @@ function get_queue_boundary_positions(cont){
 webix.UIManager.addHotKey("u", function () {
     selected_queue_element = $$('queue_list').getSelectedItem();
     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
+    swapped_element = $$('queue_list').getItem($$('queue_list').getPrevId(selected_queue_element.id));
+
     get_queue_boundary_positions(
         function (min, max) {
             new_position = Math.max(selected_queue_element_position - 1, min)
@@ -685,7 +687,8 @@ webix.UIManager.addHotKey("u", function () {
                                             `UPDATE session_queue SET position=${selected_queue_element_position} WHERE position=0`,
                                             function (err, result) {
                                                 if (err) throw err;
-                                                    selected_queue_element.position = new_position;
+                                                swapped_element.position = selected_queue_element_position;
+                                                selected_queue_element.position = new_position;
                                                 $$('queue_list').moveUp(selected_queue_element.id, 1)
                                             }
                                         )
@@ -703,6 +706,7 @@ webix.UIManager.addHotKey("u", function () {
 webix.UIManager.addHotKey("d", function () {
     selected_queue_element = $$('queue_list').getSelectedItem();
     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
+    swapped_element = $$('queue_list').getItem($$('queue_list').getNextId(selected_queue_element.id));
     get_queue_boundary_positions(
         function (min, max) {
             new_position = Math.min(selected_queue_element_position + 1, max)
@@ -721,7 +725,8 @@ webix.UIManager.addHotKey("d", function () {
                                             `UPDATE session_queue SET position=${selected_queue_element_position} WHERE position=0`,
                                             function (err, result) {
                                                 if (err) throw err;
-                                                    selected_queue_element.position = new_position;
+                                                swapped_element.position = selected_queue_element_position;
+                                                selected_queue_element.position = new_position;
                                                 $$('queue_list').moveDown(selected_queue_element.id, 1)
                                             }
                                         )
@@ -753,10 +758,24 @@ webix.UIManager.addHotKey("t", function () {
                                     `UPDATE session_queue SET position=position+1 WHERE position>=${min}`,
                                     function (err, result) {
                                         if (err) throw err;
+                                        $$('queue_list').data.each(
+                                            function (element) {
+                                                if (element.position > min) {
+                                                    element.position++;
+                                                }
+                                            }
+                                        );
                                         db_connection.query(
                                             `UPDATE session_queue SET position=position-1 WHERE position>${selected_queue_element_position}`,
                                             function (err, result) {
                                                 if (err) throw err;
+                                                $$('queue_list').data.each(
+                                                    function (element) {
+                                                        if (element.position > selected_queue_element_position) {
+                                                            element.position--;
+                                                        }
+                                                    }
+                                                );
                                                 db_connection.query(
                                                     `UPDATE session_queue SET position=${new_position} WHERE position=0`,
                                                     function (err, result) {
