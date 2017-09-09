@@ -5,7 +5,7 @@ import os
 
 main_player = AudioServer("MainPlayer", 2, port=9999, event_port=5557)
 preview_player = AudioServer("PreviewPlayer", 2, port=9998, event_port=5556)
-volume_control = VolumeControlServer("VolumeControl", num_channels=6)
+volume_control = VolumeControlServer("VolumeControl", num_channels=6, event_port=5555)
 
 preview_player.connect_outputs(output_1="VolumeControl:input_5",
                                output_2="VolumeControl:input_6")

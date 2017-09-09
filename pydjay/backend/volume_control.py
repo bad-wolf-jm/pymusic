@@ -1,8 +1,5 @@
-# import zmq
-# import threading
-
 from pydjay.core.audio.volume import VolumeController
-from pydjay.backend.command_server import RPCServer  # , PushServer
+from pydjay.backend.command_server import RPCServer
 from pydjay.backend.push_server import PushServer
 
 

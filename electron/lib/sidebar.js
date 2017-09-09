@@ -1,9 +1,12 @@
-//genres_dropdown_collapsed = true;
-//genres_query = `SELECT DISTINCT genre FROM tracks ORDER BY genre`
 
 
 function display_track_list(list_name, list_elements) {
     $$('display_list').clearAll()
+    for(i=0; i<list_elements.length; i++){
+        if (!list_elements[i].available){
+            list_elements[i].$css = "unavailable_track";
+        }
+    }
     $$('display_list').define('data', list_elements);
     $$('display_list').refresh();
     $$('playlist_name').define('label', list_name);
@@ -15,8 +18,10 @@ var display_list_fields = 'id, favorite, disabled as enabled, title, artist, alb
 
 function display_all_songs(){
    return function () {
-       var sql =`SELECT ${display_list_fields}
-                 FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id`;
+       var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields}
+                 FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
+                 LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=tracks.id
+                 GROUP BY id`;
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('All Songs', result);
@@ -27,9 +32,25 @@ function display_all_songs(){
 
 function display_short_listed_songs(){
     return function () {
-       var sql =`SELECT ${display_list_fields}
+       var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields}
                  FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
-                 JOIN short_listed_tracks ON tracks.id=short_listed_tracks.track_id GROUP BY id`;
+                 JOIN short_listed_tracks ON tracks.id=short_listed_tracks.track_id
+                 LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=tracks.id
+                 GROUP BY id`;
+       db_connection.query(sql, function (err, result) {
+           if (err) throw err;
+           display_track_list('Short List', result);
+        }
+    );}
+}
+
+function display_unavailable_songs(){
+    return function () {
+       var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields}
+                 FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
+                 JOIN unavailable_tracks ON tracks.id=unavailable_tracks.track_id
+                 LEFT JOIN (select track_id from session_queue) availability ON availability.track_id=tracks.id
+                 GROUP BY id`;
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('Short List', result);
@@ -40,8 +61,9 @@ function display_short_listed_songs(){
 
 function display_genre(name){
     return function () {
-        var sql = `SELECT ${display_list_fields}
+        var sql = `SELECT availability.track_id IS NULL as available, ${display_list_fields}
                    FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
+                   LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=tracks.id
                    WHERE genre="${name}" GROUP BY id`;
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
@@ -53,14 +75,16 @@ function display_genre(name){
 
 function display_session(id){
     return function () {
-        var sql = `SELECT id, favorite, disabled as enabled, title, artist,
+        var sql = `SELECT availability.track_id IS NULL as available,  id, favorite, disabled as enabled, title, artist,
                    album, genre, rating, bpm, stream_length, foo.play_count
 FROM session_tracks JOIN
 (SELECT * FROM tracks JOIN (SELECT
   id as id_2, count(session_tracks.track_id) as play_count
 FROM tracks JOIN session_tracks ON tracks.id = session_tracks.track_id
 GROUP BY id) play_counts ON tracks.id=play_counts.id_2) foo
-ON session_tracks.track_id=foo.id WHERE session_tracks.session_id=${id}`;
+ON session_tracks.track_id=foo.id
+LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=session_tracks.track_id
+WHERE session_tracks.session_id=${id}`;
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
             db_connection.query(
@@ -75,14 +99,16 @@ ON session_tracks.track_id=foo.id WHERE session_tracks.session_id=${id}`;
 
 function display_tag(id){
     return function () {
-        var sql = `SELECT id, favorite, disabled as enabled, title, artist,
+        var sql = `SELECT availability.track_id IS NULL as available, id, favorite, disabled as enabled, title, artist,
                    album, genre, rating, bpm, stream_length, foo.play_count
 FROM playlist_tracks JOIN
 (SELECT * FROM tracks JOIN (SELECT
   id as id_2, count(session_tracks.track_id) as play_count
 FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
 GROUP BY id) play_counts ON tracks.id=play_counts.id_2) foo
-ON playlist_tracks.track_id=foo.id WHERE playlist_tracks.playlist_id=${id}`;
+ON playlist_tracks.track_id=foo.id
+LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=playlist_tracks.track_id
+WHERE playlist_tracks.playlist_id=${id}`;
 //console.log(sql);
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
@@ -111,7 +137,7 @@ function genre_template(element) {
                 </div>`
     }
 
-var genres_list_popup = //webix.ui(
+var genres_list_popup =
     {
         view:"popup",
         id:"genres_list_popup",
@@ -218,6 +244,7 @@ var sidebar_template = {
     rows: [
         {id: 'show_all_songs', view:'button', label:'<b>ALL SONGS</b>', type:'icon', icon:'database', click:display_all_songs()},
         {id: 'show_short_list', view:'button', label:'<b>SHORT LIST</b>', type:'icon', icon:'calendar', click:display_short_listed_songs(), hotkey:'ctrl+shift+s'},
+        {id: 'show_unavailable', view:'button', label:'<b>UNAVAILABLE</b>', type:'icon', icon:'close', click:display_unavailable_songs(), hotkey:'ctrl+shift+u'},
         {id: 'show_remations', view:'button', label:'<b>RELATIONS</b>', type:'icon', icon:'cog'},
         {id: 'show_genres', view:'button', label:'<b>GENRES</b>', type:'icon', icon:'folder', popup:'genres_list_popup', hotkey:'ctrl+g'},
         {id: 'show_lists', view:'button', label:'<b>LISTS</b>', type:'icon', icon:'folder', popup:'track_list_popup', hotkey:'ctrl+l'},

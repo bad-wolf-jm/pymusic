@@ -12,6 +12,10 @@ if __name__ == '__main__':
     import pydjay.bootstrap_audio_server
     from pydjay.backend.command_server import RPCServer
 
+    main_player_channels = [1,2]
+    precue_player_channels = [5,6]
+    monitor_channels = [3,4]
+
     class RemoteController(RPCServer):
         def __init__(self, name='PLAYER', port=9898):
             RPCServer.__init__(self, name, port)
@@ -30,6 +34,16 @@ if __name__ == '__main__':
 
         def main_stop(self):
             pydjay.bootstrap_audio_server.main_player.stop()
+
+        def set_main_player_volume(self, value):
+            pydjay.bootstrap_audio_server.volume_control.set_volumes(channels=main_player_channels, volume=value)
+
+        def set_precue_player_volume(self, value):
+            pydjay.bootstrap_audio_server.volume_control.set_volumes(channels=precue_player_channels, volume=value)
+
+        def set_monitor_volume(self, value):
+            pydjay.bootstrap_audio_server.volume_control.set_volumes(channels=monitor_channels, volume=value)
+
 
     poll_zmq = RemoteController()
 

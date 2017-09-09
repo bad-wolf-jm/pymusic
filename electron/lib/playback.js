@@ -8,6 +8,7 @@ command_socket.on("message", function( status, type, payload ) {
 });
 
 function preview_play(file_name, start_time, end_time){
+    mute_monitor()
     command_socket.send(JSON.stringify({'name': 'preview_play', 'args': [file_name, start_time, end_time], 'kwargs': {}}));
 }
 
@@ -17,8 +18,8 @@ function preview_pause(file_name){
 
 function preview_stop(file_name){
     command_socket.send(JSON.stringify({'name': 'preview_stop', 'args': [], 'kwargs': {}}));
+    restore_monitor();
 }
-
 
 function main_play(file_name, start_time, end_time){
     command_socket.send(JSON.stringify({'name': 'main_play', 'args': [file_name, start_time, end_time], 'kwargs': {}}));
@@ -29,6 +30,20 @@ function main_stop(file_name, start_time, end_time){
     command_socket.send(JSON.stringify({'name': 'main_stop', 'args': [], 'kwargs': {}}));
 }
 
+
+function set_main_player_volume(value){
+    command_socket.send(JSON.stringify({'name': 'set_main_player_volume', 'args': [value], 'kwargs': {}}));
+}
+
+function set_monitor_volume(value){
+    command_socket.send(JSON.stringify({'name': 'set_monitor_volume', 'args': [value], 'kwargs': {}}));
+}
+
+function set_precue_player_volume(value){
+    command_socket.send(JSON.stringify({'name': 'set_precue_player_volume', 'args': [value], 'kwargs': {}}));
+}
+
+
 var preview_track_duration = 1;
 var main_track_seconds_elapsed = 0;
 var next_track_delay = 5;
@@ -37,6 +52,70 @@ var current_queue_position = undefined;
 var queue_playing = false;
 var stop_request = false;
 var current_track_length = 1
+
+var monitor_set_volume = 1;
+var monitor_volume = 1;
+var monitor_muted_volume = 0.07;
+var monitor_muting = false;
+var monitor_muting_time = 300;
+
+
+function mute_monitor() {
+    var a_monitor_volume = {volume: monitor_volume};
+    $(a_monitor_volume).animate(
+        {volume: monitor_muted_volume},
+        {
+            duration:100,
+            step: function (now, tween){
+                set_monitor_volume(now);
+            },
+        }
+    )
+}
+
+
+function restore_monitor() {
+    var a_monitor_volume = {volume: monitor_volume};
+    $(a_monitor_volume).animate(
+        {volume: monitor_set_volume},
+        {
+            duration:100,
+            step: function (now, tween){
+                set_monitor_volume(now);
+            },
+        }
+    )
+}
+
+
+volume_control_socket = zmq.socket('pull');
+volume_control_socket.connect('tcp://127.0.0.1:5555');
+volume_control_socket.on("message", function( payload ) {
+   data = JSON.parse(payload.toString());
+   console.log(data.kwargs.value);
+   value = Math.round(data.kwargs.value*100);
+   if (data.event == 'volume_set_notice') {
+       switch (data.kwargs.channels[0]) {
+            case 1:
+                console.log('main player volume', data.kwargs.value);
+                $$('main-player-volume').define('label', `${value}%`);
+                $$('main-player-volume').refresh();
+                break;
+            case 3:
+                console.log('monitor player volume', data.kwargs.value);
+                monitor_volume = data.kwargs.value;
+                $$('monitor-volume').define('label', `${value}%`)
+                $$('monitor-volume').refresh();
+                break;
+            case 5:
+                console.log('precue player volume', data.kwargs.value);
+                $$('precue-player-volume').define('label', `${value}%`)
+                $$('precue-player-volume').refresh();
+                break;
+       }
+   }
+});
+
 
 
 
@@ -54,6 +133,7 @@ preview_time_socket.on("message", function( payload ) {
        preview_track_duration = data.args[0];
    } else if (data.event == 'end_of_stream') {
        preview_track_duration = 1;
+       restore_monitor();
    }
 });
 
@@ -162,7 +242,6 @@ function play_next_track() {
                                     if (error) throw error;
                                     result = result[0];
                                     file_name = path.join(result.music_root, result.file_name);
-                                    //cover_file_name = `${result.image_root}/${result.cover_small}`;
                                     stream_length = (result.stream_end-result.stream_start) / 1000000000;
                                     $$('main-title').define('label', result.title)
                                     $$('main-title').refresh()
@@ -173,13 +252,10 @@ function play_next_track() {
                                     } else {
                                         cover_source = `file://${result.image_root}/${result.cover_small}`;
                                     }
-
                                     var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
                                     $$('main-cover-image').define('template', cover_image);
                                     $$('main-cover-image').refresh();
-
                                     current_queue_position = position;
-                                    // remove track from queue display_session
                                     $$('queue_list').remove($$('queue_list').getFirstId())
                                     update_queue_labels();
                                     main_play(file_name, result.stream_start, result.stream_end)

@@ -18,6 +18,9 @@
         margin: 0px;
         padding: 0px;
     }
+    .unavailable_track {
+        opacity:0.25;
+    }
 </style>
 
 <body>
@@ -63,7 +66,6 @@ var player_window = {
                         height:15,
                         width:37
                     }
-
                 ]}
             ]
         }
@@ -185,8 +187,6 @@ sessions_list_popup.attachEvent('onShow', function () {
 
     db_connection.query(sql, function (err, result) {
       if (err) throw err;
-      //console.log(result.length)
-      //console.log($$('sessions_list_view').data.length)
       $$('sessions_list_view').clearAll()
       $$('sessions_list_view').refresh()
       $$('sessions_list_view').define('data', result);
@@ -195,7 +195,6 @@ sessions_list_popup.attachEvent('onShow', function () {
 })
 $$('sessions_list_view').attachEvent("onItemClick", function(id, e, node){
     var item = this.getItem(id);
-    //console.log(item);
     display_session(item.id)();
     sessions_list_popup.hide()
 });
@@ -287,7 +286,7 @@ var popup = webix.ui({
                         icon:'stop',
                         label:'STOP QUEUE',
                         maxHeight:35,
-                        click: stop_queue_now,
+                        click: stop_queue_now
                     },
                     {
                         view:'button',
@@ -295,7 +294,7 @@ var popup = webix.ui({
                         icon:'step-forward',
                         label:'SKIP SONG',
                         maxHeight:35,
-                        click: skip_to_next_track,
+                        click: skip_to_next_track
                     }
                 ]
             }
@@ -332,70 +331,115 @@ function skip_to_next_track() {
                     queue_playing = false;
                     stop_request = false;
                 }
-
             }
         )
-
-
     }
-    //queue_playing = false;
     $$('skip_stop_dialog').hide()
 }
+
+
+function volume_popup(id, title, on_change){
+    d = {
+        view:'popup',
+        id: id,
+        height:75,
+        width:300,
+        body:{
+            rows:[
+                {
+                    view:'label',
+                    label:`<b>${title}</b>`,
+                    height:30
+                },
+                {
+                    view:'slider',
+                    id:id+'_slider',
+                    min:0,
+                    max: 200,
+                    value:100,
+                    on: {
+                        onSliderDrag: function () {on_change(this.getValue() / 100.0)}
+                    }
+                }
+            ]
+        }
+
+    }
+    x = webix.ui(d);
+    x.hide();
+    return x
+}
+
+main_volume_slider_popup = volume_popup('main_volume_popup', "MAIN PLAYER VOLUME", set_main_player_volume);
+precue_volume_slider_popup = volume_popup('precue_volume_popup', "PRECUE PLAYER VOLUME", set_precue_player_volume);
+monitor_volume_slider_popup = volume_popup('monitor_volume_popup', "MONITOR VOLUME", (value) => {monitor_set_volume=value; set_monitor_volume(value)});
 
 
 var datatable = webix.ui({
     type:"line",
     rows:[
         {
-            css:{'background-color':'#DDDDDD',
-                 'margin':'3px',
-                 'border-bottom': "1px solid #CCCCCC"},
-            cols:[{
-                cols:[
-                    {
-                        view:'button',
-                        type:'icon',
-                        icon:'volume-up',
-                        label:'100%',
-                        width:75
-                    },
-                    {
-                        view:'button',
-                        type:'icon',
-                        icon:'volume-control-phone',
-                        label:'100%',
-                        width:75
-                    },
-                    {
-                        view:'button',
-                        type:'icon',
-                        icon:'headphones',
-                        label:'100%',
-                        width:75
-                    },
-                    {},
-                    {
-                        gravity:.3,
-                        view:'button',
-                        type:'icon',
-                        icon:'list',
-                        label:'SESSION',
-                        height:25,
-                        popup:'session_popup'
-                    }
+            css:{
+                'background-color':'#DDDDDD',
+                'margin':'3px',
+                'border-bottom': "1px solid #CCCCCC"
+            },
+            cols:[
+                {
+                    cols:[
+                        {
+                            id:'main-player-volume',
+                            view:'button',
+                            type:'icon',
+                            icon:'volume-up',
+                            label:'100%',
+                            width:75,
+                            popup:'main_volume_popup'
+                        },
+                        {
+                            id:'monitor-volume',
+                            view:'button',
+                            type:'icon',
+                            icon:'volume-control-phone',
+                            label:'100%',
+                            width:75,
+                            popup:'monitor_volume_popup'
+                        },
+                        {
+                            id:'precue-player-volume',
+                            view:'button',
+                            type:'icon',
+                            icon:'headphones',
+                            label:'100%',
+                            width:75,
+                            popup:'precue_volume_popup'
+                        },
+                        {},
+                        {
+                            gravity:.5,
+                            view:'button',
+                            type:'icon',
+                            icon:'list',
+                            label:'SESSION',
+                            height:25,
+                            popup:'session_popup'
+                        }
                     ]
-                }, player_window,
+                },
+                player_window,
         {
             cols:[
                 {
                     width:250,
-                    cols: [{gravity:.5,
-                    view:'template',
-                    id: 'queue_stop_message',
-                    template:'Queue will stop after this song',
-                    maxHeight:35}]
-                },
-                //{},
+                    cols:[
+                        {
+                            gravity:.5,
+                            view:'template',
+                            id: 'queue_stop_message',
+                            template:'Queue will stop after this song',
+                            maxHeight:35
+                        }
+                    ]},
                 {
                     gravity:.5,
                     id:'start-stop-button',
@@ -430,9 +474,7 @@ var datatable = webix.ui({
             cols:[
                 sidebar_template,
                 main_list_display_template,
-                {rows: [queue_display_template,
-                        {height:10},
-                        preview_player_window]}
+                {rows: [queue_display_template,{height:10},preview_player_window]}
             ]}
     ]
 });
@@ -454,17 +496,20 @@ db_connection.connect(
 });
 
 
-var sql = `SELECT id, favorite, disabled as enabled, title, artist,
+var sql = `SELECT availability.track_id IS NULL as available, id, favorite, disabled as enabled, title, artist,
             album, genre, date_added, date_modified, rating, bpm, stream_length,
             max(session_tracks.start_time) as last_played, count(session_tracks.track_id) as play_count
-           FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id`
+           FROM
+           tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
+           LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id`
 
 var track_list = [];
 
 db_connection.query(sql, function (err, result) {
     if (err) throw err;
-    $$('display_list').define('data', result);
-    $$('display_list').refresh();
+    display_track_list('ALL SONGS', result);
+    //$$('display_list').define('data', result);
+    //$$('display_list').refresh();
   });
 
 $$('queue_list').clearAll()
@@ -656,6 +701,9 @@ webix.UIManager.addHotKey("shift+backspace", function () {
                                         function (err, result) {
                                             $$('queue_list').remove(selected_queue_element.id)
                                             update_queue_labels();
+                                            $$('display_list').removeRowCss(selected_queue_element.track_id, 'unavailable_track');
+                                            $$('display_list').getItem(selected_queue_element.track_id).$css="";
+                                            $$('display_list').refresh();
                                         }
                                     )
                                 }
@@ -669,6 +717,9 @@ webix.UIManager.addHotKey("shift+backspace", function () {
 }, $$('queue_list'));
 
 
+
+
+
 function preview_play_track_id(id) {
     db_connection.query(
         `SELECT title, artist, album, bpm, file_name, cover_small,
@@ -680,7 +731,6 @@ function preview_play_track_id(id) {
             result = result[0];
             file_name = path.join(result.music_root, result.file_name);
             console.log(file_name);
-            //file_name = `${result.music_root}/${result.file_name}`;
             cover_file_name = `${result.image_root}/${result.cover_small}`;
             stream_length = (result.stream_end-result.stream_start) / 1000000000;
             $$('preview_title').define('label', result.title)
@@ -734,7 +784,6 @@ webix.UIManager.addHotKey("shift+q", function () {
                     var new_position = result[0].new_id ? result[0].new_position :1;
                     insert_sql = `INSERT INTO session_queue (id, track_id, status, position)
                                   VALUES (${new_id}, ${id}, 'pending', ${new_position})`;
-                    //console.log(insert_sql);
                     db_connection.query(insert_sql, function (err, result) {
                         if (err) throw err;
                         sql = `SELECT tracks.id as track_id, session_queue.position, tracks.title, tracks.artist,
@@ -748,10 +797,10 @@ webix.UIManager.addHotKey("shift+q", function () {
                                 AND
                                     session_queue.track_id=${id}
                                  ORDER BY session_queue.position`;
-                        //console.log(sql);
                         db_connection.query(sql, function (err, result) {
                             if (err) throw err;
                             $$('queue_list').add(result[0]);
+                            $$('display_list').addRowCss(id, 'unavailable_track');
                             update_queue_labels();
                         });
                     });
@@ -762,7 +811,6 @@ webix.UIManager.addHotKey("shift+q", function () {
 }, $$('display_list'));
 
 webix.UIManager.addHotKey("shift+s", function () {
-    //console.log('add to short list');
     var id = $$('display_list').getSelectedId().id;
     sql = `SELECT 1 FROM short_listed_tracks WHERE track_id=${id} LIMIT 1`;
     db_connection.query(sql,
@@ -777,16 +825,48 @@ webix.UIManager.addHotKey("shift+s", function () {
     }, $$('display_list'));
 
 webix.UIManager.addHotKey("shift+u", function () {
-    console.log('make track unavailable');
+    var id = $$('display_list').getSelectedId().id;
+    db_connection.query(
+        `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+        function (error, result) {
+            if (error) throw error;
+            if (result.length == 0) {
+                db_connection.query(
+                    `INSERT INTO unavailable_tracks (track_id) VALUES (${id})`,
+                    function (error, result) {
+                        if (error) throw error;
+                        $$('display_list').addRowCss(id, 'unavailable_track');
+                    }
+                )
+            }
+        }
+    )
 }, $$('display_list'));
 
+
 webix.UIManager.addHotKey("escape", function () {
-    // console.log('make track unavailable');
     display_all_songs()();
 }, $$('display_list'));
 
 webix.UIManager.addHotKey("shift+a", function () {
-    console.log('make track available');
+    var id = $$('display_list').getSelectedId().id;
+    db_connection.query(
+        `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+        function (error, result) {
+            if (error) throw error;
+            if (result.length > 0) {
+                db_connection.query(
+                    `DELETE FROM unavailable_tracks WHERE track_id=${id}`,
+                    function (error, result) {
+                        if (error) throw error;
+                        $$('display_list').removeRowCss(id, 'unavailable_track');
+                        $$('display_list').getItem(id).$css="";
+                        $$('display_list').refresh();
+                    }
+                )
+            }
+        }
+    )
 }, $$('display_list'));
 
 
