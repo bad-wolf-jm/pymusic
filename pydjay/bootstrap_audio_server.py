@@ -24,54 +24,54 @@ volume_control.connect_outputs(output_1="system:playback_1",
                                output_6="system:playback_6")
 
 
-def set_volume(channel, volume):
-    volume_control.set_volume(channel, volume)
-
-
-def get_volume(channel):
-    return volume_control.get_volume(channel)
-
-
-def _increase_main_volume(*a):
-    v = volume_control.main_player
-    v += .1
-    v = min(v, 8)
-    volume_control.main_player = v
-
-
-def _decrease_main_volume(*a):
-    v = volume_control.main_player
-    v -= .1
-    v = max(v, 0)
-    volume_control.main_player = v
-
-
-def _increase_monitor_volume(*a):
-    v = volume_control.main_player_monitor
-    v += .1
-    v = min(v, 8)
-    volume_control.main_player_monitor = v
-
-
-def _decrease_monitor_volume(*a):
-    v = volume_control.main_player_monitor
-    v -= .1
-    v = max(v, 0)
-    volume_control.main_player_monitor = v
-
-
-def _increase_preview_volume(*a):
-    v = volume_control.preview_player
-    v += .1
-    v = min(v, 8)
-    volume_control.preview_player = v
-
-
-def _decrease_preview_volume(*a):
-    v = volume_control.preview_player
-    v -= .1
-    v = max(v, 0)
-    volume_control.preview_player = v
+# def set_volume(channel, volume):
+#     volume_control.set_volume(channel, volume)
+#
+#
+# def get_volume(channel):
+#     return volume_control.get_volume(channel)
+#
+#
+# def _increase_main_volume(*a):
+#     v = volume_control.main_player
+#     v += .1
+#     v = min(v, 8)
+#     volume_control.main_player = v
+#
+#
+# def _decrease_main_volume(*a):
+#     v = volume_control.main_player
+#     v -= .1
+#     v = max(v, 0)
+#     volume_control.main_player = v
+#
+#
+# def _increase_monitor_volume(*a):
+#     v = volume_control.main_player_monitor
+#     v += .1
+#     v = min(v, 8)
+#     volume_control.main_player_monitor = v
+#
+#
+# def _decrease_monitor_volume(*a):
+#     v = volume_control.main_player_monitor
+#     v -= .1
+#     v = max(v, 0)
+#     volume_control.main_player_monitor = v
+#
+#
+# def _increase_preview_volume(*a):
+#     v = volume_control.preview_player
+#     v += .1
+#     v = min(v, 8)
+#     volume_control.preview_player = v
+#
+#
+# def _decrease_preview_volume(*a):
+#     v = volume_control.preview_player
+#     v -= .1
+#     v = max(v, 0)
+#     volume_control.preview_player = v
 
 
 def _preview_seek(self, t):

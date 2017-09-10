@@ -17,7 +17,7 @@ var main_list_display_template = {
             css:{
                 'background-color':'#5c5c5c',
                 'padding':'5px',
-                border: '1px solid #3c3c3c'
+                border: '0px solid #3c3c3c'
              },
 
             cols: [
@@ -57,9 +57,9 @@ var main_list_display_template = {
             select:"row",
             resizeColumn:{headerOnly:true},
             css:{
-                //'background-color':'#5c5c5c',
+                'background-color':'#303030',
                 //'padding':'5px',
-                border: '0px solid #3c3c3c'
+                border: '0px solid #5c5c5c'
              },
             //css:{height:"1000px"},
             columns:[

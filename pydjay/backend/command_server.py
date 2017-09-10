@@ -48,7 +48,7 @@ class RPCServer(object):  # threading.Thread):
         try:
             command = self.__socket.recv(flags=zmq.NOBLOCK)
             command = json.loads(command)
-            print command
+            #print command
         except zmq.Again as e:
             return True
         except Exception, details:

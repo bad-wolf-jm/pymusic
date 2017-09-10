@@ -16,6 +16,10 @@ if __name__ == '__main__':
     precue_player_channels = [5,6]
     monitor_channels = [3,4]
 
+    main_volume = 1.0
+    monitor_volume = 1.0
+    precue_volume = 1.0
+
     class RemoteController(RPCServer):
         def __init__(self, name='PLAYER', port=9898):
             RPCServer.__init__(self, name, port)
@@ -44,6 +48,46 @@ if __name__ == '__main__':
         def set_monitor_volume(self, value):
             pydjay.bootstrap_audio_server.volume_control.set_volumes(channels=monitor_channels, volume=value)
 
+        def increase_main_player_volume(self, *a):
+            global main_volume
+            main_volume += .1
+            main_volume = min(main_volume, 4)
+            self.set_main_player_volume(main_volume)
+
+        def decrease_main_player_volume(self, *a):
+            global main_volume
+            main_volume -= .1
+            main_volume = max(main_volume, 0)
+            self.set_main_player_volume(main_volume)
+
+        def increase_monitor_volume(self, *a):
+            global monitor_volume
+            monitor_volume += .1
+            monitor_volume = min(monitor_volume, 4)
+            self.set_monitor_volume(monitor_volume)
+
+        def decrease_monitor_volume(self, *a):
+            global monitor_volume
+            monitor_volume -= .1
+            monitor_volume = max(monitor_volume, 0)
+            self.set_monitor_volume(monitor_volume)
+
+        def increase_precue_player_volume(self, *a):
+            global precue_volume
+            precue_volume += .1
+            precue_volume = min(precue_volume, 4)
+            self.set_precue_player_volume(precue_volume)
+
+        def decrease_precue_player_volume(self, *a):
+            global precue_volume
+            precue_volume -= .1
+            precue_volume = max(precue_volume, 0)
+            self.set_precue_player_volume(precue_volume)
+
+        def preview_seek(self, t):
+            t *= 1000000000
+            print 'SEEK'
+            pydjay.bootstrap_audio_server.preview_player.seek_relative(t)
 
     poll_zmq = RemoteController()
 

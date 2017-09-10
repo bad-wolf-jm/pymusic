@@ -29,15 +29,12 @@ class AudioPlayer(object):
 
     def on_track_length(self, length):
         self._track_length = length
-        pass
 
     def on_track_duration(self, duration):
         self._track_duration = duration
-        pass
 
     def on_track_position(self, position):
         self._track_position = position
-        pass
 
     def on_track_remaining_time(self, position):
         pass
@@ -46,7 +43,6 @@ class AudioPlayer(object):
         self.on_track_length(None)
         self.on_track_duration(None)
         self.on_track_position(None)
-        pass
 
     def _player_loop(self):
         eos = False
@@ -70,36 +66,34 @@ class AudioPlayer(object):
             self.on_end_of_stream()
 
 
-    def _player_loop_glib_idle(self):
-        eos = False
-
-        #while self._is_playing:
-        try:
-            if self._decoder is not None:
-                timestamp, samples = self._decoder.next()
-                if self._decoder.duration is not None and not self._has_duration:
-                    self._has_duration = True
-                    self.on_track_duration(self._decoder.duration)
-                    self.on_track_length(self._decoder.track_length)
-                #print self._output.stream_time
-                self._output.send(samples)
-                self.on_track_position(self._output.stream_time)
-            else:
-                return True
-        except StopIteration:
-            eos = True
-            #break
-        #self._decoder.close()
-        #self._is_playing = False
-        #self._player_thread = None
-        if eos:
-            self.on_end_of_stream()
-            return False
-        else:
-            if not self._is_playing:
-                self._decoder.close()
-                return False
-            return True
+    # def _player_loop_glib_idle(self):
+    #     eos = False
+    #     try:
+    #         if self._decoder is not None:
+    #             timestamp, samples = self._decoder.next()
+    #             if self._decoder.duration is not None and not self._has_duration:
+    #                 self._has_duration = True
+    #                 self.on_track_duration(self._decoder.duration)
+    #                 self.on_track_length(self._decoder.track_length)
+    #             #print self._output.stream_time
+    #             self._output.send(samples)
+    #             self.on_track_position(self._output.stream_time)
+    #         else:
+    #             return True
+    #     except StopIteration:
+    #         eos = True
+    #         #break
+    #     #self._decoder.close()
+    #     #self._is_playing = False
+    #     #self._player_thread = None
+    #     if eos:
+    #         self.on_end_of_stream()
+    #         return False
+    #     else:
+    #         if not self._is_playing:
+    #             self._decoder.close()
+    #             return False
+    #         return True
 
     def stop_decoder_loop(self):
         #self._decoder.close()
@@ -125,10 +119,6 @@ class AudioPlayer(object):
                 self._output.reset_timer(0)
             self._is_playing = True
             self._has_duration = False
-            #GLib.idle_add(self._player_loop_glib_idle)
-
-            #TODO fix glitching
-            #GLib.timeout_add(50, self.report_stream_position)
             self._player_thread = threading.Thread(target=self._player_loop)
             self._player_thread.start()
             self.state = "playing"

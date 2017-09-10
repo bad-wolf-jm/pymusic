@@ -52,7 +52,7 @@ var player_window = {
     css:{
         'background-color':'#3c3c3c',
         'padding':'0px',
-        border: '1px solid #CCCCCC',
+        border: '1px solid #5c5c5c',
      },
     cols:[
         {id:'main-cover-image', view: 'template', width:58, height:58, template: "FOO"},
@@ -120,7 +120,7 @@ var preview_player_window = {
     height:125,
     gravity:1,
     css:{
-        'background-color':'#5c5c5c',
+        'background-color':'#6c6c6c',
         'padding':'1px',
         border: '1px solid #3c3c3c'
      },
@@ -169,10 +169,12 @@ var preview_player_window = {
                     {width:10}
                 ]
             },
+            {height: 5},
             {
                 height:5,
                 template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%; transform: translateY(-200%)"></div>'
             },
+            {height: 3},
             {cols:[
                 {
                     view: 'label',
@@ -203,7 +205,8 @@ webix.ready( () => {
      color: '#5a5a5a',
      trailColor: '#eee',
      trailWidth: 1,
-     svgStyle: {width: '100%', height: '100%'}});
+     svgStyle: {width: '100%', height: '100%'}}
+ );
     preview_seek.animate(0);
 });
 
@@ -572,7 +575,7 @@ var datatable = webix.ui({
             cols:[
                 sidebar_template,
                 main_list_display_template,
-                {rows: [queue_display_template,{height:3},preview_player_window]}
+                {rows: [queue_display_template,{height:5, css:{'background-color': '#3c3c3c', 'border-color':"0px solid #3c3c3c"}}, preview_player_window]}
             ]}
     ]
 });
@@ -896,6 +899,44 @@ webix.UIManager.addHotKey("space", function () {
 webix.UIManager.addHotKey("shift+space", function () {
     preview_stop();
 });
+
+
+webix.UIManager.addHotKey("q", function () {
+    increase_main_player_volume();
+});
+webix.UIManager.addHotKey("a", function () {
+    decrease_main_player_volume();
+});
+
+webix.UIManager.addHotKey("w", function () {
+    increase_precue_player_volume();
+});
+webix.UIManager.addHotKey("s", function () {
+    decrease_precue_player_volume();
+});
+
+webix.UIManager.addHotKey("r", function () {
+    increase_monitor_volume();
+});
+webix.UIManager.addHotKey("f", function () {
+    decrease_monitor_volume();
+});
+
+webix.UIManager.addHotKey("n", function () {
+
+    preview_seek_relative(-5)
+});
+webix.UIManager.addHotKey("m", function () {
+    preview_seek_relative(5)
+});
+
+webix.UIManager.addHotKey("shift+n", function () {
+    preview_seek_relative(-20)
+});
+webix.UIManager.addHotKey("shift+m", function () {
+    preview_seek_relative(20)
+});
+
 
 
 webix.UIManager.addHotKey("shift+q", function () {

@@ -20,10 +20,10 @@ class PushServer(object):
         self._i = 0
 
     def __process_one_event(self, *args):
-        #print len(self.__message_queue)
         if len(self.__message_queue) > 0:
             event = self.__message_queue[0]
             try:
+                #print event
                 self.__socket.send_json(event, flags=zmq.NOBLOCK)
                 self.__message_queue.pop(0)
                 return True
@@ -37,7 +37,7 @@ class PushServer(object):
     def start(self, threaded=True):
         self.__running = True
         if threaded:
-            GLib.timeout_add(250, self.__process_one_event)
+            GLib.timeout_add(500, self.__process_one_event)
         else:
             self.run()
 
@@ -45,6 +45,7 @@ class PushServer(object):
         self.__running = False
 
     def push(self, event, *args, **kwargs):
+        #print event, args, kwargs
         self.__message_queue = [x for x in self.__message_queue if x['event'] != event]
         self.__message_queue.append({'event': event, 'args': args, 'kwargs': kwargs})
 
@@ -109,6 +110,5 @@ class PushClient(object):
         self.__running = True
         if threaded:
             GLib.idle_add(self.__process_one_event)
-
         else:
             self.run()

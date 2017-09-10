@@ -21,6 +21,11 @@ function preview_stop(file_name){
     restore_monitor();
 }
 
+function preview_seek_relative(time_delta){
+    command_socket.send(JSON.stringify({'name': 'preview_seek', 'args': [time_delta], 'kwargs': {}}));
+    //restore_monitor();
+}
+
 function main_play(file_name, start_time, end_time){
     command_socket.send(JSON.stringify({'name': 'main_play', 'args': [file_name, start_time, end_time], 'kwargs': {}}));
 }
@@ -43,6 +48,31 @@ function set_precue_player_volume(value){
     command_socket.send(JSON.stringify({'name': 'set_precue_player_volume', 'args': [value], 'kwargs': {}}));
 }
 
+function increase_main_player_volume(){
+    command_socket.send(JSON.stringify({'name': 'increase_main_player_volume', 'args': [], 'kwargs': {}}));
+}
+
+function increase_monitor_volume(){
+    command_socket.send(JSON.stringify({'name': 'increase_monitor_volume', 'args': [], 'kwargs': {}}));
+}
+
+function increase_precue_player_volume(){
+    command_socket.send(JSON.stringify({'name': 'increase_precue_player_volume', 'args': [], 'kwargs': {}}));
+}
+
+function decrease_main_player_volume(){
+    command_socket.send(JSON.stringify({'name': 'decrease_main_player_volume', 'args': [], 'kwargs': {}}));
+}
+
+function decrease_monitor_volume(){
+    command_socket.send(JSON.stringify({'name': 'decrease_monitor_volume', 'args': [], 'kwargs': {}}));
+}
+
+function decrease_precue_player_volume(){
+    command_socket.send(JSON.stringify({'name': 'decrease_precue_player_volume', 'args': [], 'kwargs': {}}));
+}
+
+
 
 var preview_track_duration = 1;
 var main_track_seconds_elapsed = 0;
@@ -55,9 +85,9 @@ var current_track_length = 1
 
 var monitor_set_volume = 1;
 var monitor_volume = 1;
-var monitor_muted_volume = 0.07;
+var monitor_muted_volume = 0.01;
 var monitor_muting = false;
-var monitor_muting_time = 300;
+var monitor_muting_time = 200;
 
 
 function mute_monitor() {

@@ -101,7 +101,7 @@ var queue_display_template = {
             id:'queue_list',
             itemHeight:35,
             css:{
-                border: '1px solid #5c5c5c'
+                border: '1px solid #3c3c3c'
              },
             select:true,
             template: queue_element_template,
