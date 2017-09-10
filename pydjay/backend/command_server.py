@@ -17,32 +17,32 @@ class RPCServer(object):  # threading.Thread):
         self.__socket = self.__context.socket(zmq.REP)
         self.__socket.bind("tcp://127.0.0.1:%s" % self.__port)
 
-    def __run(self):
-        while self.__running:
-            try:
-                command = self.__socket.recv(flags=zmq.NOBLOCK)
-                command = json.loads(command)
-            except zmq.Again as e:
-                continue
-                pass  # time.sleep(0.01)
-            except Exception, details:
-                print details
-                break
-            command_name = command['name']
-            command_args = command.get('args', None) or tuple()
-            command_kw = command.get('kwargs', None) or {}
-            method = getattr(self, command_name, None)
-            print method, comand_args, command_kw
-            try:
-                if method is not None:
-                    value = method(*command_args, **command_kw)
-                    value = json.dumps(value)
-                    self.__socket.send(value)
-            except Exception, details:
-                print 'ERROR CALLING', details, method
-                continue
-                # time.sleep(.05)
-        self.__socket.close()
+    # def __run(self):
+    #     while self.__running:
+    #         try:
+    #             command = self.__socket.recv(flags=zmq.NOBLOCK)
+    #             command = json.loads(command)
+    #         except zmq.Again as e:
+    #             continue
+    #             pass  # time.sleep(0.01)
+    #         except Exception, details:
+    #             print details
+    #             break
+    #         command_name = command['name']
+    #         command_args = command.get('args', None) or tuple()
+    #         command_kw = command.get('kwargs', None) or {}
+    #         method = getattr(self, command_name, None)
+    #         print method, comand_args, command_kw
+    #         try:
+    #             if method is not None:
+    #                 value = method(*command_args, **command_kw)
+    #                 value = json.dumps(value)
+    #                 self.__socket.send(value)
+    #         except Exception, details:
+    #             print 'ERROR CALLING', details, method
+    #             continue
+    #             # time.sleep(.05)
+    #     self.__socket.close()
 
     def __process_one_event(self, *args):
         try:
@@ -58,8 +58,8 @@ class RPCServer(object):  # threading.Thread):
         command_args = command.get('args', None) or tuple()
         command_kw = command.get('kwargs', None) or {}
         method = getattr(self, command_name, None)
-        print method
-        print method, command_args, command_kw
+        #print method
+        #print method, command_args, command_kw
 
         try:
             if method is not None:

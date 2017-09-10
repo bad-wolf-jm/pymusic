@@ -54,8 +54,6 @@ function update_queue_labels() {
 var queue_display_template = {
     type:'line',
     css:{
-        //'background-color':'#5c5c5c',
-        //'padding':'5px',
         border: '0px solid #3c3c3c'
     },
     rows:[
@@ -65,46 +63,48 @@ var queue_display_template = {
                 'padding':'5px',
                 border: '1px solid #3c3c3c'
              },
-            rows: [
+
+            cols : [
+                {width:5},
                 {
-                    view: 'label',
-                    label: '<b>QUEUE</b>',
-                    height: 20
-                },
-                {
-                    cols:[
-                    {
-                        view: 'label',
-                        id: 'queue_duration',
-                        label: 'Duration:',
-                        height: 20
-                    },
-                    {
-                        view: 'label',
-                        id:'queue_ends_at',
-                        css: {'text-align':'right'},
-                        label: 'Ends at:',
-                        height: 20
-                    }
+                     rows: [
+                        {
+                            view: 'label',
+                            label: '<b>QUEUE</b>',
+                            height: 20
+                        },
+                        {
+                            cols:[
+                                {
+                                    view: 'label',
+                                    id: 'queue_duration',
+                                    label: 'Duration:',
+                                    height: 20
+                                },
+                                {
+                                    view: 'label',
+                                    id:'queue_ends_at',
+                                    css: {'text-align':'right'},
+                                    label: 'Ends at:',
+                                    height: 20
+                                }
+                            ]
+                        }
                     ]
-                }
+                },
+                {width:15}
             ]
+
         },
-        //{height:3},
         {
             view:"list",
             id:'queue_list',
             itemHeight:35,
             css:{
-                //'background-color':'#5c5c5c',
-                //'padding':'5px',
                 border: '1px solid #5c5c5c'
              },
-            //css:{height:"1000px"},
             select:true,
             template: queue_element_template,
             type: { height: cover_size  },
         }]
 }
-
-//$$('queue_list').focus()
