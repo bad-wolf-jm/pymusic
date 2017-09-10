@@ -900,7 +900,6 @@ webix.UIManager.addHotKey("shift+space", function () {
     preview_stop();
 });
 
-
 webix.UIManager.addHotKey("q", function () {
     increase_main_player_volume();
 });
@@ -908,22 +907,21 @@ webix.UIManager.addHotKey("a", function () {
     decrease_main_player_volume();
 });
 
-webix.UIManager.addHotKey("w", function () {
+webix.UIManager.addHotKey("i", function () {
     increase_precue_player_volume();
 });
-webix.UIManager.addHotKey("s", function () {
+webix.UIManager.addHotKey("k", function () {
     decrease_precue_player_volume();
 });
 
-webix.UIManager.addHotKey("r", function () {
+webix.UIManager.addHotKey("o", function () {
     increase_monitor_volume();
 });
-webix.UIManager.addHotKey("f", function () {
+webix.UIManager.addHotKey("l", function () {
     decrease_monitor_volume();
 });
 
 webix.UIManager.addHotKey("n", function () {
-
     preview_seek_relative(-5)
 });
 webix.UIManager.addHotKey("m", function () {
@@ -935,6 +933,34 @@ webix.UIManager.addHotKey("shift+n", function () {
 });
 webix.UIManager.addHotKey("shift+m", function () {
     preview_seek_relative(20)
+});
+
+
+webix.UIManager.addHotKey("alt+f", function () {
+    const win = require('electron').remote.getCurrentWindow();
+    win.setFullScreen(!win.isFullScreen());
+});
+
+webix.UIManager.addHotKey("alt+r", function () {
+    $$('queue_list').clearAll()
+
+    var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist,
+                    tracks.album, tracks.bpm, tracks.stream_length,
+                    settings.db_image_cache as image_root, tracks.cover_small as cover,
+                    session_queue.position as position
+             FROM
+                 (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
+             ON
+                 tracks.id=session_queue.track_id WHERE session_queue.status='pending'
+             ORDER BY session_queue.position`
+
+    db_connection.query(sql, function (err, result) {
+      if (err) throw err;
+      for(var i=0; i < result.length; i++){
+          $$('queue_list').add(result[i])
+      }
+    });
+
 });
 
 
@@ -1037,12 +1063,6 @@ webix.UIManager.addHotKey("shift+a", function () {
         }
     )
 }, $$('display_list'));
-
-
-
-
-
-
 
 
 update_queue_labels();

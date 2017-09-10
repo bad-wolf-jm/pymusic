@@ -86,7 +86,6 @@ if __name__ == '__main__':
 
         def preview_seek(self, t):
             t *= 1000000000
-            print 'SEEK'
             pydjay.bootstrap_audio_server.preview_player.seek_relative(t)
 
     poll_zmq = RemoteController()

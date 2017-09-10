@@ -10,7 +10,9 @@ var mainWindow = null;
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
       width: 1728,
-      height: 1152
+      height: 1152,
+      //frame:false,
+      //fullscreen:true
     });
     mainWindow.setMenu(null);
     mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/main_ui.html');
