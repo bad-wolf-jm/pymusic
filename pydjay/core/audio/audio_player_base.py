@@ -58,7 +58,7 @@ class AudioPlayer(object):
                     has_duration = True
                     self.on_track_duration(self._decoder.duration)
                     self.on_track_length(self._decoder.track_length)
-                self.on_track_position(self._output.stream_time)
+                #self.on_track_position(self._output.stream_time)
                 self._output.send(samples)
             except StopIteration:
                 eos = True
@@ -125,10 +125,10 @@ class AudioPlayer(object):
                 self._output.reset_timer(0)
             self._is_playing = True
             self._has_duration = False
-            GLib.idle_add(self._player_loop_glib_idle)
+            #GLib.idle_add(self._player_loop_glib_idle)
             GLib.timeout_add(50, self.report_stream_position)
-            #self._player_thread = threading.Thread(target=self._player_loop)
-            #self._player_thread.start()
+            self._player_thread = threading.Thread(target=self._player_loop)
+            self._player_thread.start()
             self.state = "playing"
         except IOError, e:
             self.state = 'stopped'

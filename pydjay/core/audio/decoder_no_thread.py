@@ -70,7 +70,7 @@ except ImportError:
     from urllib import quote
 
 
-QUEUE_SIZE = -1
+QUEUE_SIZE = 100
 BUFFER_SIZE = 100
 SENTINEL = '__GSTDEC_SENTINEL__'
 
