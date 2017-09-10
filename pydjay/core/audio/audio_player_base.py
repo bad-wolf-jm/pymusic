@@ -75,14 +75,17 @@ class AudioPlayer(object):
 
         #while self._is_playing:
         try:
-            timestamp, samples = self._decoder.next()
-            if self._decoder.duration is not None and not self._has_duration:
-                self._has_duration = True
-                self.on_track_duration(self._decoder.duration)
-                self.on_track_length(self._decoder.track_length)
-            #print self._output.stream_time
-            self._output.send(samples)
-            self.on_track_position(self._output.stream_time)
+            if self._decoder is not None:
+                timestamp, samples = self._decoder.next()
+                if self._decoder.duration is not None and not self._has_duration:
+                    self._has_duration = True
+                    self.on_track_duration(self._decoder.duration)
+                    self.on_track_length(self._decoder.track_length)
+                #print self._output.stream_time
+                self._output.send(samples)
+                self.on_track_position(self._output.stream_time)
+            else:
+                return True
         except StopIteration:
             eos = True
             #break
