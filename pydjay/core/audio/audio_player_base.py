@@ -58,7 +58,7 @@ class AudioPlayer(object):
                     has_duration = True
                     self.on_track_duration(self._decoder.duration)
                     self.on_track_length(self._decoder.track_length)
-                #self.on_track_position(self._output.stream_time)
+                self.on_track_position(self._output.stream_time)
                 self._output.send(samples)
             except StopIteration:
                 eos = True
