@@ -107,10 +107,10 @@ class JackOutputDriver(object):
             self.stream_time += self._buffer_time
         self._buffer_size -= length
         self._buffer_size = max(self._buffer_size, 0)
-        if self._buffer_size < self._max_buffer_size:
-            waiting_for_space = not self._buffer_not_full.acquire(False)
-            if waiting_for_space:
-                self._buffer_not_full.release()
+        #if self._buffer_size < self._max_buffer_size:
+        #    waiting_for_space = not self._buffer_not_full.acquire(False)
+        #    if waiting_for_space:
+        #        self._buffer_not_full.release()
 
     def _blocksize_changed(self, block_size):
         self.block_size = block_size
@@ -125,8 +125,8 @@ class JackOutputDriver(object):
         self.closed = True
 
     def send(self, data):
-        if self._buffer_size >= self._max_buffer_size:
-            self._buffer_not_full.acquire()
+        #if self._buffer_size >= self._max_buffer_size:
+        #    self._buffer_not_full.acquire()
         for offset in range(0, len(data), self.num_channels):
             for channel_index in range(self.num_channels):
                 self._input_buffers[channel_index].append(data[offset + channel_index])
