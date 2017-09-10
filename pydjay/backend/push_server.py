@@ -37,7 +37,7 @@ class PushServer(object):
     def start(self, threaded=True):
         self.__running = True
         if threaded:
-            GLib.timeout_add(50, self.__process_one_event)
+            GLib.timeout_add(250, self.__process_one_event)
         else:
             self.run()
 

@@ -113,7 +113,7 @@ class JackOutputDriver(object):
 
     def _blocksize_changed(self, block_size):
         self.block_size = block_size
-        self._max_buffer_size = self.block_size * 10
+        self._max_buffer_size = self.block_size * 5
 
     def _on_server_shutdown(self, *a):
         pass

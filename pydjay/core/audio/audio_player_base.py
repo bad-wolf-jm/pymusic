@@ -126,7 +126,9 @@ class AudioPlayer(object):
             self._is_playing = True
             self._has_duration = False
             #GLib.idle_add(self._player_loop_glib_idle)
-            GLib.timeout_add(50, self.report_stream_position)
+
+            #TODO fix glitching
+            #GLib.timeout_add(50, self.report_stream_position)
             self._player_thread = threading.Thread(target=self._player_loop)
             self._player_thread.start()
             self.state = "playing"
