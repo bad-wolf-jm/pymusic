@@ -1,7 +1,7 @@
 #import os
 import threading
 from decoder_no_thread import GstAudioFile
-from output_jack import JackOutput
+from output_jack_lb import JackOutput
 
 
 class AudioPlayer(object):
