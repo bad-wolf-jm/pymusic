@@ -63,7 +63,7 @@ class JackOutputDriver(object):
         self._left_over = None
 
         self._buffer_not_full = threading.Lock()
-        self._max_buffer_size = self.block_size * 100
+        self._max_buffer_size = self.block_size * 10
         self._buffer_size = 0
 
         self._jack_client.set_process_callback(self._process)
@@ -114,7 +114,7 @@ class JackOutputDriver(object):
 
     def _blocksize_changed(self, block_size):
         self.block_size = block_size
-        self._max_buffer_size = self.block_size * 100
+        self._max_buffer_size = self.block_size * 10
 
     def _on_server_shutdown(self, *a):
         pass
