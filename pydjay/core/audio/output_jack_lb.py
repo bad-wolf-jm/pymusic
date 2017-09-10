@@ -82,7 +82,6 @@ class JackOutputDriver(object):
             self._jack_client.disconnect(port, kwargs[key])
 
     def flush_buffer(self):
-        # pass
         self._buffer_size = 0
         self.buffer_time = 0
         for channel_index in range(self.num_channels):

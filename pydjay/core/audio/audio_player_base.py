@@ -2,7 +2,7 @@
 import threading
 from decoder_no_thread import GstAudioFile
 from output_jack_lb import JackOutput
-
+from gi.repository import GLib
 
 class AudioPlayer(object):
     def __init__(self, player_name=None, num_channels=2, **kw):
@@ -46,7 +46,6 @@ class AudioPlayer(object):
         self.on_track_length(None)
         self.on_track_duration(None)
         self.on_track_position(None)
-
         pass
 
     def _player_loop(self):
@@ -70,6 +69,45 @@ class AudioPlayer(object):
         if eos:
             self.on_end_of_stream()
 
+
+    def _player_loop_glib_idle(self):
+        eos = False
+
+        #while self._is_playing:
+        try:
+            timestamp, samples = self._decoder.next()
+            if self._decoder.duration is not None and not self._has_duration:
+                self._has_duration = True
+                self.on_track_duration(self._decoder.duration)
+                self.on_track_length(self._decoder.track_length)
+            #print self._output.stream_time
+            self._output.send(samples)
+            self.on_track_position(self._output.stream_time)
+        except StopIteration:
+            eos = True
+            #break
+        #self._decoder.close()
+        #self._is_playing = False
+        #self._player_thread = None
+        if eos:
+            self.on_end_of_stream()
+            return False
+        else:
+            if not self._is_playing:
+                self._decoder.close()
+                return False
+            return True
+
+    def stop_decoder_loop(self):
+        #self._decoder.close()
+        self._is_playing = False
+        #self._player_thread = None
+
+    def report_stream_position(self):
+        self.on_track_position(self._output.stream_time)
+        return self._is_playing
+
+
     def play(self, filename, start_time=None, end_time=None):
         self.stop(flush=True)
         self._file = filename
@@ -82,9 +120,12 @@ class AudioPlayer(object):
                 self._output.reset_timer(start_time)
             else:
                 self._output.reset_timer(0)
-            self._player_thread = threading.Thread(target=self._player_loop)
             self._is_playing = True
-            self._player_thread.start()
+            self._has_duration = False
+            GLib.idle_add(self._player_loop_glib_idle)
+            GLib.timeout_add(50, self.report_stream_position)
+            #self._player_thread = threading.Thread(target=self._player_loop)
+            #self._player_thread.start()
             self.state = "playing"
         except IOError, e:
             self.state = 'stopped'

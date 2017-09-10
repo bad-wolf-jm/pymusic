@@ -20,6 +20,7 @@ class PushServer(object):
         self._i = 0
 
     def __process_one_event(self, *args):
+        #print len(self.__message_queue)
         if len(self.__message_queue) > 0:
             event = self.__message_queue[0]
             try:
@@ -36,7 +37,7 @@ class PushServer(object):
     def start(self, threaded=True):
         self.__running = True
         if threaded:
-            GLib.timeout_add(25, self.__process_one_event)
+            GLib.timeout_add(50, self.__process_one_event)
         else:
             self.run()
 
