@@ -133,7 +133,7 @@ function genre_template(element) {
     return `<div>
             <i class="ui left floated list icon"></i>
             <div style="float:left; margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:70%">${element.name}</div>
-            <div class='ui right floated grey label' style="height:22px; font_size:12px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:20%; text-align:right">${element.count}</div>
+            <div style="height:22px; font_size:12px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:20%; text-align:right">${element.count}</div>
             </div>`
     }
 
@@ -173,7 +173,7 @@ function session_template(element) {
     return `<i class="ui left floated list icon"></i>
             <div style="float:left; margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:35%">${element.name}</div>
             <div style="float:left; margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:35%; text-align:right">${webix.Date.dateToStr("%Y-%m-%d")(element.date)}</div>
-            <div class 'ui right floated grey label' style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:20%; text-align:right">${element.count}</div>`
+            <div style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:20%; text-align:right">${element.count}</div>`
     }
 
 var sessions_list_popup = //webix.ui(
@@ -182,7 +182,7 @@ var sessions_list_popup = //webix.ui(
         id:"sessions_list_popup",
         relative:'right',
         height:700,
-        width:400,
+        width:450,
         body:{
             rows:[
                 {
@@ -209,8 +209,8 @@ function track_list_template(element) {
         cover_source = `${element.image_root}/${element.cover}`
     }
     return `<i class="ui left floated list icon"></i>
-            <div style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis">${element.name}</div>
-            <div class 'ui right floated grey label' style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis" width=150>${element.count}</div>`
+            <div style="float:left; margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:70%">${element.name}</div>
+            <div style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:15%; text-align:right">${element.count}</div>`
     }
 
 var track_list_popup =
@@ -219,12 +219,12 @@ var track_list_popup =
         id:"track_list_popup",
         relative:'right',
         height:700,
-        width:300,
+        width:350,
         body:{
             rows:[
                 {
                     view:'label',
-                    label:"<b>LISTS</b>",
+                    label:"<b>TAGS</b>",
                     height:30
                 },
                 {
@@ -247,12 +247,6 @@ var sidebar_template = {
     rows: [
         {
             id: 'show_all_songs',
-            // css: {
-            //     'background-color':'#3f3f3f',
-            //     'padding':'0px',
-            //     'margin':'0px',
-            //     'color':'#232323'
-            // },
             view:'button',
             label:'<b>ALL SONGS</b>',
             type:'icon',

@@ -72,17 +72,17 @@ volume_control.connect_outputs(output_1="system:playback_1",
 #     v -= .1
 #     v = max(v, 0)
 #     volume_control.preview_player = v
-
-
-def _preview_seek(self, t):
-    #time in seconds
-    t *= 1000000000
-    preview_player.player.seek_relative(t)
-
-
-def _preview_stop(self):
-    preview_player.stop()
-
-
-def _preview_pause(self):
-    preview_player.pause()
+#
+#
+# def _preview_seek(self, t):
+#     #time in seconds
+#     t *= 1000000000
+#     preview_player.player.seek_relative(t)
+#
+#
+# def _preview_stop(self):
+#     preview_player.stop()
+#
+#
+# def _preview_pause(self):
+#     preview_player.pause()

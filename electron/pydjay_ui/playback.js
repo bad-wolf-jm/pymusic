@@ -35,7 +35,6 @@ function main_stop(file_name, start_time, end_time){
     command_socket.send(JSON.stringify({'name': 'main_stop', 'args': [], 'kwargs': {}}));
 }
 
-
 function set_main_player_volume(value){
     command_socket.send(JSON.stringify({'name': 'set_main_player_volume', 'args': [value], 'kwargs': {}}));
 }

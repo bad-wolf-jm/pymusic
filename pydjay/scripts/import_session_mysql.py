@@ -85,7 +85,7 @@ with connection.cursor() as c:
                              'track_id': x['id'],
                              'start_time': play_date,
                              'end_time': play_date+s_dur}
-            db_indices.append(x['id'])
+            db_indices.append((x['id'], play_date))
 
             sql_insert = """INSERT INTO session_tracks (position, session_id, track_id, start_time, end_time)
                         VALUES ({position}, {session_id}, {track_id}, {start_time}, {end_time})"""
@@ -98,10 +98,10 @@ with connection.cursor() as c:
         for i in range(len(db_indices)-1):
             id_1 = db_indices[i]
             id_2 = db_indices[i+1]
-            sql = """INSERT INTO track_relations (track_id, related_track_id, count)
-                        VALUES ({track_id}, {related_track_id}, 1)
-                        ON DUPLICATE KEY UPDATE count=count+1"""
-            sql=sql.format(track_id=id_1, related_track_id=id_2)
+            sql = """INSERT INTO track_relations (date, track_id, related_track_id, count)
+                        VALUES ({date}, {track_id}, {related_track_id}, 1)"""
+                        #ON DUPLICATE KEY UPDATE count=count+1"""
+            sql=sql.format(track_id=id_1[0], related_track_id=id_2[0], date=DATE(id_2[1]))
             c.execute(sql)
 
         session_data['end_date'] = play_date

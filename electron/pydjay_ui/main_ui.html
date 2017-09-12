@@ -287,7 +287,8 @@ webix.UIManager.addHotKey("enter", function () {
 track_list_popup = webix.ui(track_list_popup)
 track_list_popup.hide();
 track_list_popup.attachEvent('onShow', function () {
-    var sql = `SELECT id as id, name as name FROM playlists ORDER BY name`
+    var sql = `SELECT id, name, counts.count as count FROM playlists JOIN (select playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts ON playlists.id=counts.playlist_id`;
+    //var sql = `SELECT id as id, name as name FROM playlists ORDER BY name`
     db_connection.query(sql, function (err, result) {
       if (err) throw err;
       $$('track_list_view').clearAll()
@@ -322,6 +323,144 @@ webix.UIManager.addHotKey("enter", function () {
 
 
 
+
+function save_session(name, location, address) {
+    db_connection.query(
+        `SELECT track_id, start_time, end_time FROM session_queue WHERE status='played' ORDER BY position`,
+        function (error, played_tracks) {
+            if (error) throw error;
+
+            if (played_tracks.length > 0) {
+                db_connection.query(
+                    `SELECT max(id) + 1 AS new_session_id FROM sessions`,
+                    function (error, result) {
+                        if (error) throw error;
+                        new_session_id = result[0].new_session_id;
+                        db_connection.query(
+                            `SELECT min(start_time) AS start, max(end_time) AS end FROM session_queue WHERE status='played'`,
+                            function (error, start_end_time) {
+                                if (error) throw error;
+                                format = webix.Date.dateToStr("%Y-%m-%d %H:%i:%s");
+                                start_date = format(start_end_time[0].start);
+                                end_date = format(start_end_time[0].end);
+                                db_connection.query(
+                                    `INSERT INTO sessions (id, event_name, start_date, end_date, location, address)
+                                     VALUES (${new_session_id}, "${name}", '${start_date}', '${end_date}', "${location}", "${address}")`,
+                                     function (error, x){
+                                         if (error) throw error;
+                                         session_data = [];
+                                         relation_data = [];
+
+                                         for(var i =0; i<played_tracks.length; i++){
+                                             start_time = format(played_tracks[i].start_time);
+                                             end_time = format(played_tracks[i].start_time);
+                                             session_data.push(`(${new_session_id}, ${played_tracks[i].track_id}, '${start_time}', '${end_time}', ${i+1})`)
+                                             if (i+1 < played_tracks.length) {
+                                                 relation_time = format(played_tracks[i+1].start_time);
+                                                 relation_data.push(`(${played_tracks[i].track_id}, ${played_tracks[i+1].track_id}, 'PLAYED_IN_SET', 1, '${relation_time}')`)
+                                             }
+                                         }
+                                         db_connection.query(
+                                             `INSERT INTO session_tracks (session_id, track_id, start_time, end_time, position) VALUES ${session_data.join(',')}`,
+                                             function (error, r) {
+                                                 if (error) throw error;
+                                                 db_connection.query(
+                                                     `INSERT INTO track_relations (track_id, related_track_id, reason, count, date) VALUES ${relation_data.join(',')} ON DUPLICATE KEY UPDATE count=count+1`,
+                                                     function (error, r) {
+                                                         if (error) throw error;
+                                                         db_connection.query(
+                                                             `DELETE FROM session_queue WHERE status='played'`,
+                                                             function (error, r) {
+                                                                 if (error) throw error;
+                                                                 db_connection.query(
+                                                                    `SELECT min(position) as first FROM session_queue`,
+                                                                    function (error, result) {
+                                                                        if (error) throw error;
+                                                                        db_connection.query(
+                                                                            `UPDATE session_queue SET status='pending', start_time=NULL, end_time=NULL, position=position-(${result[0].first}-1)`,
+                                                                            function (error, r) {
+                                                                                if (error) throw error;
+                                                                                console.log('session saved');
+
+                                                                            }
+                                                                        )
+                                                                    }
+                                                                 )
+                                                             }
+                                                         )
+                                                     }
+                                                 )
+                                             }
+                                         )
+                                     }
+                                )
+                            }
+                        )
+                    }
+                )
+            }
+        }
+    )
+}
+
+function save_current_session() {
+    x = webix.ui({
+        view:"window",
+        modal:true,
+        position:"center",
+        width:600,
+        height:400,
+        head: "SAVE CURRENT SESSION",
+        body:{
+            rows:[
+                {height:10},
+                {
+                    id:'session_name',
+                    view: "text",
+                    value:'',
+                    label:"Name:"
+                },
+                {
+                    id:'session_location',
+                    view:"text",
+                    value:'',
+                    label:"Location:"
+                },
+                {
+                    id:'session_address',
+                    view:"text",
+                    value:'',
+                    label:"Address:"
+                },
+                {height:30},
+                {
+                    cols:[
+                        {},
+                        {
+                            view: 'button',
+                            label: 'SAVE',
+                            click: () => {save_session($$('session_name').getValue(), $$('session_location').getValue(),$$('session_address').getValue()); x.hide()}
+                        },
+                        {},
+                        {
+                            view: 'button',
+                            label: 'CANCEL',
+                            click: () => {x.hide()}
+                        },
+                        {}
+                    ]
+                },
+                {height:10}
+            ]
+        }
+    })
+    session_popup.hide()
+    x.show();
+
+}
+
+
+
 main_list_display_template.gravity = 2.25;
 var session_popup = webix.ui(
     {
@@ -332,10 +471,22 @@ var session_popup = webix.ui(
         body:{
             rows:[
                 {
-                    view:'label',
-                    label:"<b>PLAYED SONGS</b>",
-                    height:30
+                    cols: [
+                        {
+                            view:'label',
+                            label:"<b>PLAYED SONGS</b>",
+                            height:30
+                        },
+                        {
+                            gravity:.5,
+                            view:'button',
+                            label:"SAVE",
+                            height:30,
+                            click: save_current_session,
+                        }
+                    ]
                 },
+                {height:10},
                 {
                     view:'list',
                     id:'session_list_view',
@@ -365,6 +516,8 @@ session_popup.attachEvent('onShow', function () {
       }
     });
 })
+
+
 
 var popup = webix.ui({
     view:"popup",
@@ -960,7 +1113,6 @@ webix.UIManager.addHotKey("alt+r", function () {
           $$('queue_list').add(result[i])
       }
     });
-
 });
 
 
