@@ -287,15 +287,17 @@ webix.UIManager.addHotKey("enter", function () {
 track_list_popup = webix.ui(track_list_popup)
 track_list_popup.hide();
 track_list_popup.attachEvent('onShow', function () {
-    var sql = `SELECT id, name, counts.count as count FROM playlists JOIN (select playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts ON playlists.id=counts.playlist_id`;
+    //var sql = `SELECT id, name, counts.count as count FROM playlists JOIN (select playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts ON playlists.id=counts.playlist_id`;
     //var sql = `SELECT id as id, name as name FROM playlists ORDER BY name`
-    db_connection.query(sql, function (err, result) {
-      if (err) throw err;
-      $$('track_list_view').clearAll()
-      $$('track_list_view').refresh()
-      $$('track_list_view').define('data', result);
-      $$('track_list_view').refresh()
-    });
+    db_connection.query(
+        `SELECT id, name, counts.count as count FROM playlists JOIN (select playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts ON playlists.id=counts.playlist_id`,
+        function (err, result) {
+            if (err) throw err;
+            $$('track_list_view').clearAll()
+            $$('track_list_view').refresh()
+            $$('track_list_view').define('data', result);
+            $$('track_list_view').refresh()
+        });
 })
 $$('track_list_view').attachEvent("onItemClick", function(id, e, node){
     var item = this.getItem(id);

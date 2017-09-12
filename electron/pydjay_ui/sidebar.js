@@ -241,9 +241,10 @@ var sidebar_template = {
         'background-color':'#3f3f3f',
         'padding':'0px',
         'margin':'0px',
+
         //'color':'#232323'
     },
-    width:125,
+    width:150,
     rows: [
         {
             id: 'show_all_songs',
@@ -251,6 +252,7 @@ var sidebar_template = {
             label:'<b>ALL SONGS</b>',
             type:'icon',
             icon:'database',
+            //css:{'font-size':'10'},
             click:display_all_songs()
         },
         {
