@@ -481,6 +481,7 @@ var session_popup = webix.ui(
                         },
                         {
                             gravity:.5,
+                            id: 'session_save_button',
                             view:'button',
                             label:"SAVE",
                             height:30,
@@ -513,6 +514,15 @@ session_popup.attachEvent('onShow', function () {
     db_connection.query(sql, function (err, result) {
       if (err) throw err;
       $$('session_list_view').clearAll();
+      if (result.length == 0) {
+          $$('session_save_button').hide();
+      } else {
+          if (!queue_playing) {
+              $$('session_save_button').show();
+          } else {
+              $$('session_save_button').hide();
+          }
+      }
       for(var i=0; i < result.length; i++){
           $$('session_list_view').add(result[i])
       }

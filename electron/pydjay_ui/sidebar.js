@@ -241,24 +241,21 @@ var sidebar_template = {
         'background-color':'#3f3f3f',
         'padding':'0px',
         'margin':'0px',
-
-        //'color':'#232323'
     },
-    width:150,
+    width:125,
     rows: [
         {
             id: 'show_all_songs',
             view:'button',
-            label:'<b>ALL SONGS</b>',
+            label:'<b style="font-size:12px">ALL SONGS</b>',
             type:'icon',
             icon:'database',
-            //css:{'font-size':'10'},
             click:display_all_songs()
         },
         {
             id: 'show_short_list',
             view:'button',
-            label:'<b>SHORT LIST</b>',
+            label:'<b style="font-size:12px">SHORT LIST</b>',
             type:'icon',
             icon:'calendar',
             click:display_short_listed_songs(),
@@ -267,7 +264,7 @@ var sidebar_template = {
         {
             id: 'show_unavailable',
             view:'button',
-            label:'<b>UNAVAILABLE</b>',
+            label:'<b style="font-size:12px">UNAVAILABLE</b>',
             type:'icon',
             icon:'close',
             click:display_unavailable_songs(),
@@ -276,14 +273,14 @@ var sidebar_template = {
         {
             id: 'show_remations',
             view:'button',
-            label:'<b>RELATIONS</b>',
+            label:'<b style="font-size:12px">RELATIONS</b>',
             type:'icon',
             icon:'cog'
         },
         {
             id: 'show_genres',
             view:'button',
-            label:'<b>GENRES</b>',
+            label:'<b style="font-size:12px">GENRES</b>',
             type:'icon',
             icon:'folder',
             popup:'genres_list_popup',
@@ -292,7 +289,7 @@ var sidebar_template = {
         {
             id: 'show_lists',
             view:'button',
-            label:'<b>TAGS</b>',
+            label:'<b style="font-size:12px">TAGS</b>',
             type:'icon',
             icon:'folder',
             popup:'track_list_popup',
@@ -301,7 +298,7 @@ var sidebar_template = {
         {
             id: 'show_sessions',
             view:'button',
-            label:'<b>SESSIONS</b>',
+            label:'<b style="font-size:12px">SESSIONS</b>',
             type:'icon',
             icon:'folder',
             popup:'sessions_list_popup',
