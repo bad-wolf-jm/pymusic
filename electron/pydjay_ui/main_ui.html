@@ -746,49 +746,82 @@ var datatable = webix.ui({
 });
 $$('queue_stop_message').hide();
 
-// datatable.registerFilter(
-//     $$('track_filter'),
-//     { columnId:"id" }, //column to filter
-//     {
-//         getValue:function(node){
-//             console.log(node);
-//             return node.value;
-//         }
-//         // ,
-//         // setValue:function(node, value){
-//         //     node.value = value;
-//         // }
-// });
-//
 $$("display_list").filterByAll=function(){
     var text = $$('track_filter').getValue()
-    console.log(text);
     var i=0;
-    console.log(this);
+    search_tokens = text.split(' ')
+    search_f = [];
+    // console.log(search_tokens);
+    for (var i=0; i<search_tokens.length; i++) {
+        let token = search_tokens[i];
+        if (token.length > 0) {
+            if (search_tokens[i].startsWith('@bpm<')) {
+                let x = parseInt(search_tokens[i].split('<')[1]);
+                if (!isNaN(x)) {
+                    search_f.push(
+                        function (obj) {
+                            return obj.bpm <= x;
+                        }
+                    )
+                } else {
+                    search_f.push( (x) => {return true} )
+                }
+            } else if (search_tokens[i].startsWith('@bpm>')) {
+                let x = parseInt(search_tokens[i].split('>')[1]);
+                if (!isNaN(x)) {
+                    search_f.push(
+                        function (obj) {
+                            return (obj.bpm >= x);
+                        }
+                    )
+                } else {
+                    search_f.push( (x) => {return true} )
+                }
+
+            } else if (search_tokens[i].startsWith('@bpm~')) {
+                let x = parseInt(search_tokens[i].split('~')[1]);
+                if (!isNaN(x)) {
+                    search_f.push(
+                        function (obj) {
+                            return (obj.bpm < x*1.2) && (obj.bpm > x*0.9) ;
+                        }
+                    )
+                } else {
+                    search_f.push( (x) => {return true} )
+                }
+            } else {
+                search_f.push(
+                    function (x) {
+                        fields = [x.title, x.artist, x.genre, `@rat=${x.rating}`, '@bpm']
+                        if (x.favorite) {
+                            fields.push('@loved')
+                        }
+                        for (j=0; j<fields.length; j++) {
+                            if (fields[j] != null) {
+                                if ((fields[j].toLowerCase().search(token) != -1)) {
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    }
+                )
+            }
+        }
+    }
+    // console.log(search_f.length);
     this.filter(
         function (obj) {
-            console.log(i, obj);
-            i++;
-            return obj.title.indexOf(text)!=-1;
+            for(i=0; i<search_f.length; i++) {
+                x = search_f[i](obj);
+                if (!x) {
+                    return false;
+                }
+            }
+            return true;
         }
     )
-// //gets filter values
-//     var text = this.getFilter("rank").value.toString().toLowerCase();
-// //unfilters for empty search text
-//     if (!text) return this.filter();
-//
-// //filters using OR logic
-//     this.filter(function(obj){
-//         if (obj.year == text) return true;
-//         if (obj.title.toLowerCase().indexOf(text)!=-1) return true;
-//         return false;
-//     });
 };
-//     }
-// )
-// d
-
-
 
 
 var mysql = require('mysql');
