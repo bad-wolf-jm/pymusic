@@ -44,8 +44,16 @@ var main_list_display_template = {
                 },
                 {
                     gravity:0.4,
+                    id: 'track_filter',
                     view: 'search',
-                    placeholder:"Filter list..."
+                    placeholder:"Filter list...",
+                    keyPressTimeout:50,
+                    on: {
+                        onTimedKeyPress: function (){
+                            $$("display_list").filterByAll();
+                        }
+                    }
+
                 },
                 {width:10}
             ]
