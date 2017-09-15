@@ -170,13 +170,16 @@ main_time_socket.connect('tcp://127.0.0.1:5557');
 main_time_socket.on("message", function( payload ) {
     data = JSON.parse(payload.toString());
     if (data.event == 'track_position_notice') {
-        $$('main_track_time').define('label', format_nanoseconds(data.args[0]))
-        $$('main_track_time').refresh()
+        if (current_track_length != undefined) {
+            remaining = Math.abs(current_track_length - data.args[0])
+            $$('main_track_time').define('label', `-${format_nanoseconds(remaining)}`)
+            $$('main_track_time').refresh()
+        }
         main_player_progress.animate(data.args[0] / current_track_length);
     } else if (data.event == 'track_duration_notice') {
-            $$('main_track_length').define('label', format_nanoseconds(data.args[0]))
-            $$('main_track_length').refresh();
-            current_track_length = data.args[0];
+        $$('main_track_time').define('label', `-${format_nanoseconds(data.args[0])}`)
+        $$('main_track_time').refresh();
+        current_track_length = data.args[0];
     } else if (data.event == 'end_of_stream') {
         if (!stop_request){
             db_connection.query(
@@ -235,9 +238,16 @@ function play_next_track_after_time(time_in_seconds) {
         function () {
             if (delay <= 0) {
                 clearInterval(id);
+                $$('main-artist').define('label', `Next track will start now...`)
                 play_next_track();
             } else {
-                console.log('waiting...', next_track_delay)
+                //console.log('waiting...', next_track_delay)
+                if (delay > 1) {
+                    $$('main-artist').define('label', `Next track will start in ${delay} seconds`)
+                } else {
+                    $$('main-artist').define('label', `Next track will start in 1 second`)
+                }
+                $$('main-artist').refresh()
                 delay--;
             }
         }, 1000)

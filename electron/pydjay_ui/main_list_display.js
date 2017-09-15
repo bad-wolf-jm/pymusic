@@ -6,18 +6,17 @@ function custom_checkbox(obj, common, value){
 };
 
 var main_list_display_template = {
+    type:'line',
     css:{
-        //'background-color':'#5c5c5c',
-        //'padding':'5px',
-        border: '0px solid black'
+        border: '0px solid #3c3c3c'
      },
     rows: [
-        //{height:5},
         {
+            id: 'main_list_header_row',
             css:{
                 'background-color':'#5c5c5c',
                 'padding':'5px',
-                border: '0px solid #3c3c3c'
+                border: '1px solid #3c3c3c'
              },
 
             cols: [
@@ -43,7 +42,7 @@ var main_list_display_template = {
                     ]
                 },
                 {
-                    gravity:0.4,
+                    gravity:1,
                     id: 'track_filter',
                     view: 'search',
                     placeholder:"Filter list...",
@@ -63,6 +62,7 @@ var main_list_display_template = {
             view:"datatable",
             id:"display_list",
             select:"row",
+            //navigation:false,
             resizeColumn:{headerOnly:true},
             css:{
                 'background-color':'#303030',

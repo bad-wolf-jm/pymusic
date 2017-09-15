@@ -12,6 +12,7 @@ function display_track_list(list_name, list_elements) {
     $$('playlist_name').define('label', list_name);
     $$('playlist_name').refresh();
     webix.UIManager.setFocus($$('display_list'));
+    $$('display_list').select($$('display_list').getFirstId())
 }
 
 var display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, rating, bpm, stream_length, count(session_tracks.track_id) as play_count';
@@ -176,7 +177,7 @@ function session_template(element) {
             <div style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:20%; text-align:right">${element.count}</div>`
     }
 
-var sessions_list_popup = //webix.ui(
+var sessions_list_popup =
     {
         view:"popup",
         id:"sessions_list_popup",

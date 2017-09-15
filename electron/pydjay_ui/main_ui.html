@@ -23,7 +23,7 @@
         border: '0px solid #3c3c3c'
     }
     .unavailable_track {
-        opacity:0.25;
+        color: #555555 !important;
     }
     .webix_img_btn {
         color: #cccccc;
@@ -32,9 +32,21 @@
     .webix_el_button {
         color: #cccccc;
     }
+
     .webix_icon_btn, .webix_el_button .webix_img_btn  {
         color: #cccccc;
+    }
 
+    .webix_column>div.webix_row_select {
+        background-color:#0056AC;
+    }
+
+    .webix_list_item.webix_selected {
+        background-color:#0056AC;
+    }
+
+    .focus_header {
+        background-color: #7c7c7c !important;
     }
 </style>
 
@@ -56,49 +68,60 @@ var player_window = {
      },
     cols:[
         {id:'main-cover-image', view: 'template', width:58, height:58, template: "FOO"},
+        {width:5},
         {
             rows:[
+                {height:7},
                 {
-                    view: 'label',
-                    id:'main-title',
-                    css: {
-                        'text-align':'center',
-                        'text-transform':'uppercase',
-                        'font-weight':'bold'
-                    },
-                    label: 'Title Of Song', height:20
+                    cols: [
+                        {
+                            rows: [
+                                {
+                                    view: 'label',
+                                    id:'main-title',
+                                    css: {
+                                        'text-align':'left',
+                                        'text-transform':'uppercase',
+                                        'font-weight':'bold'
+                                    },
+                                    label: 'Title Of Song', height:20
+                                },
+                                {
+                                    view: 'label',
+                                    id:'main-artist',
+                                    css: {
+                                        'text-align':'left'
+                                    },
+                                    label: 'Artist - Album', height:20
+                                }
+                            ]
+                        },
+                        {
+                            view: 'label',
+                            id:'main_track_time',
+                            css:{'text-align':'right', 'font-size':'20px', 'font-weight':800},
+                            label: '-00:00',
+                            height:15,
+                            width:75
+                        },
+                        {width:5}
+                    ]
                 },
-                {
-                    view: 'label',
-                    id:'main-artist',
-                    css: {
-                        'text-align':'center'
-                    },
-                    label: 'Artist - Album', height:20
-                },
+                {height:2},
                 {cols:[
-                    {
-                        view: 'label',
-                        id:'main_track_time',
-                        css:{'text-align':'left', 'font-size':'12px'},
-                        label: '00:00',
-                        height:15,
-                        width:37
-                    },
+                    {width:2},
                     {
                         height:5,
                         css:{margin:0, padding:0, border: '0px solid #3c3c3c'},
-                        template:'<div id="main-player-progress" style="border: \'0px solid black\'; width:100%; height:75%; position:relative; top:0%; transform: translateY(-50%)"></div>'},
-                    {
-                        view: 'label',
-                        id:'main_track_length',
-                        css:{'text-align':'right', 'font-size':'12px'},
-                        label: '00:00',
-                        height:15,
-                        width:37
-                    }
+                        template:'<div id="main-player-progress" style="border: \'0px solid black\'; width:100%; height:100%; position:relative; top:0%; transform: translateY(-150%)"></div>'
+                    },
+                    {width:7}
                 ]}
             ]
+
+
+
+
         }
     ]
 }
@@ -112,7 +135,7 @@ $(document).ready( () => {
      color: '#5a5a5a',
      trailColor: '#eee',
      trailWidth: 1,
-     svgStyle: {width: '100%', height: '50%'}});
+     svgStyle: {width: '100%', height: '100%'}});
     main_player_progress.animate(0);
 });
 
@@ -287,8 +310,6 @@ webix.UIManager.addHotKey("enter", function () {
 track_list_popup = webix.ui(track_list_popup)
 track_list_popup.hide();
 track_list_popup.attachEvent('onShow', function () {
-    //var sql = `SELECT id, name, counts.count as count FROM playlists JOIN (select playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts ON playlists.id=counts.playlist_id`;
-    //var sql = `SELECT id as id, name as name FROM playlists ORDER BY name`
     db_connection.query(
         `SELECT id, name, counts.count as count FROM playlists JOIN (select playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts ON playlists.id=counts.playlist_id`,
         function (err, result) {
@@ -331,7 +352,6 @@ function save_session(name, location, address) {
         `SELECT track_id, start_time, end_time FROM session_queue WHERE status='played' ORDER BY position`,
         function (error, played_tracks) {
             if (error) throw error;
-
             if (played_tracks.length > 0) {
                 db_connection.query(
                     `SELECT max(id) + 1 AS new_session_id FROM sessions`,
@@ -441,7 +461,12 @@ function save_current_session() {
                         {
                             view: 'button',
                             label: 'SAVE',
-                            click: () => {save_session($$('session_name').getValue(), $$('session_location').getValue(),$$('session_address').getValue()); x.hide()}
+                            click: function () {
+                                save_session($$('session_name').getValue(),
+                                             $$('session_location').getValue(),
+                                             $$('session_address').getValue());
+                                x.hide();
+                            }
                         },
                         {},
                         {
@@ -697,13 +722,21 @@ var datatable = webix.ui({
                 {
                     width:250,
                     cols:[
+                        {width:7},
                         {
                             gravity:.5,
                             view:'template',
                             id: 'queue_stop_message',
-                            template:'Queue will stop after this song',
+                            css: {
+                                'text-align':'center',
+                                'vertical-align': 'middle',
+                                color: '#fbbbbbb',
+                                'background-color': '#870053'
+                            },
+                            template:'<span style="vertical-align:bottom"><b>Queue will stop after this song</b></span>',
                             maxHeight:35
-                        }
+                        },
+                        {width:15}
                     ]
                 },
                 {
@@ -777,7 +810,6 @@ $$("display_list").filterByAll=function(){
                 } else {
                     search_f.push( (x) => {return true} )
                 }
-
             } else if (search_tokens[i].startsWith('@bpm~')) {
                 let x = parseInt(search_tokens[i].split('~')[1]);
                 if (!isNaN(x)) {
@@ -809,7 +841,6 @@ $$("display_list").filterByAll=function(){
             }
         }
     }
-    // console.log(search_f.length);
     this.filter(
         function (obj) {
             for(i=0; i<search_f.length; i++) {
@@ -1006,7 +1037,7 @@ webix.UIManager.addHotKey("t", function () {
                                         if (err) throw err;
                                         $$('queue_list').data.each(
                                             function (element) {
-                                                if (element.position > min) {
+                                                if (element.position >= min) {
                                                     element.position++;
                                                 }
                                             }
@@ -1124,6 +1155,12 @@ function preview_play_track_id(id) {
     )
 }
 
+webix.UIManager.removeHotKey('left');
+webix.UIManager.removeHotKey('right');
+webix.UIManager.removeHotKey('shift+left');
+webix.UIManager.removeHotKey('shift+right');
+webix.UIManager.removeHotKey('tab');
+
 
 webix.UIManager.addHotKey("enter", function () {
     var id = $$('display_list').getSelectedId().id;
@@ -1143,41 +1180,40 @@ webix.UIManager.addHotKey("shift+space", function () {
     preview_stop();
 });
 
-webix.UIManager.addHotKey("ctrl+shift+q", function () {
+webix.UIManager.addHotKey("shift+ctrl+q", function () {
     increase_main_player_volume();
 });
-webix.UIManager.addHotKey("ctrl+shift+a", function () {
+webix.UIManager.addHotKey("shift+ctrl+a", function () {
     decrease_main_player_volume();
 });
 
-webix.UIManager.addHotKey("ctrl+shift+i", function () {
+webix.UIManager.addHotKey("shift+ctrl+i", function () {
     increase_precue_player_volume();
 });
-webix.UIManager.addHotKey("ctrl+shift+k", function () {
+webix.UIManager.addHotKey("shift+ctrl+k", function () {
     decrease_precue_player_volume();
 });
 
-webix.UIManager.addHotKey("ctrl+shift+o", function () {
+webix.UIManager.addHotKey("shift+ctrl+o", function () {
     increase_monitor_volume();
 });
-webix.UIManager.addHotKey("ctrl+shift+l", function () {
+webix.UIManager.addHotKey("shift+ctrl+l", function () {
     decrease_monitor_volume();
 });
 
-webix.UIManager.addHotKey("ctrl+shift+n", function () {
+webix.UIManager.addHotKey("shift+left", function () {
     preview_seek_relative(-5)
 });
-webix.UIManager.addHotKey("ctrl+shift+m", function () {
+webix.UIManager.addHotKey("shift+right", function () {
     preview_seek_relative(5)
 });
 
-webix.UIManager.addHotKey("ctrl+shift+alt+n", function () {
+webix.UIManager.addHotKey("ctrl+shift+left", function () {
     preview_seek_relative(-20)
 });
-webix.UIManager.addHotKey("ctrl+shift+alt+m", function () {
+webix.UIManager.addHotKey("ctrl+shift+right", function () {
     preview_seek_relative(20)
 });
-
 
 webix.UIManager.addHotKey("alt+f", function () {
     const win = require('electron').remote.getCurrentWindow();
@@ -1204,8 +1240,6 @@ webix.UIManager.addHotKey("alt+r", function () {
       }
     });
 });
-
-
 
 webix.UIManager.addHotKey("shift+q", function () {
     var id = $$('display_list').getSelectedId().id;
@@ -1235,7 +1269,6 @@ webix.UIManager.addHotKey("shift+q", function () {
                                  ORDER BY session_queue.position`;
                         db_connection.query(sql, function (err, result) {
                             if (err) throw err;
-                            //result[0].id = id;
                             $$('queue_list').add(result[0]);
                             $$('display_list').addRowCss(id, 'unavailable_track');
                             update_queue_labels();
@@ -1280,6 +1313,26 @@ webix.UIManager.addHotKey("shift+u", function () {
     )
 }, $$('display_list'));
 
+webix.UIManager.addHotKey("ctrl+f", function () {
+    $$('track_filter').focus();
+}, $$('display_list'));
+
+webix.UIManager.addHotKey("escape", function () {
+    webix.UIManager.setFocus($$('display_list'));
+}, $$('track_filter'));
+
+webix.UIManager.addHotKey("enter", function () {
+    webix.UIManager.setFocus($$('display_list'));
+}, $$('track_filter'));
+
+webix.UIManager.addHotKey("right", function () {
+    console.log('tab pressed');
+    webix.UIManager.setFocus('queue_list');
+}, $$('display_list'));
+
+webix.UIManager.addHotKey("left", function () {
+    webix.UIManager.setFocus($$('display_list'));
+}, $$('queue_list'));
 
 webix.UIManager.addHotKey("escape", function () {
     display_all_songs()();
@@ -1309,6 +1362,55 @@ webix.UIManager.addHotKey("shift+a", function () {
 
 update_queue_labels();
 
+$$('queue_list').attachEvent('onFocus',
+    function (x) {
+        s = $$('queue_list').getSelectedId();
+        //console.log('selected', s);
+        if (s == '') {
+            $$('queue_list').select($$('queue_list').getFirstId());
+        }
+        webix.html.addCss( $$('queue_list_header_row').getNode(), "focus_header");
+        webix.html.removeCss( $$('main_list_header_row').getNode(), "focus_header");
+    }
+ );
+
+$$('display_list').attachEvent('onFocus',
+  function (x) {
+      s = $$('display_list').getSelectedId();
+      if (s == '') {
+          $$('display_list').select($$('display_list').getFirstId());
+      }
+      webix.html.addCss( $$('main_list_header_row').getNode(), "focus_header");
+      webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
+  }
+);
+
+$$('display_list').attachEvent('onFocus',
+  function (x) {
+      webix.html.addCss( $$('main_list_header_row').getNode(), "focus_header");
+      webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
+
+    //   $$('main_list_header_row').define('css', {
+    //       'background-color':'#7c7c7c',
+    //       'padding':'5px',
+    //       border: '1px solid #5c5c5c',
+    //    });
+    //    $$('queue_list_header_row').define('css', {
+    //        'background-color':'#5c5c5c',
+    //        'padding':'5px',
+    //        border: '1px solid #3c3c3c'
+    //    });
+
+  }
+);
+
+
+
+
+
+
 $$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})
 webix.UIManager.setFocus($$('display_list'));
+
+
 </script>

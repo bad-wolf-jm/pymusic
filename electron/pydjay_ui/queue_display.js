@@ -58,6 +58,7 @@ var queue_display_template = {
     },
     rows:[
         {
+            id: 'queue_list_header_row',
             css:{
                 'background-color':'#5c5c5c',
                 'padding':'5px',
