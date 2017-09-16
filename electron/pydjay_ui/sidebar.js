@@ -2,17 +2,19 @@
 
 function display_track_list(list_name, list_elements) {
     $$('display_list').clearAll()
-    for(i=0; i<list_elements.length; i++){
-        if (!list_elements[i].available){
-            list_elements[i].$css = "unavailable_track";
+    if (list_elements.length > 0) {
+        for(i=0; i<list_elements.length; i++){
+            if (!list_elements[i].available){
+                list_elements[i].$css = "unavailable_track";
+            }
         }
+        $$('display_list').define('data', list_elements);
+        $$('display_list').refresh();
+        $$('playlist_name').define('label', list_name);
+        $$('playlist_name').refresh();
+        webix.UIManager.setFocus($$('display_list'));
+        $$('display_list').select($$('display_list').getFirstId())
     }
-    $$('display_list').define('data', list_elements);
-    $$('display_list').refresh();
-    $$('playlist_name').define('label', list_name);
-    $$('playlist_name').refresh();
-    webix.UIManager.setFocus($$('display_list'));
-    $$('display_list').select($$('display_list').getFirstId())
 }
 
 var display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, rating, bpm, stream_length, count(session_tracks.track_id) as play_count';
@@ -133,8 +135,8 @@ function genre_template(element) {
     }
     return `<div>
             <i class="ui left floated list icon"></i>
-            <div style="float:left; margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:70%">${element.name}</div>
-            <div style="height:22px; font_size:12px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:20%; text-align:right">${element.count}</div>
+            <div class="genre_element_name">${element.name}</div>
+            <div class="genre_element_count">${element.count}</div>
             </div>`
     }
 
@@ -171,11 +173,13 @@ function session_template(element) {
     } else {
         cover_source = `${element.image_root}/${element.cover}`
     }
+
     return `<i class="ui left floated list icon"></i>
-            <div style="float:left; margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:35%">${element.name}</div>
-            <div style="float:left; margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:35%; text-align:right">${webix.Date.dateToStr("%Y-%m-%d")(element.date)}</div>
-            <div style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:20%; text-align:right">${element.count}</div>`
+            <div class="session_element_name">${element.name}</div>
+            <div class="session_element_date">${webix.Date.dateToStr("%Y-%m-%d")(element.date)}</div>
+            <div class="session_element_count">${element.count}</div>`
     }
+
 
 var sessions_list_popup =
     {
@@ -210,8 +214,10 @@ function track_list_template(element) {
         cover_source = `${element.image_root}/${element.cover}`
     }
     return `<i class="ui left floated list icon"></i>
-            <div style="float:left; margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:70%">${element.name}</div>
-            <div style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis; width:15%; text-align:right">${element.count}</div>`
+            <div class="tag_element_name">${element.name}</div>
+            <div class="tag_element_count">${element.count}</div>
+            <div style="float:right; position:relative; top:0%; transform: translateY(-80%); height:20px; width:20px; background-color:${element.color}"></div>`
+
     }
 
 var track_list_popup =
@@ -220,7 +226,7 @@ var track_list_popup =
         id:"track_list_popup",
         relative:'right',
         height:700,
-        width:350,
+        width:400,
         body:{
             rows:[
                 {

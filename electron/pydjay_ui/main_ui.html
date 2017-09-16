@@ -48,6 +48,124 @@
     .focus_header {
         background-color: #7c7c7c !important;
     }
+
+    .queue_element_title {
+        margin:0px;
+        padding:0px;
+        height:22px;
+        font_size:10px;
+        white-space:nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .queue_element_artist {
+        margin:0px;
+        padding:0px;
+        height:22px;
+        white-space:nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .queue_element_bpm {
+        margin:0px;
+        padding:0px;
+        width:85px;
+        float:left;
+        text-align:right;
+        position:relative;
+        top:50%;
+        transform: translateY(-50%);
+    }
+
+    .queue_element_duration {
+        float:right;
+        position:relative;
+        top:50%;
+        transform: translateY(-50%);
+    }
+
+
+    .genre_element_name {
+        float:left;
+        margin:0px;
+        padding:0px 10px;
+        height:22px;
+        white-space:nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width:70%
+    }
+
+    .genre_element_count {
+        height:22px;
+        white-space:nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width:20%;
+        text-align:right
+    }
+
+    .session_element_name {
+        float:left;
+        margin:0px;
+        padding:0px 10px;
+        height:22px;
+        white-space:nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width:45%;
+    }
+
+    .session_element_date {
+        float:left;
+        margin:0px;
+        padding:0px;
+        height:22px;
+        white-space:nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width:25%;
+        text-align:right;
+    }
+
+    .session_element_count {
+        margin:0px;
+        padding:0px;
+        height:22px;
+        white-space:nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width:20%;
+        text-align:right;
+    }
+
+
+    .tag_element_name {
+        float:left;
+        margin:0px;
+        padding:0px 10px;
+        height:22px;
+        white-space:nowrap;
+        overflow: hidden;
+        text-overflow:
+        ellipsis; width:65%
+    }
+
+    .tag_element_count {
+        margin:0px;
+        padding:0px;
+        height:22px;
+        white-space:nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width:15%;
+        text-align:right
+    }
+
+
+
 </style>
 
 <body>
@@ -140,7 +258,7 @@ $(document).ready( () => {
 });
 
 var preview_player_window = {
-    height:125,
+    height:135,
     gravity:1,
     css:{
         'background-color':'#6c6c6c',
@@ -216,7 +334,37 @@ var preview_player_window = {
                 }
 
             ]},
-            {}]
+            {
+                cols: [
+                    {},
+                    {
+                        id:'preview_play_button',
+                        view:'button',
+                        type:'icon',
+                        icon:'play',
+                        width:30,
+                        click : function () {
+                            preview_pause();
+                        }
+                    },
+                    {width:30},
+                    {
+                        id:'preview_stop_button',
+                        view:'button',
+                        type:'icon',
+                        icon:'stop',
+                        width:30,
+                        click : function () {
+                            preview_stop();
+                        }
+
+                    },
+                    {}
+
+                ]
+            },
+            {}
+        ]
 }
 
 var preview_seek = undefined;
@@ -311,7 +459,8 @@ track_list_popup = webix.ui(track_list_popup)
 track_list_popup.hide();
 track_list_popup.attachEvent('onShow', function () {
     db_connection.query(
-        `SELECT id, name, counts.count as count FROM playlists JOIN (select playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts ON playlists.id=counts.playlist_id`,
+        `SELECT playlists.id as id , playlists.name, counts.count as count, playlist_categories.color AS color FROM
+         playlists JOIN (select playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts ON playlists.id=counts.playlist_id JOIN playlist_categories ON playlists.category=playlist_categories.id ORDER BY category`,
         function (err, result) {
             if (err) throw err;
             $$('track_list_view').clearAll()
@@ -525,6 +674,7 @@ var session_popup = webix.ui(
         }
 })
 session_popup.hide();
+$$('session_save_button').hide();
 session_popup.attachEvent('onShow', function () {
     var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist,
                     tracks.album, tracks.bpm, tracks.stream_length,
@@ -1155,6 +1305,8 @@ function preview_play_track_id(id) {
     )
 }
 
+webix.UIManager.removeHotKey('space');
+webix.UIManager.removeHotKey('shift+space');
 webix.UIManager.removeHotKey('left');
 webix.UIManager.removeHotKey('right');
 webix.UIManager.removeHotKey('shift+left');
@@ -1167,14 +1319,29 @@ webix.UIManager.addHotKey("enter", function () {
     preview_play_track_id(id);
 }, $$('display_list'));
 
+$$('display_list').attachEvent('onItemDblClick',
+    function (id) {
+        var id = $$('display_list').getSelectedId().id;
+        preview_play_track_id(id);
+    }
+);
+
+
 webix.UIManager.addHotKey("enter", function () {
     var id = $$('queue_list').getSelectedItem().track_id;
     preview_play_track_id(id);
 }, $$('queue_list'));
+$$('queue_list').attachEvent('onItemDblClick',
+    function (id) {
+        var id = $$('queue_list').getSelectedItem().track_id;
+        preview_play_track_id(id);
+    }
+);
 
 webix.UIManager.addHotKey("space", function () {
     preview_pause();
 });
+
 
 webix.UIManager.addHotKey("shift+space", function () {
     preview_stop();
@@ -1365,7 +1532,6 @@ update_queue_labels();
 $$('queue_list').attachEvent('onFocus',
     function (x) {
         s = $$('queue_list').getSelectedId();
-        //console.log('selected', s);
         if (s == '') {
             $$('queue_list').select($$('queue_list').getFirstId());
         }
@@ -1380,7 +1546,7 @@ $$('display_list').attachEvent('onFocus',
       if (s == '') {
           $$('display_list').select($$('display_list').getFirstId());
       }
-      webix.html.addCss( $$('main_list_header_row').getNode(), "focus_header");
+      webix.html.addCss($$('main_list_header_row').getNode(), "focus_header");
       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
   }
 );
@@ -1389,24 +1555,8 @@ $$('display_list').attachEvent('onFocus',
   function (x) {
       webix.html.addCss( $$('main_list_header_row').getNode(), "focus_header");
       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
-
-    //   $$('main_list_header_row').define('css', {
-    //       'background-color':'#7c7c7c',
-    //       'padding':'5px',
-    //       border: '1px solid #5c5c5c',
-    //    });
-    //    $$('queue_list_header_row').define('css', {
-    //        'background-color':'#5c5c5c',
-    //        'padding':'5px',
-    //        border: '1px solid #3c3c3c'
-    //    });
-
   }
 );
-
-
-
-
 
 
 $$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})

@@ -11,11 +11,11 @@ function queue_element_template(element) {
     }
     return `<img class="ui left floated image"  style="float:left; width:auto;" src="${cover_source}" height='${cover_size}' width='${cover_size}'></img>
             <div style="margin:0px; padding:0px; float:left; width:250px">
-                <div style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis;"><b>${element.title}</b></div>
-                <div style="margin:0px; padding:0px; height:22px; font_size:10px; white-space:nowrap; overflow: hidden; text-overflow: ellipsis"><i>${element.artist}</i></div>
+                <div class="queue_element_title"><b>${element.title}</b></div>
+                <div class="queue_element_artist"><i>${element.artist}</i></div>
             </div>
-            <div style="margin:0px; padding:0px; width:85px; font_size:8px; float:left; text-align:right; position:relative; top:50%; transform: translateY(-50%)">${element.bpm} BPM</div>
-            <div style="float:right; position:relative; top:50%; transform: translateY(-50%)">
+            <div class="queue_element_bpm">${element.bpm} BPM</div>
+            <div class="queue_element_duration">
                 <b>${format_nanoseconds(element.stream_length)}</b>
             </div>`
 }
