@@ -1,172 +1,19 @@
 <!DOCTYPE html>
 <title>PYMUSIC DJ App</title>
-<!-- <script src="../node_modules/jquery/dist/jquery.min.js"></script> -->
-<!-- <script src="../node_modules/semantic-ui/dist/semantic.min.js"></script> -->
 <script src="../node_modules/webix/webix.js"></script>
 <script src="../lib/progressbar.js"></script>
-<!-- <script src="../lib/seekbar.js"></script> -->
 <script src="./utils.js"></script>
 <script src="./main_list_display.js"></script>
 <script src="./queue_display.js"></script>
 <script src="./sidebar.js"></script>
 <script src="./playback.js"></script>
+<script src="./track_edit.js"></script>
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
 <link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">
 <link rel="stylesheet" href="../node_modules/webix/skins/contrast.css">
 <link rel="stylesheet" href="../node_modules/semantic-ui/dist/semantic.min.css">
+<link rel="stylesheet" href="./pymusic_style.css">
 
-<style>
-    .webix_template {
-        margin: 0px;
-        padding: 0px;
-        background-color:'#3c3c3c';
-        border: '0px solid #3c3c3c'
-    }
-    .unavailable_track {
-        color: #555555 !important;
-    }
-    .webix_img_btn {
-        color: #cccccc;
-    }
-
-    .webix_el_button {
-        color: #cccccc;
-    }
-
-    .webix_icon_btn, .webix_el_button .webix_img_btn  {
-        color: #cccccc;
-    }
-
-    .webix_column>div.webix_row_select {
-        background-color:#0056AC;
-    }
-
-    .webix_list_item.webix_selected {
-        background-color:#0056AC;
-    }
-
-    .focus_header {
-        background-color: #7c7c7c !important;
-    }
-
-    .queue_element_title {
-        margin:0px;
-        padding:0px;
-        height:22px;
-        font_size:10px;
-        white-space:nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .queue_element_artist {
-        margin:0px;
-        padding:0px;
-        height:22px;
-        white-space:nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .queue_element_bpm {
-        margin:0px;
-        padding:0px;
-        width:85px;
-        float:left;
-        text-align:right;
-        position:relative;
-        top:50%;
-        transform: translateY(-50%);
-    }
-
-    .queue_element_duration {
-        float:right;
-        position:relative;
-        top:50%;
-        transform: translateY(-50%);
-    }
-
-
-    .genre_element_name {
-        float:left;
-        margin:0px;
-        padding:0px 10px;
-        height:22px;
-        white-space:nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width:70%
-    }
-
-    .genre_element_count {
-        height:22px;
-        white-space:nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width:20%;
-        text-align:right
-    }
-
-    .session_element_name {
-        float:left;
-        margin:0px;
-        padding:0px 10px;
-        height:22px;
-        white-space:nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width:45%;
-    }
-
-    .session_element_date {
-        float:left;
-        margin:0px;
-        padding:0px;
-        height:22px;
-        white-space:nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width:25%;
-        text-align:right;
-    }
-
-    .session_element_count {
-        margin:0px;
-        padding:0px;
-        height:22px;
-        white-space:nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width:20%;
-        text-align:right;
-    }
-
-
-    .tag_element_name {
-        float:left;
-        margin:0px;
-        padding:0px 10px;
-        height:22px;
-        white-space:nowrap;
-        overflow: hidden;
-        text-overflow:
-        ellipsis; width:65%
-    }
-
-    .tag_element_count {
-        margin:0px;
-        padding:0px;
-        height:22px;
-        white-space:nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width:15%;
-        text-align:right
-    }
-
-
-
-</style>
 
 <body>
   <article id="mainArticle">
@@ -174,6 +21,7 @@
 </body>
 <script type="text/javascript">
 $ = require('jquery')
+Highcharts = require('highcharts')
 var path = require('path');
 
 var player_window = {
@@ -236,10 +84,6 @@ var player_window = {
                     {width:7}
                 ]}
             ]
-
-
-
-
         }
     ]
 }
@@ -574,6 +418,215 @@ function save_session(name, location, address) {
     )
 }
 
+
+
+
+
+var track_data_edit_window = webix.ui({
+    view: "window",
+    modal: true,
+    position: "center",
+    width: 975,
+    height: 700,
+    head: "EDIT TRACK DATA",
+    body:{
+        rows:[
+            {height:30},
+            {
+                cols:[
+                    {width:20},
+                    {
+                        id:'main-cover-image-edit',
+                        view: 'template',
+                        width:128,
+                        height:128,
+                        template: "FOO"
+                    },
+                    {width:20},
+                    {
+                        rows:[
+                            {height:7},
+                            {
+                                cols: [
+                                    {
+                                        rows: [
+                                            {},
+                                            {
+                                                view: 'label',
+                                                id:'main-title-edit',
+                                                css: {
+                                                    'text-align': 'left',
+                                                    'text-transform': 'uppercase',
+                                                    'font-weight': 'bold',
+                                                    'font-size': '20px'
+                                                },
+                                                label: 'Title Of Song',
+                                                height:30
+                                            },
+                                            {
+                                                view: 'label',
+                                                id:'main-artist-edit',
+                                                css: {
+                                                    'text-align':'left',
+                                                    'font-size': '20px'
+                                                },
+                                                label: 'Artist',
+                                                height:30
+                                            },
+                                            {
+                                                view: 'label',
+                                                id:'main-album-edit',
+                                                css: {
+                                                    'text-align':'left',
+                                                    'font-size':'20px'
+                                                },
+                                                label: 'Artist',
+                                                height:30
+                                            },
+                                            {}
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {width:20}
+                ]
+            },
+            {height:20},
+            {
+                cols:[
+                    {width:20},
+                    {
+                        height:125,
+                        css:{margin:0, padding:0, border: '1px solid #ffffff'},
+                        template:'<div id="track-waveform" style="border: \'1px solid black\'; width:100%; height:100%;"></div>'
+                    },
+                    {width:20}
+                ]
+            },
+            {height:30},
+            {
+                cols:[
+                    {},
+                    {
+                        view: 'button',
+                        label: 'APPLY',
+                        click: function () {
+
+                        }
+                    },
+                    {},
+                    {
+                        view: 'button',
+                        label: 'CANCEL',
+                        click: () => {track_data_edit_window.hide()}
+                    },
+                    {}
+                ]
+            },
+            {height:10}
+        ]
+    }
+})
+track_data_edit_window.hide();
+track_data_edit_window.attachEvent(
+    'onShow',
+    function () {
+        if (track_edit_waveform == undefined) {
+            create_waveform_visualizer();
+        }
+    }
+)
+
+var track_edit_waveform = undefined;
+function create_waveform_visualizer () {
+    track_edit_waveform = new Highcharts.chart({
+
+        chart: {
+            renderTo: 'track-waveform',
+            type: 'spline',
+            spacingLeft:0,
+            spacingBottom:0
+        },
+        yAxis: {title: {text: ''}, labels: {enabled: false}},
+        xAxis: {title: {text: ''}, labels: {enabled: false}},
+        legend: {enabled: false},
+        title: {text: ''},
+        // subtitle: {
+        //     text: 'Irregular time data in Highcharts JS'
+        // },
+        // xAxis: {
+        //     type: 'datetime',
+        //     dateTimeLabelFormats: { // don't display the dummy year
+        //         month: '%e. %b',
+        //         year: '%b'
+        //     }
+        //     // title: {
+        //     //     text: 'Date'
+        //     // }
+        // },
+        // yAxis: {
+        //     title: {
+        //         text: 'Snow depth (m)'
+        //     },
+        //     min: 0
+        // },
+        // tooltip: {
+        //     headerFormat: '<b>{series.name}</b><br>',
+        //     pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+        // },
+        //
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: false
+                }
+            }
+        },
+
+        series: [{
+            name: '',
+            // Define the data points. All series have a dummy year
+            // of 1970/71 in order to be compared on the same x axis. Note
+            // that in JavaScript, months start at 0 for January, 1 for February etc.
+            data: [
+                // [Date.UTC(1970, 9, 21), 0],
+                // [Date.UTC(1970, 10, 4), 0.28],
+                // [Date.UTC(1970, 10, 9), 0.25],
+                // [Date.UTC(1970, 10, 27), 0.2],
+                // [Date.UTC(1970, 11, 2), 0.28],
+                // [Date.UTC(1970, 11, 26), 0.28],
+                // [Date.UTC(1970, 11, 29), 0.47],
+                // [Date.UTC(1971, 0, 11), 0.79],
+                // [Date.UTC(1971, 0, 26), 0.72],
+                // [Date.UTC(1971, 1, 3), 1.02],
+                // [Date.UTC(1971, 1, 11), 1.12],
+                // [Date.UTC(1971, 1, 25), 1.2],
+                // [Date.UTC(1971, 2, 11), 1.18],
+                // [Date.UTC(1971, 3, 11), 1.19],
+                // [Date.UTC(1971, 4, 1), 1.85],
+                // [Date.UTC(1971, 4, 5), 2.22],
+                // [Date.UTC(1971, 4, 19), 1.15],
+                // [Date.UTC(1971, 5, 3), 0]
+            ]
+        }]
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function save_current_session() {
     x = webix.ui({
         view:"window",
@@ -634,6 +687,67 @@ function save_current_session() {
     x.show();
 
 }
+
+
+function playback_settings() {
+    db_connection.query(
+        'SELECT wait_time FROM settings',
+        function (e, r) {
+            if (e) throw e;
+            wait_time = r[0].wait_time;
+            x = webix.ui({
+                view:"window",
+                modal:true,
+                position:"center",
+                width:600,
+                height:400,
+                head: "PLAYBACK SETTINGS",
+                body:{
+                    rows:[
+                        {height:10},
+                        {
+                            id:'wait_time',
+                            view: "text",
+                            value: `${wait_time}`,
+                            labelWidth:225,
+                            label:"Delay between tracks (seconds):"
+                        },
+                        {height:30},
+                        {
+                            cols:[
+                                {},
+                                {
+                                    view: 'button',
+                                    label: 'APPLY',
+                                    click: function () {
+                                        db_connection.query(
+                                            `UPDATE settings SET wait_time=${parseInt($$('wait_time').getValue())}`,
+                                            function (error, x) {
+                                                if (error) throw error;
+                                                x.hide();
+                                            }
+                                        )
+                                        x.hide();
+                                    }
+                                },
+                                {},
+                                {
+                                    view: 'button',
+                                    label: 'CANCEL',
+                                    click: () => {x.hide()}
+                                },
+                                {}
+                            ]
+                        },
+                        {height:10}
+                    ]
+                }
+            })
+            x.show();
+        }
+    )
+}
+
 
 
 
@@ -914,6 +1028,7 @@ var datatable = webix.ui({
                     type:'icon',
                     icon:'cog',
                     label:'SETTINGS',
+                    click: playback_settings,
                     maxHeight:35
                 }
                 ]
@@ -1446,6 +1561,19 @@ webix.UIManager.addHotKey("shift+q", function () {
         }
     });
 }, $$('display_list'));
+
+
+webix.UIManager.addHotKey("ctrl+e", function () {
+    var id = $$('display_list').getSelectedId().id;
+    edit_track_data(id);
+}, $$('display_list'));
+
+webix.UIManager.addHotKey("ctrl+e", function () {
+    selected_queue_element = $$('queue_list').getSelectedItem();
+    selected_queue_element_position = $$('queue_list').getSelectedItem().position;
+    edit_track_data(selected_queue_element.track_id);
+}, $$('queue_list'));
+
 
 webix.UIManager.addHotKey("shift+s", function () {
     var id = $$('display_list').getSelectedId().id;

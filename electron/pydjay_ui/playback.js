@@ -7,32 +7,42 @@ command_socket.on("message", function( status, type, payload ) {
     //console.log("Received reply", payload);
 });
 
+function send_command(name, args, kwargs) {
+    command_socket.send(JSON.stringify({'name': name, 'args': args, 'kwargs': kwargs}));
+}
+
 function preview_play(file_name, start_time, end_time){
     mute_monitor()
-    command_socket.send(JSON.stringify({'name': 'preview_play', 'args': [file_name, start_time, end_time], 'kwargs': {}}));
+    // command_socket.send(JSON.stringify({'name': 'preview_play', 'args': [file_name, start_time, end_time], 'kwargs': {}}));
+    send_command('preview_play', [file_name, start_time, end_time], {});
+
 }
 
 function preview_pause(file_name){
-    command_socket.send(JSON.stringify({'name': 'preview_pause', 'args': [], 'kwargs': {}}));
+    //command_socket.send(JSON.stringify({'name': 'preview_pause', 'args': [], 'kwargs': {}}));
+    send_command('preview_pause', [], {});
 }
 
 function preview_stop(file_name){
-    command_socket.send(JSON.stringify({'name': 'preview_stop', 'args': [], 'kwargs': {}}));
+    //command_socket.send(JSON.stringify({'name': 'preview_stop', 'args': [], 'kwargs': {}}));
+    send_command('preview_stop', [], {});
     restore_monitor();
 }
 
 function preview_seek_relative(time_delta){
-    command_socket.send(JSON.stringify({'name': 'preview_seek', 'args': [time_delta], 'kwargs': {}}));
-    //restore_monitor();
+    send_command('preview_seek', [time_delta], {});
+    // command_socket.send(JSON.stringify({'name': 'preview_seek', 'args': [time_delta], 'kwargs': {}}));
 }
 
 function main_play(file_name, start_time, end_time){
-    command_socket.send(JSON.stringify({'name': 'main_play', 'args': [file_name, start_time, end_time], 'kwargs': {}}));
+    send_command('main_play', [file_name, start_time, end_time]);
+    //command_socket.send(JSON.stringify({'name': 'main_play', 'args': [file_name, start_time, end_time], 'kwargs': {}}));
 }
 
 
 function main_stop(file_name, start_time, end_time){
-    command_socket.send(JSON.stringify({'name': 'main_stop', 'args': [], 'kwargs': {}}));
+    send_command('main_stop', [], {});
+    // command_socket.send(JSON.stringify({'name': 'main_stop', 'args': [], 'kwargs': {}}));
 }
 
 function set_main_player_volume(value){
@@ -241,7 +251,6 @@ function play_next_track_after_time(time_in_seconds) {
                 $$('main-artist').define('label', `Next track will start now...`)
                 play_next_track();
             } else {
-                //console.log('waiting...', next_track_delay)
                 if (delay > 1) {
                     $$('main-artist').define('label', `Next track will start in ${delay} seconds`)
                 } else {
@@ -298,7 +307,6 @@ function play_next_track() {
 
                                 }
                             )
-
                         }
                     )
                 }
