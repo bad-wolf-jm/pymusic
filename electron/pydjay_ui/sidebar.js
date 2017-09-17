@@ -8,12 +8,14 @@ function display_track_list(list_name, list_elements) {
                 list_elements[i].$css = "unavailable_track";
             }
         }
-        $$('display_list').define('data', list_elements);
-        $$('display_list').refresh();
-        $$('playlist_name').define('label', list_name);
-        $$('playlist_name').refresh();
-        webix.UIManager.setFocus($$('display_list'));
-        $$('display_list').select($$('display_list').getFirstId())
+    }
+    $$('display_list').define('data', list_elements);
+    $$('display_list').refresh();
+    $$('playlist_name').define('label', list_name);
+    $$('playlist_name').refresh();
+    webix.UIManager.setFocus($$('display_list'));
+    if (list_elements.length > 0) {
+        $$('display_list').select($$('display_list').getFirstId());
     }
 }
 
@@ -56,7 +58,7 @@ function display_unavailable_songs(){
                  GROUP BY id`;
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
-           display_track_list('Short List', result);
+           display_track_list('Unavailable Tracks', result);
         }
     );}
 }
