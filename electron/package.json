@@ -15,6 +15,7 @@
     "jquery": "^3.2.1",
     "mysql": "^2.14.1",
     "semantic-ui": "^2.2.13",
+    "waves-ui": "github:wavesjs/ui",
     "webix": "^4.4.0",
     "zeromq": "^4.6.0"
   }

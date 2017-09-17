@@ -1,11 +1,15 @@
 path = require('path');
 fs = require('fs');
+//wavesUI = require('waves-ui')
+
+var stream_start_edit = undefined;
+var stream_end_edit = undefined;
 
 
 function edit_track_data(id) {
     db_connection.query(
         `SELECT title, artist, album, bpm, file_name, cover_medium, waveform,
-                stream_start, stream_end, settings.db_music_cache as music_root,
+                stream_start, stream_end, track_length, settings.db_music_cache as music_root,
                 settings.db_waveform_cache as waveform_root,
                 settings.db_image_cache as image_root
         FROM tracks left join settings on 1 WHERE tracks.id=${id} LIMIT 1`,
@@ -52,10 +56,37 @@ function edit_track_data(id) {
                         view.setUint8(1, data[i+6]);
                         view.setUint8(0, data[i+7]);
                         average_amplitude = view.getFloat32(0); //view.getInt16(0);
-                        amplitudes.push([timestamp, average_amplitude])
+                        amplitudes.push(average_amplitude);
+
                     }
-                    console.log(amplitudes);
-                    track_edit_waveform.series[0].setData(amplitudes, true, false, false)
+                    //console.log(amplitudes);
+                    var audioCtx = new AudioContext();
+                    var buffer = audioCtx.createBuffer(1, Math.round((amplitudes.length / 250) * 3000), 3000);
+                    var nowBuffering = buffer.getChannelData(0);
+                    amplitudes.forEach(
+                        function (value, index) {
+                            nowBuffering[Math.round((index / 250) * 3000)] = value
+                        }
+                    )
+                    var $track = document.querySelector('#track-waveform');
+                    var width = $track.getBoundingClientRect().width;
+                    var height = $track.getBoundingClientRect().height;
+                    //var width = 500;
+                    //var height = 125;
+                    var duration = result.track_length / 1000000000;
+                    // define the numbr of pixels per seconds the timeline should display
+                    var pixelsPerSecond = 6*(width / duration);
+                    console.log(pixelsPerSecond, duration, width, height);
+                    var timeline = new wavesUI.core.Timeline(pixelsPerSecond, width);
+                    // create a new track into the `track-1` element and give it a id ('main')
+                    timeline.createTrack($track, height, 'main');
+                    var waveformLayer = new wavesUI.helpers.WaveformLayer(buffer, {
+                            width:width,
+                         height: height
+                       });
+                    timeline.addLayer(waveformLayer, 'main');
+                    timeline.tracks.render();
+                    //track_edit_waveform.series[0].setData(amplitudes, true, false, false)
                 }
             );
             track_data_edit_window.show();
