@@ -8,6 +8,8 @@
 <script src="./sidebar.js"></script>
 <script src="./playback.js"></script>
 <script src="./track_edit.js"></script>
+<script src="./queue.js"></script>
+<script src="./sql.js"></script>
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
 <link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">
 <link rel="stylesheet" href="../node_modules/webix/skins/contrast.css">
@@ -33,7 +35,13 @@ var player_window = {
         border: '1px solid #5c5c5c',
      },
     cols:[
-        {id:'main-cover-image', view: 'template', width:58, height:58, template: "FOO"},
+        {
+            id:'main-cover-image',
+            view: 'template',
+            width:58,
+            height:58,
+            template: ""
+        },
         {width:5},
         {
             rows:[
@@ -55,9 +63,7 @@ var player_window = {
                                 {
                                     view: 'label',
                                     id:'main-artist',
-                                    css: {
-                                        'text-align':'left'
-                                    },
+                                    css: {'text-align':'left'},
                                     label: 'Artist - Album', height:20
                                 }
                             ]
@@ -65,7 +71,11 @@ var player_window = {
                         {
                             view: 'label',
                             id:'main_track_time',
-                            css:{'text-align':'right', 'font-size':'20px', 'font-weight':800},
+                            css: {
+                                'text-align':'right',
+                                'font-size':'20px',
+                                'font-weight':800
+                            },
                             label: '-00:00',
                             height:15,
                             width:75
@@ -180,31 +190,53 @@ var preview_player_window = {
             ]},
             {
                 cols: [
-                    {},
                     {
                         id:'preview_play_button',
                         view:'button',
                         type:'icon',
                         icon:'play',
-                        width:30,
+                        label:'PLAY',
                         click : function () {
                             preview_pause();
                         }
                     },
-                    {width:30},
+                    {
+                        id:'preview_play_last_30_seconds_button',
+                        view:'button',
+                        type:'icon',
+                        icon:'play',
+                        label: 'LAST 30 SECS',
+                        click : function () {
+                            if (preview_track_id != undefined) {
+                                preview_play_track_id(preview_track_id, -30000000000);
+                            }
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    },
+                    {
+                        id:'preview_play_last_10_seconds_button',
+                        view:'button',
+                        type:'icon',
+                        icon:'play',
+                        label: 'LAST 10 SECS',
+                        click : function () {
+                            if (preview_track_id != undefined) {
+                                preview_play_track_id(preview_track_id, -10000000000);
+                            }
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    },
                     {
                         id:'preview_stop_button',
                         view:'button',
                         type:'icon',
                         icon:'stop',
-                        width:30,
+                        label:'STOP',
                         click : function () {
                             preview_stop();
                         }
 
                     },
-                    {}
-
                 ]
             },
             {}
@@ -262,11 +294,12 @@ webix.UIManager.addHotKey("enter", function () {
 }, $$('genres_list_view'));
 
 
-
 sessions_list_popup = webix.ui(sessions_list_popup)
 sessions_list_popup.hide();
 sessions_list_popup.attachEvent('onShow', function () {
-    var sql = `SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts ON sessions.id=counts.session_id`
+    var sql = `SELECT id, event_name as name, date(start_date) as date, counts.count as count
+               FROM sessions JOIN (select session_id, count(track_id) as count FROM session_tracks
+               GROUP BY session_id) counts ON sessions.id=counts.session_id`
 
     db_connection.query(sql, function (err, result) {
       if (err) throw err;
@@ -304,7 +337,8 @@ track_list_popup.hide();
 track_list_popup.attachEvent('onShow', function () {
     db_connection.query(
         `SELECT playlists.id as id , playlists.name, counts.count as count, playlist_categories.color AS color FROM
-         playlists JOIN (select playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts ON playlists.id=counts.playlist_id JOIN playlist_categories ON playlists.category=playlist_categories.id ORDER BY category`,
+         playlists JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
+         ON playlists.id=counts.playlist_id JOIN playlist_categories ON playlists.category=playlist_categories.id ORDER BY category`,
         function (err, result) {
             if (err) throw err;
             $$('track_list_view').clearAll()
@@ -326,9 +360,7 @@ $$('track_list_popup').attachEvent('onHide',
 function () {
     webix.UIManager.setFocus($$('display_list'));
 });
-webix.UIManager.addHotKey("enter", function () {
-    console.log('make track available');
-}, $$('track_list_popup'));
+
 webix.UIManager.addHotKey("enter", function () {
     var foo = $$('track_list_view')
     var g = foo.getSelectedItem();
@@ -338,95 +370,12 @@ webix.UIManager.addHotKey("enter", function () {
 }, $$('track_list_view'));
 
 
-
-
-function save_session(name, location, address) {
-    db_connection.query(
-        `SELECT track_id, start_time, end_time FROM session_queue WHERE status='played' ORDER BY position`,
-        function (error, played_tracks) {
-            if (error) throw error;
-            if (played_tracks.length > 0) {
-                db_connection.query(
-                    `SELECT max(id) + 1 AS new_session_id FROM sessions`,
-                    function (error, result) {
-                        if (error) throw error;
-                        new_session_id = result[0].new_session_id;
-                        db_connection.query(
-                            `SELECT min(start_time) AS start, max(end_time) AS end FROM session_queue WHERE status='played'`,
-                            function (error, start_end_time) {
-                                if (error) throw error;
-                                format = webix.Date.dateToStr("%Y-%m-%d %H:%i:%s");
-                                start_date = format(start_end_time[0].start);
-                                end_date = format(start_end_time[0].end);
-                                db_connection.query(
-                                    `INSERT INTO sessions (id, event_name, start_date, end_date, location, address)
-                                     VALUES (${new_session_id}, "${name}", '${start_date}', '${end_date}', "${location}", "${address}")`,
-                                     function (error, x){
-                                         if (error) throw error;
-                                         session_data = [];
-                                         relation_data = [];
-
-                                         for(var i =0; i<played_tracks.length; i++){
-                                             start_time = format(played_tracks[i].start_time);
-                                             end_time = format(played_tracks[i].start_time);
-                                             session_data.push(`(${new_session_id}, ${played_tracks[i].track_id}, '${start_time}', '${end_time}', ${i+1})`)
-                                             if (i+1 < played_tracks.length) {
-                                                 relation_time = format(played_tracks[i+1].start_time);
-                                                 relation_data.push(`(${played_tracks[i].track_id}, ${played_tracks[i+1].track_id}, 'PLAYED_IN_SET', 1, '${relation_time}')`)
-                                             }
-                                         }
-                                         db_connection.query(
-                                             `INSERT INTO session_tracks (session_id, track_id, start_time, end_time, position) VALUES ${session_data.join(',')}`,
-                                             function (error, r) {
-                                                 if (error) throw error;
-                                                 db_connection.query(
-                                                     `INSERT INTO track_relations (track_id, related_track_id, reason, count, date) VALUES ${relation_data.join(',')} ON DUPLICATE KEY UPDATE count=count+1`,
-                                                     function (error, r) {
-                                                         if (error) throw error;
-                                                         db_connection.query(
-                                                             `DELETE FROM session_queue WHERE status='played'`,
-                                                             function (error, r) {
-                                                                 if (error) throw error;
-                                                                 db_connection.query(
-                                                                    `SELECT min(position) as first FROM session_queue`,
-                                                                    function (error, result) {
-                                                                        if (error) throw error;
-                                                                        db_connection.query(
-                                                                            `UPDATE session_queue SET status='pending', start_time=NULL, end_time=NULL, position=position-(${result[0].first}-1)`,
-                                                                            function (error, r) {
-                                                                                if (error) throw error;
-                                                                                console.log('session saved');
-
-                                                                            }
-                                                                        )
-                                                                    }
-                                                                 )
-                                                             }
-                                                         )
-                                                     }
-                                                 )
-                                             }
-                                         )
-                                     }
-                                )
-                            }
-                        )
-                    }
-                )
-            }
-        }
-    )
-}
-
-
-
-
-
 var track_data_edit_window = webix.ui({
+    id: "track_edit_window",
     view: "window",
     modal: true,
     position: "center",
-    width: 975,
+    width: 1275,
     height: 700,
     head: "EDIT TRACK DATA",
     body:{
@@ -458,11 +407,12 @@ var track_data_edit_window = webix.ui({
                                                     'text-align': 'left',
                                                     'text-transform': 'uppercase',
                                                     'font-weight': 'bold',
-                                                    'font-size': '20px'
+                                                    'font-size': '30px'
                                                 },
                                                 label: 'Title Of Song',
                                                 height:30
                                             },
+                                            {height:5},
                                             {
                                                 view: 'label',
                                                 id:'main-artist-edit',
@@ -483,6 +433,16 @@ var track_data_edit_window = webix.ui({
                                                 label: 'Artist',
                                                 height:30
                                             },
+                                            {
+                                                view: 'label',
+                                                id:'track-data',
+                                                css: {
+                                                    'text-align':'left',
+                                                    'font-size':'20px'
+                                                },
+                                                label: 'length - BPM',
+                                                height:30
+                                            },
                                             {}
                                         ]
                                     }
@@ -493,16 +453,70 @@ var track_data_edit_window = webix.ui({
                     {width:20}
                 ]
             },
-            {height:20},
+            {height:50},
             {
                 cols:[
                     {width:20},
                     {
-                        height:125,
-                        css:{margin:0, padding:0, border: '1px solid #ffffff'},
-                        template:'<div id="track-waveform" style="border: \'1px solid black\'; width:100%; height:100%; position:relative; top:0%;"></div>'
+                        height:175,
+                        css:{
+                            margin:0,
+                            padding:0,
+                            border: '0px solid #3c3c3c'
+                        },
+                        template:'<div id="track-waveform" style="border: \'0px solid black\'; width:100%; height:100%; position:relative; top:0%;"></div>'
                     },
                     {width:20}
+                ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        id:'edit_play_button',
+                        view:'button',
+                        type:'icon',
+                        icon:'play',
+                        label: 'PLAY FULL TRACK',
+                        click : function () {
+                            preview_play_track_id(track_edited.id, stream_start_edit, stream_end_edit);
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    },
+                    {
+                        id:'edit_play_last_30_seconds_button',
+                        view:'button',
+                        type:'icon',
+                        icon:'play',
+                        label: 'LAST 30 SECONDS',
+                        click : function () {
+                            preview_play_track_id(track_edited.id, -30000000000, stream_end_edit);
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    },
+                    {
+                        id:'edit_play_last_10_seconds_button',
+                        view:'button',
+                        type:'icon',
+                        icon:'play',
+                        label: 'LAST 10 SECONDS',
+                        click : function () {
+                            preview_play_track_id(track_edited.id, -10000000000, stream_end_edit);
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    },
+                    {
+                        id:'edit_stop_button',
+                        view:'button',
+                        type:'icon',
+                        icon:'stop',
+                        label: 'STOP',
+                        click : function () {
+                            preview_stop();
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    },
+                    {}
                 ]
             },
             {height:30},
@@ -513,14 +527,17 @@ var track_data_edit_window = webix.ui({
                         view: 'button',
                         label: 'APPLY',
                         click: function () {
-
+                            save_new_track_info();
                         }
                     },
                     {},
                     {
                         view: 'button',
                         label: 'CANCEL',
-                        click: () => {track_data_edit_window.hide()}
+                        click: () => {
+                            preview_stop();
+                            track_data_edit_window.hide()
+                        }
                     },
                     {}
                 ]
@@ -530,55 +547,128 @@ var track_data_edit_window = webix.ui({
     }
 })
 track_data_edit_window.hide();
-// track_data_edit_window.attachEvent(
-//     'onShow',
-//     function () {
-//         if (track_edit_waveform == undefined) {
-//             create_waveform_visualizer();
-//         }
-//     }
-// )
-//
-// var track_edit_waveform = undefined;
-// function create_waveform_visualizer () {
-//     track_edit_waveform = new Highcharts.chart({
-//
-//         chart: {
-//             renderTo: 'track-waveform',
-//             type: 'spline',
-//             spacingLeft:0,
-//             spacingBottom:0
-//         },
-//         yAxis: {title: {text: ''}, labels: {enabled: false}},
-//         xAxis: {title: {text: ''}, labels: {enabled: false}},
-//         legend: {enabled: false},
-//         title: {text: ''},
-//         plotOptions: {
-//             spline: {
-//                 marker: {
-//                     enabled: false
-//                 }
-//             }
-//         },
-//
-//         series: [{
-//             name: '',
-//             data: []
-//         }]
-//     });
-// }
-//
+track_data_edit_window.attachEvent(
+    'onShow',
+    function () {
+        if (track_edit_waveform == undefined) {
+            create_waveform_visualizer();
+        }
+        track_edit_waveform.xAxis[0].removePlotLine('position-marker');
+        track_edit_waveform.xAxis[0].addPlotLine({
+            color:'#FF0000',
+            width: 2,
+            zIndex: 10,
+            value: 0,
+            id: 'position-marker'});
+        preview_stop()
+    }
+)
+
+webix.UIManager.addHotKey("escape", function () {
+    preview_stop();
+    track_data_edit_window.hide()
+}, $$('track_edit_window'));
 
 
+webix.UIManager.addHotKey("ctrl+shift+enter", function () {
+    preview_play_track_id(track_edited.id, -30000000000, stream_end_edit);
+}, $$('track_edit_window'));
 
 
+webix.UIManager.addHotKey("shift+enter", function () {
+    preview_play_track_id(track_edited.id, -10000000000, stream_end_edit);
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("enter", function () {
+    preview_play_track_id(track_edited.id, stream_start_edit, stream_end_edit);
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("shift+c", function () {
+    set_start_marker_to_current_time();
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+shift+c", function () {
+    set_end_marker_to_current_time();
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("shift+h", function () {
+    set_start_marker(stream_start_edit - 1000000000);
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+shift+h", function () {
+    set_end_marker(stream_end_edit - 1000000000);
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("shift+j", function () {
+    set_start_marker(stream_start_edit + 1000000000);
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+shift+j", function () {
+    set_end_marker(stream_end_edit + 1000000000);
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("shift+n", function () {
+    set_start_marker(stream_start_edit - 100000000);
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+shift+n", function () {
+    set_end_marker(stream_end_edit - 100000000);
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("shift+m", function () {
+    set_start_marker(stream_start_edit + 100000000);
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+shift+m", function () {
+    set_end_marker(stream_end_edit + 100000000);
+}, $$('track_edit_window'));
 
 
+var track_edit_waveform = undefined;
+function create_waveform_visualizer () {
+    track_edit_waveform = new Highcharts.chart({
 
+        chart: {
+            renderTo: 'track-waveform',
+            type: 'spline',
+            zoomType:'x',
+            spacingLeft:0,
+            spacingBottom:0,
+            backgroundColor: '#3c3c3c',
+            plotBackgroundColor: '#3c3c3c',
+            plotBorderWidth: 0,
+            events: {
+                redraw: function() {
+                    webix.UIManager.setFocus($$('track_edit_window'));
+                }
+            }
+        },
+        tooltip: { enabled: false },
+        yAxis: {title: {text: ''},
+        labels: {enabled: false},
+                tickPositioner: function () {
+                            var maxDeviation = Math.max(Math.abs(this.dataMax), Math.abs(this.dataMin));
+                            var halfMaxDeviation = Math.ceil(maxDeviation / 2);
+                            return [-maxDeviation, -halfMaxDeviation, 0, halfMaxDeviation, maxDeviation];
+                            }},
+        xAxis: {title: {text: ''}, labels: {enabled: true}},
+        legend: {enabled: false},
+        title: {text: ''},
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: false
+                }
+            }
+        },
 
-
-
-
+        series: [{
+            name: '',
+            states: {hover: {enabled: false}},
+            data: []
+        }]
+    });
+}
 
 
 function save_current_session() {
@@ -810,40 +900,6 @@ var popup = webix.ui({
 })
 popup.hide();
 
-function stop_queue_now() {
-    mark_as_played(current_queue_position, (t) => {main_stop()});
-    queue_playing = false;
-    stop_request = false;
-    $$('start-stop-button').define('label', 'START');
-    $$('start-stop-button').define('icon', 'play');
-    $$('start-stop-button').refresh();
-    $$('queue_stop_message').hide();
-    $$('skip_stop_dialog').hide();
-}
-
-function skip_to_next_track() {
-    if (queue_playing && !stop_request){
-        main_stop()
-        db_connection.query(
-            `SELECT count(id) as queue_count FROM session_queue WHERE status='pending'`,
-            function (error, result) {
-                if (error) throw error;
-                if (result[0].queue_count > 0) {
-                    mark_as_played(current_queue_position, (t) => {play_next_track()});
-                } else {
-                    $$('start-stop-button').define('label', 'START');
-                    $$('start-stop-button').define('icon', 'play');
-                    $$('start-stop-button').refresh();
-                    $$('queue_stop_message').hide();
-                    queue_playing = false;
-                    stop_request = false;
-                }
-            }
-        )
-    }
-    $$('skip_stop_dialog').hide()
-}
-
 
 function volume_popup(id, title, on_change){
     d = {
@@ -992,18 +1048,31 @@ var datatable = webix.ui({
             cols:[
                 sidebar_template,
                 main_list_display_template,
-                {rows: [queue_display_template,{height:5, css:{'background-color': '#3c3c3c', 'border-color':"0px solid #3c3c3c"}}, preview_player_window]}
-            ]}
+                {
+                    width:494,
+                    rows: [
+                        queue_display_template,
+                        {
+                            height:5,
+                            css: {
+                                'background-color': '#3c3c3c',
+                                'border-color':"0px solid #3c3c3c"
+                            }
+                        },
+                        preview_player_window
+                    ]
+                }
+            ]
+        }
     ]
 });
 $$('queue_stop_message').hide();
 
-$$("display_list").filterByAll=function(){
+$$("display_list").filterByAll = function () {
     var text = $$('track_filter').getValue()
     var i=0;
     search_tokens = text.split(' ')
     search_f = [];
-    // console.log(search_tokens);
     for (var i=0; i<search_tokens.length; i++) {
         let token = search_tokens[i];
         if (token.length > 0) {
@@ -1074,22 +1143,6 @@ $$("display_list").filterByAll=function(){
 };
 
 
-var mysql = require('mysql');
-
-var db_connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database:'pymusic'
-});
-
-db_connection.connect(
-  function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-});
-
-
 var sql = `SELECT availability.track_id IS NULL as available, id, favorite, disabled as enabled, title, artist,
             album, genre, date_added, date_modified, rating, bpm, stream_length,
             max(session_tracks.start_time) as last_played, count(session_tracks.track_id) as play_count
@@ -1097,12 +1150,9 @@ var sql = `SELECT availability.track_id IS NULL as available, id, favorite, disa
            tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
            LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id`
 
-var track_list = [];
-
-db_connection.query(sql, function (err, result) {
-    if (err) throw err;
+$QUERY(sql, function (result) {
     display_track_list('ALL SONGS', result);
-  });
+ });
 
 $$('queue_list').clearAll()
 
@@ -1123,78 +1173,45 @@ db_connection.query(sql, function (err, result) {
   }
 });
 
-function get_track_info_for_queue(track_id, cont) {
-    var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist,
-                    tracks.album, tracks.bpm, tracks.stream_length,
-                    settings.db_image_cache as image_root, tracks.cover_small as cover,
-                    session_queue.position as position
-             FROM
-                 (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
-             ON
-                 tracks.id=session_queue.track_id
-            WHERE tracks.id=${track_id}
-             ORDER BY session_queue.position`;
-    db_connection.query(sql, function(error, result) {
-        if (error) throw error;
-        cont(result[0]);
-    })
+
+function move_displayed_queue_element(q_element, from_index, to_index) {
+    $$('queue_list').data.each(
+        function (element) {
+            if ((element.position >= to_index)) {
+                element.position++;
+            }
+        }
+    );
+    $$('queue_list').data.each(
+        function (element) {
+            if ((element.position > from_index)) {
+                element.position--;
+            }
+        }
+    );
+    q_element.position = to_index;
 }
 
-function get_track_id_at_queue_position(position, continuation) {
-    db_connection.query(
-        `SELECT id, track_id FROM session_queue WHERE position=${position}`,
-        function (err, result) {
-            if (err) throw err;
-            continuation(result[0].id, result[0].track_id)
+webix.UIManager.addHotKey("t", function () {
+    selected_queue_element = $$('queue_list').getSelectedItem();
+    selected_queue_element_position = $$('queue_list').getSelectedItem().position;
+    move_queue_element(selected_queue_element_position, 1,
+        function (new_position) {
+            move_displayed_queue_element(selected_queue_element, selected_queue_element_position, new_position);
+            $$('queue_list').moveTop(selected_queue_element.id)
         }
     )
-}
+}, $$('queue_list'));
 
-
-function get_queue_boundary_positions(cont){
-    sql = "SELECT min(position) as min, max(position) as max FROM session_queue WHERE status='pending'"
-    db_connection.query(sql, function(error, result){
-        if (error) throw error;
-        return cont(result[0].min, result[0].max)
-    })
-}
 
 
 webix.UIManager.addHotKey("u", function () {
     selected_queue_element = $$('queue_list').getSelectedItem();
     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
-    swapped_element = $$('queue_list').getItem($$('queue_list').getPrevId(selected_queue_element.id));
-
-    get_queue_boundary_positions(
-        function (min, max) {
-            new_position = Math.max(selected_queue_element_position - 1, min)
-            if (new_position != selected_queue_element_position) {
-                get_track_info_for_queue(selected_queue_element.id,
-                    function(track_info) {
-                        db_connection.query(
-                            `UPDATE session_queue SET position=0 WHERE position=${new_position}`,
-                            function(err, result) {
-                                if (err) throw err;
-                                db_connection.query(
-                                    `UPDATE session_queue SET position=${new_position} WHERE position=${selected_queue_element_position}`,
-                                    function (err, result) {
-                                        if (err) throw err;
-                                        db_connection.query(
-                                            `UPDATE session_queue SET position=${selected_queue_element_position} WHERE position=0`,
-                                            function (err, result) {
-                                                if (err) throw err;
-                                                swapped_element.position = selected_queue_element_position;
-                                                selected_queue_element.position = new_position;
-                                                $$('queue_list').moveUp(selected_queue_element.id, 1)
-                                            }
-                                        )
-                                    }
-                                )
-                            }
-                        )
-                    }
-                )
-            }
+    move_queue_element(selected_queue_element_position, selected_queue_element_position-1,
+            function (new_position) {
+                move_displayed_queue_element(selected_queue_element, selected_queue_element_position, new_position);
+                $$('queue_list').moveUp(selected_queue_element.id, 1)
         }
     )
 }, $$('queue_list'));
@@ -1202,177 +1219,43 @@ webix.UIManager.addHotKey("u", function () {
 webix.UIManager.addHotKey("d", function () {
     selected_queue_element = $$('queue_list').getSelectedItem();
     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
-    swapped_element = $$('queue_list').getItem($$('queue_list').getNextId(selected_queue_element.id));
-    get_queue_boundary_positions(
-        function (min, max) {
-            new_position = Math.min(selected_queue_element_position + 1, max)
-            if (new_position != selected_queue_element_position) {
-                get_track_info_for_queue(selected_queue_element.id,
-                    function(track_info) {
-                        db_connection.query(
-                            `UPDATE session_queue SET position=0 WHERE position=${new_position}`,
-                            function(err, result) {
-                                if (err) throw err;
-                                db_connection.query(
-                                    `UPDATE session_queue SET position=${new_position} WHERE position=${selected_queue_element_position}`,
-                                    function (err, result) {
-                                        if (err) throw err;
-                                        db_connection.query(
-                                            `UPDATE session_queue SET position=${selected_queue_element_position} WHERE position=0`,
-                                            function (err, result) {
-                                                if (err) throw err;
-                                                swapped_element.position = selected_queue_element_position;
-                                                selected_queue_element.position = new_position;
-                                                $$('queue_list').moveDown(selected_queue_element.id, 1)
-                                            }
-                                        )
-                                    }
-                                )
-                            }
-                        )
-                    }
-                )
-            }
+    move_queue_element(selected_queue_element_position, selected_queue_element_position+1,
+            function (new_position) {
+                move_displayed_queue_element(selected_queue_element, selected_queue_element_position, new_position);
+                $$('queue_list').moveDown(selected_queue_element.id, 1)
         }
     )
 }, $$('queue_list'));
 
-webix.UIManager.addHotKey("t", function () {
-    selected_queue_element = $$('queue_list').getSelectedItem();
-    selected_queue_element_position = $$('queue_list').getSelectedItem().position;
-    get_queue_boundary_positions(
-        function (min, max) {
-            new_position = min
-            if (new_position != selected_queue_element_position) {
-                get_track_info_for_queue(selected_queue_element.id,
-                    function(track_info) {
-                        db_connection.query(
-                            `UPDATE session_queue SET position=0 WHERE position=${selected_queue_element_position}`,
-                            function(err, result) {
-                                if (err) throw err;
-                                db_connection.query(
-                                    `UPDATE session_queue SET position=position+1 WHERE position>=${min}`,
-                                    function (err, result) {
-                                        if (err) throw err;
-                                        $$('queue_list').data.each(
-                                            function (element) {
-                                                if (element.position >= min) {
-                                                    element.position++;
-                                                }
-                                            }
-                                        );
-                                        db_connection.query(
-                                            `UPDATE session_queue SET position=position-1 WHERE position>${selected_queue_element_position}`,
-                                            function (err, result) {
-                                                if (err) throw err;
-                                                $$('queue_list').data.each(
-                                                    function (element) {
-                                                        if (element.position > selected_queue_element_position) {
-                                                            element.position--;
-                                                        }
-                                                    }
-                                                );
-                                                db_connection.query(
-                                                    `UPDATE session_queue SET position=${new_position} WHERE position=0`,
-                                                    function (err, result) {
-                                                        selected_queue_element.position = new_position;
-                                                        $$('queue_list').moveTop(selected_queue_element.id)
-
-                                                    }
-                                                )
-                                            }
-                                        )
-                                    }
-                                )
-                            }
-                        )
-                    }
-                )
-            }
-        }
-    )
-}, $$('queue_list'));
 
 webix.UIManager.addHotKey("shift+backspace", function () {
     selected_queue_element = $$('queue_list').getSelectedItem();
     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
-    console.log(selected_queue_element.position);
-    get_queue_boundary_positions(
-        function (min, max) {
-            get_track_info_for_queue(selected_queue_element.id,
-                function(track_info) {
-                    db_connection.query(
-                        `UPDATE session_queue SET position=0 WHERE position=${selected_queue_element_position}`,
-                        function(err, result) {
-                             db_connection.query(
-                                `UPDATE session_queue SET position=position-1 WHERE position>${selected_queue_element_position}`,
-                                function (err, result) {
-                                    if (err) throw err;
-                                    db_connection.query(
-                                        `DELETE FROM session_queue WHERE position=0`,
-                                        function (err, result) {
-                                            var next_item = $$('queue_list').getNextId(selected_queue_element.id);
-                                            if (next_item == undefined) {
-                                                next_item = $$('queue_list').getPrevId(selected_queue_element.id);
-                                            }
-                                            $$('queue_list').remove(selected_queue_element.id);
-                                            $$('queue_list').data.each(
-                                                function (element) {
-                                                    if (element.position > selected_queue_element_position) {
-                                                        element.position--;
-                                                    }
-                                                }
-                                            );
-                                            if (next_item != undefined) {
-                                                $$('queue_list').select(next_item)
-                                            }
-                                            console.log(next_item);
-                                            $$('display_list').removeRowCss(selected_queue_element.track_id, 'unavailable_track');
-                                            $$('display_list').getItem(selected_queue_element.track_id).$css="";
-                                            $$('display_list').refresh();
-                                            update_queue_labels();
-                                        }
-                                    )
-                                }
-                            )
-                        }
-                    )
+
+    delete_queue_element(selected_queue_element_position,
+        function () {
+            var next_item = $$('queue_list').getNextId(selected_queue_element.id);
+            if (next_item == undefined) {
+                next_item = $$('queue_list').getPrevId(selected_queue_element.id);
+            }
+            $$('queue_list').remove(selected_queue_element.id);
+            $$('queue_list').data.each(
+                function (element) {
+                    if (element.position > selected_queue_element_position) {
+                        element.position--;
+                    }
                 }
-            )
+            );
+            if (next_item != undefined) {
+                $$('queue_list').select(next_item)
+            }
+            $$('display_list').removeRowCss(selected_queue_element.track_id, 'unavailable_track');
+            $$('display_list').getItem(selected_queue_element.track_id).$css="";
+            $$('display_list').refresh();
+            update_queue_labels();
         }
     )
 }, $$('queue_list'));
-
-
-function preview_play_track_id(id) {
-    db_connection.query(
-        `SELECT title, artist, album, bpm, file_name, cover_small,
-                stream_start, stream_end, settings.db_music_cache as music_root,
-                settings.db_image_cache as image_root
-        FROM tracks left join settings on 1 WHERE tracks.id=${id} LIMIT 1`,
-        function(error, result) {
-            if (error) throw error;
-            result = result[0];
-            file_name = path.join(result.music_root, result.file_name);
-            console.log(file_name);
-            cover_file_name = `${result.image_root}/${result.cover_small}`;
-            stream_length = (result.stream_end-result.stream_start) / 1000000000;
-            $$('preview_title').define('label', result.title)
-            $$('preview_title').refresh()
-            $$('preview_artist').define('label', `${result.artist} - ${result.album}`)
-            $$('preview_artist').refresh()
-            if (result.cover_small == null) {
-                cover_source = "../resources/images/default_album_cover.png"
-            } else {
-                cover_source = `file://${result.image_root}/${result.cover_small}`;
-            }
-            var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
-            $$('preview-cover-image').define('template', cover_image);
-            $$('preview-cover-image').refresh();
-            preview_play(file_name, result.stream_start, result.stream_end)
-        }
-    )
-}
 
 webix.UIManager.removeHotKey('space');
 webix.UIManager.removeHotKey('shift+space');
@@ -1383,91 +1266,86 @@ webix.UIManager.removeHotKey('shift+right');
 webix.UIManager.removeHotKey('tab');
 
 
-webix.UIManager.addHotKey("enter", function () {
+var preview_track_id = undefined;
+
+webix.UIManager.addHotKey("ctrl+shift+enter", function () {
     var id = $$('display_list').getSelectedId().id;
-    preview_play_track_id(id);
+    preview_track_id = id;
+    preview_play_track_id(id, -30000000000);
 }, $$('display_list'));
 
+
+webix.UIManager.addHotKey("shift+enter", function () {
+    var id = $$('display_list').getSelectedId().id;
+    preview_track_id = id;
+    preview_play_track_id(id, -10000000000);
+}, $$('display_list'));
+
+
+webix.UIManager.addHotKey("enter", function () {
+    var id = $$('display_list').getSelectedId().id;
+    preview_track_id = id;
+    preview_play_track_id(id);
+}, $$('display_list'));
 $$('display_list').attachEvent('onItemDblClick',
     function (id) {
         var id = $$('display_list').getSelectedId().id;
+        preview_track_id = id;
         preview_play_track_id(id);
     }
 );
 
-
+webix.UIManager.addHotKey("ctrl+shift+enter", function () {
+    var id = $$('queue_list').getSelectedItem().track_id;
+    preview_track_id = id;
+    preview_play_track_id(id, -30000000000);
+}, $$('queue_list'));
+webix.UIManager.addHotKey("shift+enter", function () {
+    var id = $$('queue_list').getSelectedItem().track_id;
+    preview_track_id = id;
+    preview_play_track_id(id, -10000000000);
+}, $$('queue_list'));
 webix.UIManager.addHotKey("enter", function () {
     var id = $$('queue_list').getSelectedItem().track_id;
+    preview_track_id = id;
     preview_play_track_id(id);
 }, $$('queue_list'));
 $$('queue_list').attachEvent('onItemDblClick',
     function (id) {
         var id = $$('queue_list').getSelectedItem().track_id;
+        preview_track_id = id;
         preview_play_track_id(id);
     }
 );
 
-webix.UIManager.addHotKey("space", function () {
-    preview_pause();
-});
+webix.UIManager.addHotKey("space", preview_pause);
+webix.UIManager.addHotKey("shift+space", preview_stop);
+webix.UIManager.addHotKey("shift+ctrl+q", increase_main_player_volume);
+webix.UIManager.addHotKey("shift+ctrl+a", decrease_main_player_volume);
+webix.UIManager.addHotKey("shift+ctrl+i", increase_precue_player_volume);
+webix.UIManager.addHotKey("shift+ctrl+k", decrease_precue_player_volume);
+webix.UIManager.addHotKey("shift+ctrl+o", increase_monitor_volume);
+webix.UIManager.addHotKey("shift+ctrl+l", decrease_monitor_volume);
+webix.UIManager.addHotKey("shift+left", () => {preview_seek_relative(-5)});
+webix.UIManager.addHotKey("shift+right",  () => {preview_seek_relative(5)});
+webix.UIManager.addHotKey("ctrl+shift+left", () => {preview_seek_relative(-20)});
+webix.UIManager.addHotKey("ctrl+shift+right", () => {preview_seek_relative(20)});
 
 
-webix.UIManager.addHotKey("shift+space", function () {
-    preview_stop();
-});
-
-webix.UIManager.addHotKey("shift+ctrl+q", function () {
-    increase_main_player_volume();
-});
-webix.UIManager.addHotKey("shift+ctrl+a", function () {
-    decrease_main_player_volume();
-});
-
-webix.UIManager.addHotKey("shift+ctrl+i", function () {
-    increase_precue_player_volume();
-});
-webix.UIManager.addHotKey("shift+ctrl+k", function () {
-    decrease_precue_player_volume();
-});
-
-webix.UIManager.addHotKey("shift+ctrl+o", function () {
-    increase_monitor_volume();
-});
-webix.UIManager.addHotKey("shift+ctrl+l", function () {
-    decrease_monitor_volume();
-});
-
-webix.UIManager.addHotKey("shift+left", function () {
-    preview_seek_relative(-5)
-});
-webix.UIManager.addHotKey("shift+right", function () {
-    preview_seek_relative(5)
-});
-
-webix.UIManager.addHotKey("ctrl+shift+left", function () {
-    preview_seek_relative(-20)
-});
-webix.UIManager.addHotKey("ctrl+shift+right", function () {
-    preview_seek_relative(20)
-});
-
-webix.UIManager.addHotKey("alt+f", function () {
-    const win = require('electron').remote.getCurrentWindow();
-    win.setFullScreen(!win.isFullScreen());
-});
+webix.UIManager.addHotKey("alt+f",
+    function () {
+        const win = require('electron').remote.getCurrentWindow();
+        win.setFullScreen(!win.isFullScreen());
+    }
+);
 
 webix.UIManager.addHotKey("alt+r", function () {
     $$('queue_list').clearAll()
 
-    var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist,
-                    tracks.album, tracks.bpm, tracks.stream_length,
-                    settings.db_image_cache as image_root, tracks.cover_small as cover,
-                    session_queue.position as position
-             FROM
-                 (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
-             ON
-                 tracks.id=session_queue.track_id WHERE session_queue.status='pending'
-             ORDER BY session_queue.position`
+    var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist, tracks.album,
+               tracks.bpm, tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
+               FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id WHERE session_queue.status='pending'
+               ORDER BY session_queue.position`
 
     db_connection.query(sql, function (err, result) {
       if (err) throw err;
@@ -1479,54 +1357,37 @@ webix.UIManager.addHotKey("alt+r", function () {
 
 webix.UIManager.addHotKey("shift+q", function () {
     var id = $$('display_list').getSelectedId().id;
-    sql = `SELECT 1 FROM session_queue WHERE track_id=${id} LIMIT 1`;
-    db_connection.query(sql,
-    function (err, result){
-        if (result.length == 0){
-            pos_id_sql = 'SELECT max(id) + 1 as new_id, max(position)+1 as new_position FROM session_queue';
-            db_connection.query(pos_id_sql, function (err, result) {
-                if (!err){
-                    var new_id = result[0].new_id ? result[0].new_id :1;
-                    var new_position = result[0].new_id ? result[0].new_position :1;
-                    insert_sql = `INSERT INTO session_queue (id, track_id, status, position)
-                                  VALUES (${new_id}, ${id}, 'pending', ${new_position})`;
-                    db_connection.query(insert_sql, function (err, result) {
-                        if (err) throw err;
-                        sql = `SELECT tracks.id as track_id, session_queue.position, tracks.title, tracks.artist,
-                                        tracks.album, tracks.bpm, tracks.stream_length,
-                                        settings.db_image_cache as image_root, tracks.cover_small as cover,
-                                        session_queue.position as position
-                                 FROM
-                                     (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
-                                 ON
-                                     tracks.id=session_queue.track_id WHERE session_queue.status='pending'
-                                AND
-                                    session_queue.track_id=${id}
-                                 ORDER BY session_queue.position`;
-                        db_connection.query(sql, function (err, result) {
-                            if (err) throw err;
-                            $$('queue_list').add(result[0]);
-                            $$('display_list').addRowCss(id, 'unavailable_track');
-                            update_queue_labels();
-                        });
-                    });
+    add_id_to_queue(id,
+        function () {
+            sql = `SELECT tracks.id as track_id, session_queue.position, tracks.title, tracks.artist, tracks.album, tracks.bpm,
+                   tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
+                   FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id
+                   WHERE session_queue.status='pending' AND session_queue.track_id=${id} ORDER BY session_queue.position`;
+            db_connection.query(sql,
+                function (err, result) {
+                    if (err) throw err;
+                    $$('queue_list').add(result[0]);
+                    $$('display_list').addRowCss(id, 'unavailable_track');
+                    update_queue_labels();
                 }
-            })
+            );
         }
-    });
+    )
 }, $$('display_list'));
 
 
-// webix.UIManager.addHotKey("ctrl+e", function () {
-//     var id = $$('display_list').getSelectedId().id;
-//     edit_track_data(id);
-// }, $$('display_list'));
-//
-// webix.UIManager.addHotKey("ctrl+e", function () {
-//     selected_queue_element = $$('queue_list').getSelectedItem();
-//     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
-//     edit_track_data(selected_queue_element.track_id);
-// }, $$('queue_list'));
+
+
+webix.UIManager.addHotKey("ctrl+e", function () {
+    var id = $$('display_list').getSelectedId().id;
+    edit_track_data(id);
+}, $$('display_list'));
+
+webix.UIManager.addHotKey("ctrl+e", function () {
+    selected_queue_element = $$('queue_list').getSelectedItem();
+    selected_queue_element_position = $$('queue_list').getSelectedItem().position;
+    edit_track_data(selected_queue_element.track_id);
+}, $$('queue_list'));
 
 
 webix.UIManager.addHotKey("shift+s", function () {
@@ -1575,7 +1436,6 @@ webix.UIManager.addHotKey("enter", function () {
 }, $$('track_filter'));
 
 webix.UIManager.addHotKey("right", function () {
-    console.log('tab pressed');
     webix.UIManager.setFocus('queue_list');
 }, $$('display_list'));
 
@@ -1643,6 +1503,263 @@ $$('display_list').attachEvent('onFocus',
 
 $$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})
 webix.UIManager.setFocus($$('display_list'));
+
+
+//
+// webix.UIManager.addHotKey("shift+q", function () {
+//     var id = $$('display_list').getSelectedId().id;
+//     sql = `SELECT 1 FROM session_queue WHERE track_id=${id} LIMIT 1`;
+//     db_connection.query(sql,
+//     function (err, result){
+//         if (result.length == 0){
+//             pos_id_sql = 'SELECT max(id) + 1 as new_id, max(position)+1 as new_position FROM session_queue';
+//             db_connection.query(pos_id_sql, function (err, result) {
+//                 if (!err){
+//                     var new_id = result[0].new_id ? result[0].new_id :1;
+//                     var new_position = result[0].new_id ? result[0].new_position :1;
+//                     insert_sql = `INSERT INTO session_queue (id, track_id, status, position)
+//                                   VALUES (${new_id}, ${id}, 'pending', ${new_position})`;
+//                     db_connection.query(insert_sql, function (err, result) {
+//                         if (err) throw err;
+//                         sql = `SELECT tracks.id as track_id, session_queue.position, tracks.title, tracks.artist,
+//                                         tracks.album, tracks.bpm, tracks.stream_length,
+//                                         settings.db_image_cache as image_root, tracks.cover_small as cover,
+//                                         session_queue.position as position
+//                                  FROM
+//                                      (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
+//                                  ON
+//                                      tracks.id=session_queue.track_id WHERE session_queue.status='pending'
+//                                  AND
+//                                     session_queue.track_id=${id}
+//                                  ORDER BY session_queue.position`;
+//                         db_connection.query(sql, function (err, result) {
+//                             if (err) throw err;
+//                             $$('queue_list').add(result[0]);
+//                             $$('display_list').addRowCss(id, 'unavailable_track');
+//                             update_queue_labels();
+//                         });
+//                     });
+//                 }
+//             })
+//         }
+//     });
+// }, $$('display_list'));
+//
+
+
+// function get_track_info_for_queue(track_id, cont) {
+//     var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist,
+//                     tracks.album, tracks.bpm, tracks.stream_length,
+//                     settings.db_image_cache as image_root, tracks.cover_small as cover,
+//                     session_queue.position as position
+//              FROM
+//                  (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
+//              ON
+//                  tracks.id=session_queue.track_id
+//             WHERE tracks.id=${track_id}
+//              ORDER BY session_queue.position`;
+//     db_connection.query(sql, function(error, result) {
+//         if (error) throw error;
+//         cont(result[0]);
+//     })
+// }
+
+// function get_track_id_at_queue_position(position, continuation) {
+//     db_connection.query(
+//         `SELECT id, track_id FROM session_queue WHERE position=${position}`,
+//         function (err, result) {
+//             if (err) throw err;
+//             continuation(result[0].id, result[0].track_id)
+//         }
+//     )
+// }
+
+//
+// function get_queue_boundary_positions(cont){
+//     sql = "SELECT min(position) as min, max(position) as max FROM session_queue WHERE status='pending'"
+//     db_connection.query(sql, function(error, result){
+//         if (error) throw error;
+//         return cont(result[0].min, result[0].max)
+//     })
+// }
+
+
+// webix.UIManager.addHotKey("u", function () {
+//     selected_queue_element = $$('queue_list').getSelectedItem();
+//     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
+//     swapped_element = $$('queue_list').getItem($$('queue_list').getPrevId(selected_queue_element.id));
+//
+//     get_queue_boundary_positions(
+//         function (min, max) {
+//             new_position = Math.max(selected_queue_element_position - 1, min)
+//             if (new_position != selected_queue_element_position) {
+//                 db_connection.query(
+//                     `UPDATE session_queue SET position=0 WHERE position=${new_position}`,
+//                     function(err, result) {
+//                         if (err) throw err;
+//                         db_connection.query(
+//                             `UPDATE session_queue SET position=${new_position} WHERE position=${selected_queue_element_position}`,
+//                             function (err, result) {
+//                                 if (err) throw err;
+//                                 db_connection.query(
+//                                     `UPDATE session_queue SET position=${selected_queue_element_position} WHERE position=0`,
+//                                     function (err, result) {
+//                                         if (err) throw err;
+//                                         swapped_element.position = selected_queue_element_position;
+//                                         selected_queue_element.position = new_position;
+//                                         $$('queue_list').moveUp(selected_queue_element.id, 1)
+//                                     }
+//                                 )
+//                             }
+//                         )
+//                     }
+//                 )
+//             }
+//         }
+//     )
+// }, $$('queue_list'));
+
+
+// webix.UIManager.addHotKey("d", function () {
+//     selected_queue_element = $$('queue_list').getSelectedItem();
+//     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
+//     swapped_element = $$('queue_list').getItem($$('queue_list').getNextId(selected_queue_element.id));
+//     get_queue_boundary_positions(
+//         function (min, max) {
+//             new_position = Math.min(selected_queue_element_position + 1, max)
+//             if (new_position != selected_queue_element_position) {
+//                 db_connection.query(
+//                     `UPDATE session_queue SET position=0 WHERE position=${new_position}`,
+//                     function(err, result) {
+//                         if (err) throw err;
+//                         db_connection.query(
+//                             `UPDATE session_queue SET position=${new_position} WHERE position=${selected_queue_element_position}`,
+//                             function (err, result) {
+//                                 if (err) throw err;
+//                                 db_connection.query(
+//                                     `UPDATE session_queue SET position=${selected_queue_element_position} WHERE position=0`,
+//                                     function (err, result) {
+//                                         if (err) throw err;
+//                                         swapped_element.position = selected_queue_element_position;
+//                                         selected_queue_element.position = new_position;
+//                                         $$('queue_list').moveDown(selected_queue_element.id, 1)
+//                                     }
+//                                 )
+//                             }
+//                         )
+//                     }
+//                 )
+//             }
+//         }
+//     )
+// }, $$('queue_list'));
+//
+
+
+// webix.UIManager.addHotKey("t", function () {
+//     selected_queue_element = $$('queue_list').getSelectedItem();
+//     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
+//     get_queue_boundary_positions(
+//         function (min, max) {
+//             new_position = min
+//             if (new_position != selected_queue_element_position) {
+//                 db_connection.query(
+//                     `UPDATE session_queue SET position=0 WHERE position=${selected_queue_element_position}`,
+//                     function(err, result) {
+//                         if (err) throw err;
+//                         db_connection.query(
+//                             `UPDATE session_queue SET position=position+1 WHERE position>=${min}`,
+//                             function (err, result) {
+//                                 if (err) throw err;
+//                                 $$('queue_list').data.each(
+//                                     function (element) {
+//                                         if (element.position >= min) {
+//                                             element.position++;
+//                                         }
+//                                     }
+//                                 );
+//                                 db_connection.query(
+//                                     `UPDATE session_queue SET position=position-1 WHERE position>${selected_queue_element_position}`,
+//                                     function (err, result) {
+//                                         if (err) throw err;
+//                                         $$('queue_list').data.each(
+//                                             function (element) {
+//                                                 if (element.position > selected_queue_element_position) {
+//                                                     element.position--;
+//                                                 }
+//                                             }
+//                                         );
+//                                         db_connection.query(
+//                                             `UPDATE session_queue SET position=${new_position} WHERE position=0`,
+//                                             function (err, result) {
+//                                                 selected_queue_element.position = new_position;
+//                                                 $$('queue_list').moveTop(selected_queue_element.id)
+//
+//                                             }
+//                                         )
+//                                     }
+//                                 )
+//                             }
+//                         )
+//                     }
+//                 )
+//             }
+//         }
+//     )
+// }, $$('queue_list'));
+
+//
+//
+//
+//
+//
+// webix.UIManager.addHotKey("shift+backspace", function () {
+//     selected_queue_element = $$('queue_list').getSelectedItem();
+//     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
+//     // console.log(selected_queue_element.position);
+//     get_queue_boundary_positions(
+//         function (min, max) {
+//             db_connection.query(
+//                 `UPDATE session_queue SET position=0 WHERE position=${selected_queue_element_position}`,
+//                 function(err, result) {
+//                      db_connection.query(
+//                         `UPDATE session_queue SET position=position-1 WHERE position>${selected_queue_element_position}`,
+//                         function (err, result) {
+//                             if (err) throw err;
+//                             db_connection.query(
+//                                 `DELETE FROM session_queue WHERE position=0`,
+//                                 function (err, result) {
+//                                     var next_item = $$('queue_list').getNextId(selected_queue_element.id);
+//                                     if (next_item == undefined) {
+//                                         next_item = $$('queue_list').getPrevId(selected_queue_element.id);
+//                                     }
+//                                     $$('queue_list').remove(selected_queue_element.id);
+//                                     $$('queue_list').data.each(
+//                                         function (element) {
+//                                             if (element.position > selected_queue_element_position) {
+//                                                 element.position--;
+//                                             }
+//                                         }
+//                                     );
+//                                     if (next_item != undefined) {
+//                                         $$('queue_list').select(next_item)
+//                                     }
+//                                     console.log(next_item);
+//                                     $$('display_list').removeRowCss(selected_queue_element.track_id, 'unavailable_track');
+//                                     $$('display_list').getItem(selected_queue_element.track_id).$css="";
+//                                     $$('display_list').refresh();
+//                                     update_queue_labels();
+//                                 }
+//                             )
+//                         }
+//                     )
+//                 }
+//             )
+//         }
+//     )
+// }, $$('queue_list'));
+//
+//
 
 
 </script>

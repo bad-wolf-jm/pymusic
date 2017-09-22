@@ -13,72 +13,64 @@ function send_command(name, args, kwargs) {
 
 function preview_play(file_name, start_time, end_time){
     mute_monitor()
-    // command_socket.send(JSON.stringify({'name': 'preview_play', 'args': [file_name, start_time, end_time], 'kwargs': {}}));
     send_command('preview_play', [file_name, start_time, end_time], {});
-
 }
 
 function preview_pause(file_name){
-    //command_socket.send(JSON.stringify({'name': 'preview_pause', 'args': [], 'kwargs': {}}));
     send_command('preview_pause', [], {});
 }
 
 function preview_stop(file_name){
-    //command_socket.send(JSON.stringify({'name': 'preview_stop', 'args': [], 'kwargs': {}}));
     send_command('preview_stop', [], {});
     restore_monitor();
 }
 
 function preview_seek_relative(time_delta){
     send_command('preview_seek', [time_delta], {});
-    // command_socket.send(JSON.stringify({'name': 'preview_seek', 'args': [time_delta], 'kwargs': {}}));
 }
 
 function main_play(file_name, start_time, end_time){
-    send_command('main_play', [file_name, start_time, end_time]);
-    //command_socket.send(JSON.stringify({'name': 'main_play', 'args': [file_name, start_time, end_time], 'kwargs': {}}));
+    send_command('main_play', [file_name, start_time, end_time], {});
 }
-
 
 function main_stop(file_name, start_time, end_time){
     send_command('main_stop', [], {});
-    // command_socket.send(JSON.stringify({'name': 'main_stop', 'args': [], 'kwargs': {}}));
 }
 
 function set_main_player_volume(value){
-    command_socket.send(JSON.stringify({'name': 'set_main_player_volume', 'args': [value], 'kwargs': {}}));
+    send_command('set_main_player_volume', [value], {});
 }
 
 function set_monitor_volume(value){
-    command_socket.send(JSON.stringify({'name': 'set_monitor_volume', 'args': [value], 'kwargs': {}}));
+    send_command('set_monitor_volume', [value], {});
 }
 
 function set_precue_player_volume(value){
-    command_socket.send(JSON.stringify({'name': 'set_precue_player_volume', 'args': [value], 'kwargs': {}}));
+    send_command('set_precue_player_volume', [value], {});
 }
 
 function increase_main_player_volume(){
-    command_socket.send(JSON.stringify({'name': 'increase_main_player_volume', 'args': [], 'kwargs': {}}));
+    send_command('increase_main_player_volume', [], {});
 }
 
 function increase_monitor_volume(){
-    command_socket.send(JSON.stringify({'name': 'increase_monitor_volume', 'args': [], 'kwargs': {}}));
+    send_command('increase_monitor_volume', [], {});
 }
 
 function increase_precue_player_volume(){
-    command_socket.send(JSON.stringify({'name': 'increase_precue_player_volume', 'args': [], 'kwargs': {}}));
+    send_command('increase_precue_player_volume', [], {});
 }
 
 function decrease_main_player_volume(){
-    command_socket.send(JSON.stringify({'name': 'decrease_main_player_volume', 'args': [], 'kwargs': {}}));
+    send_command('decrease_main_player_volume', [], {});
 }
 
 function decrease_monitor_volume(){
-    command_socket.send(JSON.stringify({'name': 'decrease_monitor_volume', 'args': [], 'kwargs': {}}));
+    send_command('decrease_monitor_volume', [], {});
 }
 
 function decrease_precue_player_volume(){
-    command_socket.send(JSON.stringify({'name': 'decrease_precue_player_volume', 'args': [], 'kwargs': {}}));
+    send_command('decrease_precue_player_volume', [], {});
 }
 
 
@@ -131,7 +123,6 @@ volume_control_socket = zmq.socket('pull');
 volume_control_socket.connect('tcp://127.0.0.1:5555');
 volume_control_socket.on("message", function( payload ) {
    data = JSON.parse(payload.toString());
-   console.log(data.kwargs.value);
    value = Math.round(data.kwargs.value*100);
    if (data.event == 'volume_set_notice') {
        switch (data.kwargs.channels[0]) {
@@ -154,7 +145,8 @@ volume_control_socket.on("message", function( payload ) {
 
 
 
-
+// var track_edit_window
+var preview_track_position = 0
 preview_time_socket = zmq.socket('pull');
 preview_time_socket.connect('tcp://127.0.0.1:5556');
 preview_time_socket.on("message", function( payload ) {
@@ -162,6 +154,16 @@ preview_time_socket.on("message", function( payload ) {
    if (data.event == 'track_position_notice') {
        $$('preview_time').define('label', format_nanoseconds(data.args[0]))
        $$('preview_time').refresh();
+       if (track_data_edit_window.isVisible()) {
+           track_edit_waveform.xAxis[0].removePlotLine('position-marker');
+           track_edit_waveform.xAxis[0].addPlotLine({
+               color:'#FF0000',
+               width: 2,
+               zIndex:10,
+               value: data.args[0],
+               id: 'position-marker'});
+       }
+       preview_track_position = data.args[0];
        preview_seek.animate(data.args[0] / preview_track_duration);
    } else if (data.event == 'track_duration_notice') {
        $$('preview_length').define('label', format_nanoseconds(data.args[0]))
@@ -169,6 +171,7 @@ preview_time_socket.on("message", function( payload ) {
        preview_track_duration = data.args[0];
    } else if (data.event == 'end_of_stream') {
        preview_track_duration = 1;
+       preview_track_position = 0
        restore_monitor();
    }
 });
@@ -279,10 +282,8 @@ function play_next_track() {
                             if (error) throw error;
                             track_id = result[0].track_id;
                             db_connection.query(
-                                `SELECT title, artist, album, bpm, file_name, cover_small,
-                                        stream_start, stream_end, settings.db_music_cache as music_root,
-                                        settings.db_image_cache as image_root
-                                FROM tracks left join settings on 1 WHERE tracks.id=${track_id} LIMIT 1`,
+                                `SELECT title, artist, album, bpm, file_name, cover_small, stream_start, stream_end, settings.db_music_cache as music_root,
+                                 settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${track_id} LIMIT 1`,
                                 function (error, result) {
                                     if (error) throw error;
                                     result = result[0];
@@ -347,4 +348,71 @@ function start_queue() {
             $$('start-stop-button').refresh();
         }
     }
+}
+
+
+function stop_queue_now() {
+    mark_as_played(current_queue_position, (t) => {main_stop()});
+    queue_playing = false;
+    stop_request = false;
+    $$('start-stop-button').define('label', 'START');
+    $$('start-stop-button').define('icon', 'play');
+    $$('start-stop-button').refresh();
+    $$('queue_stop_message').hide();
+    $$('skip_stop_dialog').hide();
+}
+
+function skip_to_next_track() {
+    if (queue_playing && !stop_request){
+        main_stop()
+        db_connection.query(
+            `SELECT count(id) as queue_count FROM session_queue WHERE status='pending'`,
+            function (error, result) {
+                if (error) throw error;
+                if (result[0].queue_count > 0) {
+                    mark_as_played(current_queue_position, (t) => {play_next_track()});
+                } else {
+                    $$('start-stop-button').define('label', 'START');
+                    $$('start-stop-button').define('icon', 'play');
+                    $$('start-stop-button').refresh();
+                    $$('queue_stop_message').hide();
+                    queue_playing = false;
+                    stop_request = false;
+                }
+            }
+        )
+    }
+    $$('skip_stop_dialog').hide()
+}
+
+function preview_play_track_id(id, stream_start, stream_end) {
+    db_connection.query(
+        `SELECT title, artist, album, bpm, file_name, cover_small, stream_start, stream_end, settings.db_music_cache as music_root,
+         settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${id} LIMIT 1`,
+        function(error, result) {
+            if (error) throw error;
+            result = result[0];
+            file_name = path.join(result.music_root, result.file_name);
+            cover_file_name = `${result.image_root}/${result.cover_small}`;
+            stream_length = (result.stream_end-result.stream_start) / 1000000000;
+            $$('preview_title').define('label', result.title)
+            $$('preview_title').refresh()
+            $$('preview_artist').define('label', `${result.artist} - ${result.album}`)
+            $$('preview_artist').refresh()
+            if (result.cover_small == null) {
+                cover_source = "../resources/images/default_album_cover.png"
+            } else {
+                cover_source = `file://${result.image_root}/${result.cover_small}`;
+            }
+            var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
+            $$('preview-cover-image').define('template', cover_image);
+            $$('preview-cover-image').refresh();
+            stream_start = (stream_start == undefined) ? result.stream_start : stream_start;
+            stream_end = (stream_end == undefined) ? result.stream_end : stream_end;
+            if (stream_start < 0) {
+                stream_start = stream_end + stream_start;
+            }
+            preview_play(file_name, stream_start, stream_end)
+        }
+    )
 }

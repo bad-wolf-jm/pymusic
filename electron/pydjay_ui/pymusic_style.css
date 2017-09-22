@@ -64,6 +64,7 @@
 .queue_element_duration {
     float:right;
     position:relative;
+    text-align:right;
     top:50%;
     transform: translateY(-50%);
 }

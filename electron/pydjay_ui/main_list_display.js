@@ -57,19 +57,15 @@ var main_list_display_template = {
                 {width:10}
             ]
         },
-        //{height:3},
         {
             view:"datatable",
             id:"display_list",
             select:"row",
-            //navigation:false,
             resizeColumn:{headerOnly:true},
             css:{
                 'background-color':'#303030',
-                //'padding':'5px',
                 border: '0px solid #5c5c5c'
              },
-            //css:{height:"1000px"},
             columns:[
                 { id:"id",            header:"",  width:30, hidden:true, template:"<img src='../resources/images/precue.png' style='filter: invert(1);' height='20'>", checkValue:1, uncheckValue:0},
                 { id:"favorite",      header:{text:"", height:25},  width:30, template:custom_checkbox, checkValue:1, uncheckValue:0, sort:'int'},
@@ -87,7 +83,7 @@ var main_list_display_template = {
 
 
 function update_list_labels() {
-    var count = $$('display_list').data.count(); //$$('display_list').data.length;
+    var count = $$('display_list').data.count();
     var length = 0;
     $$('display_list').data.each((row) => {length += row.stream_length})
     $$('playlist_track_count').define('label', `${count} tracks - ${format_seconds_long(length / 1000000000)}`);
