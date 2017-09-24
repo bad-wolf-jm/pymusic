@@ -51,8 +51,8 @@ var player_window = {
                         {
                             rows: [
                                 {
-                                    view: 'label',
                                     id:'main-title',
+                                    view: 'label',
                                     css: {
                                         'text-align':'left',
                                         'text-transform':'uppercase',
@@ -61,16 +61,21 @@ var player_window = {
                                     label: 'Title Of Song', height:20
                                 },
                                 {
-                                    view: 'label',
                                     id:'main-artist',
-                                    css: {'text-align':'left'},
+                                    view: 'label',
+                                    css: {
+                                        'text-align':'left',
+                                        'white-space':'nowrap',
+                                        'overflow': 'hidden',
+                                        'text-overflow': 'ellipsis'
+                                    },
                                     label: 'Artist - Album', height:20
                                 }
                             ]
                         },
                         {
-                            view: 'label',
                             id:'main_track_time',
+                            view: 'label',
                             css: {
                                 'text-align':'right',
                                 'font-size':'20px',
@@ -112,7 +117,7 @@ $(document).ready( () => {
 });
 
 var preview_player_window = {
-    height:135,
+    height:190,
     gravity:1,
     css:{
         'background-color':'#6c6c6c',
@@ -120,139 +125,148 @@ var preview_player_window = {
         border: '1px solid #3c3c3c'
      },
      rows: [{
-                cols:[
-                    {
-                        view: 'template',
-                        id:'preview-cover-image',
-                        width:58,
-                        height:58,
-                        template: "FOO"
-                    },
-                    {width:10},
-                    {
-                        rows:[
-                            {},
-                            {
-                                view: 'label',
-                                id:'preview_title',
-                                css: {
-                                    'text-align':'left',
-                                    'font-weight':'bold',
-                                    'text-transform':'uppercase',
-                                    'white-space':'nowrap',
-                                    'overflow': 'hidden',
-                                    'text-overflow': 'ellipsis'
-                                },
-                                label: 'Title Of Song',
-                                height:20
-                            },
-                            {
-                                view: 'label',
-                                id:'preview_artist',
-                                css: {
-                                    'text-align':'left',
-                                    'white-space':'nowrap',
-                                    'overflow': 'hidden',
-                                    'text-overflow': 'ellipsis'
-                                },
-                                label: 'Artist - Album',
-                                height:20
-                            },
-                            {}
-                        ]
-                    },
-                    {width:10}
-                ]
-            },
-            {height: 5},
-            {
-                height:5,
-                template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%; transform: translateY(-200%)"></div>'
-            },
-            {height: 3},
-            {cols:[
+            cols:[
                 {
-                    view: 'label',
-                    id:'preview_time',
-                    css:{'text-align':'left', 'text-transform':'uppercase'},
-                    label: '0:00',
-                    height:20
+                    id:'preview-cover-image',
+                    view: 'template',
+                    width:58,
+                    height:58,
+                    template: "FOO"
                 },
-                {},
+                {width:10},
                 {
-                    view: 'label',
-                    id:'preview_length',
-                    css:{'text-align':'right'},
-                    label: '0:00',
-                    height:20
-                }
-
-            ]},
+                    rows:[
+                        {},
+                        {
+                            id:'preview_title',
+                            view: 'label',
+                            css: {
+                                'text-align':'left',
+                                'font-weight':'bold',
+                                'text-transform':'uppercase',
+                                'white-space':'nowrap',
+                                'overflow': 'hidden',
+                                'text-overflow': 'ellipsis'
+                            },
+                            label: 'Title Of Song',
+                            height:20
+                        },
+                        {
+                            id:'preview_artist',
+                            view: 'label',
+                            css: {
+                                'text-align':'left',
+                                'white-space':'nowrap',
+                                'overflow': 'hidden',
+                                'text-overflow': 'ellipsis'
+                            },
+                            label: 'Artist - Album',
+                            height:20
+                        },
+                        {}
+                    ]
+                },
+                {width:10}
+            ]
+        },
+        {height: 5},
+        {
+            height:5,
+            template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%; transform: translateY(-200%)"></div>'
+        },
+        {height: 3},
+        {cols:[
             {
-                cols: [
-                    {
-                        id:'preview_play_button',
-                        view:'button',
-                        type:'icon',
-                        icon:'play',
-                        label:'PLAY',
-                        click : function () {
-                            preview_pause();
-                        }
-                    },
-                    {
-                        id:'preview_play_last_30_seconds_button',
-                        view:'button',
-                        type:'icon',
-                        icon:'play',
-                        label: 'LAST 30 SECS',
-                        click : function () {
-                            if (preview_track_id != undefined) {
-                                preview_play_track_id(preview_track_id, -30000000000);
-                            }
-                            webix.UIManager.setFocus($$('track_edit_window'));
-                        }
-                    },
-                    {
-                        id:'preview_play_last_10_seconds_button',
-                        view:'button',
-                        type:'icon',
-                        icon:'play',
-                        label: 'LAST 10 SECS',
-                        click : function () {
-                            if (preview_track_id != undefined) {
-                                preview_play_track_id(preview_track_id, -10000000000);
-                            }
-                            webix.UIManager.setFocus($$('track_edit_window'));
-                        }
-                    },
-                    {
-                        id:'preview_stop_button',
-                        view:'button',
-                        type:'icon',
-                        icon:'stop',
-                        label:'STOP',
-                        click : function () {
-                            preview_stop();
-                        }
-
-                    },
-                ]
+                id:'preview_time',
+                view: 'label',
+                css:{'text-align':'left', 'text-transform':'uppercase'},
+                label: '0:00',
+                height:20
             },
-            {}
-        ]
+            {},
+            {
+                id:'preview_length',
+                view: 'label',
+                css:{'text-align':'right'},
+                label: '0:00',
+                height:20
+            }
+
+        ]},
+        {height:15},
+        {
+            rows: [
+                {
+                    cols: [
+                        {width: 10},
+                        {
+                            id:'preview_play_last_30_seconds_button',
+                            view:'button',
+                            label: 'LAST 30 SECS',
+                            click : function () {
+                                if (preview_track_id != undefined) {
+                                    preview_play_track_id(preview_track_id, -30000000000);
+                                }
+                                webix.UIManager.setFocus($$('track_edit_window'));
+                            }
+                        },
+                        {width:10},
+                        {
+                            id:'preview_play_last_10_seconds_button',
+                            view:'button',
+                            label: 'LAST 10 SECS',
+                            click : function () {
+                                if (preview_track_id != undefined) {
+                                    preview_play_track_id(preview_track_id, -10000000000);
+                                }
+                                webix.UIManager.setFocus($$('track_edit_window'));
+                            }
+                        },
+                        {width: 10},
+                    ]
+                },
+                {height:5},
+                {
+                    cols: [
+                        {width: 10},
+                        {
+                            id:'preview_play_button',
+                            view:'button',
+                            label:'PLAY/PAUSE',
+                            click : function () {
+                                preview_pause();
+                            }
+                        },
+                        {width:10},
+                        {
+                            id:'preview_stop_button',
+                            view:'button',
+                            label:'STOP',
+                            click : function () {
+                                preview_stop();
+                            }
+
+                        },
+                        {width: 10},
+                    ]
+                },
+            ]
+        },
+        {}
+    ]
 }
 
 var preview_seek = undefined;
 webix.ready( () => {
     preview_seek = new ProgressBar.Line('#preview-progress',
     {
-     strokeWidth: 1,
-     duration: 50,
-     color: '#5a5a5a',
-     trailColor: '#eee',
-     trailWidth: 1,
-     svgStyle: {width: '100%', height: '100%'}}
+        strokeWidth: 1,
+        duration: 50,
+        color: '#5a5a5a',
+        trailColor: '#eee',
+        trailWidth: 1,
+        svgStyle: {width: '100%', height: '100%'}
+    }
  );
     preview_seek.animate(0);
 });
@@ -261,19 +275,18 @@ webix.ready( () => {
 genres_list_popup = webix.ui(genres_list_popup)
 genres_list_popup.hide();
 genres_list_popup.attachEvent('onShow', function () {
-    var sql = `SELECT DISTINCT genre as name, COUNT(id) as count FROM tracks GROUP BY genre ORDER BY genre`
-
+    //console.log("FOO");
+    var sql = `SELECT DISTINCT genre as name, COUNT(id) as count FROM tracks GROUP BY genre ORDER BY genre`;
     db_connection.query(sql, function (err, result) {
       if (err) throw err;
       $$('genres_list_view').clearAll()
-      $$('genres_list_view').refresh()
+      //$$('genres_list_view').refresh()
       $$('genres_list_view').define('data', result);
       $$('genres_list_view').refresh()
     });
 })
 $$('genres_list_view').attachEvent("onItemClick", function(id, e, node){
     var item = this.getItem(id);
-    //console.log(item);
     display_genre(item.name)();
     $$('genres_list_popup').hide()
 });
@@ -304,7 +317,7 @@ sessions_list_popup.attachEvent('onShow', function () {
     db_connection.query(sql, function (err, result) {
       if (err) throw err;
       $$('sessions_list_view').clearAll()
-      $$('sessions_list_view').refresh()
+      //$$('sessions_list_view').refresh()
       $$('sessions_list_view').define('data', result);
       $$('sessions_list_view').refresh()
     });
@@ -342,7 +355,6 @@ track_list_popup.attachEvent('onShow', function () {
         function (err, result) {
             if (err) throw err;
             $$('track_list_view').clearAll()
-            $$('track_list_view').refresh()
             $$('track_list_view').define('data', result);
             $$('track_list_view').refresh()
         });
@@ -360,6 +372,9 @@ $$('track_list_popup').attachEvent('onHide',
 function () {
     webix.UIManager.setFocus($$('display_list'));
 });
+
+
+
 
 webix.UIManager.addHotKey("enter", function () {
     var foo = $$('track_list_view')
@@ -399,51 +414,41 @@ var track_data_edit_window = webix.ui({
                                 cols: [
                                     {
                                         rows: [
-                                            {},
                                             {
-                                                view: 'label',
                                                 id:'main-title-edit',
+                                                view: 'label',
                                                 css: {
                                                     'text-align': 'left',
                                                     'text-transform': 'uppercase',
                                                     'font-weight': 'bold',
-                                                    'font-size': '30px'
+                                                    'font-size': '20px'
                                                 },
                                                 label: 'Title Of Song',
                                                 height:30
                                             },
                                             {height:5},
                                             {
-                                                view: 'label',
                                                 id:'main-artist-edit',
+                                                view: 'label',
                                                 css: {
                                                     'text-align':'left',
-                                                    'font-size': '20px'
+                                                    'font-size': '20px',
+                                                    'color': '#bfbfbf'
                                                 },
                                                 label: 'Artist',
                                                 height:30
                                             },
+                                            {},
                                             {
-                                                view: 'label',
-                                                id:'main-album-edit',
-                                                css: {
-                                                    'text-align':'left',
-                                                    'font-size':'20px'
-                                                },
-                                                label: 'Artist',
-                                                height:30
-                                            },
-                                            {
-                                                view: 'label',
                                                 id:'track-data',
+                                                view: 'label',
                                                 css: {
                                                     'text-align':'left',
                                                     'font-size':'20px'
                                                 },
                                                 label: 'length - BPM',
                                                 height:30
-                                            },
-                                            {}
+                                            }
                                         ]
                                     }
                                 ]
@@ -454,6 +459,62 @@ var track_data_edit_window = webix.ui({
                 ]
             },
             {height:50},
+            {
+                cols: [
+                    {
+                        id:'edit_zoom_first_10_seconds_button',
+                        view:'button',
+                        type:'icon',
+                        label: 'FIRST 10 SECONDS',
+                        click : function () {
+                            track_edit_waveform.xAxis[0].setExtremes(0, 10000000000, true, false);
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    },
+                    {
+                        id:'edit_zoom_first_30_seconds_button',
+                        view:'button',
+                        type:'icon',
+                        label: 'FIRST 30 SECONDS',
+                        click : function () {
+                            track_edit_waveform.xAxis[0].setExtremes(0, 30000000000, true, false);
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    },
+                    {},
+                    {
+                        id:'edit_reset_zoom_button',
+                        view:'button',
+                        type:'icon',
+                        label: 'RESET',
+                        click : function () {
+                            track_edit_waveform.xAxis[0].setExtremes(0, track_length_edit, true, false);
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    },
+                    {},
+                    {
+                        id:'edit_zoom_last_30_seconds_button',
+                        view:'button',
+                        type:'icon',
+                        label: 'LAST 30 SECONDS',
+                        click : function () {
+                            track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 30000000000, track_length_edit, true, false);
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    },
+                    {
+                        id:'edit_zoom_last_10_seconds_button',
+                        view:'button',
+                        type:'icon',
+                        label: 'LAST 10 SECONDS',
+                        click : function () {
+                            track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 10000000000, track_length_edit, true, false);
+                            webix.UIManager.setFocus($$('track_edit_window'));
+                        }
+                    }
+                ]
+            },
             {
                 cols:[
                     {width:20},
@@ -469,14 +530,13 @@ var track_data_edit_window = webix.ui({
                     {width:20}
                 ]
             },
+            {height:30},
             {
                 cols: [
-                    {},
+                    {width:30},
                     {
                         id:'edit_play_button',
                         view:'button',
-                        type:'icon',
-                        icon:'play',
                         label: 'PLAY FULL TRACK',
                         click : function () {
                             preview_play_track_id(track_edited.id, stream_start_edit, stream_end_edit);
@@ -486,8 +546,6 @@ var track_data_edit_window = webix.ui({
                     {
                         id:'edit_play_last_30_seconds_button',
                         view:'button',
-                        type:'icon',
-                        icon:'play',
                         label: 'LAST 30 SECONDS',
                         click : function () {
                             preview_play_track_id(track_edited.id, -30000000000, stream_end_edit);
@@ -497,32 +555,29 @@ var track_data_edit_window = webix.ui({
                     {
                         id:'edit_play_last_10_seconds_button',
                         view:'button',
-                        type:'icon',
-                        icon:'play',
                         label: 'LAST 10 SECONDS',
                         click : function () {
                             preview_play_track_id(track_edited.id, -10000000000, stream_end_edit);
                             webix.UIManager.setFocus($$('track_edit_window'));
                         }
                     },
+                    {},
                     {
                         id:'edit_stop_button',
                         view:'button',
-                        type:'icon',
-                        icon:'stop',
                         label: 'STOP',
                         click : function () {
                             preview_stop();
                             webix.UIManager.setFocus($$('track_edit_window'));
                         }
                     },
-                    {}
+                    {width:30}
                 ]
             },
-            {height:30},
+            {height:60},
             {
                 cols:[
-                    {},
+                    {width:30},
                     {
                         view: 'button',
                         label: 'APPLY',
@@ -539,7 +594,7 @@ var track_data_edit_window = webix.ui({
                             track_data_edit_window.hide()
                         }
                     },
-                    {}
+                    {width:30}
                 ]
             },
             {height:10}
@@ -569,11 +624,9 @@ webix.UIManager.addHotKey("escape", function () {
     track_data_edit_window.hide()
 }, $$('track_edit_window'));
 
-
 webix.UIManager.addHotKey("ctrl+shift+enter", function () {
     preview_play_track_id(track_edited.id, -30000000000, stream_end_edit);
 }, $$('track_edit_window'));
-
 
 webix.UIManager.addHotKey("shift+enter", function () {
     preview_play_track_id(track_edited.id, -10000000000, stream_end_edit);
@@ -623,6 +676,32 @@ webix.UIManager.addHotKey("ctrl+shift+m", function () {
     set_end_marker(stream_end_edit + 100000000);
 }, $$('track_edit_window'));
 
+webix.UIManager.addHotKey("ctrl+c", function () {
+    track_edit_waveform.xAxis[0].setExtremes(0, track_length_edit, true, false);
+    webix.UIManager.setFocus($$('track_edit_window'));
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+x", function () {
+    track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 10000000000, track_length_edit, true, false);
+    webix.UIManager.setFocus($$('track_edit_window'));
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+shift+x", function () {
+    track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 30000000000, track_length_edit, true, false);
+    webix.UIManager.setFocus($$('track_edit_window'));
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+z", function () {
+    track_edit_waveform.xAxis[0].setExtremes(0, 10000000000, true, false);
+    webix.UIManager.setFocus($$('track_edit_window'));
+}, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+shift+z", function () {
+    track_edit_waveform.xAxis[0].setExtremes(0, 30000000000, true, false);
+    webix.UIManager.setFocus($$('track_edit_window'));
+}, $$('track_edit_window'));
+
+
 
 var track_edit_waveform = undefined;
 function create_waveform_visualizer () {
@@ -641,16 +720,21 @@ function create_waveform_visualizer () {
                 redraw: function() {
                     webix.UIManager.setFocus($$('track_edit_window'));
                 }
+            },
+            resetZoomButton: {
+                theme: {
+                    display: 'none'
+                }
             }
         },
         tooltip: { enabled: false },
         yAxis: {title: {text: ''},
         labels: {enabled: false},
-                tickPositioner: function () {
-                            var maxDeviation = Math.max(Math.abs(this.dataMax), Math.abs(this.dataMin));
-                            var halfMaxDeviation = Math.ceil(maxDeviation / 2);
-                            return [-maxDeviation, -halfMaxDeviation, 0, halfMaxDeviation, maxDeviation];
-                            }},
+        tickPositioner: function () {
+                    var maxDeviation = Math.max(Math.abs(this.dataMax), Math.abs(this.dataMin));
+                    var halfMaxDeviation = Math.ceil(maxDeviation / 2);
+                    return [-maxDeviation, -halfMaxDeviation, 0, halfMaxDeviation, maxDeviation];
+                    }},
         xAxis: {title: {text: ''}, labels: {enabled: true}},
         legend: {enabled: false},
         title: {text: ''},
@@ -729,7 +813,6 @@ function save_current_session() {
     })
     session_popup.hide()
     x.show();
-
 }
 
 
@@ -791,9 +874,6 @@ function playback_settings() {
         }
     )
 }
-
-
-
 
 main_list_display_template.gravity = 2.25;
 var session_popup = webix.ui(
@@ -900,45 +980,6 @@ var popup = webix.ui({
 })
 popup.hide();
 
-
-function volume_popup(id, title, on_change){
-    d = {
-        view:'popup',
-        id: id,
-        height:75,
-        width:300,
-        body:{
-            rows:[
-                {
-                    view:'label',
-                    label:`<b>${title}</b>`,
-                    height:30
-                },
-                {
-                    view:'slider',
-                    id:id+'_slider',
-                    min:0,
-                    max: 200,
-                    value:100,
-                    on: {
-                        onSliderDrag: function () {on_change(this.getValue() / 100.0)},
-                        onChange: function () {on_change(this.getValue() / 100.0); $$(id).hide()}
-                    }
-                }
-            ]
-        }
-
-    }
-    x = webix.ui(d);
-    x.hide();
-    return x
-}
-
-main_volume_slider_popup = volume_popup('main_volume_popup', "MAIN PLAYER VOLUME", set_main_player_volume);
-precue_volume_slider_popup = volume_popup('precue_volume_popup', "PRECUE PLAYER VOLUME", set_precue_player_volume);
-monitor_volume_slider_popup = volume_popup('monitor_volume_popup', "MONITOR VOLUME", (value) => {monitor_set_volume=value; set_monitor_volume(value)});
-
-
 var datatable = webix.ui({
     type:"line",
     rows:[
@@ -957,8 +998,7 @@ var datatable = webix.ui({
                             type:'icon',
                             icon:'volume-up',
                             label:'100%',
-                            width:75,
-                            popup:'main_volume_popup'
+                            width:75
                         },
                         {
                             id:'monitor-volume',
@@ -966,8 +1006,7 @@ var datatable = webix.ui({
                             type:'icon',
                             icon:'volume-control-phone',
                             label:'100%',
-                            width:75,
-                            popup:'monitor_volume_popup'
+                            width:75
                         },
                         {
                             id:'precue-player-volume',
@@ -975,8 +1014,7 @@ var datatable = webix.ui({
                             type:'icon',
                             icon:'headphones',
                             label:'100%',
-                            width:75,
-                            popup:'precue_volume_popup'
+                            width:75
                         },
                         {},
                         {
@@ -1143,35 +1181,24 @@ $$("display_list").filterByAll = function () {
 };
 
 
-var sql = `SELECT availability.track_id IS NULL as available, id, favorite, disabled as enabled, title, artist,
-            album, genre, date_added, date_modified, rating, bpm, stream_length,
-            max(session_tracks.start_time) as last_played, count(session_tracks.track_id) as play_count
-           FROM
-           tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
-           LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id`
+function refresh_queue() {
+    $QUERY(
+        `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist, tracks.album,
+         tracks.bpm, tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
+         FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id WHERE session_queue.status='pending'
+         ORDER BY session_queue.position`,
+        function(queue_content) {
+            $$('queue_list').clearAll();
+            for(var i=0; i < queue_content.length; i++){
+                $$('queue_list').add(queue_content[i])
+            }
+        }
+    )
+}
 
-$QUERY(sql, function (result) {
-    display_track_list('ALL SONGS', result);
- });
+display_all_songs()();
+refresh_queue();
 
-$$('queue_list').clearAll()
-
-var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist,
-                tracks.album, tracks.bpm, tracks.stream_length,
-                settings.db_image_cache as image_root, tracks.cover_small as cover,
-                session_queue.position as position
-         FROM
-             (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
-         ON
-             tracks.id=session_queue.track_id WHERE session_queue.status='pending'
-         ORDER BY session_queue.position`
-
-db_connection.query(sql, function (err, result) {
-  if (err) throw err;
-  for(var i=0; i < result.length; i++){
-      $$('queue_list').add(result[i])
-  }
-});
 
 
 function move_displayed_queue_element(q_element, from_index, to_index) {
@@ -1203,15 +1230,13 @@ webix.UIManager.addHotKey("t", function () {
     )
 }, $$('queue_list'));
 
-
-
 webix.UIManager.addHotKey("u", function () {
     selected_queue_element = $$('queue_list').getSelectedItem();
     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
     move_queue_element(selected_queue_element_position, selected_queue_element_position-1,
-            function (new_position) {
-                move_displayed_queue_element(selected_queue_element, selected_queue_element_position, new_position);
-                $$('queue_list').moveUp(selected_queue_element.id, 1)
+        function (new_position) {
+            move_displayed_queue_element(selected_queue_element, selected_queue_element_position, new_position);
+            $$('queue_list').moveUp(selected_queue_element.id, 1)
         }
     )
 }, $$('queue_list'));
@@ -1274,13 +1299,11 @@ webix.UIManager.addHotKey("ctrl+shift+enter", function () {
     preview_play_track_id(id, -30000000000);
 }, $$('display_list'));
 
-
 webix.UIManager.addHotKey("shift+enter", function () {
     var id = $$('display_list').getSelectedId().id;
     preview_track_id = id;
     preview_play_track_id(id, -10000000000);
 }, $$('display_list'));
-
 
 webix.UIManager.addHotKey("enter", function () {
     var id = $$('display_list').getSelectedId().id;
@@ -1318,8 +1341,8 @@ $$('queue_list').attachEvent('onItemDblClick',
     }
 );
 
-webix.UIManager.addHotKey("space", preview_pause);
-webix.UIManager.addHotKey("shift+space", preview_stop);
+webix.UIManager.addHotKey("space", () => {!filtering ? preview_pause(): undefined;});
+webix.UIManager.addHotKey("shift+space", () => {!filtering ? preview_stop(): undefined;});
 webix.UIManager.addHotKey("shift+ctrl+q", increase_main_player_volume);
 webix.UIManager.addHotKey("shift+ctrl+a", decrease_main_player_volume);
 webix.UIManager.addHotKey("shift+ctrl+i", increase_precue_player_volume);
@@ -1331,7 +1354,6 @@ webix.UIManager.addHotKey("shift+right",  () => {preview_seek_relative(5)});
 webix.UIManager.addHotKey("ctrl+shift+left", () => {preview_seek_relative(-20)});
 webix.UIManager.addHotKey("ctrl+shift+right", () => {preview_seek_relative(20)});
 
-
 webix.UIManager.addHotKey("alt+f",
     function () {
         const win = require('electron').remote.getCurrentWindow();
@@ -1339,21 +1361,7 @@ webix.UIManager.addHotKey("alt+f",
     }
 );
 
-webix.UIManager.addHotKey("alt+r", function () {
-    $$('queue_list').clearAll()
-
-    var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist, tracks.album,
-               tracks.bpm, tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
-               FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id WHERE session_queue.status='pending'
-               ORDER BY session_queue.position`
-
-    db_connection.query(sql, function (err, result) {
-      if (err) throw err;
-      for(var i=0; i < result.length; i++){
-          $$('queue_list').add(result[i])
-      }
-    });
-});
+webix.UIManager.addHotKey("alt+r", refresh_queue);
 
 webix.UIManager.addHotKey("shift+q", function () {
     var id = $$('display_list').getSelectedId().id;
@@ -1375,9 +1383,6 @@ webix.UIManager.addHotKey("shift+q", function () {
     )
 }, $$('display_list'));
 
-
-
-
 webix.UIManager.addHotKey("ctrl+e", function () {
     var id = $$('display_list').getSelectedId().id;
     edit_track_data(id);
@@ -1388,7 +1393,6 @@ webix.UIManager.addHotKey("ctrl+e", function () {
     selected_queue_element_position = $$('queue_list').getSelectedItem().position;
     edit_track_data(selected_queue_element.track_id);
 }, $$('queue_list'));
-
 
 webix.UIManager.addHotKey("shift+s", function () {
     var id = $$('display_list').getSelectedId().id;
@@ -1435,6 +1439,16 @@ webix.UIManager.addHotKey("enter", function () {
     webix.UIManager.setFocus($$('display_list'));
 }, $$('track_filter'));
 
+var filtering = false;
+
+$$('track_filter').attachEvent('onFocus', function (x) {
+    console.log('filtering');
+    filtering=true;
+});
+$$('track_filter').attachEvent('onBlur', function (x) {
+    filtering=false;
+});
+
 webix.UIManager.addHotKey("right", function () {
     webix.UIManager.setFocus('queue_list');
 }, $$('display_list'));
@@ -1467,7 +1481,6 @@ webix.UIManager.addHotKey("shift+a", function () {
         }
     )
 }, $$('display_list'));
-
 
 update_queue_labels();
 
@@ -1503,6 +1516,54 @@ $$('display_list').attachEvent('onFocus',
 
 $$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})
 webix.UIManager.setFocus($$('display_list'));
+
+
+
+// var sql = `SELECT availability.track_id IS NULL as available, id, favorite, disabled as enabled, title, artist,
+//            album, genre, date_added, date_modified, rating, bpm, stream_length, max(session_tracks.start_time) as last_played,
+//            count(session_tracks.track_id) as play_count FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
+//            LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability
+//            ON availability.track_id=tracks.id GROUP BY id`
+//
+// $QUERY(sql, function (result) {
+//     display_track_list('ALL SONGS', result);
+//  });
+//
+// $$('queue_list').clearAll()
+
+
+
+// var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist, tracks.album,
+//            tracks.bpm, tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover,
+//            session_queue.position as position FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON
+//            tracks.id=session_queue.track_id WHERE session_queue.status='pending' ORDER BY session_queue.position`
+//
+// db_connection.query(sql, function (err, result) {
+//   if (err) throw err;
+//   for(var i=0; i < result.length; i++){
+//       $$('queue_list').add(result[i])
+//   }
+// });
+
+
+
+// function () {
+//     $$('queue_list').clearAll()
+//
+//     var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist, tracks.album,
+//                tracks.bpm, tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
+//                FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id WHERE session_queue.status='pending'
+//                ORDER BY session_queue.position`
+//
+//     db_connection.query(sql, function (err, result) {
+//       if (err) throw err;
+//       for(var i=0; i < result.length; i++){
+//           $$('queue_list').add(result[i])
+//       }
+//     });
+// });
+
+
 
 
 //

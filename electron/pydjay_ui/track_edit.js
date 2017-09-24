@@ -28,10 +28,10 @@ function edit_track_data(id) {
             track_id_edit = result.id;
             $$('main-title-edit').define('label', result.title)
             $$('main-title-edit').refresh()
-            $$('main-artist-edit').define('label', `${result.artist}`)
+            $$('main-artist-edit').define('label', `${result.artist} - ${result.album}`)
             $$('main-artist-edit').refresh()
-            $$('main-album-edit').define('label', `${result.album}`)
-            $$('main-album-edit').refresh()
+            //$$('main-album-edit').define('label', `${result.album}`)
+            //$$('main-album-edit').refresh()
             $$('track-data').define('label', `${format_nanoseconds(result.track_length)} - ${result.bpm} BPM`)
             $$('track-data').refresh()
 
@@ -69,6 +69,7 @@ function edit_track_data(id) {
                         amplitudes.push([timestamp, average_amplitude]);
                     }
                     track_edit_waveform.series[0].setData(amplitudes, false, false, false);
+                    track_edit_waveform.xAxis[0].setExtremes(0, track_length_edit, true, false);
                     track_edit_waveform.redraw(false);
                 }
             );

@@ -4,7 +4,7 @@
 
 from pydjay.backend.command_server import RPCServer
 from pydjay.backend.push_server import PushServer
-from pydjay.core.audio.audio_player_base import AudioPlayer
+from pydjay.backend.audio_player_base import AudioPlayer
 
 
 class AudioServer(AudioPlayer, RPCServer):

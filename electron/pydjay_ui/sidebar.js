@@ -23,10 +23,9 @@ var display_list_fields = 'id, favorite, disabled as enabled, title, artist, alb
 
 function display_all_songs(){
    return function () {
-       var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields}
-                 FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
-                 LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=tracks.id
-                 GROUP BY id`;
+       var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks
+                 ON tracks.id = session_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
+                 (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id`;
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('All Songs', result);
@@ -37,11 +36,9 @@ function display_all_songs(){
 
 function display_short_listed_songs(){
     return function () {
-       var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields}
-                 FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
-                 JOIN short_listed_tracks ON tracks.id=short_listed_tracks.track_id
-                 LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=tracks.id
-                 GROUP BY id`;
+       var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
+                 JOIN short_listed_tracks ON tracks.id=short_listed_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
+                 (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id`;
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('Short List', result);
@@ -51,11 +48,9 @@ function display_short_listed_songs(){
 
 function display_unavailable_songs(){
     return function () {
-       var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields}
-                 FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
-                 JOIN unavailable_tracks ON tracks.id=unavailable_tracks.track_id
-                 LEFT JOIN (select track_id from session_queue) availability ON availability.track_id=tracks.id
-                 GROUP BY id`;
+       var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks ON
+                 tracks.id = session_tracks.track_id JOIN unavailable_tracks ON tracks.id=unavailable_tracks.track_id LEFT JOIN
+                 (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id`;
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('Unavailable Tracks', result);
@@ -66,10 +61,9 @@ function display_unavailable_songs(){
 
 function display_genre(name){
     return function () {
-        var sql = `SELECT availability.track_id IS NULL as available, ${display_list_fields}
-                   FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
-                   LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=tracks.id
-                   WHERE genre="${name}" GROUP BY id`;
+        var sql = `SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks ON
+                   tracks.id = session_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
+                   (select track_id from session_queue)) availability ON availability.track_id=tracks.id WHERE genre="${name}" GROUP BY id`;
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
             display_track_list(name, result);
@@ -81,15 +75,12 @@ function display_genre(name){
 function display_session(id){
     return function () {
         var sql = `SELECT availability.track_id IS NULL as available,  id, favorite, disabled as enabled, title, artist,
-                   album, genre, rating, bpm, stream_length, foo.play_count
-FROM session_tracks JOIN
-(SELECT * FROM tracks JOIN (SELECT
-  id as id_2, count(session_tracks.track_id) as play_count
-FROM tracks JOIN session_tracks ON tracks.id = session_tracks.track_id
-GROUP BY id) play_counts ON tracks.id=play_counts.id_2) foo
-ON session_tracks.track_id=foo.id
-LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=session_tracks.track_id
-WHERE session_tracks.session_id=${id}`;
+                   album, genre, rating, bpm, stream_length, foo.play_count FROM session_tracks JOIN
+                   (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
+                   FROM tracks JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts ON
+                   tracks.id=play_counts.id_2) foo ON session_tracks.track_id=foo.id LEFT JOIN
+                   ((select track_id from unavailable_tracks) UNION (select track_id from session_queue)) availability ON
+                   availability.track_id=session_tracks.track_id WHERE session_tracks.session_id=${id}`;
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
             db_connection.query(
@@ -105,16 +96,12 @@ WHERE session_tracks.session_id=${id}`;
 function display_tag(id){
     return function () {
         var sql = `SELECT availability.track_id IS NULL as available, id, favorite, disabled as enabled, title, artist,
-                   album, genre, rating, bpm, stream_length, foo.play_count
-FROM playlist_tracks JOIN
-(SELECT * FROM tracks JOIN (SELECT
-  id as id_2, count(session_tracks.track_id) as play_count
-FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
-GROUP BY id) play_counts ON tracks.id=play_counts.id_2) foo
-ON playlist_tracks.track_id=foo.id
-LEFT JOIN ((select track_id from unavailable_tracks) union (select track_id from session_queue)) availability ON availability.track_id=playlist_tracks.track_id
-WHERE playlist_tracks.playlist_id=${id}`;
-//console.log(sql);
+                   album, genre, rating, bpm, stream_length, foo.play_count FROM playlist_tracks JOIN
+                   (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
+                   FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts
+                   ON tracks.id=play_counts.id_2) foo ON playlist_tracks.track_id=foo.id LEFT JOIN
+                   ((select track_id from unavailable_tracks) UNION (select track_id from session_queue)) availability
+                   ON availability.track_id=playlist_tracks.track_id WHERE playlist_tracks.playlist_id=${id}`;
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
             db_connection.query(
@@ -123,10 +110,66 @@ WHERE playlist_tracks.playlist_id=${id}`;
                     display_track_list(`${r[0].name}`, result);
                 }
             );
-          });
+        });
     }
 }
 
+
+function SidebarPopup(id_prefix, width, height, title, template, on_item_click) {
+    var list_id = `${id_prefix}_view`;
+    var popup_id = `${id_prefix}_popup`;
+    var obj = {
+        view: 'popup',
+        id: popup_id,
+        width: width,
+        height: height,
+        relative: 'right',
+        body: {
+            rows:[
+                {
+                    view: 'label',
+                    label:`<b>${title}</b>`,
+                    height:30
+                },
+                {
+                    view:'list',
+                    id:list_id,
+                    select:true,
+                    template: template,
+                }
+            ]
+        }
+    };
+    // console.log(obj);
+    // webix.ready(
+    //     obj = webix.ui(obj);
+    //     obj.hide();
+    //     $$(list_id).attachEvent("onItemClick",
+    //         function(id, e, node){
+    //             var item = this.getItem(id);
+    //             on_item_click(item.id)();
+    //             $$(popup_id).hide()
+    //         }
+    //     );
+    //     $$(popup_id).attachEvent('onShow',
+    //     function () {
+    //         webix.UIManager.setFocus($$(list_id));
+    //     });
+    //     $$(popup_id).attachEvent('onHide',
+    //     function () {
+    //         webix.UIManager.setFocus($$('display_list'));
+    //     });
+    //     // webix.UIManager.addHotKey("enter", function () {
+    //     //     var foo = $$(list_id)
+    //     //     var g = foo.getSelectedItem();
+    //     //     on_item_click(g.name)();
+    //     //     $$('genres_list_popup').hide();
+    //     //     webix.UIManager.setFocus($$('display_list'));
+    //     // }, $$('genres_list_view'));
+    // )
+    // //console.log(webix.ui)
+    return obj;
+}
 
 function genre_template(element) {
     var cover_source = null;
@@ -136,37 +179,11 @@ function genre_template(element) {
         cover_source = `${element.image_root}/${element.cover}`
     }
     return `<div>
-            <i class="ui left floated list icon"></i>
-            <div class="genre_element_name">${element.name}</div>
-            <div class="genre_element_count">${element.count}</div>
+                <i class="ui left floated list icon"></i>
+                <div class="genre_element_name">${element.name}</div>
+                <div class="genre_element_count">${element.count}</div>
             </div>`
-    }
-
-var genres_list_popup =
-    {
-        view:"popup",
-        id:"genres_list_popup",
-        relative:'right',
-        height:700,
-        width:300,
-        body:{
-            rows:[
-                {
-                    view: 'label',
-                    label:"<b>GENRES</b>",
-                    height:30
-                },
-                {
-                    view:'list',
-                    id:'genres_list_view',
-                    select:true,
-                    template: genre_template,
-                }
-            ]
-        }
 }
-
-
 
 function session_template(element) {
     var cover_source = null;
@@ -175,38 +192,11 @@ function session_template(element) {
     } else {
         cover_source = `${element.image_root}/${element.cover}`
     }
-
     return `<i class="ui left floated list icon"></i>
             <div class="session_element_name">${element.name}</div>
             <div class="session_element_date">${webix.Date.dateToStr("%Y-%m-%d")(element.date)}</div>
             <div class="session_element_count">${element.count}</div>`
-    }
-
-
-var sessions_list_popup =
-    {
-        view:"popup",
-        id:"sessions_list_popup",
-        relative:'right',
-        height:700,
-        width:450,
-        body:{
-            rows:[
-                {
-                    view: 'label',
-                    label:"<b>SESSIONS</b>",
-                    height:30
-                },
-                {
-                    view:'list',
-                    id:'sessions_list_view',
-                    template: session_template,
-                }
-            ]
-        }
 }
-
-
 
 function track_list_template(element) {
     var cover_source = null;
@@ -219,31 +209,11 @@ function track_list_template(element) {
             <div class="tag_element_name">${element.name}</div>
             <div class="tag_element_count">${element.count}</div>
             <div style="float:right; position:relative; top:0%; transform: translateY(-80%); height:20px; width:20px; background-color:${element.color}"></div>`
-
-    }
-
-var track_list_popup =
-    {
-        view:"popup",
-        id:"track_list_popup",
-        relative:'right',
-        height:700,
-        width:400,
-        body:{
-            rows:[
-                {
-                    view:'label',
-                    label:"<b>TAGS</b>",
-                    height:30
-                },
-                {
-                    view:'list',
-                    id:'track_list_view',
-                    template: track_list_template,
-                }
-            ]
-        }
 }
+
+var genres_list_popup = SidebarPopup('genres_list', 300, 700, 'GENRES', genre_template, display_genre);
+var sessions_list_popup = SidebarPopup('sessions_list', 450, 700, 'SESSIONS', session_template, display_session);
+var track_list_popup = SidebarPopup('track_list', 400, 700, 'TAGS', track_list_template, display_tag);
 
 var sidebar_template = {
     css: {
@@ -316,3 +286,79 @@ var sidebar_template = {
         {}
     ]
 }
+
+
+//console.log(genres_list_popup);
+//     {
+//         view:"popup",
+//         id:"genres_list_popup",
+//         relative:'right',
+//         height:700,
+//         width:300,
+//         body:{
+//             rows:[
+//                 {
+//                     view: 'label',
+//                     label:"<b>GENRES</b>",
+//                     height:30
+//                 },
+//                 {
+//                     view:'list',
+//                     id:'genres_list_view',
+//                     select:true,
+//                     template: genre_template,
+//                 }
+//             ]
+//         }
+// }
+
+
+
+
+
+    // {
+    //     view:"popup",
+    //     id:"sessions_list_popup",
+    //     relative:'right',
+    //     height:700,
+    //     width:450,
+    //     body:{
+    //         rows:[
+    //             {
+    //                 view: 'label',
+    //                 label:"<b>SESSIONS</b>",
+    //                 height:30
+    //             },
+    //             {
+    //                 view:'list',
+    //                 id:'sessions_list_view',
+    //                 template: session_template,
+    //             }
+    //         ]
+    //     }
+    // }
+
+
+
+
+    // {
+    //     view:"popup",
+    //     id:"track_list_popup",
+    //     relative:'right',
+    //     height:700,
+    //     width:400,
+    //     body:{
+    //         rows:[
+    //             {
+    //                 view:'label',
+    //                 label:"<b>TAGS</b>",
+    //                 height:30
+    //             },
+    //             {
+    //                 view:'list',
+    //                 id:'track_list_view',
+    //                 template: track_list_template,
+    //             }
+    //         ]
+    //     }
+    // }

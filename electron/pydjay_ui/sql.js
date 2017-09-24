@@ -19,9 +19,11 @@ function $QUERY(sql, with_result) {
         sql,
         function (error, result) {
             if (error) {
+                console.log(error)
                 throw error;
+            } else {
+                with_result(result);                
             }
-            with_result(result)
         }
     )
 }

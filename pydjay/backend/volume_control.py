@@ -1,4 +1,4 @@
-from pydjay.core.audio.volume import VolumeController
+from pydjay.backend.volume import VolumeController
 from pydjay.backend.command_server import RPCServer
 from pydjay.backend.push_server import PushServer
 
