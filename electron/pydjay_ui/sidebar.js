@@ -115,7 +115,7 @@ function display_tag(id){
 }
 
 
-function SidebarPopup(id_prefix, width, height, title, template, on_item_click) {
+function SidebarPopup(id_prefix, width, height, title, template, on_item_click, populator_query) {
     var list_id = `${id_prefix}_view`;
     var popup_id = `${id_prefix}_popup`;
     var obj = {
@@ -140,34 +140,41 @@ function SidebarPopup(id_prefix, width, height, title, template, on_item_click) 
             ]
         }
     };
-    // console.log(obj);
-    // webix.ready(
-    //     obj = webix.ui(obj);
-    //     obj.hide();
-    //     $$(list_id).attachEvent("onItemClick",
-    //         function(id, e, node){
-    //             var item = this.getItem(id);
-    //             on_item_click(item.id)();
-    //             $$(popup_id).hide()
-    //         }
-    //     );
-    //     $$(popup_id).attachEvent('onShow',
-    //     function () {
-    //         webix.UIManager.setFocus($$(list_id));
-    //     });
-    //     $$(popup_id).attachEvent('onHide',
-    //     function () {
-    //         webix.UIManager.setFocus($$('display_list'));
-    //     });
-    //     // webix.UIManager.addHotKey("enter", function () {
-    //     //     var foo = $$(list_id)
-    //     //     var g = foo.getSelectedItem();
-    //     //     on_item_click(g.name)();
-    //     //     $$('genres_list_popup').hide();
-    //     //     webix.UIManager.setFocus($$('display_list'));
-    //     // }, $$('genres_list_view'));
-    // )
-    // //console.log(webix.ui)
+    webix.ready(
+        function () {
+            obj = webix.ui(obj);
+            obj.hide();
+            $$(list_id).attachEvent("onItemClick",
+                function(id, e, node){
+                    var item = this.getItem(id);
+                    on_item_click(item.id)();
+                    $$(popup_id).hide()
+                }
+            );
+            $$(popup_id).attachEvent('onShow',
+            function () {
+                $QUERY(
+                    populator_query,
+                    function (result_list) {
+                        $$(list_id).clearAll()
+                        $$(list_id).define('data', result_list);
+                        $$(list_id).refresh()
+                        webix.UIManager.setFocus($$(list_id));
+                    }
+                )
+            });
+            $$(popup_id).attachEvent('onHide',
+            function () {
+                webix.UIManager.setFocus($$('display_list'));
+            });
+            webix.UIManager.addHotKey("enter", function () {
+                var g = $$(list_id).getSelectedItem();
+                on_item_click(g.id)();
+                $$(popup_id).hide();
+                webix.UIManager.setFocus($$('display_list'));
+            }, $$(list_id));
+        }
+    )
     return obj;
 }
 
@@ -180,7 +187,7 @@ function genre_template(element) {
     }
     return `<div>
                 <i class="ui left floated list icon"></i>
-                <div class="genre_element_name">${element.name}</div>
+                <div class="genre_element_name">${element.id}</div>
                 <div class="genre_element_count">${element.count}</div>
             </div>`
 }
@@ -211,9 +218,21 @@ function track_list_template(element) {
             <div style="float:right; position:relative; top:0%; transform: translateY(-80%); height:20px; width:20px; background-color:${element.color}"></div>`
 }
 
-var genres_list_popup = SidebarPopup('genres_list', 300, 700, 'GENRES', genre_template, display_genre);
-var sessions_list_popup = SidebarPopup('sessions_list', 450, 700, 'SESSIONS', session_template, display_session);
-var track_list_popup = SidebarPopup('track_list', 400, 700, 'TAGS', track_list_template, display_tag);
+var genres_list_popup = SidebarPopup('genres_list', 300, 700, 'GENRES', genre_template, display_genre,
+    `SELECT DISTINCT genre as id, COUNT(id) as count FROM tracks GROUP BY genre ORDER BY genre`
+);
+
+var sessions_list_popup = SidebarPopup('sessions_list', 450, 700, 'SESSIONS', session_template, display_session,
+    `SELECT id, event_name as name, date(start_date) as date, counts.count as count
+     FROM sessions JOIN (select session_id, count(track_id) as count FROM session_tracks
+     GROUP BY session_id) counts ON sessions.id=counts.session_id`
+);
+
+var track_list_popup = SidebarPopup('track_list', 400, 700, 'TAGS', track_list_template, display_tag,
+    `SELECT playlists.id as id , playlists.name, counts.count as count, playlist_categories.color AS color FROM
+     playlists JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
+     ON playlists.id=counts.playlist_id JOIN playlist_categories ON playlists.category=playlist_categories.id ORDER BY category`
+);
 
 var sidebar_template = {
     css: {
@@ -249,13 +268,13 @@ var sidebar_template = {
             click:display_unavailable_songs(),
             hotkey:'ctrl+shift+u'
         },
-        {
-            id: 'show_remations',
-            view:'button',
-            label:'<b style="font-size:12px">RELATIONS</b>',
-            type:'icon',
-            icon:'cog'
-        },
+        // {
+        //     id: 'show_remations',
+        //     view:'button',
+        //     label:'<b style="font-size:12px">RELATIONS</b>',
+        //     type:'icon',
+        //     icon:'cog'
+        // },
         {
             id: 'show_genres',
             view:'button',
