@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
 <link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">
 <link rel="stylesheet" href="../node_modules/webix/skins/contrast.css">
-<link rel="stylesheet" href="../node_modules/semantic-ui/dist/semantic.min.css">
+<!-- <link rel="stylesheet" href="../node_modules/semantic-ui/dist/semantic.min.css"> -->
 <link rel="stylesheet" href="./pymusic_style.css">
 
 
@@ -1055,20 +1055,24 @@ webix.UIManager.addHotKey("escape", track_edit_actions.close_track_editor, $$('t
 webix.UIManager.addHotKey("ctrl+shift+enter", track_edit_actions.play_last_30_seconds, $$('track_edit_window'));
 webix.UIManager.addHotKey("shift+enter", track_edit_actions.play_last_10_seconds, $$('track_edit_window'));
 webix.UIManager.addHotKey("enter", track_edit_actions.play_track, $$('track_edit_window'));
-webix.UIManager.addHotKey("shift+c", track_edit_actions.set_start_marker, $$('track_edit_window'));
-webix.UIManager.addHotKey("ctrl+shift+c", track_edit_actions.set_end_marker, $$('track_edit_window'));
-webix.UIManager.addHotKey("shift+h", track_edit_actions.move_start_marker_backward_long, $$('track_edit_window'));
-webix.UIManager.addHotKey("ctrl+shift+h", track_edit_actions.move_end_marker_backward_long, $$('track_edit_window'));
-webix.UIManager.addHotKey("shift+j", track_edit_actions.move_start_marker_forward_long, $$('track_edit_window'));
-webix.UIManager.addHotKey("ctrl+shift+j", track_edit_actions.move_start_marker_forward_long, $$('track_edit_window'));
-webix.UIManager.addHotKey("shift+n", track_edit_actions.move_start_marker_backward_short, $$('track_edit_window'));
-webix.UIManager.addHotKey("ctrl+shift+n", track_edit_actions.move_end_marker_backward_short, $$('track_edit_window'));
-webix.UIManager.addHotKey("shift+m", track_edit_actions.move_start_marker_forward_short, $$('track_edit_window'));
-webix.UIManager.addHotKey("ctrl+shift+m", track_edit_actions.move_start_marker_forward_short, $$('track_edit_window'));
+
 webix.UIManager.addHotKey("ctrl+c", track_edit_actions.reset_waveform_zoom, $$('track_edit_window'));
 webix.UIManager.addHotKey("ctrl+x", track_edit_actions.zoom_waveform_last_10_seconds, $$('track_edit_window'));
-webix.UIManager.addHotKey("ctrl+shift+x", track_edit_actions.zoom_waveform_last_30_seconds, $$('track_edit_window'));
 webix.UIManager.addHotKey("ctrl+z", track_edit_actions.zoom_waveform_first_10_seconds, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("shift+c", track_edit_actions.set_start_marker, $$('track_edit_window'));
+webix.UIManager.addHotKey("shift+h", track_edit_actions.move_start_marker_backward_long, $$('track_edit_window'));
+webix.UIManager.addHotKey("shift+j", track_edit_actions.move_start_marker_forward_long, $$('track_edit_window'));
+webix.UIManager.addHotKey("shift+n", track_edit_actions.move_start_marker_backward_short, $$('track_edit_window'));
+webix.UIManager.addHotKey("shift+m", track_edit_actions.move_start_marker_forward_short, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+shift+c", track_edit_actions.set_end_marker, $$('track_edit_window'));
+webix.UIManager.addHotKey("ctrl+shift+h", track_edit_actions.move_end_marker_backward_long, $$('track_edit_window'));
+webix.UIManager.addHotKey("ctrl+shift+j", track_edit_actions.move_end_marker_forward_long, $$('track_edit_window'));
+webix.UIManager.addHotKey("ctrl+shift+n", track_edit_actions.move_end_marker_backward_short, $$('track_edit_window'));
+webix.UIManager.addHotKey("ctrl+shift+m", track_edit_actions.move_end_marker_forward_short, $$('track_edit_window'));
+
+webix.UIManager.addHotKey("ctrl+shift+x", track_edit_actions.zoom_waveform_last_30_seconds, $$('track_edit_window'));
 webix.UIManager.addHotKey("ctrl+shift+z", track_edit_actions.zoom_waveform_first_30_seconds, $$('track_edit_window'));
 
 

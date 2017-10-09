@@ -268,13 +268,13 @@ var sidebar_template = {
             click:display_unavailable_songs(),
             hotkey:'ctrl+shift+u'
         },
-        // {
-        //     id: 'show_remations',
-        //     view:'button',
-        //     label:'<b style="font-size:12px">RELATIONS</b>',
-        //     type:'icon',
-        //     icon:'cog'
-        // },
+        {
+            id: 'show_remations',
+            view:'button',
+            label:'<b style="font-size:12px">RELATIONS</b>',
+            type:'icon',
+            icon:'cog'
+        },
         {
             id: 'show_genres',
             view:'button',

@@ -297,7 +297,7 @@ var track_edit_actions = {
     },
 
     move_end_marker_forward_long: function () {
-        set_end_marker(stream_end_edit + 100000000);
+        set_end_marker(stream_end_edit + 1000000000);
     },
 
     move_start_marker_backward_short: function () {
