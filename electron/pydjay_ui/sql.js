@@ -22,7 +22,7 @@ function $QUERY(sql, with_result) {
                 console.log(error)
                 throw error;
             } else {
-                with_result(result);                
+                with_result(result);
             }
         }
     )

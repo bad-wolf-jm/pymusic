@@ -307,6 +307,7 @@ var sidebar_template = {
 }
 
 
+
 //console.log(genres_list_popup);
 //     {
 //         view:"popup",
@@ -315,7 +316,7 @@ var sidebar_template = {
 //         height:700,
 //         width:300,
 //         body:{
-//             rows:[
+//             rows:[¨U
 //                 {
 //                     view: 'label',
 //                     label:"<b>GENRES</b>",

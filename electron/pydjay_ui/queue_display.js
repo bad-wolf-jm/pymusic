@@ -51,6 +51,9 @@ function update_queue_labels() {
     )
 }
 
+
+
+
 var queue_display_template = {
     type:'line',
     css:{
