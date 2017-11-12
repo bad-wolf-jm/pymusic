@@ -14,9 +14,6 @@ function format_nanoseconds (ts) {
     return hours+':'+minutes+':'+seconds;
 }
 
-
-
-
 function format_plural(number, unit, pluralize = true)
 {
     if (pluralize && number != 1)
@@ -35,7 +32,6 @@ function parse_seconds_to_time(number_of_seconds)
       seconds: Math.floor(((number_of_seconds % (3600 * 24)) % 3600) % 60)
     }
 }
-
 
 function format_seconds(t_seconds, units, pluralize=true)
 {

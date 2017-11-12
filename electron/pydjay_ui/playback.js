@@ -144,8 +144,6 @@ volume_control_socket.on("message", function( payload ) {
 });
 
 
-
-// var track_edit_window
 var preview_track_position = 0
 preview_time_socket = zmq.socket('pull');
 preview_time_socket.connect('tcp://127.0.0.1:5556');

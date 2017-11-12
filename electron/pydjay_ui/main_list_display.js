@@ -73,10 +73,10 @@ var main_list_display_template = {
                 { id:"artist",        header:"<b>Artist</b>", fillspace:true, sort:'string'},
                 { id:"album",         header:"<b>Album</b>",  fillspace:true, sort:'string'},
                 { id:"genre",         header:"<b>Genre</b>",  width:110, sort:'string'},
-                { id:"play_count",    header:{text:"<b>Plays</b>", css:{"text-align":'center'}},  width:50,     template:"<div style='text-align: right'>#play_count#</div>", sort:'int'},
-                { id:"rating",        header:{text:"<b>Rating</b>", css:{"text-align":'center'}}, width:75,  template:"<img src='../resources/images/rating#rating#.png' style='' height='10'>", css:{"text-align":'right'}, sort:'int'},
-                { id:"bpm",           header:{text:"<b>BPM</b>", css:{"text-align":'center'}},    width:50,     css:{"text-align":'right'}, sort:'int'},
-                { id:"stream_length", header:{text:"<b>Time</b>", css:{"text-align":'center'}},   width:55,       format:format_nanoseconds, css:{"text-align":'right'}},
+                { id:"play_count",    header:{text:"<b>Plays</b>", css:{"text-align":'center'}},  width:50, template:"<div style='text-align: right'>#play_count#</div>", sort:'int'},
+                { id:"rating",        header:{text:"<b>Rating</b>", css:{"text-align":'center'}}, width:75, template:"<img src='../resources/images/rating#rating#.png' style='' height='10'>", css:{"text-align":'right'}, sort:'int'},
+                { id:"bpm",           header:{text:"<b>BPM</b>", css:{"text-align":'center'}},    width:50, css:{"text-align":'right'}, sort:'int'},
+                { id:"stream_length", header:{text:"<b>Time</b>", css:{"text-align":'center'}},   width:55, format:format_nanoseconds, css:{"text-align":'right'}},
             ],
     }    ]
 }

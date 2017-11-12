@@ -7,7 +7,6 @@ function get_queue_boundary_positions(cont){
     })
 }
 
-
 function move_queue_element(from_position, to_position, when_done) {
     get_queue_boundary_positions(
         function (min, max) {
@@ -42,7 +41,6 @@ function move_queue_element(from_position, to_position, when_done) {
         }
     )
 }
-
 
 function delete_queue_element(position, when_done) {
     db_connection.query(
@@ -88,7 +86,6 @@ function add_id_to_queue(track_id, when_done) {
         }
     );
 }
-
 
 function save_session(name, location, address) {
     db_connection.query(
