@@ -1,25 +1,25 @@
 #!/usr/bin/python
 import os
 import sys
-print os.getcwd()
-sys.path.append('.')
-from pydjay.core.library import load_file as lib_load_file
-#from pydjay.core.library.track import Track, save_mp3_file
-#import os.getcwd()
-import sys
-import io
-from PIL import Image
-import urllib
+#print os.getcwd()
+#sys.path.append('.')
+#from pydjay.core.library import load_file as lib_load_file
+##from pydjay.core.library.track import Track, save_mp3_file
+##import os.getcwd()
+#import sys
+#import io
+#from PIL import Image
+#import urllib
 import array
 
-from pydjay.core.audio.wavegen import WaveformGenerator
+from wavegen import WaveformGenerator
 import pprint
 import subprocess
 import datetime
 
 import plistlib
 
-foo = plistlib.readPlist("Music.xml")
+#foo = plistlib.readPlist("Music.xml")
 
 
 def _get_string(list):
@@ -46,21 +46,21 @@ def quote(str_, i=None):
     return bar
 
 
-files = []
-
-
-tracks = foo.get("Tracks", {})
-track_list = []
-
-import pymysql
-from mp3hash import mp3hash
-
-connection = pymysql.connect(host="localhost",
-                             user='root',
-                             password='root',
-                             db='pymusic',
-                             charset='utf8mb4',
-                             cursorclass=pymysql.cursors.DictCursor)
+#files = []
+#
+#
+#tracks = foo.get("Tracks", {})
+#track_list = []
+#
+#import pymysql
+#from mp3hash import mp3hash
+# #
+# connection = pymysql.connect(host="localhost",
+#                              user='root',
+#                              password='root',
+#                              db='pymusic',
+#                              charset='utf8mb4',
+#                              cursorclass=pymysql.cursors.DictCursor)
 
 
 insert_track_sql = u"""
@@ -110,47 +110,47 @@ def DATE(v):
     fo = "'{}'".format(v.strftime("%Y-%m-%d %H:%M:%S")) if v is not None else 'NULL'
     return fo
 
-
-for n in tracks:
-    new_track_metadata = {
-        'id': None,
-        'title': tracks[n].get('Name', None),
-        'artist': tracks[n].get('Artist', None),
-        'album': tracks[n].get('Album', None),
-        'year': tracks[n].get('Year', None),
-        'genre': tracks[n].get('Genre', None),
-        'style': tracks[n].get('Grouping', None),
-        'bpm': tracks[n].get('BPM', None),
-        'rating': tracks[n].get('Rating', None) // 20,
-        'favorite': tracks[n].get('Loved', None),
-        'comments': tracks[n].get('Comments', None),
-        'disabled': tracks[n].get('Disabled', False),
-        'vocals': tracks[n].get('Composer', None),
-        'last_played': None,
-        'waveform': None,
-        'cover_medium': None,  # cover_art_data['small'],
-        'cover_small': None,  # cover_art_data['tiny'],
-        'cover_large': None,  # cover_art_data['medium'],
-        'cover_original': None,  # cover_art_data['original'],
-        'track_length': tracks[n].get('Total Time', None) * 1000000,
-        'stream_start': 0,
-        'stream_end': tracks[n].get('Total Time', None) * 1000000,
-        'stream_length': tracks[n].get('Total Time', None) * 1000000,
-        'date_added': tracks[n].get('Date Added', None),
-        'date_modified': tracks[n].get('Date Modified', None),
-        'bitrate': tracks[n].get('Bit Rate', None),
-        'samplerate': tracks[n].get('Sample Rate', None),
-        'file_name': urllib.unquote(tracks[n].get('Location', 'file://')[7:]).decode('utf8'),
-        'file_size': tracks[n].get('Size', None),
-        'hash': None,
-        'play_at': tracks[n].get('Album Artist', None),
-        'kind': tracks[n].get('Kind', None),
-        'category': tracks[n].get('Category', None),
-        'description': tracks[n].get('Description', None)
-    }
-    track_list.append(new_track_metadata)
-
-files = sorted(track_list, key=lambda x: x['file_name'])
+#
+# for n in tracks:
+#     new_track_metadata = {
+#         'id': None,
+#         'title': tracks[n].get('Name', None),
+#         'artist': tracks[n].get('Artist', None),
+#         'album': tracks[n].get('Album', None),
+#         'year': tracks[n].get('Year', None),
+#         'genre': tracks[n].get('Genre', None),
+#         'style': tracks[n].get('Grouping', None),
+#         'bpm': tracks[n].get('BPM', None),
+#         'rating': tracks[n].get('Rating', None) // 20,
+#         'favorite': tracks[n].get('Loved', None),
+#         'comments': tracks[n].get('Comments', None),
+#         'disabled': tracks[n].get('Disabled', False),
+#         'vocals': tracks[n].get('Composer', None),
+#         'last_played': None,
+#         'waveform': None,
+#         'cover_medium': None,  # cover_art_data['small'],
+#         'cover_small': None,  # cover_art_data['tiny'],
+#         'cover_large': None,  # cover_art_data['medium'],
+#         'cover_original': None,  # cover_art_data['original'],
+#         'track_length': tracks[n].get('Total Time', None) * 1000000,
+#         'stream_start': 0,
+#         'stream_end': tracks[n].get('Total Time', None) * 1000000,
+#         'stream_length': tracks[n].get('Total Time', None) * 1000000,
+#         'date_added': tracks[n].get('Date Added', None),
+#         'date_modified': tracks[n].get('Date Modified', None),
+#         'bitrate': tracks[n].get('Bit Rate', None),
+#         'samplerate': tracks[n].get('Sample Rate', None),
+#         'file_name': urllib.unquote(tracks[n].get('Location', 'file://')[7:]).decode('utf8'),
+#         'file_size': tracks[n].get('Size', None),
+#         'hash': None,
+#         'play_at': tracks[n].get('Album Artist', None),
+#         'kind': tracks[n].get('Kind', None),
+#         'category': tracks[n].get('Category', None),
+#         'description': tracks[n].get('Description', None)
+#     }
+#     track_list.append(new_track_metadata)
+#
+# files = sorted(track_list, key=lambda x: x['file_name'])
 
 
 def load_track(f):
@@ -380,4 +380,29 @@ def process_track_queue(*args):
         add_track(0, f)
         connection.commit()
 
-process_track_queue()
+#process_track_queue()
+if __name__ == '__main__':
+    print ('hellp')
+    mp3_path = sys.argv[1]
+    wave_path = sys.argv[2]
+    #if not os.path.exists(wave_path):
+    try:
+        wg = WaveformGenerator(35000)
+        last_time = 0
+        wg.set_data_point_callback(_print_time)
+        wave_points = wg.generate_waveform(mp3_path)  # = WaveformGenerator(f, 35000)
+        try:
+            file_ = open(wave_path, 'wb')
+            flat_wave = [num for pair in wave_points for num in pair]
+            file_.write(str(len(flat_wave)) + '\n')
+            arr = array.array('f', flat_wave)
+            arr.tofile(file_)
+            file_.close()
+            #f['waveform'] = wave_file
+        except Exception as details:
+            print (details)
+            #f['waveform'] = None
+
+    except Exception as details:
+        print (details)
+        #f['waveform'] = None
