@@ -43,7 +43,7 @@ function display_all_songs(){
                tracks LEFT JOIN session_tracks
                ON tracks.id = session_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
                (select track_id from session_queue)) availability ON availability.track_id=tracks.id LEFT JOIN settings ON 1
-           GROUP BY tracks.id, settings.db_image_cache`
+           GROUP BY tracks.id, settings.db_image_cache ORDER BY title`
 
        // var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks
        //           ON tracks.id = session_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
@@ -60,7 +60,7 @@ function display_short_listed_songs(){
     return function () {
        var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
                  JOIN short_listed_tracks ON tracks.id=short_listed_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
-                 (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id`;
+                 (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title`;
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('Short List', result);
@@ -72,7 +72,7 @@ function display_unavailable_songs(){
     return function () {
        var sql =`SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks ON
                  tracks.id = session_tracks.track_id JOIN unavailable_tracks ON tracks.id=unavailable_tracks.track_id LEFT JOIN
-                 (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id`;
+                 (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title`;
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('Unavailable Tracks', result);
@@ -85,7 +85,7 @@ function display_genre(name){
     return function () {
         var sql = `SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks ON
                    tracks.id = session_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
-                   (select track_id from session_queue)) availability ON availability.track_id=tracks.id WHERE genre="${name}" GROUP BY id`;
+                   (select track_id from session_queue)) availability ON availability.track_id=tracks.id WHERE genre="${name}" GROUP BY id ORDER BY title`;
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
             display_track_list(name, result);
@@ -123,7 +123,7 @@ function display_tag(id){
                    FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts
                    ON tracks.id=play_counts.id_2) foo ON playlist_tracks.track_id=foo.id LEFT JOIN
                    ((select track_id from unavailable_tracks) UNION (select track_id from session_queue)) availability
-                   ON availability.track_id=playlist_tracks.track_id WHERE playlist_tracks.playlist_id=${id}`;
+                   ON availability.track_id=playlist_tracks.track_id WHERE playlist_tracks.playlist_id=${id} ORDER BY title`;
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
             db_connection.query(

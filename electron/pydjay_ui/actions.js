@@ -158,6 +158,7 @@ var main_list_actions = {
 
     remove_selection_from_unavailable: function () {
         var id = $$('display_list').getSelectedId().id;
+        console.log(`DELETE FROM unavailable_tracks WHERE track_id=${id}`)
         db_connection.query(
             `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
             function (error, result) {

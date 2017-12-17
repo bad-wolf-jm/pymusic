@@ -871,7 +871,7 @@ function add_selected_files_to_database (settings, id) {
 
 function ADD_TRACK(track_info) {
     return `
-    INSERT INTO tracks_test (
+    INSERT INTO tracks (
     id, title, artist, album, year, genre, bpm, rating, favorite, comments, waveform, cover_medium,
     cover_small, cover_large, cover_original, track_length, stream_start, stream_end, stream_length,
     date_added, date_modified, bitrate, samplerate, file_name, file_size, hash, category, description,
@@ -891,12 +891,13 @@ function perform_add_to_database() {
     db_connection.query(
         "SELECT db_image_cache as image_root, db_music_cache as music_root, db_waveform_cache as waveform_root FROM settings",
         function (error, settings) {
-            settings.music_root = `/users/jihemme/.pydjay/TEST/sql_music_cache`
-            settings.image_root =`/users/jihemme/.pydjay/TEST/sql_image_cache`
-            settings.waveform_root = `/users/jihemme/.pydjay/TEST/sql_wave_cache`
+            settings=settings[0]
+            //settings.music_root = `/Users/jihemme/.pydjay/TEST/sql_music_cache`
+            //settings.image_root =`/Users/jihemme/.pydjay/TEST/sql_image_cache`
+            //settings.waveform_root = `/Users/jihemme/.pydjay/TEST/sql_wave_cache`
             if (error) throw error;
             db_connection.query(
-                "SELECT max(id) + 1 AS first_available_id FROM tracks_test",
+                "SELECT max(id) + 1 AS first_available_id FROM tracks",
                 function (error, id_result) {
                     if (error) throw error;
                     var first_available_id = null;
@@ -916,8 +917,6 @@ function perform_add_to_database() {
                 }
             )
         }
-
-
     )
 }
 
@@ -1478,7 +1477,7 @@ webix.UIManager.addHotKey("enter", queue_actions.preview_selection, $$('queue_li
 webix.UIManager.addHotKey("shift+q", main_list_actions.add_selection_to_queue, $$('display_list'));
 webix.UIManager.addHotKey("shift+s", main_list_actions.add_selection_to_short_list, $$('display_list'));
 webix.UIManager.addHotKey("shift+u", main_list_actions.add_selection_to_unavailable, $$('display_list'));
-webix.UIManager.addHotKey("shift+a", main_list_actions.remove_selection_from_unavavilable, $$('display_list'));
+webix.UIManager.addHotKey("shift+a", main_list_actions.remove_selection_from_unavailable, $$('display_list'));
 webix.UIManager.addHotKey("escape", main_list_actions.display_all_songs, $$('display_list'));
 webix.UIManager.addHotKey("ctrl+e", main_list_actions.edit_track_data, $$('display_list'));
 webix.UIManager.addHotKey("ctrl+shift+enter",  main_list_actions.preview_last_30_seconds, $$('display_list'));
