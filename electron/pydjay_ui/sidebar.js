@@ -19,7 +19,7 @@ function display_track_list(list_name, list_elements) {
     }
 }
 
-var display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, rating, bpm, stream_length, count(session_tracks.track_id) as play_count';
+var display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, rating, bpm, stream_length, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
 
 function display_all_songs(){
    return function () {
@@ -59,6 +59,32 @@ function display_unavailable_songs(){
 }
 
 
+function display_never_played_songs(){
+    return function () {
+       var sql =`SELECT * FROM (SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks ON
+                 tracks.id = session_tracks.track_id LEFT JOIN
+                 (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title) q WHERE q.play_count = 0`;
+       db_connection.query(sql, function (err, result) {
+           if (err) throw err;
+           display_track_list('NEVER PLAYED', result);
+        }
+    );}
+}
+
+
+function display_played_songs(){
+    return function () {
+       var sql =`SELECT * FROM (SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks ON
+                 tracks.id = session_tracks.track_id LEFT JOIN
+                 (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title) q WHERE q.play_count != 0`;
+       db_connection.query(sql, function (err, result) {
+           if (err) throw err;
+           display_track_list('PLAYED SONGS', result);
+        }
+    );}
+}
+
+
 function display_genre(name){
     return function () {
         var sql = `SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks ON
@@ -75,12 +101,15 @@ function display_genre(name){
 function display_session(id){
     return function () {
         var sql = `SELECT availability.track_id IS NULL as available,  id, favorite, disabled as enabled, title, artist,
-                   album, genre, rating, bpm, stream_length, foo.play_count FROM session_tracks JOIN
+                   album, genre, rating, bpm, stream_length, foo.play_count, max_play_times.time as last_played
+                   FROM session_tracks JOIN
                    (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
                    FROM tracks JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts ON
                    tracks.id=play_counts.id_2) foo ON session_tracks.track_id=foo.id LEFT JOIN
                    ((select track_id from unavailable_tracks) UNION (select track_id from session_queue)) availability ON
-                   availability.track_id=session_tracks.track_id WHERE session_tracks.session_id=${id}`;
+                   availability.track_id=session_tracks.track_id LEFT JOIN (SELECT track_id, MAX(start_time) AS time
+                   FROM session_tracks GROUP BY track_id) max_play_times ON id = max_play_times.track_id
+                   WHERE session_tracks.session_id=${id}`;
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
             db_connection.query(
@@ -225,7 +254,7 @@ var genres_list_popup = SidebarPopup('genres_list', 300, 700, 'GENRES', genre_te
 var sessions_list_popup = SidebarPopup('sessions_list', 450, 700, 'SESSIONS', session_template, display_session,
     `SELECT id, event_name as name, date(start_date) as date, counts.count as count
      FROM sessions JOIN (select session_id, count(track_id) as count FROM session_tracks
-     GROUP BY session_id) counts ON sessions.id=counts.session_id`
+     GROUP BY session_id) counts ON sessions.id=counts.session_id ORDER BY date ASC`
 );
 
 var track_list_popup = SidebarPopup('track_list', 400, 700, 'TAGS', track_list_template, display_tag,
@@ -258,6 +287,24 @@ var sidebar_template = {
             icon:'calendar',
             click:display_short_listed_songs(),
             hotkey:'ctrl+shift+s'
+        },
+        {
+            id: 'show_played',
+            view:'button',
+            label:'<b style="font-size:12px">PLAYED SONGS</b>',
+            type:'icon',
+            icon:'calendar',
+            click:display_played_songs(),
+            hotkey:'ctrl+shift+p'
+        },
+        {
+            id: 'show_never_played',
+            view:'button',
+            label:'<b style="font-size:12px">NEVER PLAYED</b>',
+            type:'icon',
+            icon:'calendar',
+            click:display_never_played_songs(),
+            hotkey:'ctrl+shift+n'
         },
         {
             id: 'show_unavailable',

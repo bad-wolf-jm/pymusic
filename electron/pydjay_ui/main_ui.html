@@ -58,7 +58,8 @@ var player_window = {
                                         'text-transform':'uppercase',
                                         'font-weight':'bold'
                                     },
-                                    label: 'Title Of Song', height:20
+                                    label: 'Title Of Song',
+                                    height:20
                                 },
                                 {
                                     id:'main-artist',
@@ -118,148 +119,6 @@ $(document).ready( () => {
     main_player_progress.animate(0);
 });
 
-var preview_player_window = {
-    height:190,
-    gravity:1,
-    css:{
-        'background-color':'#6c6c6c',
-        'padding':'1px',
-        border: '1px solid #3c3c3c'
-     },
-     rows: [{
-            cols:[
-                {
-                    id:'preview-cover-image',
-                    view: 'template',
-                    width:58,
-                    height:58,
-                    template: "FOO"
-                },
-                {width:10},
-                {
-                    rows:[
-                        {},
-                        {
-                            id:'preview_title',
-                            view: 'label',
-                            css: {
-                                'text-align':'left',
-                                'font-weight':'bold',
-                                'text-transform':'uppercase',
-                                'white-space':'nowrap',
-                                'overflow': 'hidden',
-                                'text-overflow': 'ellipsis'
-                            },
-                            label: 'Title Of Song',
-                            height:20
-                        },
-                        {
-                            id:'preview_artist',
-                            view: 'label',
-                            css: {
-                                'text-align':'left',
-                                'white-space':'nowrap',
-                                'overflow': 'hidden',
-                                'text-overflow': 'ellipsis'
-                            },
-                            label: 'Artist - Album',
-                            height:20
-                        },
-                        {}
-                    ]
-                },
-                {width:10}
-            ]
-        },
-        {height: 5},
-        {
-            height:5,
-            template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%; transform: translateY(-200%)"></div>'
-        },
-        {height: 3},
-        {cols:[
-            {
-                id:'preview_time',
-                view: 'label',
-                css:{
-                    'text-align':'left',
-                    'text-transform':'uppercase'
-                },
-                label: '0:00',
-                height:20
-            },
-            {},
-            {
-                id:'preview_length',
-                view: 'label',
-                css:{'text-align':'right'},
-                label: '0:00',
-                height:20
-            }
-
-        ]},
-        {height:15},
-        {
-            rows: [
-                {
-                    cols: [
-                        {width: 10},
-                        {
-                            id:'preview_play_last_30_seconds_button',
-                            view:'button',
-                            label: '-30 SECS',
-                            click : function () {
-                                if (preview_track_id != undefined) {
-                                    preview_play_track_id(preview_track_id, -30000000000);
-                                }
-                                webix.UIManager.setFocus($$('track_edit_window'));
-                            }
-                        },
-                        {width:10},
-                        {
-                            id:'preview_play_last_10_seconds_button',
-                            view:'button',
-                            label: '-10 SECS',
-                            click : function () {
-                                if (preview_track_id != undefined) {
-                                    preview_play_track_id(preview_track_id, -10000000000);
-                                }
-                                webix.UIManager.setFocus($$('track_edit_window'));
-                            }
-                        },
-                        {width: 10},
-                    ]
-                },
-                {height:5},
-                {
-                    cols: [
-                        {width: 10},
-                        {
-                            id:'preview_play_button',
-                            view:'button',
-                            label:'PLAY/PAUSE',
-                            click : function () {
-                                preview_pause();
-                            }
-                        },
-                        {width:10},
-                        {
-                            id:'preview_stop_button',
-                            view:'button',
-                            label:'STOP',
-                            click : function () {
-                                preview_stop();
-                            }
-
-                        },
-                        {width: 10},
-                    ]
-                },
-            ]
-        },
-        {}
-    ]
-}
 
 var preview_seek = undefined;
 webix.ready( () => {
@@ -295,7 +154,7 @@ var track_data_edit_window = webix.ui({
                         view: 'template',
                         width:128,
                         height:128,
-                        template: "FOO"
+                        template: ""
                     },
                     {width:20},
                     {
@@ -904,7 +763,7 @@ var datatable = webix.ui({
                                 'border-color':"0px solid #3c3c3c"
                             }
                         },
-                        preview_player_window
+                        suggestions_display_template
                     ]
                 }
             ]
@@ -990,6 +849,7 @@ $$("display_list").filterByAll = function () {
 display_all_songs()();
 queue_actions.reload();
 update_queue_labels();
+update_suggestions();
 
 function move_displayed_queue_element(q_element, from_index, to_index) {
     $$('queue_list').data.each(
@@ -1039,6 +899,18 @@ webix.UIManager.addHotKey("ctrl+shift+enter",  main_list_actions.preview_last_30
 webix.UIManager.addHotKey("shift+enter",  main_list_actions.preview_last_10_seconds, $$('display_list'));
 webix.UIManager.addHotKey("enter",  main_list_actions.preview_selected, $$('display_list'));
 webix.UIManager.addHotKey("ctrl+f",  main_list_actions.filter_list, $$('display_list'));
+
+
+webix.UIManager.addHotKey("shift+q", suggestion_list_actions.add_selection_to_queue, $$('suggestion_list'));
+webix.UIManager.addHotKey("shift+s", suggestion_list_actions.add_selection_to_short_list, $$('suggestion_list'));
+webix.UIManager.addHotKey("shift+u", suggestion_list_actions.add_selection_to_unavailable, $$('suggestion_list'));
+webix.UIManager.addHotKey("shift+a", suggestion_list_actions.remove_selection_from_unavailable, $$('suggestion_list'));
+webix.UIManager.addHotKey("ctrl+e", suggestion_list_actions.edit_track_data, $$('suggestion_list'));
+webix.UIManager.addHotKey("ctrl+shift+enter",  suggestion_list_actions.preview_last_30_seconds, $$('suggestion_list'));
+webix.UIManager.addHotKey("shift+enter",  suggestion_list_actions.preview_last_10_seconds, $$('suggestion_list'));
+webix.UIManager.addHotKey("enter",  suggestion_list_actions.preview_selected, $$('suggestion_list'));
+webix.UIManager.addHotKey("ctrl+f",  suggestion_list_actions.filter_list, $$('suggestion_list'));
+
 
 webix.UIManager.addHotKey("space", playback_actions.preview_pause);
 webix.UIManager.addHotKey("shift+space", playback_actions.preview_stop);
@@ -1123,8 +995,42 @@ webix.UIManager.addHotKey("right", function () {
 }, $$('display_list'));
 
 webix.UIManager.addHotKey("left", function () {
+    webix.UIManager.setFocus('suggestion_list');
+}, $$('display_list'));
+
+
+
+webix.UIManager.addHotKey("left", function () {
     webix.UIManager.setFocus($$('display_list'));
 }, $$('queue_list'));
+
+webix.UIManager.addHotKey("right", function () {
+    webix.UIManager.setFocus($$('suggestion_list'));
+}, $$('queue_list'));
+
+
+webix.UIManager.addHotKey("left", function () {
+    webix.UIManager.setFocus($$('queue_list'));
+}, $$('suggestion_list'));
+
+webix.UIManager.addHotKey("right", function () {
+    webix.UIManager.setFocus($$('display_list'));
+}, $$('suggestion_list'));
+
+
+
+$$('suggestion_list').attachEvent('onFocus',
+    function (x) {
+        s = $$('queue_list').getSelectedId();
+        if (s == '') {
+            $$('queue_list').select($$('queue_list').getFirstId());
+        }
+        webix.html.addCss( $$('suggestion_list_header_row').getNode(), "focus_header");
+        webix.html.removeCss( $$('main_list_header_row').getNode(), "focus_header");
+        webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
+    }
+ );
+
 
 $$('queue_list').attachEvent('onFocus',
     function (x) {
@@ -1134,6 +1040,7 @@ $$('queue_list').attachEvent('onFocus',
         }
         webix.html.addCss( $$('queue_list_header_row').getNode(), "focus_header");
         webix.html.removeCss( $$('main_list_header_row').getNode(), "focus_header");
+        webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
     }
  );
 
@@ -1145,15 +1052,16 @@ $$('display_list').attachEvent('onFocus',
       }
       webix.html.addCss($$('main_list_header_row').getNode(), "focus_header");
       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
+      webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
   }
 );
 
-$$('display_list').attachEvent('onFocus',
-  function (x) {
-      webix.html.addCss( $$('main_list_header_row').getNode(), "focus_header");
-      webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
-  }
-);
+// $$('display_list').attachEvent('onFocus',
+//   function (x) {
+//       webix.html.addCss( $$('main_list_header_row').getNode(), "focus_header");
+//       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
+//   }
+// );
 
 $$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})
 webix.UIManager.setFocus($$('display_list'));

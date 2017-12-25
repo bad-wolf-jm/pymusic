@@ -56,7 +56,10 @@ var queue_actions = {
                 $$('display_list').removeRowCss(selected_queue_element.track_id, 'unavailable_track');
                 $$('display_list').getItem(selected_queue_element.track_id).$css="";
                 $$('display_list').refresh();
+                $$('suggestion_list').removeCss(selected_queue_element.track_id, 'unavailable_track');
+
                 update_queue_labels();
+                update_suggestions();
             }
         )
     },
@@ -116,7 +119,9 @@ var main_list_actions = {
                         if (err) throw err;
                         $$('queue_list').add(result[0]);
                         $$('display_list').addRowCss(id, 'unavailable_track');
+                        $$('suggestion_list').addCss(id, 'unavailable_track');
                         update_queue_labels();
+                        update_suggestions();
                     }
                 );
             }
@@ -131,6 +136,22 @@ var main_list_actions = {
                 if (result.length == 0){
                     insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
                     db_connection.query(insert_sql, function(error, result){
+                        if (error) throw error;
+                        console.log('FOO')
+                        webix.message({
+                            text:"Added track to the short list",
+                            type:"info",
+                            expire: 3000,
+                            id:"message1"
+                        });
+
+                    });
+                } else {
+                    webix.message({
+                        text:"Track is already in the short list",
+                        type:"info",
+                        expire: 3000,
+                        id:"message1"
                     });
                 }
             }
@@ -149,6 +170,8 @@ var main_list_actions = {
                         function (error, result) {
                             if (error) throw error;
                             $$('display_list').addRowCss(id, 'unavailable_track');
+                            $$('suggestion_list').addCss(id, 'unavailable_track');
+
                         }
                     )
                 }
@@ -171,6 +194,8 @@ var main_list_actions = {
                             $$('display_list').removeRowCss(id, 'unavailable_track');
                             $$('display_list').getItem(id).$css="";
                             $$('display_list').refresh();
+                            $$('suggestion_list').removeCss(id, 'unavailable_track');
+
                         }
                     )
                 }
@@ -340,5 +365,135 @@ var track_edit_actions = {
     zoom_waveform_last_30_seconds: function () {
         track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 30000000000, track_length_edit, true, false);
         webix.UIManager.setFocus($$('track_edit_window'));
+    }
+}
+
+
+var suggestion_list_actions = {
+    add_selection_to_queue: function () {
+        var id = $$('suggestion_list').getSelectedItem().id;
+        add_id_to_queue(id,
+            function () {
+                sql = `SELECT tracks.id as track_id, session_queue.position, tracks.title, tracks.artist, tracks.album, tracks.bpm,
+                       tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
+                       FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id
+                       WHERE session_queue.status='pending' AND session_queue.track_id=${id} ORDER BY session_queue.position`;
+                db_connection.query(sql,
+                    function (err, result) {
+                        if (err) throw err;
+                        $$('queue_list').add(result[0]);
+                        $$('display_list').addRowCss(id, 'unavailable_track');
+                        $$('suggestion_list').addRowCss(id, 'unavailable_track');
+                        update_queue_labels();
+                        update_suggestions();
+                    }
+                );
+            }
+        )
+    },
+
+    add_selection_to_short_list: function () {
+        var id = $$('suggestion_list').getSelectedItem().id;
+        sql = `SELECT 1 FROM short_listed_tracks WHERE track_id=${id} LIMIT 1`;
+        db_connection.query(sql,
+            function (err, result){
+                if (result.length == 0){
+                    insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
+                    db_connection.query(insert_sql, function(error, result){
+                        if (error) throw error;
+                        console.log('FOO')
+                        webix.message({
+                            text:"Added track to the short list",
+                            type:"info",
+                            expire: 3000,
+                            id:"message1"
+                        });
+
+                    });
+                } else {
+                    webix.message({
+                        text:"Track is already in the short list",
+                        type:"info",
+                        expire: 3000,
+                        id:"message1"
+                    });
+                }
+            }
+        )
+    },
+
+    add_selection_to_unavailable: function () {
+        var id = $$('suggestion_list').getSelectedItem().id;
+        db_connection.query(
+            `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+            function (error, result) {
+                if (error) throw error;
+                if (result.length == 0) {
+                    db_connection.query(
+                        `INSERT INTO unavailable_tracks (track_id) VALUES (${id})`,
+                        function (error, result) {
+                            if (error) throw error;
+                            $$('display_list').addRowCss(id, 'unavailable_track');
+                            $$('suggestion_list').addCss(id, 'unavailable_track');
+                        }
+                    )
+                }
+            }
+        )
+    },
+
+    remove_selection_from_unavailable: function () {
+        var id = $$('suggestion_list').getSelectedItem().id;
+        console.log(`DELETE FROM unavailable_tracks WHERE track_id=${id}`)
+        db_connection.query(
+            `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+            function (error, result) {
+                if (error) throw error;
+                if (result.length > 0) {
+                    db_connection.query(
+                        `DELETE FROM unavailable_tracks WHERE track_id=${id}`,
+                        function (error, result) {
+                            if (error) throw error;
+                            $$('display_list').removeRowCss(id, 'unavailable_track');
+                            $$('display_list').getItem(id).$css="";
+                            $$('display_list').refresh();
+                            $$('suggestion_list').removeCss(id, 'unavailable_track');
+                            $$('suggestion_list').refresh();
+
+
+                        }
+                    )
+                }
+            }
+        )
+    },
+
+    edit_track_data: function () {
+        var id = $$('suggestion_list').getSelectedItem().id;
+        edit_track_data(id);
+    },
+
+    // display_all_songs: () => {display_all_songs()},
+    //
+    // filter_list: function () {
+    //     webix.UIManager.setFocus($$('display_list'));
+    // },
+
+    preview_selected: function () {
+        var id = $$('suggestion_list').getSelectedItem().id;
+        preview_track_id = id;
+        preview_play_track_id(id);
+    },
+
+    preview_last_10_seconds: function () {
+        var id = $$('suggestion_list').getSelectedItem().id;
+        preview_track_id = id;
+        preview_play_track_id(id, -10000000000);
+    },
+
+    preview_last_30_seconds: function () {
+        var id = $$('suggestion_list').getSelectedItem().id;
+        preview_track_id = id;
+        preview_play_track_id(id, -30000000000);
     }
 }

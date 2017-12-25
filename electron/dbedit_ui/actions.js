@@ -130,7 +130,15 @@ var main_list_actions = {
             function (err, result){
                 if (result.length == 0){
                     insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
-                    db_connection.query(insert_sql, function(error, result){
+                    db_connection.query(insert_sql, function(error, result) {
+                        if (error) throw error;
+                        console.log('FOO')
+                        webix.message({
+                            text:"Form Data is Invalid",
+                            type:"error",
+                            expire: 10000,
+                            id:"message1"
+                        });
                     });
                 }
             }

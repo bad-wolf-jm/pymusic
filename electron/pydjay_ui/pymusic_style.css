@@ -31,6 +31,21 @@
     background-color: #7c7c7c !important;
 }
 
+.webix_info div{
+  background-color:#caffe0;
+  border: 1px solid #676d71;
+  width: 400px;
+  color: #484444;
+}
+
+.webix_info {
+  background-color:#caffe0;
+  border: 1px solid #676d71;
+  width: 400px;
+  color: #484444;
+  transform: translateX(-40%);
+}
+
 .queue_element_title {
     margin:0px;
     padding:0px;

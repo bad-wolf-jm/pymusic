@@ -736,10 +736,60 @@ function STRING(s) {
 }
 
 function DATE(s) {
-    return `'${s.toISOString().slice(0,19).replace('T', ' ')}'`
+    pad = function(num) {
+                var norm = Math.floor(Math.abs(num));
+                return (norm < 10 ? '0' : '') + norm;
+            };
+    d = `${s.getFullYear()}-${pad(s.getMonth())}-${pad(s.getDate())}T${pad(s.getHours())}:${pad(s.getMinutes())}:${pad(s.getSeconds())}`
+    return `'${d}'`
 }
 
-function add_selected_files_to_database (settings, id) {
+var track_add_progress_dialog =  webix.ui({
+    view:"window",
+    modal:true,
+    position:"center",
+    width:600,
+    height:400,
+    head: false,
+    body:{
+        rows:[
+            {height:10},
+            {
+                id:'track_add_progress',
+                view: "label",
+                label:"Processing track ### of ###",
+                css: {
+                    'text-align': 'center',
+                    'font-size':  '20px',
+                }
+            },
+            {height:10},
+            {
+                id:'track_add_title',
+                view: "label",
+                label:"Title Of Song",
+                css: {
+                    'text-align': 'center',
+                    'font-size': '20px',
+                }
+
+            },
+            {
+                id:'track_add_artist',
+                view: "label",
+                label:"Artist - Album",
+                css: {
+                    'text-align': 'center',
+                    'font-size':  '15px',
+                }
+
+            }
+        ]
+    }
+})
+track_add_progress_dialog.hide();
+
+function add_selected_files_to_database (settings, id, total) {
     if (items_to_add.length > 0) {
         let data = items_to_add.pop();
         let mp3_file = `track_${id}.mp3`
@@ -750,6 +800,16 @@ function add_selected_files_to_database (settings, id) {
         var medium_image_file = null;
         var small_image_file = null;
         var wave_path = null;
+
+        $$('track_add_progress').define('label', `ADDING TRACK ${total - items_to_add.length} OF ${total}`)
+        $$('track_add_progress').refresh()
+        $$('track_add_title').define('label', `<b>${data.title}</b>`)
+        $$('track_add_title').refresh()
+        $$('track_add_artist').define('label', `${data.artist} - ${data.album}`)
+        $$('track_add_artist').refresh()
+
+
+
         converter.stdout.on(
             'data',
             function (data) {
@@ -765,8 +825,8 @@ function add_selected_files_to_database (settings, id) {
         converter.on(
             'close',
             function () {
-                console.log('CONVERTER DONE!!!');
-                console.log(data.picture)
+                // console.log('CONVERTER DONE!!!');
+                // console.log(data.picture)
                 if (data.picture != undefined) {
                     image_type = data.picture.format;
                     extensions = {
@@ -856,7 +916,7 @@ function add_selected_files_to_database (settings, id) {
                                     function (error, _) {
                                         if (error) throw error;
 
-                                        add_selected_files_to_database (settings, id+1)
+                                        add_selected_files_to_database (settings, id+1, total)
                                     }
                                 )
 
@@ -866,6 +926,8 @@ function add_selected_files_to_database (settings, id) {
                 )
             }
         )
+    } else {
+        track_add_progress_dialog.hide();
     }
 }
 
@@ -892,9 +954,6 @@ function perform_add_to_database() {
         "SELECT db_image_cache as image_root, db_music_cache as music_root, db_waveform_cache as waveform_root FROM settings",
         function (error, settings) {
             settings=settings[0]
-            //settings.music_root = `/Users/jihemme/.pydjay/TEST/sql_music_cache`
-            //settings.image_root =`/Users/jihemme/.pydjay/TEST/sql_image_cache`
-            //settings.waveform_root = `/Users/jihemme/.pydjay/TEST/sql_wave_cache`
             if (error) throw error;
             db_connection.query(
                 "SELECT max(id) + 1 AS first_available_id FROM tracks",
@@ -912,8 +971,14 @@ function perform_add_to_database() {
                             items_to_add.push($$('add_file_list').getItem(row))
                         }
                     )
-                    console.log(items_to_add)
-                    add_selected_files_to_database(settings, first_available_id)
+                    $$('track_add_progress').define('label', ``)
+                    $$('track_add_progress').refresh()
+                    $$('track_add_title').define('label', ``)
+                    $$('track_add_title').refresh()
+                    $$('track_add_artist').define('label', ``)
+                    $$('track_add_artist').refresh()
+                    track_add_progress_dialog.show();
+                    add_selected_files_to_database(settings, first_available_id, items_to_add.length)
                 }
             )
         }
@@ -1118,8 +1183,6 @@ function add_track() {
         }
     })
     x.show();
-    //     }
-    // )
 }
 
 
