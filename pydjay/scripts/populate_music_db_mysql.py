@@ -174,8 +174,8 @@ def load_track(f):
         'file_name': f.decode('utf8'),
         'file_size': file_size,
         'hash': mp3hash(f),
-        'play_at':None,
-        'kind':None,
+        'play_at': None,
+        'kind': None,
         'category': None,
         'description': None
     }
@@ -274,7 +274,7 @@ def add_track(i, track):
             'play_at': STRING(track['play_at']),
             'kind': STRING(track['kind']),
             'category': STRING(track['category']),
-            'description': STRING(track['description']),# mp3hash(f)
+            'description': STRING(track['description']),  # mp3hash(f)
         }
         print i
         sql = insert_track_sql.format(**track_info)

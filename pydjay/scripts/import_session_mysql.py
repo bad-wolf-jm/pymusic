@@ -1,4 +1,6 @@
-import os, sys, io
+import os
+import sys
+import io
 from PIL import Image
 import urllib
 import array
@@ -18,6 +20,7 @@ connection = pymysql.connect(host="localhost",
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
 
+
 def addslashes(s):
     if s == None:
         return None
@@ -31,8 +34,10 @@ def addslashes(s):
 def none_to_null(v):
     return v if v is not None else u'NULL'
 
+
 def none_to_zero(v):
     return v if v is not None else 0
+
 
 def bool_to_int(b):
     return 1 if b else 0
@@ -50,8 +55,7 @@ def DATE(v):
 with connection.cursor() as c:
     c.execute("SELECT max(id) as M FROM sessions")
     d = c.fetchone()
-    d = d['M']+1 if d['M'] is not None else 1
-
+    d = d['M'] + 1 if d['M'] is not None else 1
 
     import glob
     for fil in glob.glob("sessions/*.xml"):
@@ -59,32 +63,31 @@ with connection.cursor() as c:
         foo = plistlib.readPlist(fil)
 
         p_tracks = foo['Tracks']
-        tracks   = {}
+        tracks = {}
         for t in p_tracks:
-            tracks[int(t)] = urllib.unquote(p_tracks[t].get('Location','file://')[7:]).decode('utf8')
+            tracks[int(t)] = urllib.unquote(p_tracks[t].get('Location', 'file://')[7:]).decode('utf8')
         playlist = [x['Track ID'] for x in foo['Playlists'][0]['Playlist Items']]
-
 
         name, _ = os.path.splitext(os.path.basename(fil))
         location, date = name.split('--')
         date = datetime.datetime.strptime(date, "%Y-%m-%d-%H-%M")
 
         session_start_date = date
-        session_data = {'id': d, 'name':location, 'start_date': session_start_date}
+        session_data = {'id': d, 'name': location, 'start_date': session_start_date}
 
         play_date = session_start_date
         db_indices = []
         for i, index in enumerate(playlist):
             sql = u"select id, title, stream_length from tracks where original_file_name='{}'".format(addslashes(tracks[index]))
-            #with connection.cursor() as c:
+            # with connection.cursor() as c:
             c.execute(sql)
             x = c.fetchone()
             s_dur = datetime.timedelta(seconds=x['stream_length'] / 1000000000)
-            session_track = {'position':i,
+            session_track = {'position': i,
                              'session_id': d,
                              'track_id': x['id'],
                              'start_time': play_date,
-                             'end_time': play_date+s_dur}
+                             'end_time': play_date + s_dur}
             db_indices.append((x['id'], play_date))
 
             sql_insert = """INSERT INTO session_tracks (position, session_id, track_id, start_time, end_time)
@@ -93,15 +96,15 @@ with connection.cursor() as c:
             session_track['end_time'] = DATE(session_track['end_time'])
             sql_insert = sql_insert.format(**session_track)
             c.execute(sql_insert)
-            play_date += s_dur+datetime.timedelta(seconds=3)
+            play_date += s_dur + datetime.timedelta(seconds=3)
 
-        for i in range(len(db_indices)-1):
+        for i in range(len(db_indices) - 1):
             id_1 = db_indices[i]
-            id_2 = db_indices[i+1]
+            id_2 = db_indices[i + 1]
             sql = """INSERT INTO track_relations (date, track_id, related_track_id, count)
                         VALUES ({date}, {track_id}, {related_track_id}, 1)"""
-                        #ON DUPLICATE KEY UPDATE count=count+1"""
-            sql=sql.format(track_id=id_1[0], related_track_id=id_2[0], date=DATE(id_2[1]))
+            # ON DUPLICATE KEY UPDATE count=count+1"""
+            sql = sql.format(track_id=id_1[0], related_track_id=id_2[0], date=DATE(id_2[1]))
             c.execute(sql)
 
         session_data['end_date'] = play_date

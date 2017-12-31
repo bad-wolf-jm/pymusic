@@ -1,7 +1,3 @@
-# import zmq
-# import threading
-
-
 from pydjay.backend.command_server import RPCServer
 from pydjay.backend.push_server import PushServer
 from pydjay.backend.audio_player_base import AudioPlayer
@@ -25,7 +21,7 @@ class AudioServer(AudioPlayer, RPCServer):
         AudioPlayer.on_track_position(self, value)
         self._position_notice_index += 1
         self._position_notice_index %= 15
-        #if self._position_notice_index == 0:
+        # if self._position_notice_index == 0:
         self.event.push('track_position_notice', value)
 
     def on_track_duration(self, value):

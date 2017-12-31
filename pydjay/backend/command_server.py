@@ -2,10 +2,9 @@ import zmq
 import json
 import threading
 from gi.repository import GLib
-#import time
 
 
-class RPCServer(object):  # threading.Thread):
+class RPCServer(object):
     """docstring for RPCServer."""
 
     def __init__(self, name=None, port=9999, **kw):

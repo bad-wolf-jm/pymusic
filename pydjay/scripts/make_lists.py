@@ -1,6 +1,8 @@
 #from pydjay.core.library import init, load_file as lib_load_file, save
 #from pydjay.core.library.track import Track, save_mp3_file
-import os, sys, io
+import os
+import sys
+import io
 from PIL import Image
 import urllib
 import array
@@ -32,7 +34,6 @@ connection = pymysql.connect(host="localhost",
                              cursorclass=pymysql.cursors.DictCursor)
 
 
-
 def addslashes(s):
     if s == None:
         return None
@@ -46,8 +47,10 @@ def addslashes(s):
 def none_to_null(v):
     return v if v is not None else u'NULL'
 
+
 def none_to_zero(v):
     return v if v is not None else 0
+
 
 def bool_to_int(b):
     return 1 if b else 0
@@ -60,16 +63,6 @@ def STRING(v):
 def DATE(v):
     fo = "'{}'".format(v.strftime("%Y-%m-%d %H:%M:%S")) if v is not None else 'NULL'
     return fo
-
-
-
-
-
-
-
-
-
-
 
 
 with connection.cursor() as c:
@@ -109,17 +102,6 @@ with connection.cursor() as c:
             c.execute('INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ({playlist_id}, {track_id})'.format(playlist_id=list_id, track_id=track_id['id']))
         connection.commit()
         list_id += 1
-
-
-
-
-
-
-
-
-
-
-
 
 
 #

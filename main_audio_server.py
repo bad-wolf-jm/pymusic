@@ -12,9 +12,9 @@ if __name__ == '__main__':
     import pydjay.bootstrap_audio_server
     from pydjay.backend.command_server import RPCServer
 
-    main_player_channels = [1,2]
-    precue_player_channels = [5,6]
-    monitor_channels = [3,4]
+    main_player_channels = [1, 2]
+    precue_player_channels = [5, 6]
+    monitor_channels = [3, 4]
 
     main_volume = 1.0
     monitor_volume = 1.0

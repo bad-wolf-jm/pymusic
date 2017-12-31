@@ -1,5 +1,4 @@
 import zmq
-#import json
 import threading
 import time
 from gi.repository import GLib
@@ -23,7 +22,6 @@ class PushServer(object):
         if len(self.__message_queue) > 0:
 
             try:
-                #print event
                 event = self.__message_queue[0]
                 self.__socket.send_json(event, flags=zmq.NOBLOCK)
                 self.__message_queue.pop(0)
@@ -46,7 +44,6 @@ class PushServer(object):
         self.__running = False
 
     def push(self, event, *args, **kwargs):
-        #print event, args, kwargs
         self.__message_queue = [x for x in self.__message_queue if x['event'] != event]
         self.__message_queue.append({'event': event, 'args': args, 'kwargs': kwargs})
 

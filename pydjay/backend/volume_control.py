@@ -11,7 +11,6 @@ class VolumeControlServer(VolumeController, RPCServer):
         self.event.start()
 
     def set_volumes(self, channels, volume):
-        #print channels, volume
         VolumeController.set_volumes(self, channels=channels, value=volume)
         self.event.push('volume_set_notice', channels=channels, value=volume)
 

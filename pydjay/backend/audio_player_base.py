@@ -4,6 +4,7 @@ from decoder_no_thread import GstAudioFile
 from output_jack_lb import JackOutput
 from gi.repository import GLib
 
+
 class AudioPlayer(object):
     def __init__(self, player_name=None, num_channels=2, **kw):
         object.__init__(self)
@@ -65,7 +66,6 @@ class AudioPlayer(object):
         if eos:
             self.on_end_of_stream()
 
-
     # def _player_loop_glib_idle(self):
     #     eos = False
     #     try:
@@ -96,14 +96,13 @@ class AudioPlayer(object):
     #         return True
 
     def stop_decoder_loop(self):
-        #self._decoder.close()
+        # self._decoder.close()
         self._is_playing = False
         #self._player_thread = None
 
     def report_stream_position(self):
         self.on_track_position(self._output.stream_time)
         return self._is_playing
-
 
     def play(self, filename, start_time=None, end_time=None):
         self.stop(flush=True)

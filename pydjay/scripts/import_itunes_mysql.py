@@ -5,7 +5,7 @@ print os.getcwd()
 sys.path.append('.')
 from pydjay.core.library import load_file as lib_load_file
 #from pydjay.core.library.track import Track, save_mp3_file
-#import os.getcwd()
+# import os.getcwd()
 import sys
 import io
 from PIL import Image
@@ -162,7 +162,7 @@ def load_track(f):
     return track
 
 
-#def _next_track(data_points):
+# def _next_track(data_points):
 #    Clock.schedule_once(_do_next_track, 0)
 #    Clock.unschedule(force_process_next)
 
@@ -266,15 +266,16 @@ def quote(str_, *i):
 
 
 def make_unique_filename(folder, prefix, extension):
-    template_name = prefix+"_{index}.{ext}"
+    template_name = prefix + "_{index}.{ext}"
     index = 1
-    name = template_name.format(index = index, ext=extension)
+    name = template_name.format(index=index, ext=extension)
     p = os.path.join(folder, name)
     while os.path.exists(p):
         index += 1
-        name = template_name.format(index = index, ext=extension)
+        name = template_name.format(index=index, ext=extension)
         p = os.path.join(folder, name)
     return name
+
 
 def process_track_queue(*args):
     global wg
@@ -321,7 +322,7 @@ def process_track_queue(*args):
         }
         f.update(foo)
 
-        wave_file = make_unique_filename(os.path.expanduser('~/.pydjay/sql_wave_cache'), 'waveform', 'wv')  #quote("%s - %s (%s).wv" % (f['title'],  f['artist'], f['album']))
+        wave_file = make_unique_filename(os.path.expanduser('~/.pydjay/sql_wave_cache'), 'waveform', 'wv')  # quote("%s - %s (%s).wv" % (f['title'],  f['artist'], f['album']))
         wave_path = os.path.join(os.path.expanduser('~/.pydjay/sql_wave_cache'), wave_file)
         if not os.path.exists(wave_path):
             try:
@@ -379,5 +380,6 @@ def process_track_queue(*args):
 
         add_track(0, f)
         connection.commit()
+
 
 process_track_queue()

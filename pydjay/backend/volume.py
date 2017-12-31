@@ -39,9 +39,7 @@ class VolumeControllerDriver(object):
         super(VolumeControllerDriver, self).__init__()
         self.num_channels = num_channels_in
         self.client_name = client_name
-
         self.volume = 1.0
-
         self._jack_client = jack.Client(client_name)
         self.client_name = self._jack_client.name
         self.samplerate = self._jack_client.samplerate
@@ -51,7 +49,7 @@ class VolumeControllerDriver(object):
         self._volumes = []
         self._outputs = {}
         self._inputs = {}
-        self._input_buffers = []  # array.array('f')
+        self._input_buffers = []
         self.stream_time = 0
         self.closed = False
 
@@ -156,10 +154,7 @@ class VolumeControllerProcess(Process):
 
 class VolumeController(object):
     def __init__(self, client_name="PYDjayJackClient", num_channels=2, *args, **kw):
-        # print 'GGGG'
-        #super(VolumeController, self).__init__()
         object.__init__(self)
-        # print 'FFFF'
         self.out_queue = Queue(maxsize=10)
         self.in_queue = Queue(maxsize=1000)
         self.ready_sem = threading.Semaphore(0)

@@ -1,6 +1,8 @@
 from pydjay.core.library import init, load_file as lib_load_file, save
 from pydjay.core.library.track import Track, save_mp3_file
-import os, sys, io
+import os
+import sys
+import io
 from PIL import Image
 import urllib
 import array
@@ -20,26 +22,26 @@ from pydjay.utils.xml import Parser
 import plistlib
 
 foo = plistlib.readPlist("Music.xml")
-#print foo
+# print foo
 
-#Parser.parse(open('Music.xml').read())
+# Parser.parse(open('Music.xml').read())
 
 
 def _get_string(list):
     return ''.join([x.text for x in list])
 
+
 def node_to_dict(node):
-    result = {"__tag__":node.tag}
+    result = {"__tag__": node.tag}
     for attribute in node.children:
         if attribute.tag != 'CharData':
             result[attribute.tag] = _get_string(attribute.children)
-                #print attribute.tag, result[attribute.tag]
+            # print attribute.tag, result[attribute.tag]
     return result
 
 
+# install_gobject_iteration()
 
-
-#install_gobject_iteration()
 
 _root_folder = os.path.abspath(os.path.expanduser('~/.pydjay'))
 init(_root_folder)
@@ -50,21 +52,23 @@ loop = GLib.MainLoop()
 
 timeout_time = 10
 
-#if not os.path.exists(scan_root):
+# if not os.path.exists(scan_root):
 #    sys.exit(1)
 
 
 db = {}
 
-def quote(str_, i = None):
+
+def quote(str_, i=None):
     bar = str_.replace("/", "-")
     bar = bar.replace(":", "-")
     bar = bar.replace("\"", "-")
     bar = bar.replace("?", "-")
     return bar
 
+
 def create_thumbnail(track, image, size, type):
-    new_path = os.path.join(_root_folder, 'image_cache', type+'_' + quote(str(track), "") + ".png")
+    new_path = os.path.join(_root_folder, 'image_cache', type + '_' + quote(str(track), "") + ".png")
     image.thumbnail(size, Image.ANTIALIAS)
     image.save(new_path)
     return new_path
@@ -126,36 +130,28 @@ for n in tracks:
         'date_added':    tracks[n].get('Date Added', None),
         'date_modified': tracks[n].get('Date Modified', None),
         'kind':          tracks[n].get('Kind', None),
-        'location':      urllib.unquote(tracks[n].get('Location','file://')[7:])
-        }
-    #pprint.pprint(new_track_metadata)
+        'location':      urllib.unquote(tracks[n].get('Location', 'file://')[7:])
+    }
+    # pprint.pprint(new_track_metadata)
     track_list.append(new_track_metadata)
 
-#sys.exit()
+# sys.exit()
 
 
-
-files = sorted(track_list, key= lambda x: x['location'])
-
+files = sorted(track_list, key=lambda x: x['location'])
 
 
-
-
-#for f in sorted(os.listdir(scan_root)):
+# for f in sorted(os.listdir(scan_root)):
 #    files.append(os.path.join(scan_root, f))
 
-
-
-
-    #print f
+# print f
 def load_track(f):
     track = Track(f['location'], {}, {})
     if track is None:
         return None
-    #account for my funny tagging
+    # account for my funny tagging
     del f['location']
     track.metadata._metadata = f
-
 
     #track.metadata._metadata['play_at'] = track.metadata._metadata.get('album_artist', None)
     #track.metadata._metadata['vocal']   = track.metadata._metadata.get('composer', None)
@@ -163,7 +159,7 @@ def load_track(f):
     #track.metadata_metadata['speed_feel'] = track.metadata._metadata['']
     #track.metadata_metadata['mood'] = track.metadata._metadata['']
 
-    #if track.metadata.album_cover is not None:
+    # if track.metadata.album_cover is not None:
     ##    cover = track.metadata.album_cover
     #    im_type = cover[0]
     #    im_data = cover[1]
@@ -180,7 +176,7 @@ def load_track(f):
     #        cover_art_data['small']  = create_thumbnail(track, image, (160,160), 'small')
     #        cover_art_data['tiny']   = create_thumbnail(track, image, (100,100), 'tiny')
 
-            #os.path.join('/Users/jihemme/.pydjay/image_cache', 'medium_'+str(track)+".jpg")
+    #os.path.join('/Users/jihemme/.pydjay/image_cache', 'medium_'+str(track)+".jpg")
 #            image.thumbnail((160,160), Image.ANTIALIAS)
 #            image.save(os.path.join('/Users/jihemme/.pydjay/image_cache', 'small_'+str(track)+".jpg"))
 #            cover_art_data['small'] = os.path.join('/Users/jihemme/.pydjay/image_cache', 'small_'+str(track)+".jpg")
@@ -188,35 +184,39 @@ def load_track(f):
 #            image.save(os.path.join('/Users/jihemme/.pydjay/image_cache', 'tiny_'+str(track)+".jpg"))
 #            cover_art_data['tiny'] = os.path.join('/Users/jihemme/.pydjay/image_cache', 'tiny_'+str(track)+".jpg")
     #        track.metadata._metadata['album_art'] = cover_art_data
-            #im   = CoreImage(data, ext = ext)
-            #self._album_art = im
+    #im   = CoreImage(data, ext = ext)
+    #self._album_art = im
 
-    #print track.metadata.album_cover
+    # print track.metadata.album_cover
     #db[f] = track
     return track
+
 
 def _next_track(data_points):
     Clock.schedule_once(_do_next_track, 0)
     Clock.unschedule(force_process_next)
     #GLib.timeout_add(50, _do_next_track)
 
+
 last_time = None
+
+
 def _print_time(total, time, point):
     global last_time
     global timeout_time
     cur_time = time / 1000000000
     timeout_time = 10
-    #print time, total
-    #if time > total:
+    # print time, total
+    # if time > total:
     #    Glib.timeout_add
     if last_time is None or cur_time - last_time > 2:
         printProgress(time, total, "Generating Waveform", "completed")
         last_time = cur_time
 
-#loop.run()
+# loop.run()
 
 
-def printProgress (iteration, total, prefix = '', suffix = '', decimals = 0, barLength = 1):
+def printProgress(iteration, total, prefix='', suffix='', decimals=0, barLength=1):
     """
     Call in a loop to create terminal progress bar
     @params:
@@ -236,11 +236,13 @@ def printProgress (iteration, total, prefix = '', suffix = '', decimals = 0, bar
         sys.stdout.write('\n')
     sys.stdout.flush()
 
+
 def force_process_next(*args):
     global timeout_time
     timeout_time -= 1
     if timeout_time <= 0:
         wg.force_stop()
+
 
 def process_track_queue(*args):
     global wg
@@ -255,8 +257,7 @@ def process_track_queue(*args):
         print f['location']
         track = load_track(f)
 
-
-        mp3_file = quote("%s - %s (%s).mp3"% (track.metadata.title, track.metadata.artist, track.metadata.album))
+        mp3_file = quote("%s - %s (%s).mp3" % (track.metadata.title, track.metadata.artist, track.metadata.album))
         mp3_path = os.path.join('/Users/jihemme/Music/Blues MP3', mp3_file)
 
         if not os.path.exists(mp3_path):
@@ -268,8 +269,8 @@ def process_track_queue(*args):
                              '-vn',
                              '-r', '48000',
                              mp3_path])
-        #print 'Converting'
-        #print 'XXXXXXXXXXXXXX', track.location
+        # print 'Converting'
+        # print 'XXXXXXXXXXXXXX', track.location
         file_meta = lib_load_file(track.location)
         if file_meta is not None:
             album_art = file_meta.metadata.album_cover
@@ -277,15 +278,15 @@ def process_track_queue(*args):
             print track.location
             sys.exit(0)
             print album_art
-        #sys.exit(0)
+        # sys.exit(0)
         track.metadata._metadata['album_art'] = album_art
         track.location = mp3_path
-        #if album_art is not None:
+        # if album_art is not None:
         ##
         #    sys.exit()
         save_mp3_file(track)
 
-        #if track is not None:
+        # if track is not None:
         #    #print 'file://' + urllib.quote(os.path.abspath(f))
         #    path = os.path.join(_root_folder, 'wave_cache', quote(str(track), "")+".wf")
         #    #if not os.path.exists(path):
@@ -317,21 +318,16 @@ def process_track_queue(*args):
         loop.quit()
 
 
-
-
-
-
-
 def _do_next_track(*data_points):
     wave_points = wg.get_data_points()
-    path = os.path.join(_root_folder, 'wave_cache', quote(str(track), "")+".wf")
+    path = os.path.join(_root_folder, 'wave_cache', quote(str(track), "") + ".wf")
     #file_ = open(path, 'w')
     print path
     flat_wave = [num for pair in wave_points for num in pair]
     arr = array.array('f', flat_wave)
-    #print flat_wave[0:10]
-    #print wave[0:5]
-    #file_.close()
+    # print flat_wave[0:10]
+    # print wave[0:5]
+    # file_.close()
     try:
         file_ = open(path, 'wb')
         arr.tofile(file_)
@@ -347,27 +343,27 @@ def _do_next_track(*data_points):
 
 
 #wg = WaveformGenerator(35000)
-#wg.set_process_done_callback(_next_track)
-#wg.set_data_point_callback(_print_time)
+# wg.set_process_done_callback(_next_track)
+# wg.set_data_point_callback(_print_time)
 track = None
 Clock.schedule_once(process_track_queue, 0)
 
 #GLib.timeout_add(0, process_track_queue)
 xxx = Label()
 
-#try:
+# try:
 runTouchApp(xxx)
-#EventLoop.run()
+# EventLoop.run()
 print 'running main loop'
-#loop.run()
+# loop.run()
 print 'stopped main loop'
 
-#if _root_folder is not None:
+# if _root_folder is not None:
 #    foo = open(os.path.join(_root_folder, "library__2.data"), "w")
 #    tracks = [(key, db[key].location, db[key].info._metadata, db[key].metadata._metadata) for key in db]
 #    #print tracks
 #    pickle.dump(tracks, foo)
-##    #db = json.dumps(tracks, indent=4)
+# db = json.dumps(tracks, indent=4)
 #    #foo.write(db)
 #    #foo.close()
-##save()
+# save()
