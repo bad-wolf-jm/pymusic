@@ -383,7 +383,7 @@ var suggestion_list_actions = {
                         if (err) throw err;
                         $$('queue_list').add(result[0]);
                         $$('display_list').addRowCss(id, 'unavailable_track');
-                        $$('suggestion_list').addRowCss(id, 'unavailable_track');
+                        $$('suggestion_list').addCss(id, 'unavailable_track');
                         update_queue_labels();
                         update_suggestions();
                     }

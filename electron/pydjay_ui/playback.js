@@ -402,7 +402,7 @@ function preview_play_track_id(id, stream_start, stream_end) {
             } else {
                 cover_source = `file://${result.image_root}/${result.cover_small}`;
             }
-            var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
+            var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='75' width='75'></img>`
             $$('preview-cover-image').define('template', cover_image);
             $$('preview-cover-image').refresh();
             stream_start = (stream_start == undefined) ? result.stream_start : stream_start;

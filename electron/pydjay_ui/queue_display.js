@@ -27,7 +27,8 @@ function update_queue_labels() {
          FROM tracks JOIN session_queue ON tracks.id=session_queue.track_id LEFT JOIN settings on 1
          WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`,
          function (error, result) {
-             console.log(error);
+             //console.log(error);
+             if (error) throw error;
              if (result.length == 0) {
                  $$('queue_duration').define('label', `Duration: ${format_nanoseconds(0)}`);
                  $$('queue_duration').refresh();
@@ -89,7 +90,9 @@ function update_suggestions() {
          FROM tracks JOIN session_queue ON tracks.id=session_queue.track_id LEFT JOIN settings on 1
          WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`,
          function (error, result) {
-             console.log(error);
+             //console.log(error);
+             if (error) throw error;
+
              if (result.length == 0) {
                  $$('queue_duration').define('label', `Duration: ${format_nanoseconds(0)}`);
                  $$('queue_duration').refresh();
@@ -171,6 +174,7 @@ var queue_display_template = {
             select:true,
             template: queue_element_template,
             type: { height: cover_size  },
+            scroll:"y"
         }]
 }
 
@@ -178,7 +182,8 @@ var queue_display_template = {
 
 var suggestions_display_template = {
     type:'line',
-    gravity:.75,
+    //gravity:.75,
+    height:440,
     css:{
         border: '0px solid #3c3c3c'
     },
@@ -227,5 +232,7 @@ var suggestions_display_template = {
             select:true,
             template: queue_element_template,
             type: { height: cover_size  },
+            scroll:"y"
+
         }]
 }

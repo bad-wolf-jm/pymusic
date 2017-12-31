@@ -19,7 +19,7 @@ function display_track_list(list_name, list_elements) {
     }
 }
 
-var display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, rating, bpm, stream_length, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
+var display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, grouping, rating, bpm, stream_length, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
 
 function display_all_songs(){
    return function () {
@@ -29,6 +29,7 @@ function display_all_songs(){
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('All Songs', result);
+           $$('main_menu_popup').hide();
          });
    }
 }
@@ -42,6 +43,7 @@ function display_short_listed_songs(){
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('Short List', result);
+           $$('main_menu_popup').hide();
         }
     );}
 }
@@ -54,6 +56,7 @@ function display_unavailable_songs(){
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('Unavailable Tracks', result);
+           $$('main_menu_popup').hide();
         }
     );}
 }
@@ -67,6 +70,7 @@ function display_never_played_songs(){
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('NEVER PLAYED', result);
+           $$('main_menu_popup').hide();
         }
     );}
 }
@@ -80,6 +84,7 @@ function display_played_songs(){
        db_connection.query(sql, function (err, result) {
            if (err) throw err;
            display_track_list('PLAYED SONGS', result);
+           $$('main_menu_popup').hide();
         }
     );}
 }
@@ -93,6 +98,7 @@ function display_genre(name){
         db_connection.query(sql, function (err, result) {
             if (err) throw err;
             display_track_list(name, result);
+            //$$('main_menu_popup').hide();
           });
     }
 }
@@ -116,6 +122,7 @@ function display_session(id){
                 `SELECT event_name, start_date FROM sessions WHERE id=${id}`,
                 function (e, r) {
                     display_track_list(`${r[0].event_name} - ${webix.Date.dateToStr("%Y-%m-%d")(r[0].start_date)}`, result);
+                    //$$('main_menu_popup').hide();
                 }
             );
           });
@@ -137,6 +144,7 @@ function display_tag(id){
                 `SELECT name FROM playlists WHERE id=${id}`,
                 function (e, r) {
                     display_track_list(`${r[0].name}`, result);
+                    //$$('main_menu_popup').hide();
                 }
             );
         });
@@ -178,6 +186,7 @@ function SidebarPopup(id_prefix, width, height, title, template, on_item_click, 
                     var item = this.getItem(id);
                     on_item_click(item.id)();
                     $$(popup_id).hide()
+                    $$('main_menu_popup').hide();
                 }
             );
             $$(popup_id).attachEvent('onShow',
@@ -200,6 +209,7 @@ function SidebarPopup(id_prefix, width, height, title, template, on_item_click, 
                 var g = $$(list_id).getSelectedItem();
                 on_item_click(g.id)();
                 $$(popup_id).hide();
+                $$('main_menu_popup').hide();
                 webix.UIManager.setFocus($$('display_list'));
             }, $$(list_id));
         }
@@ -316,7 +326,7 @@ var sidebar_template = {
             hotkey:'ctrl+shift+u'
         },
         {
-            id: 'show_remations',
+            id: 'show_relations',
             view:'button',
             label:'<b style="font-size:12px">RELATIONS</b>',
             type:'icon',

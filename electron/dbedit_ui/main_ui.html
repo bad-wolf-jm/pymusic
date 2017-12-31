@@ -1147,8 +1147,6 @@ function add_track() {
                      },
                     columns:[
                         { id:"id",            header:"",  width:30, hidden:true},
-                        //{ id:"enabled",       header:"", width:35, checkValue:1, uncheckValue:0,  template:"{common.checkbox()}", sort:'int'},
-                        //{ id:"cover",         header:{text:"", height:25},  width:30, template:cover_art_b64, checkValue:1, uncheckValue:0, sort:'int'},
                         { id:"title",         header:"<b>Title</b>",  fillspace:true, sort:'string', editor: 'text'},
                         { id:"artist",        header:"<b>Artist</b>", fillspace:true, sort:'string', editor: 'text'},
                         { id:"album",         header:"<b>Album</b>",  fillspace:true, sort:'string', editor: 'text'},
@@ -1167,7 +1165,10 @@ function add_track() {
                         {
                             view: 'button',
                             label: 'ADD',
-                            click: perform_add_to_database //add_selected_files_to_database
+                            click: function () {
+                                x.hide();
+                                perform_add_to_database();
+                            }
                         },
                         {},
                         {
