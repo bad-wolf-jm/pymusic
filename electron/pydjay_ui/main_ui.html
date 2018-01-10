@@ -679,38 +679,39 @@ var datatable = webix.ui({
                             width:75
                         },
                         {width:75},
-                        {
-                            id:'main-player-volume',
-                            view:'button',
-                            type:'icon',
-                            icon:'volume-up',
-                            label:'100%',
-                            width:75
-                        },
-                        {
-                            id:'monitor-volume',
-                            view:'button',
-                            type:'icon',
-                            icon:'volume-control-phone',
-                            label:'100%',
-                            width:75
-                        },
-                        {
-                            id:'precue-player-volume',
-                            view:'button',
-                            type:'icon',
-                            icon:'headphones',
-                            label:'100%',
-                            width:75
-                        },
+                        // {
+                        //     id:'main-player-volume',
+                        //     view:'button',
+                        //     type:'icon',
+                        //     icon:'volume-up',
+                        //     label:'100%',
+                        //     width:75
+                        // },
+                        // {
+                        //     id:'monitor-volume',
+                        //     view:'button',
+                        //     type:'icon',
+                        //     icon:'volume-control-phone',
+                        //     label:'100%',
+                        //     width:75
+                        // },
+                        // {
+                        //     id:'precue-player-volume',
+                        //     view:'button',
+                        //     type:'icon',
+                        //     icon:'headphones',
+                        //     label:'100%',
+                        //     width:75
+                        // },
                         {},
                         {
-                            gravity:.5,
+                            //gravity:.85,
                             view:'button',
                             type:'icon',
                             icon:'list',
                             label:'SESSION',
                             height:25,
+                            width:100,
                             popup:'session_popup'
                         }
                     ]
@@ -788,6 +789,67 @@ var datatable = webix.ui({
                     ]
                 }
             ]
+        },
+        {
+            height:40,
+            css: {
+                'background-color': '#202020',
+                'border-top':"1px solid #3f3f3f"
+            },
+            //{
+                cols:[
+                    {
+                        width:15
+                    },
+                    {
+                        view: 'label',
+                        id: 'calendar',
+                        label: '<span style="color:rgb(200,200,200)">2018-01-09</span> | 0:45',
+                        height: 20
+                    },
+                    {
+                        view: 'label',
+                        id: 'queue_duration',
+                        label: '<b>QUEUE DURATION:</b> 0:00',
+                        height: 20
+                    },
+                    {
+                        view: 'label',
+                        id:'queue_ends_at',
+                        // css: {'text-align':'right'},
+                        label: '<b>ENDS:</b> 0:00',
+                        height: 20
+                    },
+                    {
+                        id:'main-player-volume',
+                        view:'button',
+                        type:'icon',
+                        icon:'volume-up',
+                        label:'100%',
+                        width:75
+                    },
+                    {
+                        id:'monitor-volume',
+                        view:'button',
+                        type:'icon',
+                        icon:'volume-control-phone',
+                        label:'100%',
+                        width:75
+                    },
+                    {
+                        id:'precue-player-volume',
+                        view:'button',
+                        type:'icon',
+                        icon:'headphones',
+                        label:'100%',
+                        width:75
+                    },
+                    {
+                        width:15
+                    }
+                ]
+            //}
+
         }
     ]
 });
@@ -916,7 +978,7 @@ webix.UIManager.addHotKey("shift+u", main_list_actions.add_selection_to_unavaila
 webix.UIManager.addHotKey("shift+a", main_list_actions.remove_selection_from_unavailable, $$('display_list'));
 webix.UIManager.addHotKey("escape", main_list_actions.display_all_songs, $$('display_list'));
 webix.UIManager.addHotKey("ctrl+e", main_list_actions.edit_track_data, $$('display_list'));
-webix.UIManager.addHotKey("ctrl+shift+enter",  main_list_actions.preview_last_30_seconds, $$('display_list'));
+webix.UIManager.addHotKey("ctrl+shift+enter", main_list_actions.preview_last_30_seconds, $$('display_list'));
 webix.UIManager.addHotKey("shift+enter",  main_list_actions.preview_last_10_seconds, $$('display_list'));
 webix.UIManager.addHotKey("enter",  main_list_actions.preview_selected, $$('display_list'));
 webix.UIManager.addHotKey("ctrl+f",  main_list_actions.filter_list, $$('display_list'));
@@ -1087,5 +1149,27 @@ $$('display_list').attachEvent('onFocus',
 
 $$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})
 webix.UIManager.setFocus($$('display_list'));
+
+function checkTime(i) {
+     return (i < 10) ? "0" + i : i;
+ }
+
+ function startTime() {
+     var today = new Date()
+     h = checkTime(today.getHours())
+     m = checkTime(today.getMinutes())
+     s = checkTime(today.getSeconds())
+     d = checkTime(today.getDate())
+     M = checkTime(today.getMonth()+1)
+     Y = today.getFullYear()
+        //document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+    $$('calendar').define('label', `<span style="color:rgb(200,200,200)">${Y}-${M}-${d}</span> | <b>${h}:${m}:${s}</b>`)
+    $$('calendar').refresh()
+     t = setTimeout(function () {
+         startTime()
+     }, 500);
+ }
+ startTime();
+
 
 </script>

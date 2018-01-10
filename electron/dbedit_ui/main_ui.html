@@ -738,9 +738,10 @@ function STRING(s) {
 function DATE(s) {
     pad = function(num) {
                 var norm = Math.floor(Math.abs(num));
+                //if (norm == 0)
                 return (norm < 10 ? '0' : '') + norm;
             };
-    d = `${s.getFullYear()}-${pad(s.getMonth())}-${pad(s.getDate())}T${pad(s.getHours())}:${pad(s.getMinutes())}:${pad(s.getSeconds())}`
+    d = `${s.getFullYear()}-${pad(s.getMonth()+1)}-${pad(s.getDate())}T${pad(s.getHours())}:${pad(s.getMinutes())}:${pad(s.getSeconds())}`
     return `'${d}'`
 }
 
@@ -808,8 +809,6 @@ function add_selected_files_to_database (settings, id, total) {
         $$('track_add_artist').define('label', `${data.artist} - ${data.album}`)
         $$('track_add_artist').refresh()
 
-
-
         converter.stdout.on(
             'data',
             function (data) {
@@ -825,8 +824,6 @@ function add_selected_files_to_database (settings, id, total) {
         converter.on(
             'close',
             function () {
-                // console.log('CONVERTER DONE!!!');
-                // console.log(data.picture)
                 if (data.picture != undefined) {
                     image_type = data.picture.format;
                     extensions = {
@@ -905,9 +902,9 @@ function add_selected_files_to_database (settings, id, total) {
                                     'original_file_name': STRING(addslashes(data.filename)),
                                     'file_size': bit_output.file_size,
                                     'hash': 'NULL',
-                                    'grouping': STRING(none_to_null(data.grouping)),
-                                    'category': STRING(none_to_null(data.category)),
-                                    'description': STRING(none_to_null(data.description))
+                                    'grouping': STRING(none_to_null(addslashes(data.grouping))),
+                                    'category': STRING(none_to_null(addslashes(data.category))),
+                                    'description': STRING(none_to_null(addslashes(data.description)))
                                 }
                                 console.log(track_info);
                                 console.log(ADD_TRACK(track_info))
@@ -987,7 +984,7 @@ function perform_add_to_database() {
 
 function parse_tag(filename, tag) {
     var type = tag.type;
-    p_tag = {
+    var p_tag = {
         filename: filename,
         title: tag.tags.title,
         artist: tag.tags.artist,
@@ -995,19 +992,20 @@ function parse_tag(filename, tag) {
         genre: tag.tags.genre,
         year: tag.tags.year,
         comment: tag.tags.comment,
-        picture: tag.tags.picture
+        picture: tag.tags.picture,
     }
     if (tag.type == 'MP4') {
         p_tag.bpm = tag.tags.tmpo.data;
-        p_tag.grouping = (tag.tags['©grp'] != undefined) ? tag.tags['©grp'].data : null;
+        p_tag.grouping = (tag.tags['\xa9grp'] != undefined) ? tag.tags['\xa9grp'].data : null;
         p_tag.category = (tag.tags['catg'] != undefined) ? tag.tags['catg'].data : null;
-        p_tag.grouping = (tag.tags['desc'] != undefined) ? tag.tags['desc'].data : null;
+        p_tag.description = (tag.tags['desc'] != undefined) ? tag.tags['desc'].data : null;
     } else if (tag.type == 'ID3') {
         p_tag.bpm = (tag.tags.TBPM != undefined) ? tag.tags.TBPM.data : null;
-        p_tag.grouping = null;
+        p_tag.grouping = '11';
         p_tag.category = null;
         p_tag.description = null;
     }
+
     return p_tag;
 }
 
@@ -1022,6 +1020,7 @@ function select_tracks_to_add() {
                       onSuccess: function(tag) {
                           num --;
                           console.log(i, tag);
+                          console.log(parse_tag(filenames[i], tag))
                           new_array.push(parse_tag(filenames[i], tag));
                           if (num == 0) {
                               $$('add_file_list').clearAll();
@@ -1063,6 +1062,8 @@ function cover_art_b64(object) {
         return `<img style="padding-right:0px; padding-left:-10px; margin-left:-10px" src="${cover_source}" height='${cover_size}' width='${cover_size}'></img>`
     }
 }
+
+
 //
 // function fix_cover_art() {
 //     console.log("FOO")

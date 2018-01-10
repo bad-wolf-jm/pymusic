@@ -30,8 +30,6 @@ function edit_track_data(id) {
             $$('main-title-edit').refresh()
             $$('main-artist-edit').define('label', `${result.artist} - ${result.album}`)
             $$('main-artist-edit').refresh()
-            //$$('main-album-edit').define('label', `${result.album}`)
-            //$$('main-album-edit').refresh()
             $$('track-data').define('label', `${format_nanoseconds(result.track_length)} - ${result.bpm} BPM`)
             $$('track-data').refresh()
 
@@ -129,6 +127,5 @@ function save_new_track_info() {
          function (r) {
              console.log('track_edited')
          }
-
     )
 }

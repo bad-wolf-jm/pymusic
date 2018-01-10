@@ -55,7 +55,7 @@ class WaveformGenerator:
                 self._sink_chain(buf)
         return self._data_points
 
-    def _sink_chain(self, buf):s
+    def _sink_chain(self, buf):
         # this is where we do filtering
         # and then push a buffer to the next element, returning a value saying
         # it was either successful or not.

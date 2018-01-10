@@ -85,13 +85,13 @@ function format_seconds_short(seconds)
                                     days:'d'}, false)
 }
 
-function progress_chart_track(inner_radius, outer_radius, color)
-{
-    return {outerRadius: outer_radius,
-            innerRadius: inner_radius,
-            backgroundColor: color,
-            borderWidth: 0}
-}
+// function progress_chart_track(inner_radius, outer_radius, color)
+// {
+//     return {outerRadius: outer_radius,
+//             innerRadius: inner_radius,
+//             backgroundColor: color,
+//             borderWidth: 0}
+// }
 
 function humanFileSize(bytes) {
     var thresh = 1024;
@@ -109,7 +109,7 @@ function humanFileSize(bytes) {
     return `<span style="font-size:16px">${bytes.toFixed(1)}</span><span style="font-size:11px">${units[u]}</span>`;
 }
 
-function format_memory_usage(used, total){
-  console.log("FOOBAR");
-  return `${humanFileSize(used)}<span style="font-size:15px>">/</span>${humanFileSize(total)}`
-}
+// function format_memory_usage(used, total){
+//   console.log("FOOBAR");
+//   return `${humanFileSize(used)}<span style="font-size:15px>">/</span>${humanFileSize(total)}`
+// }
