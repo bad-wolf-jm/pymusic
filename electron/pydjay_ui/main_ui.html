@@ -771,6 +771,7 @@ var datatable = webix.ui({
         }]},
         {
             //type:"line",
+            //height:1034,
             cols:[
                 //sidebar_template,
                 main_list_display_template,
@@ -1163,11 +1164,11 @@ function checkTime(i) {
      M = checkTime(today.getMonth()+1)
      Y = today.getFullYear()
         //document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
-    $$('calendar').define('label', `<span style="color:rgb(200,200,200)">${Y}-${M}-${d}</span> | <b>${h}:${m}:${s}</b>`)
+    $$('calendar').define('label', `<span style="color:rgb(200,200,200)">${Y}-${M}-${d}</span> | <b>${h}:${m}</b>`)
     $$('calendar').refresh()
      t = setTimeout(function () {
          startTime()
-     }, 500);
+     }, 30000);
  }
  startTime();
 

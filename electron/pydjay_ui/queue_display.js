@@ -41,12 +41,18 @@ function update_queue_labels() {
                  wait_time = result[0].wait_time;
                  current_time = new Date().getTime();
                  total_time = queue_duration + (queue_count-1)*wait_time*1000000000;
-                 $$('queue_duration').define('label', `Duration: ${format_nanoseconds(total_time)}`);
+                 $$('queue_duration').define('label', `<span style="font-size:13px; color:rgb(150,150,150)"><b>QUEUE DURATION:</b></span> <span style="font-size:15px; color:rgb(225,225,225)">${format_nanoseconds(total_time)}</span>`);
                  $$('queue_duration').refresh();
+                 //
+                 // $$('queue_duration').define('label', `Duration: ${format_nanoseconds(total_time)}`);
+                 // $$('queue_duration').refresh();
                  current_time += (total_time / 1000000);
                  d = new Date(current_time)
-                 $$('queue_ends_at').define('label', `Ends at: ${webix.Date.dateToStr('%H:%i:%s')(d)}`);
+                 $$('queue_ends_at').define('label', `<span style="font-size:13px; color:rgb(150,150,150)"><b>ENDS:</b></span> <span style="font-size:15px; color:rgb(225,225,225)">${webix.Date.dateToStr('%H:%i:%s')(d)}</span>`);
                  $$('queue_ends_at').refresh();
+                 //
+                 // $$('queue_ends_at').define('label', `Ends at: ${webix.Date.dateToStr('%H:%i:%s')(d)}`);
+                 // $$('queue_ends_at').refresh();
              }
          }
     )
@@ -70,77 +76,87 @@ function update_suggestions() {
                          $$('suggestion_list').addCss(suggestions[i].id, 'unavailable_track');
                      }
                  }
-                 if (suggestions.length == 0) {
-                     $$('suggestion_number').define('label', `No tracks`)
-                     $$('suggestion_number').refresh()
-
-                 } else {
-                     $$('suggestion_number').define('label', `${suggestions.length} track${suggestions.length > 1 ? "s" : ""}`)
-                     $$('suggestion_number').refresh()
-                 }
+                 // if (suggestions.length == 0) {
+                 //     $$('suggestion_number').define('label', `No tracks`)
+                 //     $$('suggestion_number').refresh()
+                 //
+                 // } else {
+                 //     $$('suggestion_number').define('label', `${suggestions.length} track${suggestions.length > 1 ? "s" : ""}`)
+                 //     $$('suggestion_number').refresh()
+                 // }
              //}
          }
     )
-
-
-
-    db_connection.query(
-        `SELECT SUM(duration) as duration, COUNT(id) as count, AVG(wait_time) as wait_time FROM
-         (SELECT 1 as id, tracks.stream_length as duration, session_queue.id as count, settings.wait_time as wait_time
-         FROM tracks JOIN session_queue ON tracks.id=session_queue.track_id LEFT JOIN settings on 1
-         WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`,
-         function (error, result) {
-             //console.log(error);
-             if (error) throw error;
-
-             if (result.length == 0) {
-                 $$('queue_duration').define('label', `<b>QUEUE DURATION:</b> ${format_nanoseconds(0)}`);
-                 $$('queue_duration').refresh();
-                 d = new Date()
-                 $$('queue_ends_at').define('label', `<b>ENDS:</b> ${webix.Date.dateToStr('%H:%i:%s')(d)}`);
-                 $$('queue_ends_at').refresh();
-             } else {
-                 queue_duration = result[0].duration;
-                 queue_count = result[0].count;
-                 wait_time = result[0].wait_time;
-                 current_time = new Date().getTime();
-                 total_time = queue_duration + (queue_count-1)*wait_time*1000000000;
-                 $$('queue_duration').define('label', `<b>QUEUE DURATION:</b> ${format_nanoseconds(total_time)}`);
-                 $$('queue_duration').refresh();
-                 current_time += (total_time / 1000000);
-                 d = new Date(current_time)
-                 $$('queue_ends_at').define('label', `<b>ENDS:</b> ${webix.Date.dateToStr('%H:%i:%s')(d)}`);
-                 $$('queue_ends_at').refresh();
-             }
-         }
-    )
+    //
+    //
+    //
+    // db_connection.query(
+    //     `SELECT SUM(duration) as duration, COUNT(id) as count, AVG(wait_time) as wait_time FROM
+    //      (SELECT 1 as id, tracks.stream_length as duration, session_queue.id as count, settings.wait_time as wait_time
+    //      FROM tracks JOIN session_queue ON tracks.id=session_queue.track_id LEFT JOIN settings on 1
+    //      WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`,
+    //      function (error, result) {
+    //          //console.log(error);
+    //          if (error) throw error;
+    //
+    //          if (result.length == 0) {
+    //              $$('queue_duration').define('label', `<b>QUEUE DURATION:</b> ${format_nanoseconds(0)}`);
+    //              $$('queue_duration').refresh();
+    //              d = new Date()
+    //              $$('queue_ends_at').define('label', `<b>ENDS:</b> ${webix.Date.dateToStr('%H:%i:%s')(d)}`);
+    //              $$('queue_ends_at').refresh();
+    //          } else {
+    //              queue_duration = result[0].duration;
+    //              queue_count = result[0].count;
+    //              wait_time = result[0].wait_time;
+    //              current_time = new Date().getTime();
+    //              total_time = queue_duration + (queue_count-1)*wait_time*1000000000;
+    //              $$('queue_duration').define('label', `<b>QUEUE DURATION:</b> ${format_nanoseconds(total_time)}`);
+    //              $$('queue_duration').refresh();
+    //              current_time += (total_time / 1000000);
+    //              d = new Date(current_time)
+    //              $$('queue_ends_at').define('label', `<b>ENDS:</b> ${webix.Date.dateToStr('%H:%i:%s')(d)}`);
+    //              $$('queue_ends_at').refresh();
+    //          }
+    //      }
+    // )
 }
 
 
 
 var queue_display_template = {
     type:'line',
+    gravity:1.0,
     css:{
         border: '0px solid #3c3c3c'
     },
     rows:[
         {
             id: 'queue_list_header_row',
+            height:30,
             css:{
                 'background-color':'#5c5c5c',
-                'padding':'5px',
+                //'margin':'5px',
                 border: '1px solid #3c3c3c'
              },
 
-            cols : [
-                {width:5},
+            // cols : [
+            //     {width:5},
+            //     {
+             rows: [
+                 {height:7},
                 {
-                     rows: [
-                        {
-                            view: 'label',
-                            label: '<b>QUEUE</b>',
-                            height: 20
-                        },
+                    view: 'label',
+                    label: '<b>QUEUE</b>',
+                    height: 20,
+                    css:{
+                        //'background-color':'#5c5c5c',
+                        'padding-left':'10px',
+                        //border: '1px solid #3c3c3c'
+                     }
+                },
+                {height:5},
+                //,
                         // {
                         //     cols:[
                         //         {
@@ -158,9 +174,9 @@ var queue_display_template = {
                         //         }
                         //     ]
                         // }
-                    ]
-                },
-                {width:15}
+                //     ]
+                // },
+                // {width:15}
             ]
 
         },
@@ -168,6 +184,7 @@ var queue_display_template = {
             view:"list",
             id:'queue_list',
             itemHeight:35,
+            //height:425,
             css:{
                 border: '1px solid #3c3c3c'
              },
@@ -183,57 +200,67 @@ var queue_display_template = {
 var suggestions_display_template = {
     type:'line',
     //gravity:.75,
-    height:440,
+    //height:440,
     css:{
-        border: '0px solid #3c3c3c'
+        border: '0px solid #3c3c3c',
+        'background-color':'#5c5c5c',
     },
     rows:[
         {
             id: 'suggestion_list_header_row',
-            //height:40,
+            height:30,
             css:{
                 'background-color':'#5c5c5c',
-                'padding':'5px',
+                //'padding':'5px',
                 border: '1px solid #3c3c3c'
              },
 
-            cols : [
-                {width:5},
+            // cols : [
+            //     {width:5},
+            //     {
+             rows: [
+                 {height:7},
                 {
-                     rows: [
-                        {
-                            view: 'label',
-                            label: '<b>SUGGESTIONS</b>',
-                            height: 20
-                        }
-                        //,
-                        // {
-                        //     cols:[
-                        //         {
-                        //             view: 'label',
-                        //             id: 'suggestion_number',
-                        //             label: '### tracks',
-                        //             height: 20
-                        //         }
-                        //     ]
-                        // }
-                    ]
+                    view: 'label',
+                    label: '<b>SUGGESTIONS</b>',
+                    height: 20,
+                    css:{
+                        //'background-color':'#5c5c5c',
+                        'padding-left':'10px',
+                        //border: '1px solid #3c3c3c'
+                     },
                 },
-                {width:15}
+                {height:5},
+
+                //,
+                // {
+                //     cols:[
+                //         {
+                //             view: 'label',
+                //             id: 'suggestion_number',
+                //             label: '### tracks',
+                //             height: 20
+                //         }
+                //     ]
+                // }
             ]
+            //     },
+            //     {width:15}
+            // ]
 
         },
         {
             view:"list",
             id:'suggestion_list',
             itemHeight:45,
+            height:410,
             css:{
                 border: '1px solid #3c3c3c'
              },
             select:true,
             template: queue_element_template,
             type: { height: cover_size  },
-            scroll:"y"
+            //scroll:"y"
 
         }]
 }

@@ -229,7 +229,7 @@ var main_list_display_template = {
                 { id:"play_count",    header:{text:"<b><span class='fa fa-play'/></b>", css:{"text-align":'center'}},  width:30, template:"<div style='text-align: right'>#play_count#</div>", sort:'int'},
                 { id:"last_played",   header:{text:"<b><span class='fa fa-calendar' style='font-size: 15px'/></b>", css:{"text-align":'right'}},  width:80, template: function(element) { return `${webix.Date.dateToStr("%Y-%m-%d")(element.last_played)}`}, sort:'int'},
                 { id:"rating",        header:{text:"<b style='font-size: 13px'>Rating</b>", css:{"text-align":'center'}}, width:75, template:"<img src='../resources/images/rating#rating#.png' style='' height='10'>", css:{"text-align":'right'}, sort:'int'},
-                { id:"bpm",           header:{text:"<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>", css:{"text-align":'center'}},    width:40, css:{"text-align":'right'}, sort:'int'},
+                { id:"bpm",           header:{text:"<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>", css:{"text-align":'center'}}, width:45, css:{"text-align":'right'}, sort:'int'},
                 { id:"stream_length", header:{text:"<b style='font-size: 13px'>Time</b>", css:{"text-align":'center'}}, width:55, format:format_nanoseconds, css:{"text-align":'right'}},
             ],
             scroll:"y"
