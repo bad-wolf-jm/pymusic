@@ -5,7 +5,7 @@ var db_connection = mysql.createConnection({
   user: "root",
   password: "root",
 //  database:'pymusic'
-  database:'pymusic_testing'
+  database:'pymusic'
 });
 
 db_connection.connect(

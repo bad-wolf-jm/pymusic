@@ -4,7 +4,7 @@ path = require('path');
 command_socket = zmq.socket('req');
 command_socket.connect('tcp://127.0.0.1:9898');
 command_socket.on("message", function( status, type, payload ) {
-    //console.log("Received reply", payload);
+
 });
 
 function send_command(name, args, kwargs) {

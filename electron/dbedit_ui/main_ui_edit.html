@@ -685,6 +685,13 @@ function playback_settings() {
     )
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 var jsmediatags = require("jsmediatags");
 var fs = require('fs');
 const {spawn} = require ('child_process');
@@ -1063,47 +1070,6 @@ function cover_art_b64(object) {
     }
 }
 
-
-//
-// function fix_cover_art() {
-//     console.log("FOO")
-//     db_connection.query(
-//         "SELECT original_file_name FROM tracks WHERE cover_original IS NULL",
-//         function (err, filenames) {
-//             if (err) throw err;
-//             let num = filenames.length;
-//             let new_array = []
-//             for (let i=0; i<filenames.length; i++) {
-//                 jsmediatags.read(filenames[i].original_file_name, {
-//                       onSuccess: function(tag) {
-//                           num --;
-//                           console.log(i, tag.tags.picture);
-//                           //new_array.push(parse_tag(filenames[i], tag));
-//                           if (num == 0) {
-//                               // $$('add_file_list').clearAll();
-//                               // $$('add_file_list').define('data', new_array);
-//                               // $$('add_file_list').refresh();
-//                               // console.log(new_array);
-//                               console.log('DONE');
-//                               // files_to_add = new_array;
-//                           }
-//                       },
-//                       onError: function(error) {
-//                           num --;
-//                           if (num == 0) {
-//                               // $$('add_file_list').clearAll();
-//                               // $$('add_file_list').define('data', new_array);
-//                               // $$('add_file_list').refresh();
-//                               // files_to_add = new_array;
-//                           }
-//                       }
-//                     }
-//                 );
-//             }
-//         }
-//     )
-// }
-
 function add_track() {
     x = webix.ui({
         view:"window",
@@ -1187,6 +1153,12 @@ function add_track() {
     x.show();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 main_list_display_template.gravity = 2.25;
