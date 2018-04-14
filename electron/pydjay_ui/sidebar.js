@@ -145,7 +145,6 @@ function display_tag(id){
                 `SELECT name FROM playlists WHERE id=${id}`,
                 function (e, r) {
                     display_track_list(`${r[0].name}`, result);
-                    //$$('main_menu_popup').hide();
                 }
             );
         });
@@ -280,8 +279,25 @@ var sidebar_template = {
         'padding':'0px',
         'margin':'0px',
     },
-    width:125,
+    width:250,
     rows: [
+        {
+            container:"layout_div",
+            multi:true,
+            view:"accordion",
+            rows:[
+                { header:"col 1", body:"content 1", height:140},
+                { body:"Content 2" },
+                { 
+                    collapsed:false, 
+                    header:"col 3",
+                    body:"content 3",
+                    height:140
+                },
+                { body:"Content 4" },
+                { header:"col 5", body:"content 5", height:140}
+            ]
+        },
         {
             id: 'show_all_songs',
             view:'button',

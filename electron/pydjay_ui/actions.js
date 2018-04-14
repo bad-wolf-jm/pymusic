@@ -473,12 +473,6 @@ var suggestion_list_actions = {
         edit_track_data(id);
     },
 
-    // display_all_songs: () => {display_all_songs()},
-    //
-    // filter_list: function () {
-    //     webix.UIManager.setFocus($$('display_list'));
-    // },
-
     preview_selected: function () {
         var id = $$('suggestion_list').getSelectedItem().id;
         preview_track_id = id;
