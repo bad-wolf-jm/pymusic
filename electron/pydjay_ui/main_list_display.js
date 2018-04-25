@@ -155,6 +155,7 @@ var preview_player_window = {
 
 var main_list_display_template = {
     type:'line',
+    autoheight:true,
     css:{
         border: '0px solid #3c3c3c'
      },
@@ -211,6 +212,7 @@ var main_list_display_template = {
             select:"row",
             resizeColumn:{headerOnly:true},
             rowHeight:25,
+            //autoheight:true,
             css:{
                 'background-color':'#303030',
                 border: '0px solid #5c5c5c',

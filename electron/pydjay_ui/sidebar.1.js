@@ -240,7 +240,7 @@ function session_template(element) {
     } else {
         cover_source = `${element.image_root}/${element.cover}`
     }
-    return `<div class="webix_icon fa-list" style='float:left;transform: translateY(40%); font-size:13px'></div>
+    return `<i class="ui left floated list icon"></i>
             <div class="session_element_name">${element.name}</div>
             <div class="session_element_date">${webix.Date.dateToStr("%Y-%m-%d")(element.date)}</div>
             <div class="session_element_count">${element.count}</div>`
@@ -253,7 +253,7 @@ function track_list_template(element) {
     } else {
         cover_source = `${element.image_root}/${element.cover}`
     }
-    return `<div class="webix_icon fa-list" style='float:left;transform: translateY(40%); font-size:13px'></div>
+    return `<div class="webix_icon fa-list" style='float:left;transform: translateY(60%); font-size:13px'></div>
             <div class="tag_element_name">${element.name}</div>
             <div class="tag_element_count">${element.count}</div>
             <!-- <div style="float:right; position:relative; top:0%; transform: translateY(-80%); height:15px; width:20px; background-color:${element.color}"> -->
@@ -277,214 +277,190 @@ var track_list_popup = SidebarPopup('track_list', 400, 700, 'TAGS', track_list_t
 );
 
 
+
 var sidebar_template = {
     css: {
-        'background-color':'#303f3f',
+        'background-color':'#3f3f3f',
         'padding':'0px',
         'margin':'0px',
+        //'height': "100% !important"
     },
-    autoheight:true,
     width:350,
+    //rows: [
+    //    {
+    multi:"mixed",
+    id:"sidebar-accordions",
+    view:"accordion",
     rows:[
-        {
-            multi:"mixed",
-            id:"sidebar-accordions",
-            view:"accordion",
-            rows: [
-                { 
-                    header:"Library",   
-        
-                    body:{
-                        gravity:1,
-
-                        rows: [
-                            {
-                                id: 'show_all_songs',
-                                view:'button',
-                                label:'<b style="font-size:12px">ALL SONGS</b>',
-                                type:'icon',
-                                icon:'database',
-                                click:display_all_songs()
-                            },
-                            {
-                                id: 'show_short_list',
-                                view:'button',
-                                label:'<b style="font-size:12px">SHORT LIST</b>',
-                                type:'icon',
-                                icon:'calendar',
-                                click:display_short_listed_songs(),
-                                hotkey:'ctrl+shift+s'
-                            },
-                            {
-                                id: 'show_played',
-                                view:'button',
-                                label:'<b style="font-size:12px">PLAYED SONGS</b>',
-                                type:'icon',
-                                icon:'calendar',
-                                click:display_played_songs(),
-                                hotkey:'ctrl+shift+p'
-                            },
-                            {
-                                id: 'show_never_played',
-                                view:'button',
-                                label:'<b style="font-size:12px">NEVER PLAYED</b>',
-                                type:'icon',
-                                icon:'calendar',
-                                click:display_never_played_songs(),
-                                hotkey:'ctrl+shift+n'
-                            },
-                            {
-                                id: 'show_unavailable',
-                                view:'button',
-                                label:'<b style="font-size:12px">UNAVAILABLE</b>',
-                                type:'icon',
-                                icon:'close',
-                                click:display_unavailable_songs(),
-                                hotkey:'ctrl+shift+u'
-                            }
-                        ]
+        { 
+            header:"Library",   
+            body:{
+                rows: [
+                    {
+                        id: 'show_all_songs',
+                        view:'button',
+                        label:'<b style="font-size:12px">ALL SONGS</b>',
+                        type:'icon',
+                        icon:'database',
+                        click:display_all_songs()
+                    },
+                    {
+                        id: 'show_short_list',
+                        view:'button',
+                        label:'<b style="font-size:12px">SHORT LIST</b>',
+                        type:'icon',
+                        icon:'calendar',
+                        click:display_short_listed_songs(),
+                        hotkey:'ctrl+shift+s'
+                    },
+                    {
+                        id: 'show_played',
+                        view:'button',
+                        label:'<b style="font-size:12px">PLAYED SONGS</b>',
+                        type:'icon',
+                        icon:'calendar',
+                        click:display_played_songs(),
+                        hotkey:'ctrl+shift+p'
+                    },
+                    {
+                        id: 'show_never_played',
+                        view:'button',
+                        label:'<b style="font-size:12px">NEVER PLAYED</b>',
+                        type:'icon',
+                        icon:'calendar',
+                        click:display_never_played_songs(),
+                        hotkey:'ctrl+shift+n'
+                    },
+                    {
+                        id: 'show_unavailable',
+                        view:'button',
+                        label:'<b style="font-size:12px">UNAVAILABLE</b>',
+                        type:'icon',
+                        icon:'close',
+                        click:display_unavailable_songs(),
+                        hotkey:'ctrl+shift+u'
                     }
-                },
-                { 
-                    id: "playlists_item",
-                    collapsed:false, 
-                    header:"Groups",
-                    autoheight:true,
-                    body:{
-                        gravity:1,
-                        rows:[
-                            {
-                                id:"playlist-list",
-                                view:"list",
-                                template: track_list_template,
-                                select:true,
-                                scroll:"y",
-                                type: {
-                                    height:25
-                                },
-        
-                                on: {
-                                    onItemClick: function(id, e, node){
-                                        display_tag(id)();
-                                    }
-                    
-                                }
-                            },
-                            {
-                                cols:[
-                                    {
-                                        view:'button',
-                                        type:'icon',
-                                        icon: 'plus',
-                                        width:40,
-                                        click: function () {
-                                            win = new NewPlaylist()
-                                            win.show()
-                                        }
-                                    },
-                                    {},
-                                    {
-                                        view:'button',
-                                        type:'icon',
-                                        icon: 'edit',
-                                        width:40,
-                                        click: function () {
-                                            win = new PlaylistEditor($$("playlist-list").getSelectedItem().id)
-                                            win.show()
-                                        }
-                                    },
-                                    {
-                                        view:'button',
-                                        type:'icon',
-                                        icon: 'copy',
-                                        width:40,
-                                        click: function () {
-                                            win = new PlaylistDuplicator($$("playlist-list").getSelectedItem().id)
-                                            win.show()
-                                        }
-                                    },
-                                    {
-                                        view:'button',
-                                        type:'icon',
-                                        icon: 'minus',
-                                        width:40,
-                                        click: function () {
-                                            win = new DeletePlaylist($$("playlist-list").getSelectedItem().id)
-                                            win.show()
-                                        }
-                                    }
-        
-                                ]
-                            }
-                        ]
-                    }
-                },
-                { 
-                    id: "sessions_item",
-                    header:"Sessions", 
-                    body: {
-                        gravity:1,
-
-                        view:'list',
-                        id:"sessions-list",
+                ]
+            }
+        },
+        { 
+            id: "playlists_item",
+            collapsed:false, 
+            header:"Groups",
+            autoheight:true,
+            body:{
+                rows:[
+                    {
+                        id:"playlist-list",
+                        view:"list",
+                        template: track_list_template,
                         select:true,
-                        template: session_template,
-                        //itemHeight:20,
-                        type: {
-                            height:25,
-                            //"border-bottom": "4 #818081 !important",
-                            //"border-bottom-color": "#818181 !important"
-                        },
+                        scroll:"y",
+                        itemHeight:15,
                         on: {
                             onItemClick: function(id, e, node){
-                                display_session(id)();
+                                display_tag(id)();
                             }
             
                         }
-                    }, 
-                }
-    
-            ],
-            on: {
-                onAfterExpand: function(i) {
-                    if (i == "sessions_item") {
-                        let list_id = "sessions-list"
-                        $QUERY(
-                            `SELECT id, event_name as name, date(start_date) as date, counts.count as count
-                            FROM sessions JOIN (select session_id, count(track_id) as count FROM session_tracks
-                            GROUP BY session_id) counts ON sessions.id=counts.session_id ORDER BY date ASC`,
-                            function (result_list) {
-                                $$(list_id).clearAll()
-                                //result_list.each(function (x) {x.height=20})
-                                $$(list_id).define('data', result_list);
-                                //$$(list_id).data.ea
-                                
-                                $$(list_id).refresh()
+                    },
+                    {
+                        cols:[
+                            {
+                                view:'button',
+                                type:'icon',
+                                icon: 'plus',
+                                width:40,
+                                click: function () {
+                                    win = new NewPlaylist()
+                                    win.show()
+                                }
+                            },
+                            {},
+                            {
+                                view:'button',
+                                type:'icon',
+                                icon: 'edit',
+                                width:40,
+                                click: function () {
+                                    win = new PlaylistEditor($$("playlist-list").getSelectedItem().id)
+                                    win.show()
+                                }
+                            },
+                            {
+                                view:'button',
+                                type:'icon',
+                                icon: 'copy',
+                                width:40,
+                                click: function () {
+                                    win = new PlaylistDuplicator($$("playlist-list").getSelectedItem().id)
+                                    win.show()
+                                }
+                            },
+                            {
+                                view:'button',
+                                type:'icon',
+                                icon: 'minus',
+                                width:40,
+                                click: function () {
+                                    win = new DeletePlaylist($$("playlist-list").getSelectedItem().id)
+                                    win.show()
+                                }
                             }
-                        )
-        
-                    } else if (i == "playlists_item") {
-                        let list_id = "playlist-list"
-                        $QUERY(
-                            `SELECT playlists.id as id , playlists.name, IFNULL(counts.count, 0) as count FROM
-                                playlists LEFT JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
-                                ON playlists.id=counts.playlist_id ORDER BY name`,
-                            function (result_list) {
-                                $$(list_id).clearAll()
-                                $$(list_id).define('data', result_list);
-                                $$(list_id).refresh()
-                            }
-                        )
-        
+
+                        ]
                     }
-                }
+                ]
             }
         },
-        {
-            css: {
-                "min-height":"0px !important;",
-            },
-            height:1,
-        },
-    ]
+        { 
+            id: "sessions_item",
+            header:"Sessions", 
+            body: {
+                view:'list',
+                id:"sessions-list",
+                select:true,
+                template: session_template,
+                on: {
+                    onItemClick: function(id, e, node){
+                        display_session(id)();
+                    }
+    
+                }
+            }, 
+        }
+    ],
+    on: {
+        onAfterExpand: function(i) {
+            if (i == "sessions_item") {
+                let list_id = "sessions-list"
+                $QUERY(
+                    `SELECT id, event_name as name, date(start_date) as date, counts.count as count
+                    FROM sessions JOIN (select session_id, count(track_id) as count FROM session_tracks
+                    GROUP BY session_id) counts ON sessions.id=counts.session_id ORDER BY date ASC`,
+                    function (result_list) {
+                        $$(list_id).clearAll()
+                        $$(list_id).define('data', result_list);
+                        $$(list_id).refresh()
+                    }
+                )
+
+            } else if (i == "playlists_item") {
+                let list_id = "playlist-list"
+                $QUERY(
+                    `SELECT playlists.id as id , playlists.name, IFNULL(counts.count, 0) as count FROM
+                        playlists LEFT JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
+                        ON playlists.id=counts.playlist_id ORDER BY name`,
+                    function (result_list) {
+                        $$(list_id).clearAll()
+                        $$(list_id).define('data', result_list);
+                        $$(list_id).refresh()
+                    }
+                )
+
+            }
+        }
+    }
+       // },
+   // ]
 }

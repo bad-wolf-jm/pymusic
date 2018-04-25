@@ -2,8 +2,14 @@
     margin: 0px;
     padding: 0px;
     background-color:'#3c3c3c';
-    border: '0px solid #3c3c3c'
+    /* border: '0px solid #3c3c3c';
+    height:100%; */
 }
+
+/* .webix_layout_line {
+    height:100% !important;
+} */
+
 .unavailable_track {
     color: #555555 !important;
 }
@@ -113,11 +119,12 @@
 .session_element_name {
     float:left;
     margin:0px;
-    padding:0px 10px;
+    padding:0px 0px;
     height:22px;
     white-space:nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size:13px;
     width:45%;
 }
 
@@ -129,7 +136,8 @@
     white-space:nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width:25%;
+    width:32%;
+    font-size:13px;
     text-align:right;
 }
 
@@ -140,7 +148,8 @@
     white-space:nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width:20%;
+    width:15%;
+    font-size:13px;
     text-align:right;
 }
 
@@ -148,12 +157,12 @@
 .tag_element_name {
     float:left;
     margin:0px;
-    padding:0px 10px;
+    padding:0px;
     height:22px;
+    font-size:13px;
     white-space:nowrap;
     overflow: hidden;
-    text-overflow:
-    ellipsis; width:65%
+    text-overflow:ellipsis; width:75%
 }
 
 .tag_element_count {
@@ -164,5 +173,83 @@
     overflow: hidden;
     text-overflow: ellipsis;
     width:15%;
+    font-size:14px;
     text-align:right
+}
+
+
+.webix_accordionitem.vertical {
+    background-image: none !important; 
+    background-repeat: no-repeat !important; 
+    /* height: 25px; */
+    margin-top: 0px !important;
+    font-size: 13px;
+}
+
+
+.webix_accordionitem.vertical>.webix_accordionitem_header .webix_accordionitem_button {
+    background-image: none !important; 
+    background-repeat: no-repeat !important; 
+    height: 25px;
+    margin-top: 0px !important;
+    font-size: 13px;
+}
+
+.webix_accordionitem_header {
+    border-bottom: 1px solid #818181;
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    font-size: 15px;
+    background: #191919 !important;
+    line-height: 25px;
+    cursor: pointer;
+    overflow: hidden;
+    text-transform:uppercase;
+    height: 25px !important;
+    margin-top: 0px !important;
+}
+
+.webix_accordionitem.collapsed .webix_accordionitem_header .webix_accordionitem_header.collapsed .webix_accordionitem.vertical.collapsed {
+    background: #191919 !important;
+    color: #fff;
+    height: 25px !important;
+    margin-top: 0px !important;
+}
+/* 
+.webix_accordionitem.vertical.collapsed {
+    background: #191919;
+    color: #fff;
+    height: 25px !important;
+    margin-top: 0px !important;
+/* } */
+
+.webix_list_item {
+    overflow: hidden !important;
+    /*height:20px;*/
+    padding: 0px 0px 0px 10px;
+    margin: 0px;
+    line-height: 25px;
+}
+
+.webix_list_item {
+    overflow: hidden !important;
+    /*height:20px;*/
+    padding: 0px 0px 0px 10px !important;
+    margin: 0px;
+    line-height: 25px;
+}
+
+.webix_list_item.webix_selected {
+    overflow: hidden !important;
+    /*height:20px;*/
+    padding: 0px 0px 0px 10px !important;
+    margin: 0px;
+    line-height: 25px;
+}
+
+
+.webix_full_screen {
+    overflow: hidden !important;
+    height:100% !important;
 }

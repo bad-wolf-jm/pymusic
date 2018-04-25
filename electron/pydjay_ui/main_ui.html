@@ -5,11 +5,13 @@
 <script src="./utils.js"></script>
 <script src="./main_list_display.js"></script>
 <script src="./queue_display.js"></script>
+<script src="./playlist_edit.js"></script>
 <script src="./sidebar.js"></script>
 <script src="./playback.js"></script>
 <script src="./track_edit.js"></script>
 <script src="./queue.js"></script>
 <script src="./sql.js"></script>
+<script src="./data.js"></script>
 <script src="./actions.js"></script>
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
 <link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">
@@ -657,55 +659,24 @@ main_menu_popup  = webix.ui({
 main_menu_popup.hide()
 
 var datatable = webix.ui({
-    type:"line",
+    css:{
+                'background-color':'#515151',
+                'padding':'0px',
+                'border-bottom': "1px solid #CCCCCC",
+                'height': "100% !important"
+            },
     rows:[
         {
             css:{
                 'background-color':'#515151',
                 'padding':'0px',
-                'border-bottom': "1px solid #CCCCCC"
+                'border-bottom': "1px solid #CCCCCC",
             },
             cols:[
                 {
                     cols:[
-                        //{width:5},
-                        // {
-                        //     id:'main_menu',
-                        //     view:'button',
-                        //     type:'icon',
-                        //     icon:'database',
-                        //     label:'MENU',
-                        //     popup:'main_menu_popup',
-                        //     width:75
-                        // },
-                        {width:75},
-                        // {
-                        //     id:'main-player-volume',
-                        //     view:'button',
-                        //     type:'icon',
-                        //     icon:'volume-up',
-                        //     label:'100%',
-                        //     width:75
-                        // },
-                        // {
-                        //     id:'monitor-volume',
-                        //     view:'button',
-                        //     type:'icon',
-                        //     icon:'volume-control-phone',
-                        //     label:'100%',
-                        //     width:75
-                        // },
-                        // {
-                        //     id:'precue-player-volume',
-                        //     view:'button',
-                        //     type:'icon',
-                        //     icon:'headphones',
-                        //     label:'100%',
-                        //     width:75
-                        // },
                         {},
                         {
-                            //gravity:.85,
                             view:'button',
                             type:'icon',
                             icon:'list',
@@ -719,6 +690,15 @@ var datatable = webix.ui({
                 player_window,
         {
             cols:[
+                {
+                    css: {
+                        //'background-color':'#515151',
+                        //'padding':'0px',
+                        //'border-bottom': "1px solid #CCCCCC",
+                        'height': "100% !important"
+                    },
+                    width:1
+                },
                 {
                     width:250,
                     cols:[
@@ -770,8 +750,6 @@ var datatable = webix.ui({
             ]
         }]},
         {
-            //type:"line",
-            //height:1034,
             cols:[
                 sidebar_template,
                 main_list_display_template,
@@ -797,60 +775,56 @@ var datatable = webix.ui({
                 'background-color': '#202020',
                 'border-top':"1px solid #3f3f3f"
             },
-            //{
-                cols:[
-                    {
-                        width:15
-                    },
-                    {
-                        view: 'label',
-                        id: 'calendar',
-                        label: '<span style="color:rgb(200,200,200)">2018-01-09</span> | 0:45',
-                        height: 20
-                    },
-                    {
-                        view: 'label',
-                        id: 'queue_duration',
-                        label: '<b>QUEUE DURATION:</b> 0:00',
-                        height: 20
-                    },
-                    {
-                        view: 'label',
-                        id:'queue_ends_at',
-                        // css: {'text-align':'right'},
-                        label: '<b>ENDS:</b> 0:00',
-                        height: 20
-                    },
-                    {
-                        id:'main-player-volume',
-                        view:'button',
-                        type:'icon',
-                        icon:'volume-up',
-                        label:'100%',
-                        width:75
-                    },
-                    {
-                        id:'monitor-volume',
-                        view:'button',
-                        type:'icon',
-                        icon:'volume-control-phone',
-                        label:'100%',
-                        width:75
-                    },
-                    {
-                        id:'precue-player-volume',
-                        view:'button',
-                        type:'icon',
-                        icon:'headphones',
-                        label:'100%',
-                        width:75
-                    },
-                    {
-                        width:15
-                    }
-                ]
-            //}
-
+            cols:[
+                {
+                    width:15
+                },
+                {
+                    view: 'label',
+                    id: 'calendar',
+                    label: '<span style="color:rgb(200,200,200)">2018-01-09</span> | 0:45',
+                    height: 20
+                },
+                {
+                    view: 'label',
+                    id: 'queue_duration',
+                    label: '<b>QUEUE DURATION:</b> 0:00',
+                    height: 20
+                },
+                {
+                    view: 'label',
+                    id:'queue_ends_at',
+                    label: '<b>ENDS:</b> 0:00',
+                    height: 20
+                },
+                {
+                    id:'main-player-volume',
+                    view:'button',
+                    type:'icon',
+                    icon:'volume-up',
+                    label:'100%',
+                    width:75
+                },
+                {
+                    id:'monitor-volume',
+                    view:'button',
+                    type:'icon',
+                    icon:'volume-control-phone',
+                    label:'100%',
+                    width:75
+                },
+                {
+                    id:'precue-player-volume',
+                    view:'button',
+                    type:'icon',
+                    icon:'headphones',
+                    label:'100%',
+                    width:75
+                },
+                {
+                    width:15
+                }
+            ]
         }
     ]
 });
@@ -984,7 +958,6 @@ webix.UIManager.addHotKey("shift+enter",  main_list_actions.preview_last_10_seco
 webix.UIManager.addHotKey("enter",  main_list_actions.preview_selected, $$('display_list'));
 webix.UIManager.addHotKey("ctrl+f",  main_list_actions.filter_list, $$('display_list'));
 
-
 webix.UIManager.addHotKey("shift+q", suggestion_list_actions.add_selection_to_queue, $$('suggestion_list'));
 webix.UIManager.addHotKey("shift+s", suggestion_list_actions.add_selection_to_short_list, $$('suggestion_list'));
 webix.UIManager.addHotKey("shift+u", suggestion_list_actions.add_selection_to_unavailable, $$('suggestion_list'));
@@ -994,7 +967,6 @@ webix.UIManager.addHotKey("ctrl+shift+enter",  suggestion_list_actions.preview_l
 webix.UIManager.addHotKey("shift+enter",  suggestion_list_actions.preview_last_10_seconds, $$('suggestion_list'));
 webix.UIManager.addHotKey("enter",  suggestion_list_actions.preview_selected, $$('suggestion_list'));
 webix.UIManager.addHotKey("ctrl+f",  suggestion_list_actions.filter_list, $$('suggestion_list'));
-
 
 webix.UIManager.addHotKey("space", playback_actions.preview_pause);
 webix.UIManager.addHotKey("shift+space", playback_actions.preview_stop);
@@ -1140,13 +1112,6 @@ $$('display_list').attachEvent('onFocus',
       webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
   }
 );
-
-// $$('display_list').attachEvent('onFocus',
-//   function (x) {
-//       webix.html.addCss( $$('main_list_header_row').getNode(), "focus_header");
-//       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
-//   }
-// );
 
 $$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})
 webix.UIManager.setFocus($$('display_list'));
