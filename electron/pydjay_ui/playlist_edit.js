@@ -187,7 +187,7 @@ function PlaylistEditor(id) {
                         {
                             view: 'button',
                             label: 'CANCEL',
-                            click: () => {self._win.hide()}
+                            click: () => {self.hide()}
                         },
                         {}
                     ]
@@ -209,7 +209,7 @@ function PlaylistEditor(id) {
             replace_sql = `INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`
             $QUERY(delete_sql,
                 function () {
-                    $QUERY(replace_sql, function () {self._win.hide();})
+                    $QUERY(replace_sql, function () {self.hide();})
                 }
             )
         }
@@ -379,6 +379,24 @@ function PlaylistEditor(id) {
         preview_play_track_id(id, -30000000000);
     }
 
+    self.group_preview_selected = function () {
+        var id = $$(self.track_list).getSelectedId().id;
+        preview_track_id = id;
+        preview_play_track_id(id);
+    }
+
+    self.group_preview_last_10_seconds = function () {
+        var id = $$(self.track_list).getSelectedId().id;
+        preview_track_id = id;
+        preview_play_track_id(id, -10000000000);
+    }
+
+    self.group_preview_last_30_seconds = function () {
+        var id = $$(self.track_list).getSelectedId().id;
+        preview_track_id = id;
+        preview_play_track_id(id, -30000000000);
+    }
+
 
     self.show = function () {
         $QUERY(
@@ -396,11 +414,21 @@ function PlaylistEditor(id) {
                 webix.UIManager.addHotKey("ctrl+shift+enter", self.preview_last_30_seconds, $$(self.track_list));
                 webix.UIManager.addHotKey("shift+enter", self.preview_last_10_seconds, $$(self.track_list));
                 webix.UIManager.addHotKey("enter", self.preview_selected, $$(self.track_list));
+                webix.UIManager.addHotKey("ctrl+shift+enter", self.group_preview_last_30_seconds, $$(self.group_list));
+                webix.UIManager.addHotKey("shift+enter", self.group_preview_last_10_seconds, $$(self.group_list));
+                webix.UIManager.addHotKey("enter", self.group_preview_selected, $$(self.group_list));
                 webix.UIManager.addHotKey("delete", self.remove_from_playlist, $$(self.group_list));
                 webix.UIManager.addHotKey("backspace", self.remove_from_playlist, $$(self.group_list));        
             }
         )
     }
+    self.hide = function () {
+        self._win.hide()
+        if (self.onHide != undefined) {
+            self.onHide()
+        }
+    }
+
 }
 
 
@@ -492,6 +520,9 @@ function NewPlaylist() {
     }
     self.hide = function () {
         self._win.hide()
+        if (self.onHide != undefined) {
+            self.onHide()
+        }
     }
 }
 
@@ -603,6 +634,10 @@ function PlaylistDuplicator(id) {
     }
     self.hide = function () {
         self._win.hide()
+        if (self.onHide != undefined) {
+            self.onHide()
+        }
+
     }
 }
 
@@ -677,6 +712,10 @@ function DeletePlaylist(id) {
     }
     self.hide = function () {
         self._win.hide()
+        if (self.onHide != undefined) {
+            self.onHide()
+        }
+
     }
 }
 
