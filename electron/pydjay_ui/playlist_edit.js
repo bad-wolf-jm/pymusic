@@ -463,8 +463,8 @@ function NewPlaylist() {
                             view: 'button',
                             label: 'CREATE',
                             click: function () {
-                                self.create_playlist()
-                                self.hide();
+                                self.create_playlist(self.hide)
+                                //self.hide();
                             }
                         },
                         {},
@@ -481,7 +481,7 @@ function NewPlaylist() {
         }
     }
 
-    self.create_playlist = function (name, description) {
+    self.create_playlist = function (done) {
         name = $$(self.playlist_name).getValue()
         $QUERY(
         `SELECT id FROM playlists WHERE name='${name}'`,
@@ -497,7 +497,7 @@ function NewPlaylist() {
                             expire: 3000,
                             id:"message1"
                         });
-    
+                        done()
                     }
                 )
             } else {
@@ -507,6 +507,7 @@ function NewPlaylist() {
                     expire: 3000,
                     id:"message1"
                 });
+                done()
     
             }
         }
@@ -561,8 +562,8 @@ function PlaylistDuplicator(id) {
                             view: 'button',
                             label: 'DUPLICATE',
                             click: function () {
-                                self.create_playlist()
-                                self.hide();
+                                self.create_playlist(self.hide)
+                                //self.hide();
                             }
                         },
                         {},
@@ -579,7 +580,7 @@ function PlaylistDuplicator(id) {
         }
     }
 
-    self.create_playlist = function (name, description) {
+    self.create_playlist = function (done) { //name, description) {
         name = $$(self.playlist_name).getValue()
         //description =  $$(self.playlist_desc).getValue()
         $QUERY(
@@ -607,7 +608,7 @@ function PlaylistDuplicator(id) {
                                             expire: 3000,
                                             id:"message1"
                                         });
-                                        self._win.hide();
+                                        done();
                                     })
                                 }
                             }
@@ -621,7 +622,7 @@ function PlaylistDuplicator(id) {
                     expire: 3000,
                     id:"message1"
                 });
-                self._win.hide();
+                done();
             }
         }
     )
@@ -673,8 +674,8 @@ function DeletePlaylist(id) {
                             view: 'button',
                             label: 'DELETE',
                             click: function () {
-                                self.delete_playlist()
-                                self.hide();
+                                self.delete_playlist(self.hide)
+                                //self.hide();
                             }
                         },
                         {},
@@ -691,14 +692,14 @@ function DeletePlaylist(id) {
         }
     }
 
-    self.delete_playlist = function () {
+    self.delete_playlist = function (done) {
         $QUERY(
             `DELETE FROM playlists WHERE id=${self.playlist_id}`,
             function (r) {
                 $QUERY(
                     `DELETE FROM playlist_tracks WHERE playlist_id=${self.playlist_id}`,
                     function (r) {
-                        
+                        done()
                     }
                 )
             }

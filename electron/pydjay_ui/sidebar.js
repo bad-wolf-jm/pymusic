@@ -378,9 +378,31 @@ var sidebar_template = {
                                         icon: 'plus',
                                         width:40,
                                         click: function () {
+                                            //let selected_id = $$("playlist-list").getSelectedItem().id
                                             win = new NewPlaylist()
+                                            win.onHide = function () {
+                                                //i = $$("playlist-list").getItem(selected_id)
+                                                let list_id = "playlist-list"
+                                                $QUERY(
+                                                    `SELECT playlists.id as id , playlists.name, IFNULL(counts.count, 0) as count FROM
+                                                    playlists LEFT JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
+                                                    ON playlists.id=counts.playlist_id ORDER BY name`,
+                                                    function (result_list) {
+                                                        //i = $$(list_id).getItem(selected_id)
+                                                        //i.count = result_list[0].count
+                                                        //console.log(result_list)
+                                                        $$(list_id).clearAll()
+                                                        $$(list_id).define('data', result_list);
+                                                        $$(list_id).refresh() //updateItem(selected_id, i)
+                                                    }
+                                                )
+                        
+                                            }
                                             win.show()
                                         }
+
+                                        //     win.show()
+                                        // }
                                     },
                                     {},
                                     {
