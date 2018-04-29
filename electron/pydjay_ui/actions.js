@@ -71,17 +71,13 @@ var queue_actions = {
     },
 
     reload: function () {
-        $QUERY(
-            `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist, tracks.album,
-             tracks.bpm, tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
-             FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id WHERE session_queue.status='pending'
-             ORDER BY session_queue.position`,
+        DB.get_queue_elements(
             function(queue_content) {
                 $$('queue_list').clearAll();
                 for(var i=0; i < queue_content.length; i++){
                     $$('queue_list').add(queue_content[i])
                 }
-            }
+            }            
         )
     },
 
@@ -110,20 +106,15 @@ var main_list_actions = {
         var id = $$('display_list').getSelectedId().id;
         add_id_to_queue(id,
             function () {
-                sql = `SELECT tracks.id as track_id, session_queue.position, tracks.title, tracks.artist, tracks.album, tracks.bpm,
-                       tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
-                       FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id
-                       WHERE session_queue.status='pending' AND session_queue.track_id=${id} ORDER BY session_queue.position`;
-                db_connection.query(sql,
-                    function (err, result) {
-                        if (err) throw err;
+                DB.get_queue_track(id,
+                    function (result) {
                         $$('queue_list').add(result[0]);
                         $$('display_list').addRowCss(id, 'unavailable_track');
                         $$('suggestion_list').addCss(id, 'unavailable_track');
                         update_queue_labels();
-                        update_suggestions();
+                        update_suggestions();                        
                     }
-                );
+                )
             }
         )
     },
@@ -374,20 +365,15 @@ var suggestion_list_actions = {
         var id = $$('suggestion_list').getSelectedItem().id;
         add_id_to_queue(id,
             function () {
-                sql = `SELECT tracks.id as track_id, session_queue.position, tracks.title, tracks.artist, tracks.album, tracks.bpm,
-                       tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
-                       FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id
-                       WHERE session_queue.status='pending' AND session_queue.track_id=${id} ORDER BY session_queue.position`;
-                db_connection.query(sql,
-                    function (err, result) {
-                        if (err) throw err;
+                DB.get_queue_track(id,
+                    function (result) {
                         $$('queue_list').add(result[0]);
                         $$('display_list').addRowCss(id, 'unavailable_track');
                         $$('suggestion_list').addCss(id, 'unavailable_track');
                         update_queue_labels();
-                        update_suggestions();
+                        update_suggestions();                        
                     }
-                );
+                )
             }
         )
     },
@@ -401,7 +387,6 @@ var suggestion_list_actions = {
                     insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
                     db_connection.query(insert_sql, function(error, result){
                         if (error) throw error;
-                        console.log('FOO')
                         webix.message({
                             text:"Added track to the short list",
                             type:"info",
@@ -459,8 +444,6 @@ var suggestion_list_actions = {
                             $$('display_list').refresh();
                             $$('suggestion_list').removeCss(id, 'unavailable_track');
                             $$('suggestion_list').refresh();
-
-
                         }
                     )
                 }

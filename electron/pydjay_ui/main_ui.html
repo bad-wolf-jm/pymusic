@@ -3,6 +3,8 @@
 <script src="../node_modules/webix/webix.js"></script>
 <script src="../lib/progressbar.js"></script>
 <script src="./utils.js"></script>
+<script src="./sql.js"></script>
+<script src="./data.js"></script>
 <script src="./main_list_display.js"></script>
 <script src="./queue_display.js"></script>
 <script src="./playlist_edit.js"></script>
@@ -10,8 +12,6 @@
 <script src="./playback.js"></script>
 <script src="./track_edit.js"></script>
 <script src="./queue.js"></script>
-<script src="./sql.js"></script>
-<script src="./data.js"></script>
 <script src="./actions.js"></script>
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
 <link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">
@@ -1128,7 +1128,6 @@ function checkTime(i) {
      d = checkTime(today.getDate())
      M = checkTime(today.getMonth()+1)
      Y = today.getFullYear()
-        //document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
     $$('calendar').define('label', `<span style="color:rgb(200,200,200)">${Y}-${M}-${d}</span> | <b>${h}:${m}</b>`)
     $$('calendar').refresh()
      t = setTimeout(function () {

@@ -32,6 +32,8 @@ function PlaylistEditor(id) {
     self.track_count_label = `plylist_track_count_${ID()}`
     self.group_name_label = `plylist_name_${ID()}`
 
+    self.database = new DataProvider()
+
     self.track_list_columns = [
         { id:"id",            header:"",  width:30, hidden:true, template:"<img src='../resources/images/precue.png' style='filter: invert(1);' height='20'>", checkValue:1, uncheckValue:0},
         { id:"favorite",      header:{text:"<b><span class='fa fa-heart' style='font-size: 12px'/></b>", height:25},  width:30, template:custom_checkbox, checkValue:1, uncheckValue:0, sort:'int'},
@@ -216,57 +218,40 @@ function PlaylistEditor(id) {
     }
 
     self.display_all_tracks = function () {
-        var sql = `SELECT availability.track_id IS NULL as available, ${display_list_fields} FROM tracks LEFT JOIN session_tracks
-        ON tracks.id = session_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
-        (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title`;
-        db_connection.query(sql, function (err, result) {
-                if (err) throw err;
+        self.database.get_all_tracks(
+            function (result) {
                 $$(self.track_list).clearAll()
                 $$(self.track_list).define("data", result)
-                $$(self.track_list).refresh()
+                $$(self.track_list).refresh()                
             }
         )
     }
 
     self.display_playlist_tracks = function () {
-        var sql = `SELECT availability.track_id IS NULL as available, playlist_tracks.track_id, favorite, disabled as enabled, title, artist,
-                   album, genre, rating, bpm, stream_length, foo.play_count, cover_small as cover, settings.db_image_cache as image_root 
-                   FROM playlist_tracks JOIN (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
-                   FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts
-                   ON tracks.id=play_counts.id_2) foo ON playlist_tracks.track_id=foo.id LEFT JOIN
-                   ((select track_id from unavailable_tracks) UNION (select track_id from session_queue)) availability
-                   ON availability.track_id=playlist_tracks.track_id LEFT JOIN settings on 1 WHERE playlist_tracks.playlist_id=${self.playlist_id} 
-                   ORDER BY title`;
-        db_connection.query(sql, function (err, result) {
-            if (err) throw err;
-            db_connection.query(
-                `SELECT name FROM playlists WHERE id=${id}`,
-                function (e, r) {
-                    $$(self.group_list).clearAll()
-                    $$(self.group_list).define("data", result)
-                    $$(self.group_list).refresh()
-                    self.update_track_count_label()
-
-                }
-            );
-        });
+        self.database.get_playlist_tracks(self.playlist_id,
+            function (result) {
+                $QUERY(
+                    `SELECT name FROM playlists WHERE id=${id}`,
+                    function (r) {
+                        $$(self.group_list).clearAll()
+                        $$(self.group_list).define("data", result)
+                        $$(self.group_list).refresh()
+                        self.update_track_count_label()
+                    }
+                );
+                    
+            }
+        )
     }
 
     self.add_to_playlist = function () {
         var id = $$(self.track_list).getSelectedId().id;
-        $QUERY(`SELECT availability.track_id IS NULL as available, tracks.id as track_id, tracks.favorite, tracks.disabled as enabled, tracks.title, tracks.artist,
-        tracks.album, tracks.genre, tracks.rating, tracks.bpm, tracks.stream_length, foo.play_count, tracks.cover_small as cover, settings.db_image_cache as image_root, 
-        max_play_times.time as last_played FROM tracks JOIN (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
-        FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts ON tracks.id=play_counts.id_2) foo ON tracks.id=foo.id LEFT JOIN
-        ((select track_id from unavailable_tracks) UNION (select track_id from session_queue)) availability ON availability.track_id=tracks.id LEFT JOIN 
-        (SELECT track_id, MAX(start_time) AS time FROM session_tracks GROUP BY track_id) max_play_times ON tracks.id = max_play_times.track_id LEFT JOIN settings on 1 
-        WHERE tracks.id=${id} ORDER BY title`,
-        function(result) {
-            $$(self.group_list).add(result[0]);
-            $$(self.group_list).data.sort("#title#","asc","string")
-            self.update_track_count_label()
-        }
-    
+        self.database.get_track_by_id(id,
+            function(result) {
+                $$(self.group_list).add(result[0]);
+                $$(self.group_list).data.sort("#title#","asc","string")
+                self.update_track_count_label()
+            }                
         )
     }
 
@@ -464,7 +449,6 @@ function NewPlaylist() {
                             label: 'CREATE',
                             click: function () {
                                 self.create_playlist(self.hide)
-                                //self.hide();
                             }
                         },
                         {},
@@ -519,6 +503,7 @@ function NewPlaylist() {
         self._win = webix.ui(self.template)
         self._win.show()
     }
+
     self.hide = function () {
         self._win.hide()
         if (self.onHide != undefined) {
