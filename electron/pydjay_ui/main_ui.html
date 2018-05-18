@@ -937,7 +937,11 @@ webix.UIManager.removeHotKey('shift+left');
 webix.UIManager.removeHotKey('shift+right');
 webix.UIManager.removeHotKey('tab');
 
+//webix.UIManager.addHotKey("ctrl+shift+s", main_list_actions.set_as_short_list, $$('display_list'));
+
+
 webix.UIManager.addHotKey("alt+r", queue_actions.reload);
+
 webix.UIManager.addHotKey("t", queue_actions.move_selection_to_top, $$('queue_list'));
 webix.UIManager.addHotKey("u", queue_actions.move_selection_up, $$('queue_list'));
 webix.UIManager.addHotKey("d", queue_actions.move_selection_down, $$('queue_list'));

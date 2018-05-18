@@ -260,6 +260,17 @@ var sidebar_template = {
                                     {
                                         view:'button',
                                         type:'icon',
+                                        icon: 'list',
+                                        width:40,
+                                        click: function () {
+                                            let selected_id = $$("playlist-list").getSelectedItem().id
+                                            win = new SetAsShortlist(selected_id) 
+                                            win.show()
+                                        }
+                                    },
+                                    {
+                                        view:'button',
+                                        type:'icon',
                                         icon: 'edit',
                                         width:40,
                                         click: function () {
