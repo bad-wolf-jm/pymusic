@@ -936,6 +936,7 @@ webix.UIManager.removeHotKey('right');
 webix.UIManager.removeHotKey('shift+left');
 webix.UIManager.removeHotKey('shift+right');
 webix.UIManager.removeHotKey('tab');
+webix.UIManager.removeHotKey('shift+ctrl+s');
 
 //webix.UIManager.addHotKey("ctrl+shift+s", main_list_actions.set_as_short_list, $$('display_list'));
 
@@ -953,6 +954,7 @@ webix.UIManager.addHotKey("enter", queue_actions.preview_selection, $$('queue_li
 
 webix.UIManager.addHotKey("shift+q", main_list_actions.add_selection_to_queue, $$('display_list'));
 webix.UIManager.addHotKey("shift+s", main_list_actions.add_selection_to_short_list, $$('display_list'));
+webix.UIManager.addHotKey("shift+ctrl+s", main_list_actions.save_shortlist_as_playlist, $$('display_list'));
 webix.UIManager.addHotKey("shift+u", main_list_actions.add_selection_to_unavailable, $$('display_list'));
 webix.UIManager.addHotKey("shift+a", main_list_actions.remove_selection_from_unavailable, $$('display_list'));
 webix.UIManager.addHotKey("escape", main_list_actions.display_all_songs, $$('display_list'));

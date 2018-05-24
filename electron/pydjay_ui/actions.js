@@ -194,6 +194,11 @@ var main_list_actions = {
         )
     },
 
+    save_shortlist_as_playlist: function () {
+        var win = new SaveAsPlaylist()
+        win.show()
+    },
+
     edit_track_data: function () {
         var id = $$('display_list').getSelectedId().id;
         edit_track_data(id);

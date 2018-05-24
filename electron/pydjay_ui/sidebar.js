@@ -89,6 +89,7 @@ function display_tag(id){
     return function () {
         DB.get_playlist_tracks(id,
             function (result) {
+                //console.log(result)
                 $QUERY(
                     `SELECT name FROM playlists WHERE id=${id}`,
                     function (r) {

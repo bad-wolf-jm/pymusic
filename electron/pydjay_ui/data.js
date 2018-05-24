@@ -77,17 +77,17 @@ function DataProvider() {
          $QUERY(sql, k)
     }
 
-    self.get_playlist_tracks = function (id, k) {
-        var sql = `SELECT availability.track_id IS NULL as available, playlist_tracks.track_id, favorite, disabled as enabled, title, artist,
-        album, genre, rating, bpm, stream_length, foo.play_count, cover_small as cover, settings.db_image_cache as image_root 
-        FROM playlist_tracks JOIN (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
-        FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts
-        ON tracks.id=play_counts.id_2) foo ON playlist_tracks.track_id=foo.id LEFT JOIN
-        ((select track_id from unavailable_tracks) UNION (select track_id from session_queue)) availability
-        ON availability.track_id=playlist_tracks.track_id LEFT JOIN settings on 1 WHERE playlist_tracks.playlist_id=${id} 
-        ORDER BY title`;
-        $QUERY(sql, k)
-    }
+    // self.get_playlist_tracks = function (id, k) {
+    //     var sql = `SELECT availability.track_id IS NULL as available, playlist_tracks.track_id, favorite, disabled as enabled, title, artist,
+    //     album, genre, rating, bpm, stream_length, foo.play_count, cover_small as cover, settings.db_image_cache as image_root 
+    //     FROM playlist_tracks JOIN (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
+    //     FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts
+    //     ON tracks.id=play_counts.id_2) foo ON playlist_tracks.track_id=foo.id LEFT JOIN
+    //     ((select track_id from unavailable_tracks) UNION (select track_id from session_queue)) availability
+    //     ON availability.track_id=playlist_tracks.track_id LEFT JOIN settings on 1 WHERE playlist_tracks.playlist_id=${id} 
+    //     ORDER BY title`;
+    //     $QUERY(sql, k)
+    // }
 
     self.get_sessions_list = function (k) {
         $QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions 
