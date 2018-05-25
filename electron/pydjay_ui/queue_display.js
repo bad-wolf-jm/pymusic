@@ -66,16 +66,15 @@ function update_suggestions() {
 
 var queue_display_template = {
     type:'line',
-    gravity:1.0,
     css:{
-        border: '0px solid #3c3c3c'
+        border: '0px solid #3c3c3c',
     },
     rows:[
         {
             id: 'queue_list_header_row',
             height:30,
             css:{
-                'background-color':'#5c5c5c',
+                'background-color':'#303030',
                 border: '1px solid #3c3c3c'
              },
              rows: [
@@ -95,9 +94,9 @@ var queue_display_template = {
         {
             view:"list",
             id:'queue_list',
-            itemHeight:35,
             css:{
-                border: '1px solid #3c3c3c'
+                border: '1px solid #3c3c3c',
+                height: "100% !important"
              },
             select:true,
             template: queue_element_template,
@@ -119,8 +118,8 @@ var suggestions_display_template = {
             id: 'suggestion_list_header_row',
             height:30,
             css:{
-                'background-color':'#5c5c5c',
-                border: '1px solid #3c3c3c'
+                'background-color':'#303030',
+                border: '1px solid #3c3c3c',
              },
              rows: [
                  {height:7},
@@ -139,9 +138,10 @@ var suggestions_display_template = {
             view:"list",
             id:'suggestion_list',
             itemHeight:45,
-            height:410,
+            autoHeight: true,
             css:{
-                border: '1px solid #3c3c3c'
+                border: '1px solid #3c3c3c',
+                height: "91% !important"
              },
             select:true,
             template: queue_element_template,

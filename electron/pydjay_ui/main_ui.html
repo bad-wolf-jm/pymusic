@@ -663,7 +663,7 @@ var datatable = webix.ui({
                 'background-color':'#515151',
                 'padding':'0px',
                 'border-bottom': "1px solid #CCCCCC",
-                'height': "100% !important"
+                //'height': "100% !important"
             },
     rows:[
         {
@@ -671,6 +671,7 @@ var datatable = webix.ui({
                 'background-color':'#515151',
                 'padding':'0px',
                 'border-bottom': "1px solid #CCCCCC",
+                //"height": "5% !important"
             },
             cols:[
                 {
@@ -695,7 +696,7 @@ var datatable = webix.ui({
                         //'background-color':'#515151',
                         //'padding':'0px',
                         //'border-bottom': "1px solid #CCCCCC",
-                        'height': "100% !important"
+                        //'height': "100% !important"
                     },
                     width:1
                 },
@@ -750,10 +751,23 @@ var datatable = webix.ui({
             ]
         }]},
         {
+            //height:"100%",
+            css: {
+                        //'background-color':'#515151',
+                        //'padding':'0px',
+                        //'border-bottom': "1px solid #CCCCCC",
+                        //'height': "92% !important"
+                    },
             cols:[
                 sidebar_template,
                 main_list_display_template,
                 {
+                    css: {
+                        //'background-color':'#515151',
+                        //'padding':'0px',
+                        //'border-bottom': "1px solid #CCCCCC",
+                        //'height': "100% !important"
+                    },
                     width:494,
                     rows: [
                         queue_display_template,
@@ -773,7 +787,8 @@ var datatable = webix.ui({
             height:40,
             css: {
                 'background-color': '#202020',
-                'border-top':"1px solid #3f3f3f"
+                'border-top':"1px solid #3f3f3f",
+                // "height": "3% !important"
             },
             cols:[
                 {
@@ -1143,4 +1158,33 @@ function checkTime(i) {
  startTime();
 
 
+ function load_sessions() {
+    let list_id = "sessions-list"
+    $QUERY(
+        `SELECT id, event_name as name, date(start_date) as date, counts.count as count
+        FROM sessions JOIN (select session_id, count(track_id) as count FROM session_tracks
+        GROUP BY session_id) counts ON sessions.id=counts.session_id ORDER BY date ASC`,
+        function (result_list) {
+            $$(list_id).clearAll()
+            $$(list_id).define('data', result_list);
+            $$(list_id).refresh()
+        }
+    )
+
+ }
+
+function load_playlists() {
+    let list_id = "playlist-list"
+    DB.get_group_list(
+        function (result_list) {
+            $$(list_id).clearAll()
+            $$(list_id).define('data', result_list);
+            $$(list_id).refresh() 
+        }
+    )
+ 
+}
+
+load_sessions()
+load_playlists()
 </script>

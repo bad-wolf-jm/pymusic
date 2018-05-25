@@ -157,7 +157,8 @@ var main_list_display_template = {
     type:'line',
     autoheight:true,
     css:{
-        border: '0px solid #3c3c3c'
+        border: '0px solid #3c3c3c',
+        //height: "100% !important"
      },
     rows: [
         {
@@ -216,7 +217,8 @@ var main_list_display_template = {
             css:{
                 'background-color':'#303030',
                 border: '0px solid #5c5c5c',
-                "font-size":'13px'
+                "font-size":'13px',
+                //height: "87.5% !important"
              },
             columns:[
                 { id:"id",            header:"",  width:30, hidden:true, template:"<img src='../resources/images/precue.png' style='filter: invert(1);' height='20'>", checkValue:1, uncheckValue:0},
