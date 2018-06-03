@@ -141,7 +141,7 @@ var suggestions_display_template = {
             autoHeight: true,
             css:{
                 border: '1px solid #3c3c3c',
-                height: "91% !important"
+                height: "93.5% !important"
              },
             select:true,
             template: queue_element_template,

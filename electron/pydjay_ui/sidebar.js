@@ -156,7 +156,8 @@ var sidebar_template = {
             label: '<b>LIBRARY</b>',
             height:30,
             css:{
-                'background-color': '#303030'
+                'background-color': '#303030',
+                "padding-left": "10px"
             }
         },
 
@@ -215,7 +216,8 @@ var sidebar_template = {
             label: '<b>GROUPS</b>',
             height:30,
             css:{
-                'background-color': '#303030'
+                'background-color': '#303030',
+                "padding-left": "10px"
             }
         },
         {
@@ -346,7 +348,8 @@ var sidebar_template = {
             label: '<b>SESSIONS</b>',
             height:30,
             css:{
-                'background-color': '#303030'
+                'background-color': '#303030',
+                "padding-left": "10px"
             }
 
         },
