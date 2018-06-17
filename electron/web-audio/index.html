@@ -20,9 +20,43 @@ HELLO!!
             this.merger.channelInterpretation = "discrete"
             this.splitter.connect(this.merger, 0, 0)
             this.splitter.connect(this.merger, 1, 1)
-            this.splitter.connect(this.merger, 0, 4)
-            this.splitter.connect(this.merger, 1, 5)
+
+            this.duck_under_1 = this.audio_ctx.createGain()
+            this.duck_under_2 = this.audio_ctx.createGain()
+
+            this.splitter.connect(this.duck_under_1, 0, 0).connect(this.merger, 0, 4)
+            this.splitter.connect(this.duck_under_2, 1, 0).connect(this.merger, 0, 5)
             this.merger.connect(this.audio_ctx.destination)
+
+            this.source = null;
+
+            this.play = function (buffer, start, end) {
+                self.stop()
+                self.source = self.audio_ctx.createBufferSource()
+                self.source.buffer = buffer //(wavesurfer.backend.buffer)
+                self.source.channelInterpretation = "discrete"
+                self.source.connect(self.splitter)
+                self.source.start(0, start, end - start)
+            }
+
+            this.stop = function () {
+                (self.source != null) && self.source.stop()
+                self.source = null
+            }
+
+            this.set_monitor_volume = function (volume) {
+                self.duck_under_1.gain.linearRampToValueAtTime(volume, self.audio_ctx.currentTime + 0.75)
+                self.duck_under_2.gain.linearRampToValueAtTime(volume, self.audio_ctx.currentTime + 0.75)
+            }
+
+            this.duck_monitor = function () {
+                self.set_monitor_volume(0.001)
+            }
+
+            this.restore_monitor = function () {
+                self.set_monitor_volume(1)
+            }
+
         }
 
         function PreviewDeckAudioContext() {
@@ -102,24 +136,26 @@ HELLO!!
         }) //function () {
         wavesurfer.on("ready", function () {
             console.log("ready")
-            source = main_context.audio_ctx.createBufferSource()
-            source.buffer = (wavesurfer.backend.buffer)
-            source.channelInterpretation = "discrete"
-            source.connect(main_context.splitter)
-            //source.connect(main_context.destination)
-            source.start()
+            main_context.play(wavesurfer.backend.buffer, 23, 32)
+            // source = main_context.audio_ctx.createBufferSource()
+            // source.buffer = (wavesurfer.backend.buffer)
+            // source.channelInterpretation = "discrete"
+            // source.connect(main_context.splitter)
+            // //source.connect(main_context.destination)
+            // source.start()
             //wavesurfer2.loadBuffer(wavesurfer.buffer)
         })
         wavesurfer.load('track_1.mp3');
 
         wavesurfer2.on("ready", function () {
             console.log("ready")
-            source2 = pre_context.audio_ctx.createBufferSource()
-            source2.buffer = (wavesurfer2.backend.buffer)
-            source2.channelInterpretation = "discrete"
-            source2.connect(pre_context.splitter)
-            //source.connect(main_context.destination)
-            source2.start()
+            // pre_context.play(wavesurfer2.backend.buffer)
+            // source2 = pre_context.audio_ctx.createBufferSource()
+            // source2.buffer = (wavesurfer2.backend.buffer)
+            // source2.channelInterpretation = "discrete"
+            // source2.connect(pre_context.splitter)
+            // //source.connect(main_context.destination)
+            // source2.start()
         })
 
         wavesurfer2.load('track_2.mp3');
