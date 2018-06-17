@@ -2,24 +2,128 @@ HELLO!!
 
 <html>
     <div id="waveform"></div>
+
     <div id="waveform-preview"></div>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/2.0.6/wavesurfer.min.js"></script>
     <script type="text/javascript">
-        var main_context = new AudioContext()
-        var preview_context = new AudioContext()
+
+        function MainDeckAudioContext() {
+            var self = this;
+            this.audio_ctx =  new AudioContext()
+            this.audio_ctx.destination.channelCount = 6
+            this.audio_ctx.destination.channelInterpretation = "discrete"
+            this.splitter =  this.audio_ctx.createChannelSplitter(6)
+            this.splitter.channelInterpretation = "discrete"
+            this.splitter.channelCount=6
+            this.merger = this.audio_ctx.createChannelMerger(6)
+            this.merger.channelCount = 6
+            this.merger.channelInterpretation = "discrete"
+            this.splitter.connect(this.merger, 0, 0)
+            this.splitter.connect(this.merger, 1, 1)
+            this.splitter.connect(this.merger, 0, 4)
+            this.splitter.connect(this.merger, 1, 5)
+            this.merger.connect(this.audio_ctx.destination)
+        }
+
+        function PreviewDeckAudioContext() {
+            var self = this;
+            this.audio_ctx =  new AudioContext()
+            this.audio_ctx.destination.channelCount = 6
+            this.audio_ctx.destination.channelInterpretation = "discrete"
+            this.splitter =  this.audio_ctx.createChannelSplitter(6)
+            this.splitter.channelInterpretation = "discrete"
+            this.splitter.channelCount = 6
+            this.merger = this.audio_ctx.createChannelMerger(6)
+            this.merger.channelCount = 6
+            this.merger.channelInterpretation = "discrete"
+            this.splitter.connect(this.merger, 0, 4)
+            this.splitter.connect(this.merger, 1, 5)
+            this.merger.connect(this.audio_ctx.destination)
+        }
+
+
+
+        var main_context = new MainDeckAudioContext()
+        // main_context.destination.channelCount = 6
+        // main_context.destination.channelInterpretation = "discrete"
+        // splitter =  main_context.createChannelSplitter(6)
+        // splitter.channelInterpretation = "discrete"
+        // splitter.channelCount = 6
+        // merger = main_context.createChannelMerger(6)
+        // merger.channelCount = 6
+        // merger.channelInterpretation = "discrete"
+        // splitter.connect(merger, 0, 0)
+        // splitter.connect(merger, 1, 1)
+        // splitter.connect(merger, 0, 4)
+        // splitter.connect(merger, 1, 5)
+        // merger.connect(main_context.destination)
+
+        var pre_context = new PreviewDeckAudioContext()
+        // pre_context .destination.channelCount = 6
+        // pre_context .destination.channelInterpretation = "discrete"
+        // splitter2 = pre_context.createChannelSplitter(6)
+        // splitter2.channelInterpretation = "discrete"
+        // splitter2.channelCount=6
+        // merger2 = pre_context.createChannelMerger(6)
+        // merger2.channelCount = 6
+        // merger2.channelInterpretation = "discrete"
+        // splitter2.connect(merger2, 0, 4)
+        // splitter2.connect(merger2, 1, 5)
+        // merger2.connect(pre_context.destination)
+
+
+
+        //var preview_context = new AudioContext()
         var wavesurfer = WaveSurfer.create({
             container: '#waveform',
             scrollParent: true,
             hideScrollbar: true,
-            audioContext:main_context
+            //audioContext:main_context
         });
         var wavesurfer2 = WaveSurfer.create({
             container: '#waveform-preview',
             scrollParent: true,
             hideScrollbar: true,
-            audioContext:preview_context
+            // waveColor: "purple",
+            // progressColor: "blue",
+            //audioContext:preview_context
         });
+        wavesurfer.on("loading", function (p, o) {
+            // console.log(p)
+            // if (p == 100) {
+            //     source = main_context.createBufferSource()
+            // source.buffer = (wavesurfer.backend.buffer)
+            // source.channelInterpretation = "discrete"
+            // source.connect(splitter)
+            // //source.connect(main_context.destination)
+            // source.start()
+
+            // }
+        }) //function () {
+        wavesurfer.on("ready", function () {
+            console.log("ready")
+            source = main_context.audio_ctx.createBufferSource()
+            source.buffer = (wavesurfer.backend.buffer)
+            source.channelInterpretation = "discrete"
+            source.connect(main_context.splitter)
+            //source.connect(main_context.destination)
+            source.start()
+            //wavesurfer2.loadBuffer(wavesurfer.buffer)
+        })
         wavesurfer.load('track_1.mp3');
+
+        wavesurfer2.on("ready", function () {
+            console.log("ready")
+            source2 = pre_context.audio_ctx.createBufferSource()
+            source2.buffer = (wavesurfer2.backend.buffer)
+            source2.channelInterpretation = "discrete"
+            source2.connect(pre_context.splitter)
+            //source.connect(main_context.destination)
+            source2.start()
+        })
+
         wavesurfer2.load('track_2.mp3');
+        //main_context.source.start()
+        //wavesurfer.backend.ac.destination.addEventListener("audioprocess", () => {console.log("x")})
     </script>
 </html>
