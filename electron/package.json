@@ -1,7 +1,7 @@
 {
   "name": "pymusic_ui",
   "version": "0.0.1",
-  "main": "./main.js",
+  "main": "./web-audio/main.js",
   "scripts": {
     "start": "electron ."
   },
@@ -19,7 +19,6 @@
     "jsmediatags": "^3.8.1",
     "mp3.js": "^0.2.0",
     "mysql": "^2.14.1",
-    "semantic-ui": "^2.2.13",
     "waves-ui": "github:wavesjs/ui",
     "zeromq": "^4.6.0",
     "webix": "^5.2.0"

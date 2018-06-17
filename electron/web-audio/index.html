@@ -1,0 +1,25 @@
+HELLO!!
+
+<html>
+    <div id="waveform"></div>
+    <div id="waveform-preview"></div>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/2.0.6/wavesurfer.min.js"></script>
+    <script type="text/javascript">
+        var main_context = new AudioContext()
+        var preview_context = new AudioContext()
+        var wavesurfer = WaveSurfer.create({
+            container: '#waveform',
+            scrollParent: true,
+            hideScrollbar: true,
+            audioContext:main_context
+        });
+        var wavesurfer2 = WaveSurfer.create({
+            container: '#waveform-preview',
+            scrollParent: true,
+            hideScrollbar: true,
+            audioContext:preview_context
+        });
+        wavesurfer.load('track_1.mp3');
+        wavesurfer2.load('track_2.mp3');
+    </script>
+</html>
