@@ -73,6 +73,24 @@ HELLO!!
             this.splitter.connect(this.merger, 0, 4)
             this.splitter.connect(this.merger, 1, 5)
             this.merger.connect(this.audio_ctx.destination)
+
+            this.play = function (buffer, start, end) {
+                self.stop()
+                self.source = self.audio_ctx.createBufferSource()
+                self.source.buffer = buffer //(wavesurfer.backend.buffer)
+                self.source.channelInterpretation = "discrete"
+                self.source.connect(self.splitter)
+                self.source.start(0, start, end - start)
+            }
+
+            this.pause = function () {
+
+            }
+
+            this.stop = function () {
+                (self.source != null) && self.source.stop()
+                self.source = null
+            }
         }
 
 
