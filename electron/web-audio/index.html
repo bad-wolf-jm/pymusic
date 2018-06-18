@@ -6,7 +6,7 @@ HELLO!!
     <link rel="stylesheet" href="../node_modules/webix/webix.css">
     <link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">
     <link rel="stylesheet" href="../node_modules/webix/skins/contrast.css">
-    <link rel="stylesheet" href="./pymusic_style.css">
+    <link rel="stylesheet" href="../pydjay_ui/pymusic_style.css">
         
     <!-- <div id="waveform"></div>
 
@@ -14,25 +14,47 @@ HELLO!!
     <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/2.0.6/wavesurfer.min.js"></script>
     <script type="text/javascript">
 
+        class PydjayAudioContext {
+            constructor() {
+                this.audio_ctx =  new AudioContext()
+                this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
+                this.audio_ctx.destination.channelInterpretation = "discrete"
+                this.splitter =  this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
+                this.splitter.channelInterpretation = "discrete"
+                this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
+                this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
+                this.merger.channelInterpretation = "discrete"
+                this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
+                this.splitter.connect(this.merger, 0, 0)
+                this.splitter.connect(this.merger, 1, 1)
+                this.duck_under_1 = this.audio_ctx.createGain()
+                this.duck_under_2 = this.audio_ctx.createGain()
+                this.splitter.connect(this.duck_under_1, 0, 0).connect(this.merger, 0, 4)
+                this.splitter.connect(this.duck_under_2, 1, 0).connect(this.merger, 0, 5)
+                this.merger.connect(this.audio_ctx.destination)
+                this.source = null;
+            }
+        }
+
         function MainDeckAudioContext() {
             var self = this;
             this.audio_ctx =  new AudioContext()
-            this.audio_ctx.destination.channelCount = 6
+            this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
             this.audio_ctx.destination.channelInterpretation = "discrete"
-            this.splitter =  this.audio_ctx.createChannelSplitter(6)
+            this.splitter =  this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
             this.splitter.channelInterpretation = "discrete"
-            this.splitter.channelCount=6
-            this.merger = this.audio_ctx.createChannelMerger(6)
-            this.merger.channelCount = 6
+            this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
+            this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
             this.merger.channelInterpretation = "discrete"
+            this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
             this.splitter.connect(this.merger, 0, 0)
             this.splitter.connect(this.merger, 1, 1)
 
             this.duck_under_1 = this.audio_ctx.createGain()
             this.duck_under_2 = this.audio_ctx.createGain()
 
-            this.splitter.connect(this.duck_under_1, 0, 0).connect(this.merger, 0, 4)
-            this.splitter.connect(this.duck_under_2, 1, 0).connect(this.merger, 0, 5)
+            //this.splitter.connect(this.duck_under_1, 0, 0).connect(this.merger, 0, 4)
+            //this.splitter.connect(this.duck_under_2, 1, 0).connect(this.merger, 0, 5)
             this.merger.connect(this.audio_ctx.destination)
 
             this.source = null;
@@ -75,16 +97,16 @@ HELLO!!
         function PreviewDeckAudioContext() {
             var self = this;
             this.audio_ctx =  new AudioContext()
-            this.audio_ctx.destination.channelCount = 6
+            this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
             this.audio_ctx.destination.channelInterpretation = "discrete"
-            this.splitter =  this.audio_ctx.createChannelSplitter(6)
+            this.splitter =  this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
             this.splitter.channelInterpretation = "discrete"
-            this.splitter.channelCount = 6
-            this.merger = this.audio_ctx.createChannelMerger(6)
-            this.merger.channelCount = 6
+            this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
+            this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
+            this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
             this.merger.channelInterpretation = "discrete"
-            this.splitter.connect(this.merger, 0, 4)
-            this.splitter.connect(this.merger, 1, 5)
+            //this.splitter.connect(this.merger, 0, 4)
+            //this.splitter.connect(this.merger, 1, 5)
             this.merger.connect(this.audio_ctx.destination)
 
             this.play = function (buffer, start, end) {
@@ -162,14 +184,14 @@ HELLO!!
         var wavesurfer = WaveSurfer.create({
             container: '#waveform',
             pixelRatio: 1,
-            //scrollParent: true,
-            //hideScrollbar: true,
+            scrollParent: true,
+            hideScrollbar: true,
             //audioContext:main_context
         });
         var wavesurfer2 = WaveSurfer.create({
             container: '#waveform-preview',
-            //scrollParent: true,
-            //hideScrollbar: true,
+            scrollParent: true,
+            hideScrollbar: true,
             // waveColor: "purple",
             // progressColor: "blue",
             //audioContext:preview_context
