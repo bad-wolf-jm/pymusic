@@ -12,9 +12,14 @@ HELLO!!
 
     <div id="waveform-preview"></div> -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/2.0.6/wavesurfer.min.js"></script>
+    <script src="decoder.js"></script>
     <script type="text/javascript">
 
         class PydjayAudioContext {
+            /*
+
+            */
+
             constructor() {
                 this.audio_ctx =  new AudioContext()
                 this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
@@ -137,7 +142,7 @@ HELLO!!
         foo = webix.ui({
             rows: [
                 {
-                    height:128,
+                    height:100,
                     view:"template",
                     template:'<div id="waveform"></div>'
                 },
@@ -156,7 +161,7 @@ HELLO!!
                     ]
                 },
                 {
-                    height:128,
+                    height:100,
                     view:"template",
                     template:'<div id="waveform-preview"></div>'
                 },
@@ -199,13 +204,13 @@ HELLO!!
         wavesurfer.on("ready", function () {
             console.log("ready")
         })
-        wavesurfer.load('track_1.mp3');
+        //wavesurfer.load('track_1.mp3');
 
         wavesurfer2.on("ready", function () {
             console.log("ready")
         })
 
-        wavesurfer2.load('track_2.mp3');
+        //wavesurfer2.load('track_2.mp3');
         //main_context.source.start()
         //wavesurfer.backend.ac.destination.addEventListener("audioprocess", () => {console.log("x")})
     </script>
