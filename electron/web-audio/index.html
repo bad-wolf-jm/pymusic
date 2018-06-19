@@ -16,60 +16,86 @@ HELLO!!
     <script type="text/javascript">
 
         class PydjayAudioContext {
-            /*
-
-            */
-
             constructor() {
                 this.audio_ctx =  new AudioContext()
                 this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
                 this.audio_ctx.destination.channelInterpretation = "discrete"
-                this.splitter =  this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
-                this.splitter.channelInterpretation = "discrete"
-                this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
-                this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
-                this.merger.channelInterpretation = "discrete"
-                this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
-                this.splitter.connect(this.merger, 0, 0)
-                this.splitter.connect(this.merger, 1, 1)
-                this.duck_under_1 = this.audio_ctx.createGain()
-                this.duck_under_2 = this.audio_ctx.createGain()
-                this.splitter.connect(this.duck_under_1, 0, 0).connect(this.merger, 0, 4)
-                this.splitter.connect(this.duck_under_2, 1, 0).connect(this.merger, 0, 5)
+                this.createSplitter()
+                this.createMerger()
+                this.createGainControls()
                 this.merger.connect(this.audio_ctx.destination)
                 this.source = null;
             }
+
+            createSplitter() {
+                this.splitter = this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
+                this.splitter.channelInterpretation = "discrete"
+                this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
+            }
+
+            createMerger() {
+                this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
+                this.merger.channelInterpretation = "discrete"
+                this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
+            }
+
+            createGainControls() {
+                this.gain_controls = []
+                let i=0
+                for (i=0; i < this.audio_ctx.destination.maxChannelCount; i++) {
+                    let g = this.audio_ctx.createGain()
+                    g.connect(this.merger, 0, i)
+                    this.gain_controls.push(g)
+                }
+            }
         }
+
+        class PydjayMainAudioContext extends PydjayAudioContext {
+            constructor(channel_layout) {
+                super()
+                console.log(channel_layout)
+                if (channel_layout.master != undefined){
+                    this.splitter.connect(this.gain_controls[channel_layout.master.left], 0, 0)
+                    this.splitter.connect(this.gain_controls[channel_layout.master.right], 1, 0)
+                }
+                if (channel_layout.monitor != undefined) {
+                    this.splitter.connect(this.gain_controls[channel_layout.monitor.left], 0, 0)
+                    this.splitter.connect(this.gain_controls[channel_layout.monitor.right], 1, 0)
+                }
+            }
+        }
+
 
         function MainDeckAudioContext() {
             var self = this;
-            this.audio_ctx =  new AudioContext()
-            this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
-            this.audio_ctx.destination.channelInterpretation = "discrete"
-            this.splitter =  this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
-            this.splitter.channelInterpretation = "discrete"
-            this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
-            this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
-            this.merger.channelInterpretation = "discrete"
-            this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
-            this.splitter.connect(this.merger, 0, 0)
-            this.splitter.connect(this.merger, 1, 1)
+            this.audio_ctx =  new PydjayMainAudioContext({master: {left:2, right:3}, monitor: {left:4, right:5}})
+            // this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
+            // this.audio_ctx.destination.channelInterpretation = "discrete"
+            // this.splitter =  this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
+            // this.splitter.channelInterpretation = "discrete"
+            // this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
+            // this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
+            // this.merger.channelInterpretation = "discrete"
+            // this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
+            // this.splitter.connect(this.merger, 0, 0)
+            // this.splitter.connect(this.merger, 1, 1)
 
-            this.duck_under_1 = this.audio_ctx.createGain()
-            this.duck_under_2 = this.audio_ctx.createGain()
+            // this.duck_under_1 = this.audio_ctx.createGain()
+            // this.duck_under_2 = this.audio_ctx.createGain()
 
-            //this.splitter.connect(this.duck_under_1, 0, 0).connect(this.merger, 0, 4)
-            //this.splitter.connect(this.duck_under_2, 1, 0).connect(this.merger, 0, 5)
-            this.merger.connect(this.audio_ctx.destination)
+            // //this.splitter.connect(this.duck_under_1, 0, 0).connect(this.merger, 0, 4)
+            // //this.splitter.connect(this.duck_under_2, 1, 0).connect(this.merger, 0, 5)
+            // this.merger.connect(this.audio_ctx.destination)
 
             this.source = null;
 
             this.play = function (buffer, start, end) {
                 self.stop()
-                self.source = self.audio_ctx.createBufferSource()
+                self.source = self.audio_ctx.audio_ctx.createBufferSource()
                 self.source.buffer = buffer //(wavesurfer.backend.buffer)
-                self.source.channelInterpretation = "discrete"
-                self.source.connect(self.splitter)
+                self.source.channelCount = 2
+                self.source.channelInterpretation = "speakers"
+                self.source.connect(self.audio_ctx.splitter)
                 if ((start != undefined) && (end != undefined)) {
                     self.source.start(0, start, end - start)
                 } else if (start != undefined) {
@@ -84,18 +110,18 @@ HELLO!!
                 self.source = null
             }
 
-            this.set_monitor_volume = function (volume) {
-                self.duck_under_1.gain.linearRampToValueAtTime(volume, self.audio_ctx.currentTime + 0.75)
-                self.duck_under_2.gain.linearRampToValueAtTime(volume, self.audio_ctx.currentTime + 0.75)
-            }
+            // this.set_monitor_volume = function (volume) {
+            //     self.duck_under_1.gain.linearRampToValueAtTime(volume, self.audio_ctx.currentTime + 0.75)
+            //     self.duck_under_2.gain.linearRampToValueAtTime(volume, self.audio_ctx.currentTime + 0.75)
+            // }
 
-            this.duck_monitor = function () {
-                self.set_monitor_volume(0.001)
-            }
+            // this.duck_monitor = function () {
+            //     self.set_monitor_volume(0.001)
+            // }
 
-            this.restore_monitor = function () {
-                self.set_monitor_volume(1)
-            }
+            // this.restore_monitor = function () {
+            //     self.set_monitor_volume(1)
+            // }
 
         }
 
@@ -110,8 +136,8 @@ HELLO!!
             this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
             this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
             this.merger.channelInterpretation = "discrete"
-            //this.splitter.connect(this.merger, 0, 4)
-            //this.splitter.connect(this.merger, 1, 5)
+            this.splitter.connect(this.merger, 0, 4)
+            this.splitter.connect(this.merger, 1, 5)
             this.merger.connect(this.audio_ctx.destination)
 
             this.play = function (buffer, start, end) {
@@ -137,6 +163,20 @@ HELLO!!
                 (self.source != null) && self.source.stop()
                 self.source = null
             }
+
+            this.playUrl = function (url) {
+                self.source = new Audio()
+                self.source.src = url
+                //let ctx = new AudioContext()
+                let x = self.audio_ctx.createMediaElementSource(self.source)
+                x.channelInterpretation = "discrete"
+                x.connect(self.splitter)
+                self.source.play()
+                console.log(self.source)
+                //let y = self.audio_ctx.createGain()
+                //y.gain.linearRampToValueAtTime(10, 2)
+                //let t = x.connect(y).connect(ctx.destination)
+            } 
         }
 
         foo = webix.ui({
@@ -172,7 +212,9 @@ HELLO!!
                             view: "button",
                             label: "PLAY", 
                             click: function () {
-                                pre_context.play(wavesurfer2.backend.buffer)
+                                pre_context.playUrl("track_2.mp3")
+                            
+                                // pre_context.play(wavesurfer2.backend.buffer)
                             }
                         },
                         {}
@@ -204,7 +246,7 @@ HELLO!!
         wavesurfer.on("ready", function () {
             console.log("ready")
         })
-        //wavesurfer.load('track_1.mp3');
+        wavesurfer.load('track_1.mp3');
 
         wavesurfer2.on("ready", function () {
             console.log("ready")

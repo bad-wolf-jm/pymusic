@@ -32,3 +32,17 @@ class AudioDecoder {
         this.decoding_audio_context.decodeAudioData(arraybuffer, callback.bind(this), errback);
     }
 }
+
+class MEDecoder {
+    load(url) {
+        foo = new Audio()
+        foo.src = url
+        let ctx = new AudioContext()
+        let x = ctx.createMediaElementSource(foo)
+        let y = ctx.createGain()
+        y.gain.linearRampToValueAtTime(10, 2)
+        let t = x.connect(y).connect(ctx.destination)
+        //return x
+        //foo.play()
+    }
+}
