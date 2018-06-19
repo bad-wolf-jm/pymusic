@@ -23,6 +23,11 @@ HELLO!!
                 this.createSplitter()
                 this.createMerger()
                 this.createGainControls()
+                this.time_monitor = this.audio_ctx.createScriptProcessor(256, 1, 1)
+                this.time_monitor.onaudioprocess = () => {
+                    (this.time_callback != null) && this.time_callback(this.audio_ctx.currentTime)
+                }
+                this.merger.connect(this.time_monitor).connect(this.audio_ctx.destination)
                 this.merger.connect(this.audio_ctx.destination)
                 this.source = null;
             }
@@ -48,6 +53,67 @@ HELLO!!
                     this.gain_controls.push(g)
                 }
             }
+
+            connectOutputs(channel_layout) {
+                let channel_names = Object.keys(channel_layout)
+                this.splitter.disconnect()
+                for (let i=0; i<channel_names.length; i++) {
+                    let channel_data = channel_layout[channel_names[i]]
+                    this.splitter.connect(this.gain_controls[channel_data.left], 0, 0)
+                    this.splitter.connect(this.gain_controls[channel_data.right], 1, 0)
+                }
+            }
+        }
+
+        class AudioPlayer {
+            constructor() {
+                this.state = "STOPPED"
+                this.url = null
+                this.source = null
+                this.stream_position = null
+                this.stream_start_timestamp = null
+                this.output_channel_layout = null
+                this.audio_context = new PydjayAudioContext()
+                this.audio_context.setTimeMonitor(this.updateStreamPosition.bind(this))
+            }
+
+            play(url, start_time, end_time) {
+                this.stop()
+                this.source = new Audio()
+                this.source.autoplay = false
+                this.source.src = url
+                this.stream_start_timestamp = self.audio_context.currentTime
+                let x = this.audio_context.createMediaElementSource(self.source)
+                x.channelInterpretation = "discrete"
+                x.connect(this.audio_context.splitter)
+                this.source.fastSeek(start_time / 1000000000)
+                this.source.play()
+                this.state = "PLAYING"
+                this.stream_stop_time = end_time
+            }
+
+            pause() {
+                this.state = "PAUSED"
+                (self.source != null) && self.source.pause()
+            }
+
+            stop() {
+                (self.source != null) && self.source.pause()
+                self.source = null
+                this.state = "STOPPED"
+            }
+
+            setVolume(channel_name, gain_value) {
+
+            }
+
+            getVolume(channel_name) {
+
+            }
+
+            updateStreamPosition(playback_time) {
+
+            }
         }
 
         class PydjayMainAudioContext extends PydjayAudioContext {
@@ -68,25 +134,8 @@ HELLO!!
 
         function MainDeckAudioContext() {
             var self = this;
-            this.audio_ctx =  new PydjayMainAudioContext({master: {left:2, right:3}, monitor: {left:4, right:5}})
-            // this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
-            // this.audio_ctx.destination.channelInterpretation = "discrete"
-            // this.splitter =  this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
-            // this.splitter.channelInterpretation = "discrete"
-            // this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
-            // this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
-            // this.merger.channelInterpretation = "discrete"
-            // this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
-            // this.splitter.connect(this.merger, 0, 0)
-            // this.splitter.connect(this.merger, 1, 1)
-
-            // this.duck_under_1 = this.audio_ctx.createGain()
-            // this.duck_under_2 = this.audio_ctx.createGain()
-
-            // //this.splitter.connect(this.duck_under_1, 0, 0).connect(this.merger, 0, 4)
-            // //this.splitter.connect(this.duck_under_2, 1, 0).connect(this.merger, 0, 5)
-            // this.merger.connect(this.audio_ctx.destination)
-
+            this.audio_ctx =  new PydjayAudioContext()
+            this.audio_ctx.connectOutputs({master: {left:0, right:1}}) //, monitor: {left:4, right:5}})
             this.source = null;
 
             this.play = function (buffer, start, end) {
@@ -136,8 +185,8 @@ HELLO!!
             this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
             this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
             this.merger.channelInterpretation = "discrete"
-            this.splitter.connect(this.merger, 0, 4)
-            this.splitter.connect(this.merger, 1, 5)
+            this.splitter.connect(this.merger, 0, 0)
+            this.splitter.connect(this.merger, 1, 1)
             this.merger.connect(this.audio_ctx.destination)
 
             this.play = function (buffer, start, end) {
