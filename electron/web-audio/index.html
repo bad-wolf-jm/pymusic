@@ -13,221 +13,13 @@ HELLO!!
     <div id="waveform-preview"></div> -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/2.0.6/wavesurfer.min.js"></script>
     <script src="decoder.js"></script>
+    <script src="audio_context.js"></script>
+    <script src="audio_player.js"></script>
     <script type="text/javascript">
-
-        class PydjayAudioContext {
-            constructor() {
-                this.audio_ctx =  new AudioContext()
-                this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
-                this.audio_ctx.destination.channelInterpretation = "discrete"
-                this.createSplitter()
-                this.createMerger()
-                this.createGainControls()
-                this.time_monitor = this.audio_ctx.createScriptProcessor(256, 1, 1)
-                this.time_monitor.onaudioprocess = () => {
-                    (this.time_callback != null) && this.time_callback(this.audio_ctx.currentTime)
-                }
-                this.merger.connect(this.time_monitor).connect(this.audio_ctx.destination)
-                this.merger.connect(this.audio_ctx.destination)
-                this.source = null;
-            }
-
-            createSplitter() {
-                this.splitter = this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
-                this.splitter.channelInterpretation = "discrete"
-                this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
-            }
-
-            createMerger() {
-                this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
-                this.merger.channelInterpretation = "discrete"
-                this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
-            }
-
-            createGainControls() {
-                this.gain_controls = []
-                let i=0
-                for (i=0; i < this.audio_ctx.destination.maxChannelCount; i++) {
-                    let g = this.audio_ctx.createGain()
-                    g.connect(this.merger, 0, i)
-                    this.gain_controls.push(g)
-                }
-            }
-
-            connectOutputs(channel_layout) {
-                let channel_names = Object.keys(channel_layout)
-                this.splitter.disconnect()
-                for (let i=0; i<channel_names.length; i++) {
-                    let channel_data = channel_layout[channel_names[i]]
-                    this.splitter.connect(this.gain_controls[channel_data.left], 0, 0)
-                    this.splitter.connect(this.gain_controls[channel_data.right], 1, 0)
-                }
-            }
-        }
-
-        class AudioPlayer {
-            constructor() {
-                this.state = "STOPPED"
-                this.url = null
-                this.source = null
-                this.stream_position = null
-                this.stream_start_timestamp = null
-                this.output_channel_layout = null
-                this.audio_context = new PydjayAudioContext()
-                this.audio_context.setTimeMonitor(this.updateStreamPosition.bind(this))
-            }
-
-            play(url, start_time, end_time) {
-                this.stop()
-                this.source = new Audio()
-                this.source.autoplay = false
-                this.source.src = url
-                this.stream_start_timestamp = self.audio_context.currentTime
-                let x = this.audio_context.createMediaElementSource(self.source)
-                x.channelInterpretation = "discrete"
-                x.connect(this.audio_context.splitter)
-                this.source.fastSeek(start_time / 1000000000)
-                this.source.play()
-                this.state = "PLAYING"
-                this.stream_stop_time = end_time
-            }
-
-            pause() {
-                this.state = "PAUSED"
-                (self.source != null) && self.source.pause()
-            }
-
-            stop() {
-                (self.source != null) && self.source.pause()
-                self.source = null
-                this.state = "STOPPED"
-            }
-
-            setVolume(channel_name, gain_value) {
-
-            }
-
-            getVolume(channel_name) {
-
-            }
-
-            updateStreamPosition(playback_time) {
-
-            }
-        }
-
-        class PydjayMainAudioContext extends PydjayAudioContext {
-            constructor(channel_layout) {
-                super()
-                console.log(channel_layout)
-                if (channel_layout.master != undefined){
-                    this.splitter.connect(this.gain_controls[channel_layout.master.left], 0, 0)
-                    this.splitter.connect(this.gain_controls[channel_layout.master.right], 1, 0)
-                }
-                if (channel_layout.monitor != undefined) {
-                    this.splitter.connect(this.gain_controls[channel_layout.monitor.left], 0, 0)
-                    this.splitter.connect(this.gain_controls[channel_layout.monitor.right], 1, 0)
-                }
-            }
-        }
-
-
-        function MainDeckAudioContext() {
-            var self = this;
-            this.audio_ctx =  new PydjayAudioContext()
-            this.audio_ctx.connectOutputs({master: {left:0, right:1}}) //, monitor: {left:4, right:5}})
-            this.source = null;
-
-            this.play = function (buffer, start, end) {
-                self.stop()
-                self.source = self.audio_ctx.audio_ctx.createBufferSource()
-                self.source.buffer = buffer //(wavesurfer.backend.buffer)
-                self.source.channelCount = 2
-                self.source.channelInterpretation = "speakers"
-                self.source.connect(self.audio_ctx.splitter)
-                if ((start != undefined) && (end != undefined)) {
-                    self.source.start(0, start, end - start)
-                } else if (start != undefined) {
-                    self.source.start(0, start)
-                } else {
-                    self.source.start(0, start)
-                }
-            }
-
-            this.stop = function () {
-                (self.source != null) && self.source.stop()
-                self.source = null
-            }
-
-            // this.set_monitor_volume = function (volume) {
-            //     self.duck_under_1.gain.linearRampToValueAtTime(volume, self.audio_ctx.currentTime + 0.75)
-            //     self.duck_under_2.gain.linearRampToValueAtTime(volume, self.audio_ctx.currentTime + 0.75)
-            // }
-
-            // this.duck_monitor = function () {
-            //     self.set_monitor_volume(0.001)
-            // }
-
-            // this.restore_monitor = function () {
-            //     self.set_monitor_volume(1)
-            // }
-
-        }
-
-        function PreviewDeckAudioContext() {
-            var self = this;
-            this.audio_ctx =  new AudioContext()
-            this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
-            this.audio_ctx.destination.channelInterpretation = "discrete"
-            this.splitter =  this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
-            this.splitter.channelInterpretation = "discrete"
-            this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
-            this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
-            this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
-            this.merger.channelInterpretation = "discrete"
-            this.splitter.connect(this.merger, 0, 0)
-            this.splitter.connect(this.merger, 1, 1)
-            this.merger.connect(this.audio_ctx.destination)
-
-            this.play = function (buffer, start, end) {
-                self.stop()
-                self.source = self.audio_ctx.createBufferSource()
-                self.source.buffer = buffer //(wavesurfer.backend.buffer)
-                self.source.channelInterpretation = "discrete"
-                self.source.connect(self.splitter)
-                if ((start != undefined) && (end != undefined)) {
-                    self.source.start(0, start, end - start)
-                } else if (start != undefined) {
-                    self.source.start(0, start)
-                } else {
-                    self.source.start(0, start)
-                }
-            }
-
-            this.pause = function () {
-
-            }
-
-            this.stop = function () {
-                (self.source != null) && self.source.stop()
-                self.source = null
-            }
-
-            this.playUrl = function (url) {
-                self.source = new Audio()
-                self.source.src = url
-                //let ctx = new AudioContext()
-                let x = self.audio_ctx.createMediaElementSource(self.source)
-                x.channelInterpretation = "discrete"
-                x.connect(self.splitter)
-                self.source.play()
-                console.log(self.source)
-                //let y = self.audio_ctx.createGain()
-                //y.gain.linearRampToValueAtTime(10, 2)
-                //let t = x.connect(y).connect(ctx.destination)
-            } 
-        }
-
+        var player = new PydjayAudioPlayer()
+        player.connectOutputs({master:{left:2, right:3}})
+        var cue_player = new PydjayAudioPlayer()
+        cue_player.audio_context.connectOutputs({master:{left:4, right:5}})
         foo = webix.ui({
             rows: [
                 {
@@ -242,8 +34,39 @@ HELLO!!
                             view: "button",
                             label: "PLAY", 
                             click: function () {
-                                console.log(main_context)
-                                main_context.play(wavesurfer.backend.buffer)
+                                player.play("track_4.mp3", 45000)
+                            }
+                        },
+                        {},
+                        {
+                            view: "button",
+                            label: "PLAY/PAUSE", 
+                            click: function () {
+                                player.togglePause()
+                            }
+                        },
+                        {},
+                        {
+                            view: "button",
+                            label: "PAUSE", 
+                            click: function () {
+                                player.pause()
+                            }
+                        },
+                        {},
+                        {
+                            view: "button",
+                            label: "STOP", 
+                            click: function () {
+                                player.stop()
+                            }
+                        },
+                        {},
+                        {
+                            view: "button",
+                            label: "Switch", 
+                            click: function () {
+                                player.connectOutputs({master: {left:1, right:0}})
                             }
                         },
                         {}
@@ -261,7 +84,7 @@ HELLO!!
                             view: "button",
                             label: "PLAY", 
                             click: function () {
-                                pre_context.playUrl("track_2.mp3")
+                                cue_player.play("track_4.mp3")
                             
                                 // pre_context.play(wavesurfer2.backend.buffer)
                             }
@@ -275,8 +98,8 @@ HELLO!!
 
 
 
-        var main_context = new MainDeckAudioContext()
-        var pre_context = new PreviewDeckAudioContext()
+        // var main_context = new MainDeckAudioContext()
+        // var pre_context = new PreviewDeckAudioContext()
         var wavesurfer = WaveSurfer.create({
             container: '#waveform',
             pixelRatio: 1,
@@ -295,11 +118,128 @@ HELLO!!
         wavesurfer.on("ready", function () {
             console.log("ready")
         })
-        wavesurfer.load('track_1.mp3');
+        // wavesurfer.load('track_1.mp3');
 
         wavesurfer2.on("ready", function () {
             console.log("ready")
         })
+
+
+
+
+        // class PydjayMainAudioContext extends PydjayAudioContext {
+        //     constructor(channel_layout) {
+        //         super()
+        //         console.log(channel_layout)
+        //         if (channel_layout.master != undefined){
+        //             this.splitter.connect(this.gain_controls[channel_layout.master.left], 0, 0)
+        //             this.splitter.connect(this.gain_controls[channel_layout.master.right], 1, 0)
+        //         }
+        //         if (channel_layout.monitor != undefined) {
+        //             this.splitter.connect(this.gain_controls[channel_layout.monitor.left], 0, 0)
+        //             this.splitter.connect(this.gain_controls[channel_layout.monitor.right], 1, 0)
+        //         }
+        //     }
+        // }
+
+
+        // function MainDeckAudioContext() {
+        //     var self = this;
+        //     this.audio_ctx =  new PydjayAudioContext()
+        //     this.audio_ctx.connectOutputs({master: {left:0, right:1}}) //, monitor: {left:4, right:5}})
+        //     this.source = null;
+
+        //     this.play = function (buffer, start, end) {
+        //         self.stop()
+        //         self.source = self.audio_ctx.audio_ctx.createBufferSource()
+        //         self.source.buffer = buffer //(wavesurfer.backend.buffer)
+        //         self.source.channelCount = 2
+        //         self.source.channelInterpretation = "speakers"
+        //         self.source.connect(self.audio_ctx.splitter)
+        //         if ((start != undefined) && (end != undefined)) {
+        //             self.source.start(0, start, end - start)
+        //         } else if (start != undefined) {
+        //             self.source.start(0, start)
+        //         } else {
+        //             self.source.start(0, start)
+        //         }
+        //     }
+
+        //     this.stop = function () {
+        //         (self.source != null) && self.source.stop()
+        //         self.source = null
+        //     }
+
+        //     // this.set_monitor_volume = function (volume) {
+        //     //     self.duck_under_1.gain.linearRampToValueAtTime(volume, self.audio_ctx.currentTime + 0.75)
+        //     //     self.duck_under_2.gain.linearRampToValueAtTime(volume, self.audio_ctx.currentTime + 0.75)
+        //     // }
+
+        //     // this.duck_monitor = function () {
+        //     //     self.set_monitor_volume(0.001)
+        //     // }
+
+        //     // this.restore_monitor = function () {
+        //     //     self.set_monitor_volume(1)
+        //     // }
+
+        // }
+
+        // function PreviewDeckAudioContext() {
+        //     var self = this;
+        //     this.audio_ctx =  new AudioContext()
+        //     this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
+        //     this.audio_ctx.destination.channelInterpretation = "discrete"
+        //     this.splitter =  this.audio_ctx.createChannelSplitter(this.audio_ctx.destination.maxChannelCount)
+        //     this.splitter.channelInterpretation = "discrete"
+        //     this.splitter.channelCount = this.audio_ctx.destination.maxChannelCount
+        //     this.merger = this.audio_ctx.createChannelMerger(this.audio_ctx.destination.maxChannelCount)
+        //     this.merger.channelCount = this.audio_ctx.destination.maxChannelCount
+        //     this.merger.channelInterpretation = "discrete"
+        //     this.splitter.connect(this.merger, 0, 0)
+        //     this.splitter.connect(this.merger, 1, 1)
+        //     this.merger.connect(this.audio_ctx.destination)
+
+        //     this.play = function (buffer, start, end) {
+        //         self.stop()
+        //         self.source = self.audio_ctx.createBufferSource()
+        //         self.source.buffer = buffer //(wavesurfer.backend.buffer)
+        //         self.source.channelInterpretation = "discrete"
+        //         self.source.connect(self.splitter)
+        //         if ((start != undefined) && (end != undefined)) {
+        //             self.source.start(0, start, end - start)
+        //         } else if (start != undefined) {
+        //             self.source.start(0, start)
+        //         } else {
+        //             self.source.start(0, start)
+        //         }
+        //     }
+
+        //     this.pause = function () {
+
+        //     }
+
+        //     this.stop = function () {
+        //         (self.source != null) && self.source.stop()
+        //         self.source = null
+        //     }
+
+        //     this.playUrl = function (url) {
+        //         self.source = new Audio()
+        //         self.source.src = url
+        //         //let ctx = new AudioContext()
+        //         let x = self.audio_ctx.createMediaElementSource(self.source)
+        //         x.channelInterpretation = "discrete"
+        //         x.connect(self.splitter)
+        //         self.source.play()
+        //         console.log(self.source)
+        //         //let y = self.audio_ctx.createGain()
+        //         //y.gain.linearRampToValueAtTime(10, 2)
+        //         //let t = x.connect(y).connect(ctx.destination)
+        //     } 
+        // }
+
+
 
         //wavesurfer2.load('track_2.mp3');
         //main_context.source.start()
