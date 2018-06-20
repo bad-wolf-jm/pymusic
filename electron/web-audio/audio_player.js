@@ -1,5 +1,6 @@
-class PydjayAudioPlayer {
+class PydjayAudioPlayer extends EventDispatcher {
     constructor() {
+        super()
         this.state = "STOPPED"
         this.url = null
         this.source = null
@@ -9,7 +10,8 @@ class PydjayAudioPlayer {
         this.stream_start_timestamp = null
         this.output_channel_layout = null
         this.audio_context = new PydjayAudioContext()
-        this.audio_context.setTimeMonitor(x => this.updateStreamPosition(x))
+        this.audio_context.on("timestamp", x => this.updateStreamPosition(x))
+        //this.audio_context.setTimeMonitor(x => this.updateStreamPosition(x))
     }
 
     play(url, start_time, end_time) {
@@ -64,8 +66,9 @@ class PydjayAudioPlayer {
     }
 
     onStreamEnded() {
-        console.log("stream end")
+        //console.log("stream end")
         this.stop()
+        this.dispatch("end-of-stream")
     }
 
     setVolume(channel_name, ch, gain_value) {
@@ -74,6 +77,7 @@ class PydjayAudioPlayer {
             if (channel != undefined) {
                 let l = channel[ch]
                 this.audio_context.gain_controls[l].gain.value = gain_value
+                this.dispatch('volume-set', channel_name, ch, gain_value)
             }
         }
     }
@@ -90,12 +94,16 @@ class PydjayAudioPlayer {
 
     updateStreamPosition(playback_time) {
         if (this.stream_start_timestamp != null) {
-            this.stream_position = playback_time * 1000 - this.stream_start_timestamp + this.stream_start
-            if ((this.stream_end != undefined) && (this.stream_position > this.stream_end)) {
-                this.stop()
-                this.onStreamEnded()
+            let stream_position = playback_time * 1000 - this.stream_start_timestamp + this.stream_start
+            stream_position = Math.round(stream_position)
+            if (stream_position != this.stream_position) {
+                this.stream_position = stream_position
+                this.dispatch("stream-position", this.stream_position)
+                if ((this.stream_end != undefined) && (this.stream_position > this.stream_end)) {
+                    this.stop()
+                    this.onStreamEnded()
+                }    
             }
-            //console.log((this.source.duration * 1000 -  this.stream_position).toFixed(1))
         } else {
             this.stream_position = undefined
         }

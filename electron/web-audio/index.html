@@ -12,12 +12,14 @@ HELLO!!
 
     <div id="waveform-preview"></div> -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/2.0.6/wavesurfer.min.js"></script>
-    <script src="decoder.js"></script>
+    <script src="event_dispatcher.js"></script>
     <script src="audio_context.js"></script>
     <script src="audio_player.js"></script>
     <script type="text/javascript">
         var player = new PydjayAudioPlayer()
-        player.connectOutputs({master:{left:2, right:3}})
+        player.connectOutputs({master:{left:2, right:3}, monitor:{left:4, right:5}})
+        //player.on("stream-position", console.log)
+        player.on("end-of-stream", () => console.log("eos"))
         var cue_player = new PydjayAudioPlayer()
         cue_player.audio_context.connectOutputs({master:{left:4, right:5}})
         foo = webix.ui({
@@ -34,7 +36,7 @@ HELLO!!
                             view: "button",
                             label: "PLAY", 
                             click: function () {
-                                player.play("track_4.mp3", 45000)
+                                player.play("track_4.mp3", 0, 47000)
                             }
                         },
                         {},
@@ -85,8 +87,6 @@ HELLO!!
                             label: "PLAY", 
                             click: function () {
                                 cue_player.play("track_4.mp3")
-                            
-                                // pre_context.play(wavesurfer2.backend.buffer)
                             }
                         },
                         {}

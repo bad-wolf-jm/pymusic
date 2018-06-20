@@ -1,5 +1,6 @@
-class PydjayAudioContext {
+class PydjayAudioContext extends EventDispatcher{
     constructor() {
+        super()
         this.audio_ctx =  new AudioContext()
         this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
         this.audio_ctx.destination.channelInterpretation = "discrete"
@@ -9,7 +10,8 @@ class PydjayAudioContext {
         this.time_callback = null
         this.time_monitor = this.audio_ctx.createScriptProcessor(256, 1, 1)
         this.time_monitor.onaudioprocess = () => {
-            (this.time_callback != null) && this.time_callback(this.audio_ctx.currentTime)
+            this.dispatch("timestamp", this.audio_ctx.currentTime)
+            // (this.time_callback != null) && this.time_callback(this.audio_ctx.currentTime)
         }
         this.merger.connect(this.time_monitor).connect(this.audio_ctx.destination)
         this.merger.connect(this.audio_ctx.destination)
@@ -46,7 +48,7 @@ class PydjayAudioContext {
         }
     }
 
-    setTimeMonitor(callback) {
-        this.time_callback = callback
-    }
+    // setTimeMonitor(callback) {
+    //     this.time_callback = callback
+    // }
 }
