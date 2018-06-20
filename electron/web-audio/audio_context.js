@@ -11,7 +11,6 @@ class PydjayAudioContext extends EventDispatcher{
         this.time_monitor = this.audio_ctx.createScriptProcessor(256, 1, 1)
         this.time_monitor.onaudioprocess = () => {
             this.dispatch("timestamp", this.audio_ctx.currentTime)
-            // (this.time_callback != null) && this.time_callback(this.audio_ctx.currentTime)
         }
         this.merger.connect(this.time_monitor).connect(this.audio_ctx.destination)
         this.merger.connect(this.audio_ctx.destination)
@@ -47,8 +46,4 @@ class PydjayAudioContext extends EventDispatcher{
             this.splitter.connect(this.gain_controls[channel_data.right], 1, 0)
         }
     }
-
-    // setTimeMonitor(callback) {
-    //     this.time_callback = callback
-    // }
 }

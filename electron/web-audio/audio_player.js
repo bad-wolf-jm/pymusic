@@ -29,10 +29,12 @@ class PydjayAudioPlayer extends EventDispatcher {
         this.source.play()
         this.state = "PLAYING"
         this.stream_end = end_time
+        this.dispatch("playback-started")
     }
 
     pause() {
         if (this.state == "PLAYING"){
+            this.dispatch("playback-paused")
             this.state = "PAUSED"
             if (this.source != null) {
                 this.source.pause()
@@ -44,6 +46,7 @@ class PydjayAudioPlayer extends EventDispatcher {
         if (this.state == "PAUSED") {
             this.source.play()
             this.state = "PLAYING"
+            this.dispatch("playback-started")
         }
     }
 
@@ -63,6 +66,7 @@ class PydjayAudioPlayer extends EventDispatcher {
         this.stream_end = null
         this.stream_start_timestamp = null
         this.state = "STOPPED"
+        this.dispatch("playback-stopped")
     }
 
     onStreamEnded() {
