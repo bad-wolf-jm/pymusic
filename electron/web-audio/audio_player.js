@@ -24,12 +24,23 @@ class PydjayAudioPlayer extends EventDispatcher {
         x.channelInterpretation = "discrete"
         x.connect(this.audio_context.splitter)
         this.stream_start = (start_time != undefined) ? start_time : 0
-        //this.source.fastSeek(this.stream_start / 1000)
         this.source.currentTime = this.stream_start / 1000
         this.source.play()
         this.state = "PLAYING"
         this.stream_end = end_time
         this.dispatch("playback-started")
+    }
+
+    seek(timestamp) {
+        if (this.source != null) {
+            this.source.currentTime = timestamp
+        }
+    }
+
+    skip(delta) {
+        if (this.source != null) {
+            this.source.currentTime += delta
+        }
     }
 
     pause() {

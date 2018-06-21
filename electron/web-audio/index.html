@@ -17,11 +17,12 @@ HELLO!!
     <script src="audio_player.js"></script>
     <script type="text/javascript">
         var player = new PydjayAudioPlayer()
-        player.connectOutputs({master:{left:2, right:3}, monitor:{left:4, right:5}})
+        //player.connectOutputs({master:{left:0, right:3}, monitor:{left:4, right:5}})
+        player.connectOutputs({master:{left:0, right:1}}) //, monitor:{left:4, right:5}})
         //player.on("stream-position", console.log)
         player.on("end-of-stream", () => console.log("eos"))
         var cue_player = new PydjayAudioPlayer()
-        cue_player.audio_context.connectOutputs({master:{left:4, right:5}})
+        cue_player.audio_context.connectOutputs({master:{left:0, right:1}})
         foo = webix.ui({
             rows: [
                 {

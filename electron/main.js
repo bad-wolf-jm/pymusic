@@ -12,7 +12,7 @@ app.on('ready', function() {
       width: 1728,
       height: 1152,
     });
-    mainWindow.setMenu(null);
+    //mainWindow.setMenu(null);
     mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/main_ui.html');
     // mainWindow.loadURL('file://' + __dirname + '/dbedit_ui/main_ui_edit.html');
 });
