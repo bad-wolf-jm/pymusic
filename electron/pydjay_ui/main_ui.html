@@ -2,6 +2,12 @@
 <title>PYMUSIC DJ App</title>
 <script src="../node_modules/webix/webix.js"></script>
 <script src="../lib/progressbar.js"></script>
+
+<script src="../web-audio/event_dispatcher.js"></script>
+<script src="../web-audio/audio_context.js"></script>
+<script src="../web-audio/audio_player.js"></script>
+
+
 <script src="./utils.js"></script>
 <script src="./sql.js"></script>
 <script src="./data.js"></script>
@@ -113,7 +119,7 @@ $(document).ready( () => {
     {
      strokeWidth: 1,
      easing: 'easeInOut',
-     duration: 50,
+     duration: 5,
      color: '#5a5a5a',
      trailColor: '#eee',
      trailWidth: 1,
@@ -127,7 +133,7 @@ webix.ready( () => {
     preview_seek = new ProgressBar.Line('#preview-progress',
     {
         strokeWidth: 1,
-        duration: 50,
+        duration: 5,
         color: '#5a5a5a',
         trailColor: '#eee',
         trailWidth: 1,

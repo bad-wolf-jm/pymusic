@@ -1,142 +1,77 @@
-// zmq = require('zeromq');
-// path = require('path');
+zmq = require('zeromq');
+path = require('path');
 
-// command_socket = zmq.socket('req');
-// command_socket.connect('tcp://127.0.0.1:9898');
-// command_socket.on("message", function( status, type, payload ) {
+command_socket = zmq.socket('req');
+command_socket.connect('tcp://127.0.0.1:9898');
+command_socket.on("message", function( status, type, payload ) {
 
-// });
+});
 
-// function send_command(name, args, kwargs) {
-//     command_socket.send(JSON.stringify({'name': name, 'args': args, 'kwargs': kwargs}));
-// }
-
-pl = new PydjayAudioPlayer()
-pl.connectOutputs({master:{left:4, right:5}})
-pl.on('playback-stopped', restore_monitor)
-pl.on('playback-paused', restore_monitor)
-pl.on('playback-started', mute_monitor)
+function send_command(name, args, kwargs) {
+    command_socket.send(JSON.stringify({'name': name, 'args': args, 'kwargs': kwargs}));
+}
 
 function preview_play(file_name, start_time, end_time){
-    pl.play(file_name, start_time / 1000000, end_time / 1000000)
+    mute_monitor()
+    send_command('preview_play', [file_name, start_time, end_time], {});
 }
 
 function preview_pause(file_name){
-    pl.togglePause()
+    send_command('preview_pause', [], {});
 }
 
 function preview_stop(file_name){
-    pl.stop()
+    send_command('preview_stop', [], {});
+    restore_monitor();
 }
 
 function preview_seek_relative(time_delta){
-    pl.skip(time_delta)
+    send_command('preview_seek', [time_delta], {});
 }
 
-pl.on("stream-position", function (pos) {
-    $$('preview_time').define('label', `${format_nanoseconds(pos*1000000)}`)
-    $$('preview_time').refresh()
-    $$('preview_length').define('label', format_nanoseconds(pl.source.duration*1000000000))
-    $$('preview_length').refresh();
-    preview_seek.animate(pos / (1000*pl.source.duration));
-    if (track_data_edit_window.isVisible()) {
-        track_edit_waveform.xAxis[0].removePlotLine('position-marker');
-        track_edit_waveform.xAxis[0].addPlotLine({
-            color:'#FF0000',
-            width: 2,
-            zIndex:10,
-            value: pos * 1000000,
-            id: 'position-marker'});
-    }
-    preview_track_position = pos;
-
-})
-
-mpl = new PydjayAudioPlayer()
-mpl.connectOutputs({master:{left:0, right:1}, headphones:{left:4, right:5}})
-mpl.on("stream-position", function (pos) {
-    remaining = Math.abs(mpl.source.duration*1000 - pos)
-    $$('main_track_time').define('label', `-${format_nanoseconds(remaining*1000000)}`)
-    $$('main_track_time').refresh()
-    main_player_progress.animate(pos / (1000*mpl.source.duration));
-
-})
-mpl.on('end-of-stream', function () {
-    if (!stop_request){
-        db_connection.query(
-            'SELECT COUNT(id) as queue_count FROM session_queue WHERE status="pending"',
-            function (error, result) {
-                if (error) throw error;
-                if (result[0].queue_count > 0) {
-                    mark_as_played(current_queue_position, play_next_track_after_time);
-                } else {
-                    mark_as_played(current_queue_position, false);
-                    queue_playing = false;
-                    $$('start-stop-button').define('label', 'START');
-                    $$('start-stop-button').define('icon', 'play');
-                    $$('start-stop-button').refresh();
-                    $$('queue_stop_message').hide()
-                }
-            }
-        )
-    } else {
-        mark_as_played(current_queue_position, false);
-        queue_playing = false;
-        $$('start-stop-button').define('label', 'START');
-        $$('start-stop-button').define('icon', 'play');
-        $$('start-stop-button').refresh();
-        $$('queue_stop_message').hide()
-    }
-})
-
-
-
 function main_play(file_name, start_time, end_time){
-    mpl.play(file_name, start_time / 1000000, end_time / 1000000)
+    send_command('main_play', [file_name, start_time, end_time], {});
 }
 
 function main_stop(file_name, start_time, end_time){
-    mpl.stop()
+    send_command('main_stop', [], {});
 }
 
 function set_main_player_volume(value){
-    mpl.setVolume('master', 'left', value)
-    mpl.setVolume('master', 'right', value)
+    send_command('set_main_player_volume', [value], {});
 }
 
 function set_monitor_volume(value){
-    mpl.setVolume('headphones', 'left', value)
-    mpl.setVolume('headphones', 'right', value)
+    send_command('set_monitor_volume', [value], {});
 }
 
 function set_precue_player_volume(value){
-    pl.setVolume('master', 'left', value)
-    pl.setVolume('master', 'right', value)
+    send_command('set_precue_player_volume', [value], {});
 }
 
-// function increase_main_player_volume(){
-//     send_command('increase_main_player_volume', [], {});
-// }
+function increase_main_player_volume(){
+    send_command('increase_main_player_volume', [], {});
+}
 
-// function increase_monitor_volume(){
-//     send_command('increase_monitor_volume', [], {});
-// }
+function increase_monitor_volume(){
+    send_command('increase_monitor_volume', [], {});
+}
 
-// function increase_precue_player_volume(){
-//     send_command('increase_precue_player_volume', [], {});
-// }
+function increase_precue_player_volume(){
+    send_command('increase_precue_player_volume', [], {});
+}
 
-// function decrease_main_player_volume(){
-//     send_command('decrease_main_player_volume', [], {});
-// }
+function decrease_main_player_volume(){
+    send_command('decrease_main_player_volume', [], {});
+}
 
-// function decrease_monitor_volume(){
-//     send_command('decrease_monitor_volume', [], {});
-// }
+function decrease_monitor_volume(){
+    send_command('decrease_monitor_volume', [], {});
+}
 
-// function decrease_precue_player_volume(){
-//     send_command('decrease_precue_player_volume', [], {});
-// }
+function decrease_precue_player_volume(){
+    send_command('decrease_precue_player_volume', [], {});
+}
 
 
 
@@ -151,7 +86,7 @@ var current_track_length = 1
 
 var monitor_set_volume = 1;
 var monitor_volume = 1;
-var monitor_muted_volume = 0;
+var monitor_muted_volume = 0.01;
 var monitor_muting = false;
 var monitor_muting_time = 200;
 
@@ -184,106 +119,106 @@ function restore_monitor() {
 }
 
 
-// volume_control_socket = zmq.socket('pull');
-// volume_control_socket.connect('tcp://127.0.0.1:5555');
-// volume_control_socket.on("message", function( payload ) {
-//    data = JSON.parse(payload.toString());
-//    value = Math.round(data.kwargs.value*100);
-//    if (data.event == 'volume_set_notice') {
-//        switch (data.kwargs.channels[0]) {
-//             case 1:
-//                 $$('main-player-volume').define('label', `${value}%`);
-//                 $$('main-player-volume').refresh();
-//                 break;
-//             case 3:
-//                 monitor_volume = data.kwargs.value;
-//                 $$('monitor-volume').define('label', `${value}%`)
-//                 $$('monitor-volume').refresh();
-//                 break;
-//             case 5:
-//                 $$('precue-player-volume').define('label', `${value}%`)
-//                 $$('precue-player-volume').refresh();
-//                 break;
-//        }
-//    }
-// });
+volume_control_socket = zmq.socket('pull');
+volume_control_socket.connect('tcp://127.0.0.1:5555');
+volume_control_socket.on("message", function( payload ) {
+   data = JSON.parse(payload.toString());
+   value = Math.round(data.kwargs.value*100);
+   if (data.event == 'volume_set_notice') {
+       switch (data.kwargs.channels[0]) {
+            case 1:
+                $$('main-player-volume').define('label', `${value}%`);
+                $$('main-player-volume').refresh();
+                break;
+            case 3:
+                monitor_volume = data.kwargs.value;
+                $$('monitor-volume').define('label', `${value}%`)
+                $$('monitor-volume').refresh();
+                break;
+            case 5:
+                $$('precue-player-volume').define('label', `${value}%`)
+                $$('precue-player-volume').refresh();
+                break;
+       }
+   }
+});
 
 
-// var preview_track_position = 0
-// preview_time_socket = zmq.socket('pull');
-// preview_time_socket.connect('tcp://127.0.0.1:5556');
-// preview_time_socket.on("message", function( payload ) {
-//    data = JSON.parse(payload.toString());
-//    if (data.event == 'track_position_notice') {
-//        $$('preview_time').define('label', format_nanoseconds(data.args[0]))
-//        $$('preview_time').refresh();
-//        if (track_data_edit_window.isVisible()) {
-//            track_edit_waveform.xAxis[0].removePlotLine('position-marker');
-//            track_edit_waveform.xAxis[0].addPlotLine({
-//                color:'#FF0000',
-//                width: 2,
-//                zIndex:10,
-//                value: data.args[0],
-//                id: 'position-marker'});
-//        }
-//        preview_track_position = data.args[0];
-//        preview_seek.animate(data.args[0] / preview_track_duration);
-//    } else if (data.event == 'track_duration_notice') {
-//        $$('preview_length').define('label', format_nanoseconds(data.args[0]))
-//        $$('preview_length').refresh();
-//        preview_track_duration = data.args[0];
-//    } else if (data.event == 'end_of_stream') {
-//        preview_track_duration = 1;
-//        preview_track_position = 0
-//        restore_monitor();
-//    }
-// });
+var preview_track_position = 0
+preview_time_socket = zmq.socket('pull');
+preview_time_socket.connect('tcp://127.0.0.1:5556');
+preview_time_socket.on("message", function( payload ) {
+   data = JSON.parse(payload.toString());
+   if (data.event == 'track_position_notice') {
+       $$('preview_time').define('label', format_nanoseconds(data.args[0]))
+       $$('preview_time').refresh();
+       if (track_data_edit_window.isVisible()) {
+           track_edit_waveform.xAxis[0].removePlotLine('position-marker');
+           track_edit_waveform.xAxis[0].addPlotLine({
+               color:'#FF0000',
+               width: 2,
+               zIndex:10,
+               value: data.args[0],
+               id: 'position-marker'});
+       }
+       preview_track_position = data.args[0];
+       preview_seek.animate(data.args[0] / preview_track_duration);
+   } else if (data.event == 'track_duration_notice') {
+       $$('preview_length').define('label', format_nanoseconds(data.args[0]))
+       $$('preview_length').refresh();
+       preview_track_duration = data.args[0];
+   } else if (data.event == 'end_of_stream') {
+       preview_track_duration = 1;
+       preview_track_position = 0
+       restore_monitor();
+   }
+});
 
 
 
-// main_time_socket = zmq.socket('pull');
-// main_time_socket.connect('tcp://127.0.0.1:5557');
-// main_time_socket.on("message", function( payload ) {
-//     data = JSON.parse(payload.toString());
-//     if (data.event == 'track_position_notice') {
-//         if (current_track_length != undefined) {
-//             remaining = Math.abs(current_track_length - data.args[0])
-//             $$('main_track_time').define('label', `-${format_nanoseconds(remaining)}`)
-//             $$('main_track_time').refresh()
-//         }
-//         main_player_progress.animate(data.args[0] / current_track_length);
-//     } else if (data.event == 'track_duration_notice') {
-//         $$('main_track_time').define('label', `-${format_nanoseconds(data.args[0])}`)
-//         $$('main_track_time').refresh();
-//         current_track_length = data.args[0];
-//     } else if (data.event == 'end_of_stream') {
-//         if (!stop_request){
-//             db_connection.query(
-//                 'SELECT COUNT(id) as queue_count FROM session_queue WHERE status="pending"',
-//                 function (error, result) {
-//                     if (error) throw error;
-//                     if (result[0].queue_count > 0) {
-//                         mark_as_played(current_queue_position, play_next_track_after_time);
-//                     } else {
-//                         mark_as_played(current_queue_position, false);
-//                         queue_playing = false;
-//                         $$('start-stop-button').define('label', 'START');
-//                         $$('start-stop-button').define('icon', 'play');
-//                         $$('start-stop-button').refresh();
-//                         $$('queue_stop_message').hide()
-//                     }
-//                 }
-//             )
-//         } else {
-//             mark_as_played(current_queue_position, false);
-//             queue_playing = false;
-//             $$('start-stop-button').define('label', 'START');
-//             $$('start-stop-button').define('icon', 'play');
-//             $$('start-stop-button').refresh();
-//             $$('queue_stop_message').hide()
-//         }
-//     }
-// });
+main_time_socket = zmq.socket('pull');
+main_time_socket.connect('tcp://127.0.0.1:5557');
+main_time_socket.on("message", function( payload ) {
+    data = JSON.parse(payload.toString());
+    if (data.event == 'track_position_notice') {
+        if (current_track_length != undefined) {
+            remaining = Math.abs(current_track_length - data.args[0])
+            $$('main_track_time').define('label', `-${format_nanoseconds(remaining)}`)
+            $$('main_track_time').refresh()
+        }
+        main_player_progress.animate(data.args[0] / current_track_length);
+    } else if (data.event == 'track_duration_notice') {
+        $$('main_track_time').define('label', `-${format_nanoseconds(data.args[0])}`)
+        $$('main_track_time').refresh();
+        current_track_length = data.args[0];
+    } else if (data.event == 'end_of_stream') {
+        if (!stop_request){
+            db_connection.query(
+                'SELECT COUNT(id) as queue_count FROM session_queue WHERE status="pending"',
+                function (error, result) {
+                    if (error) throw error;
+                    if (result[0].queue_count > 0) {
+                        mark_as_played(current_queue_position, play_next_track_after_time);
+                    } else {
+                        mark_as_played(current_queue_position, false);
+                        queue_playing = false;
+                        $$('start-stop-button').define('label', 'START');
+                        $$('start-stop-button').define('icon', 'play');
+                        $$('start-stop-button').refresh();
+                        $$('queue_stop_message').hide()
+                    }
+                }
+            )
+        } else {
+            mark_as_played(current_queue_position, false);
+            queue_playing = false;
+            $$('start-stop-button').define('label', 'START');
+            $$('start-stop-button').define('icon', 'play');
+            $$('start-stop-button').refresh();
+            $$('queue_stop_message').hide()
+        }
+    }
+});
 
 
 function mark_as_played(queue_position, continuation) {

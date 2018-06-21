@@ -81,7 +81,6 @@ class PydjayAudioPlayer extends EventDispatcher {
     }
 
     onStreamEnded() {
-        //console.log("stream end")
         this.stop()
         this.dispatch("end-of-stream")
     }
