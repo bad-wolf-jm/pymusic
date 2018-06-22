@@ -1,0 +1,119 @@
+body {
+    color: #CCCCCC;
+    height:100%;
+    width:100%;
+    margin:0px;
+
+}
+
+.header {
+    height: 48px;
+}
+
+.player-deck {
+    height: 200px;
+}
+
+.footer {
+    height: 48px;
+}
+
+
+.container {
+    height: calc(100% - 200px - 96px);
+}
+
+.container .win-hub-surface
+{
+    padding: 0px;
+}
+
+.section {
+    margin-left: 18px;
+}
+
+.win-hub-section
+{
+    padding: 0;
+}
+
+.container .win-hub-section-header
+{
+    margin-top: 0;
+}
+
+.win-hub-section-header-content
+{
+    color: #CCCCCC;
+    font-family: Segoe UI;
+    font-size: 9pt;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.win-hub-section-header-wrapper
+{
+    margin-left: 1px;
+}
+
+.table {
+    display: table;
+    width:100%;
+    height:100%;
+    padding:0px;
+    margin:0px;
+}
+
+.row {
+    display: table-row;
+    padding: 0px;
+    margin: 0px;
+}
+
+.cell {
+    display: table-cell;
+    padding: 0px;
+    margin:0px;
+}
+
+.cell:focus {
+    background-color: #36AEF0;
+    outline: 1px white solid;
+    z-index: 2;
+    margin:0px;
+     /* box-shadow: 0 0 20px 1px #000000; */
+}
+
+.tall, .large, .square, .wide {
+    background-color: #383838;
+    border: 1px solid #000000;
+    position: relative;
+    z-index: 1;
+}
+
+.resize-width {
+    display:visible;
+    resize:horizontal;
+}
+
+
+.tall {
+    height: 100%;
+    width: 104px;
+}
+
+.large {
+    height: 212px;
+    width: 428px;
+}
+
+.square {
+    height: 104px;
+    width: 104px;
+}
+
+.wide {
+    height: 104px;
+    width: 185px;
+}

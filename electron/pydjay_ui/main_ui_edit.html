@@ -2,23 +2,14 @@
 <title>PYMUSIC DJ App</title>
 <script src="../node_modules/webix/webix.js"></script>
 <script src="../lib/progressbar.js"></script>
-
-<script src="../web-audio/event_dispatcher.js"></script>
-<script src="../web-audio/audio_context.js"></script>
-<script src="../web-audio/audio_player.js"></script>
-
-
 <script src="./utils.js"></script>
-<script src="./sql.js"></script>
-<script src="./data.js"></script>
 <script src="./main_list_display.js"></script>
 <script src="./queue_display.js"></script>
-<script src="./playlist_edit.js"></script>
 <script src="./sidebar.js"></script>
 <script src="./playback.js"></script>
 <script src="./track_edit.js"></script>
-<script src="./track_add.js"></script>
 <script src="./queue.js"></script>
+<script src="./sql.js"></script>
 <script src="./actions.js"></script>
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
 <link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">
@@ -32,6 +23,9 @@
 </body>
 <script type="text/javascript">
 $ = require('jquery')
+//var remote = require('remote');
+var dialog = require('electron').remote.dialog;
+//emote.require('dialog');
 Highcharts = require('highcharts')
 var path = require('path');
 
@@ -67,8 +61,7 @@ var player_window = {
                                         'text-transform':'uppercase',
                                         'font-weight':'bold'
                                     },
-                                    label: 'Title Of Song',
-                                    height:20
+                                    label: 'Title Of Song', height:20
                                 },
                                 {
                                     id:'main-artist',
@@ -120,7 +113,7 @@ $(document).ready( () => {
     {
      strokeWidth: 1,
      easing: 'easeInOut',
-     duration: 5,
+     duration: 50,
      color: '#5a5a5a',
      trailColor: '#eee',
      trailWidth: 1,
@@ -128,13 +121,155 @@ $(document).ready( () => {
     main_player_progress.animate(0);
 });
 
+var preview_player_window = {
+    height:190,
+    gravity:1,
+    css:{
+        'background-color':'#6c6c6c',
+        'padding':'1px',
+        border: '1px solid #3c3c3c'
+     },
+     rows: [{
+            cols:[
+                {
+                    id:'preview-cover-image',
+                    view: 'template',
+                    width:58,
+                    height:58,
+                    template: "FOO"
+                },
+                {width:10},
+                {
+                    rows:[
+                        {},
+                        {
+                            id:'preview_title',
+                            view: 'label',
+                            css: {
+                                'text-align':'left',
+                                'font-weight':'bold',
+                                'text-transform':'uppercase',
+                                'white-space':'nowrap',
+                                'overflow': 'hidden',
+                                'text-overflow': 'ellipsis'
+                            },
+                            label: 'Title Of Song',
+                            height:20
+                        },
+                        {
+                            id:'preview_artist',
+                            view: 'label',
+                            css: {
+                                'text-align':'left',
+                                'white-space':'nowrap',
+                                'overflow': 'hidden',
+                                'text-overflow': 'ellipsis'
+                            },
+                            label: 'Artist - Album',
+                            height:20
+                        },
+                        {}
+                    ]
+                },
+                {width:10}
+            ]
+        },
+        {height: 5},
+        {
+            height:5,
+            template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%; transform: translateY(-200%)"></div>'
+        },
+        {height: 3},
+        {cols:[
+            {
+                id:'preview_time',
+                view: 'label',
+                css:{
+                    'text-align':'left',
+                    'text-transform':'uppercase'
+                },
+                label: '0:00',
+                height:20
+            },
+            {},
+            {
+                id:'preview_length',
+                view: 'label',
+                css:{'text-align':'right'},
+                label: '0:00',
+                height:20
+            }
+
+        ]},
+        {height:15},
+        {
+            rows: [
+                {
+                    cols: [
+                        {width: 10},
+                        {
+                            id:'preview_play_last_30_seconds_button',
+                            view:'button',
+                            label: '-30 SECS',
+                            click : function () {
+                                if (preview_track_id != undefined) {
+                                    preview_play_track_id(preview_track_id, -30000000000);
+                                }
+                                webix.UIManager.setFocus($$('track_edit_window'));
+                            }
+                        },
+                        {width:10},
+                        {
+                            id:'preview_play_last_10_seconds_button',
+                            view:'button',
+                            label: '-10 SECS',
+                            click : function () {
+                                if (preview_track_id != undefined) {
+                                    preview_play_track_id(preview_track_id, -10000000000);
+                                }
+                                webix.UIManager.setFocus($$('track_edit_window'));
+                            }
+                        },
+                        {width: 10},
+                    ]
+                },
+                {height:5},
+                {
+                    cols: [
+                        {width: 10},
+                        {
+                            id:'preview_play_button',
+                            view:'button',
+                            label:'PLAY/PAUSE',
+                            click : function () {
+                                preview_pause();
+                            }
+                        },
+                        {width:10},
+                        {
+                            id:'preview_stop_button',
+                            view:'button',
+                            label:'STOP',
+                            click : function () {
+                                preview_stop();
+                            }
+
+                        },
+                        {width: 10},
+                    ]
+                },
+            ]
+        },
+        {}
+    ]
+}
 
 var preview_seek = undefined;
 webix.ready( () => {
     preview_seek = new ProgressBar.Line('#preview-progress',
     {
         strokeWidth: 1,
-        duration: 5,
+        duration: 50,
         color: '#5a5a5a',
         trailColor: '#eee',
         trailWidth: 1,
@@ -163,7 +298,7 @@ var track_data_edit_window = webix.ui({
                         view: 'template',
                         width:128,
                         height:128,
-                        template: ""
+                        template: "FOO"
                     },
                     {width:20},
                     {
@@ -550,6 +685,482 @@ function playback_settings() {
     )
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+var jsmediatags = require("jsmediatags");
+var fs = require('fs');
+const {spawn} = require ('child_process');
+var async = require('async');
+var Jimp = require("jimp");
+var AV = require('av');
+require('mp3.js');
+
+var files_to_add = null;
+var items_to_hide = null;
+var conv_test_folder = '/Users/jihemme/Python/DJ/conv_test'
+var conv_test_folder_img = '/Users/jihemme/Python/DJ/conv_test/images'
+var audio_info = null;
+
+
+
+function addslashes(s) {
+    if (s == null) return null;
+    o = ""
+    d = {'"': '\\"',
+         "'": "\\'",
+         "\0":"\\\0",
+         "\\": "\\\\"}
+
+    for (var i=0; i<s.length; i++) {
+        if (s[i] in d) {
+            o += d[s[i]]
+        } else {
+            o += s[i]
+        }
+    }
+    return o
+}
+
+function none_to_null(v) {
+    return  (v == null) ? null : v
+}
+
+function none_to_zero(v) {
+    return  (v == null) ? 0 : v
+}
+
+function bool_to_int(b) {
+    return b ? 1 : 0
+}
+
+function STRING(s) {
+    return (s != null) ? `'${s}'` : 'NULL'
+}
+
+function DATE(s) {
+    pad = function(num) {
+                var norm = Math.floor(Math.abs(num));
+                //if (norm == 0)
+                return (norm < 10 ? '0' : '') + norm;
+            };
+    d = `${s.getFullYear()}-${pad(s.getMonth()+1)}-${pad(s.getDate())}T${pad(s.getHours())}:${pad(s.getMinutes())}:${pad(s.getSeconds())}`
+    return `'${d}'`
+}
+
+var track_add_progress_dialog =  webix.ui({
+    view:"window",
+    modal:true,
+    position:"center",
+    width:600,
+    height:400,
+    head: false,
+    body:{
+        rows:[
+            {height:10},
+            {
+                id:'track_add_progress',
+                view: "label",
+                label:"Processing track ### of ###",
+                css: {
+                    'text-align': 'center',
+                    'font-size':  '20px',
+                }
+            },
+            {height:10},
+            {
+                id:'track_add_title',
+                view: "label",
+                label:"Title Of Song",
+                css: {
+                    'text-align': 'center',
+                    'font-size': '20px',
+                }
+
+            },
+            {
+                id:'track_add_artist',
+                view: "label",
+                label:"Artist - Album",
+                css: {
+                    'text-align': 'center',
+                    'font-size':  '15px',
+                }
+
+            }
+        ]
+    }
+})
+track_add_progress_dialog.hide();
+
+function add_selected_files_to_database (settings, id, total) {
+    if (items_to_add.length > 0) {
+        let data = items_to_add.pop();
+        let mp3_file = `track_${id}.mp3`
+        let mp3_path = `${settings.music_root}/${mp3_file}`
+        converter = spawn('avconv', ['-y', '-i', data.filename, '-acodec', 'libmp3lame', '-ab',  '320k', '-vn', '-r', '48000', mp3_path])
+        var original_image_file = null;
+        var large_image_file = null;
+        var medium_image_file = null;
+        var small_image_file = null;
+        var wave_path = null;
+
+        $$('track_add_progress').define('label', `ADDING TRACK ${total - items_to_add.length} OF ${total}`)
+        $$('track_add_progress').refresh()
+        $$('track_add_title').define('label', `<b>${data.title}</b>`)
+        $$('track_add_title').refresh()
+        $$('track_add_artist').define('label', `${data.artist} - ${data.album}`)
+        $$('track_add_artist').refresh()
+
+        converter.stdout.on(
+            'data',
+            function (data) {
+                console.log(data)
+            }
+        )
+        converter.on(
+            'error',
+            function (err) {
+                console.log(err)
+            }
+        )
+        converter.on(
+            'close',
+            function () {
+                if (data.picture != undefined) {
+                    image_type = data.picture.format;
+                    extensions = {
+                        'image/jpeg': 'jpg',
+                        'image/png': 'png'
+                    }
+                    if (image_type in extensions) {
+                        ext = extensions[image_type];
+                        original_image_file = `cover_original_${id}.${ext}`
+                        large_image_file = `cover_large_${id}.${ext}`
+                        medium_image_file = `cover_medium_${id}.${ext}`
+                        small_image_file = `cover_small_${id}.${ext}`
+                        Jimp.read(
+                            new Buffer(data.picture.data),
+                            function (err, image) {
+                                if (err) throw err;
+                                image.write(`${settings.image_root}/${original_image_file}`);
+                                image.resize(320,320).write(`${settings.image_root}/${large_image_file}`)
+                                image.resize(160,160).write(`${settings.image_root}/${medium_image_file}`)
+                                image.resize(100,100).write(`${settings.image_root}/${small_image_file}`)
+                            }
+                        )
+                    }
+                }
+                wave_file = `waveform_${id}.wv`
+                wave_path = `${settings.waveform_root}/${wave_file}`
+                waveform_generator = spawn(
+                    'python', ['-m', 'python.generate_waveform', mp3_path, wave_path]
+                )
+                waveform_generator.on(
+                    'close',
+                    function () {
+                        bit_output = ""
+                        bit_info = spawn(
+                            'python', ['-m', 'python.file_info', mp3_path]
+                        )
+                        bit_info.stdout.on(
+                            'data', function (x) {
+                                console.log(x.toString())
+                                bit_output += x.toString()
+                            }
+                        )
+                        bit_info.on(
+                            'close',
+                            function () {
+                                console.log(bit_output);
+                                console.log(JSON.parse(bit_output));
+                                bit_output = JSON.parse(bit_output);
+                                NOW = new Date()
+                                track_info = {
+                                    'id': id,
+                                    'title': STRING(addslashes(data.title)),
+                                    'artist': STRING(addslashes(data.artist)),
+                                    'album': STRING(addslashes(data.album)),
+                                    'year': STRING(none_to_null(data.year)),
+                                    'genre': STRING(addslashes(data.genre)),
+                                    'bpm': STRING(none_to_null(data.bpm)),
+                                    'rating': 0,
+                                    'disabled': 0,
+                                    'favorite': 0,
+                                    'comments': STRING(addslashes(null)),
+                                    'waveform': STRING(addslashes(wave_file)),
+                                    'cover_medium': STRING(addslashes(medium_image_file)),
+                                    'cover_small': STRING(addslashes(small_image_file)),
+                                    'cover_large': STRING(addslashes(large_image_file)),
+                                    'cover_original': STRING(addslashes(original_image_file)),
+                                    'track_length': bit_output.length,
+                                    'stream_start': 0,
+                                    'stream_end': bit_output.length,
+                                    'stream_length': bit_output.length,
+                                    'date_added': DATE(NOW),
+                                    'date_modified': DATE(NOW),
+                                    'bitrate': bit_output.bitrate,
+                                    'samplerate': bit_output.samplerate,
+                                    'file_name': STRING(addslashes(mp3_file)),
+                                    'original_file_name': STRING(addslashes(data.filename)),
+                                    'file_size': bit_output.file_size,
+                                    'hash': 'NULL',
+                                    'grouping': STRING(none_to_null(addslashes(data.grouping))),
+                                    'category': STRING(none_to_null(addslashes(data.category))),
+                                    'description': STRING(none_to_null(addslashes(data.description)))
+                                }
+                                console.log(track_info);
+                                console.log(ADD_TRACK(track_info))
+                                db_connection.query(
+                                    ADD_TRACK(track_info),
+                                    function (error, _) {
+                                        if (error) throw error;
+
+                                        add_selected_files_to_database (settings, id+1, total)
+                                    }
+                                )
+
+                            }
+                        )
+                    }
+                )
+            }
+        )
+    } else {
+        track_add_progress_dialog.hide();
+    }
+}
+
+function ADD_TRACK(track_info) {
+    return `
+    INSERT INTO tracks (
+    id, title, artist, album, year, genre, bpm, rating, favorite, comments, waveform, cover_medium,
+    cover_small, cover_large, cover_original, track_length, stream_start, stream_end, stream_length,
+    date_added, date_modified, bitrate, samplerate, file_name, file_size, hash, category, description,
+    disabled, original_file_name, grouping)
+    VALUES
+    (${track_info.id},${track_info.title}, ${track_info.artist}, ${track_info.album}, ${track_info.year},
+    ${track_info.genre}, ${track_info.bpm}, ${track_info.rating}, ${track_info.favorite}, ${track_info.comments},
+    ${track_info.waveform}, ${track_info.cover_medium}, ${track_info.cover_small}, ${track_info.cover_large},
+    ${track_info.cover_original}, ${track_info.track_length}, ${track_info.stream_start}, ${track_info.stream_end},
+    ${track_info.stream_length}, ${track_info.date_added}, ${track_info.date_modified}, ${track_info.bitrate},
+    ${track_info.samplerate}, ${track_info.file_name}, ${track_info.file_size}, ${track_info.hash}, ${track_info.category},
+    ${track_info.description}, ${track_info.disabled}, ${track_info.original_file_name}, ${track_info.grouping})`
+}
+
+
+function perform_add_to_database() {
+    db_connection.query(
+        "SELECT db_image_cache as image_root, db_music_cache as music_root, db_waveform_cache as waveform_root FROM settings",
+        function (error, settings) {
+            settings=settings[0]
+            if (error) throw error;
+            db_connection.query(
+                "SELECT max(id) + 1 AS first_available_id FROM tracks",
+                function (error, id_result) {
+                    if (error) throw error;
+                    var first_available_id = null;
+                    if (id_result[0].first_available_id != null) {
+                        first_available_id = id_result[0].first_available_id;
+                    } else {
+                        first_available_id = 1;
+                    }
+                    items_to_add = []
+                    $$('add_file_list').eachRow(
+                        function (row) {
+                            items_to_add.push($$('add_file_list').getItem(row))
+                        }
+                    )
+                    $$('track_add_progress').define('label', ``)
+                    $$('track_add_progress').refresh()
+                    $$('track_add_title').define('label', ``)
+                    $$('track_add_title').refresh()
+                    $$('track_add_artist').define('label', ``)
+                    $$('track_add_artist').refresh()
+                    track_add_progress_dialog.show();
+                    add_selected_files_to_database(settings, first_available_id, items_to_add.length)
+                }
+            )
+        }
+    )
+}
+
+function parse_tag(filename, tag) {
+    var type = tag.type;
+    var p_tag = {
+        filename: filename,
+        title: tag.tags.title,
+        artist: tag.tags.artist,
+        album: tag.tags.album,
+        genre: tag.tags.genre,
+        year: tag.tags.year,
+        comment: tag.tags.comment,
+        picture: tag.tags.picture,
+    }
+    if (tag.type == 'MP4') {
+        p_tag.bpm = tag.tags.tmpo.data;
+        p_tag.grouping = (tag.tags['\xa9grp'] != undefined) ? tag.tags['\xa9grp'].data : null;
+        p_tag.category = (tag.tags['catg'] != undefined) ? tag.tags['catg'].data : null;
+        p_tag.description = (tag.tags['desc'] != undefined) ? tag.tags['desc'].data : null;
+    } else if (tag.type == 'ID3') {
+        p_tag.bpm = (tag.tags.TBPM != undefined) ? tag.tags.TBPM.data : null;
+        p_tag.grouping = '11';
+        p_tag.category = null;
+        p_tag.description = null;
+    }
+
+    return p_tag;
+}
+
+function select_tracks_to_add() {
+    dialog.showOpenDialog(
+        { properties: [ 'openFile', 'multiSelections']},
+        function (filenames) {
+            let num = filenames.length;
+            let new_array = []
+            for (let i=0; i<filenames.length; i++) {
+                jsmediatags.read(filenames[i], {
+                      onSuccess: function(tag) {
+                          num --;
+                          console.log(i, tag);
+                          console.log(parse_tag(filenames[i], tag))
+                          new_array.push(parse_tag(filenames[i], tag));
+                          if (num == 0) {
+                              $$('add_file_list').clearAll();
+                              $$('add_file_list').define('data', new_array);
+                              $$('add_file_list').refresh();
+                              console.log(new_array);
+                              console.log('DONE');
+                              files_to_add = new_array;
+                          }
+                      },
+                      onError: function(error) {
+                          num --;
+                          if (num == 0) {
+                              $$('add_file_list').clearAll();
+                              $$('add_file_list').define('data', new_array);
+                              $$('add_file_list').refresh();
+                              files_to_add = new_array;
+                          }
+                      }
+                    }
+                );
+            }
+        }
+    )
+}
+
+function cover_art_b64(object) {
+    if (object != undefined) {
+        var u8 = new Uint8Array(object.data);
+        var decoder = new TextDecoder('utf8');
+        var b64encoded = btoa(decoder.decode(u8));
+        image_format = object.format;
+        console.log(b64encoded);
+        return `<img src="data:${image_format};base64,${b64encoded}" />`
+    }
+    else {
+        cover_size = 50;
+        cover_source = "../resources/images/default_album_cover.png"
+        return `<img style="padding-right:0px; padding-left:-10px; margin-left:-10px" src="${cover_source}" height='${cover_size}' width='${cover_size}'></img>`
+    }
+}
+
+function add_track() {
+    x = webix.ui({
+        view:"window",
+        modal:true,
+        position:"center",
+        width:1600,
+        height:950,
+        head: "ADD TRACKS",
+        body:{
+            rows:[
+                {height:10},
+                {
+                    cols: [
+                        {
+                            id:'wait_time',
+                            view: "text",
+                            value: `$HOME`,
+                            labelWidth:100,
+                            label:"Search folder:"
+                        },
+                        {
+                            view: 'button',
+                            type: 'icon',
+                            icon: 'folder',
+                            autowidth: true,
+                            label: 'Browse',
+                            click: select_tracks_to_add
+                        }
+                    ]
+                },
+                {height:30},
+                {
+                    view:"datatable",
+                    id:"add_file_list",
+                    select:"row",
+                    editaction:'dblclick',
+                    editable: true,
+                    resizeColumn:{headerOnly:true},
+                    css:{
+                        'background-color':'#303030',
+                        border: '0px solid #5c5c5c'
+                     },
+                    columns:[
+                        { id:"id",            header:"",  width:30, hidden:true},
+                        { id:"title",         header:"<b>Title</b>",  fillspace:true, sort:'string', editor: 'text'},
+                        { id:"artist",        header:"<b>Artist</b>", fillspace:true, sort:'string', editor: 'text'},
+                        { id:"album",         header:"<b>Album</b>",  fillspace:true, sort:'string', editor: 'text'},
+                        { id:"year",          header:"<b>Year</b>",   width:50, sort:'string', editor: 'text'},
+                        { id:"genre",         header:"<b>Genre</b>",  width:110, sort:'string', editor: 'text'},
+                        { id:"bpm",           header:{text:"<b>BPM</b>", css:{"text-align":'center'}},    width:50, css:{"text-align":'right'}, sort:'int', editor: 'text'},
+                        { id:"grouping",      header:"<b>Grouping</b>", fillspace:true, sort:'string', editor: 'text'},
+                        { id:"category",      header:"<b>Category</b>",  fillspace:true, sort:'string', editor: 'text'},
+                        { id:"description",   header:"<b>Description</b>", fillspace:true, sort:'string', editor: 'text'},
+                    ],
+            },
+                {height:30},
+                {
+                    cols:[
+                        {},
+                        {
+                            view: 'button',
+                            label: 'ADD',
+                            click: function () {
+                                x.hide();
+                                perform_add_to_database();
+                            }
+                        },
+                        {},
+                        {
+                            view: 'button',
+                            label: 'CANCEL',
+                            click: () => {x.hide()}
+                        },
+                        {}
+                    ]
+                },
+                {height:10}
+            ]
+        }
+    })
+    x.show();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 main_list_display_template.gravity = 2.25;
 var session_popup = webix.ui(
     {
@@ -655,58 +1266,57 @@ var popup = webix.ui({
 })
 popup.hide();
 
-main_menu_popup  = webix.ui({
-    view: 'popup',
-    id: "main_menu_popup",
-    width: 400,
-    autoheight: true,
-    relative: 'bottom',
-    body: sidebar_template
-})
-main_menu_popup.hide()
-
 var datatable = webix.ui({
-    css:{
-                'background-color':'#515151',
-                'padding':'0px',
-                'border-bottom': "1px solid #CCCCCC",
-                //'height': "100% !important"
-            },
+    type:"line",
     rows:[
         {
             css:{
                 'background-color':'#515151',
                 'padding':'0px',
-                'border-bottom': "1px solid #CCCCCC",
-                //"height": "5% !important"
+                'border-bottom': "1px solid #CCCCCC"
             },
             cols:[
                 {
-                    cols:[
-                        {},
-                        {
-                            view:'button',
-                            type:'icon',
-                            icon:'list',
-                            label:'SESSION',
-                            height:25,
-                            width:100,
-                            popup:'session_popup'
-                        }
-                    ]
+                    // cols:[
+                    //     {
+                    //         id:'main-player-volume',
+                    //         view:'button',
+                    //         type:'icon',
+                    //         icon:'volume-up',
+                    //         label:'100%',
+                    //         width:75
+                    //     },
+                    //     {
+                    //         id:'monitor-volume',
+                    //         view:'button',
+                    //         type:'icon',
+                    //         icon:'volume-control-phone',
+                    //         label:'100%',
+                    //         width:75
+                    //     },
+                    //     {
+                    //         id:'precue-player-volume',
+                    //         view:'button',
+                    //         type:'icon',
+                    //         icon:'headphones',
+                    //         label:'100%',
+                    //         width:75
+                    //     },
+                    //     {},
+                    //     {
+                    //         gravity:.5,
+                    //         view:'button',
+                    //         type:'icon',
+                    //         icon:'list',
+                    //         label:'SESSION',
+                    //         height:25,
+                    //         popup:'session_popup'
+                    //     }
+                    // ]
                 },
                 player_window,
         {
             cols:[
-                {
-                    css: {
-                        //'background-color':'#515151',
-                        //'padding':'0px',
-                        //'border-bottom': "1px solid #CCCCCC",
-                        //'height': "100% !important"
-                    },
-                    width:1
-                },
                 {
                     width:250,
                     cols:[
@@ -727,34 +1337,16 @@ var datatable = webix.ui({
                         {width:15}
                     ]
                 },
-                {
-                    gravity:.5,
-                    id:'start-stop-button',
-                    view:'button',
-                    type:'icon',
-                    icon:'play',
-                    label:'START',
-                    click: start_queue,
-                    maxHeight:35
-                },
-                {
-                    gravity:.5,
-                    view:'button',
-                    type:'icon',
-                    icon:'step-forward',
-                    label:'SKIP/STOP',
-                    popup: "skip_stop_dialog",
-                    maxHeight:35
-                },
-                {
-                    gravity:.5,
-                    view:'button',
-                    type:'icon',
-                    icon:'cog',
-                    label:'SETTINGS',
-                    click: playback_settings,
-                    maxHeight:35
-                },
+                // {
+                //     gravity:.5,
+                //     id:'start-stop-button',
+                //     view:'button',
+                //     type:'icon',
+                //     icon:'play',
+                //     label:'START',
+                //     //click: start_queue,
+                //     maxHeight:35
+                // },
                 {
                     gravity:.5,
                     view:'button',
@@ -764,84 +1356,39 @@ var datatable = webix.ui({
                     autowidth:true,
                     click: add_track,
                     maxHeight:35
+                },
+                {
+                    gravity:.5,
+                    view:'button',
+                    type:'icon',
+                    icon:'cog',
+                    label:'SETTINGS',
+                    autowidth:true,
+                    click: playback_settings,
+                    maxHeight:35
                 }
             ]
         }]},
         {
+            type:"line",
             cols:[
                 sidebar_template,
-                main_list_display_template,
-                {
-                    width:494,
-                    rows: [
-                        queue_display_template,
-                        {
-                            height:5,
-                            css: {
-                                'background-color': '#3c3c3c',
-                                'border-color':"0px solid #3c3c3c"
-                            }
-                        },
-                        suggestions_display_template
-                    ]
-                }
-            ]
-        },
-        {
-            height:40,
-            css: {
-                'background-color': '#202020',
-                'border-top':"1px solid #3f3f3f",
-            },
-            cols:[
-                {
-                    width:15
-                },
-                {
-                    view: 'label',
-                    id: 'calendar',
-                    label: '<span style="color:rgb(200,200,200)">2018-01-09</span> | 0:45',
-                    height: 20
-                },
-                {
-                    view: 'label',
-                    id: 'queue_duration',
-                    label: '<b>QUEUE DURATION:</b> 0:00',
-                    height: 20
-                },
-                {
-                    view: 'label',
-                    id:'queue_ends_at',
-                    label: '<b>ENDS:</b> 0:00',
-                    height: 20
-                },
-                {
-                    id:'main-player-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'volume-up',
-                    label:'100%',
-                    width:75
-                },
-                {
-                    id:'monitor-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'volume-control-phone',
-                    label:'100%',
-                    width:75
-                },
-                {
-                    id:'precue-player-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'headphones',
-                    label:'100%',
-                    width:75
-                },
-                {
-                    width:15
-                }
+                main_list_display_template
+                // ,
+                // {
+                //     width:494,
+                //     rows: [
+                //         queue_display_template,
+                //         {
+                //             height:5,
+                //             css: {
+                //                 'background-color': '#3c3c3c',
+                //                 'border-color':"0px solid #3c3c3c"
+                //             }
+                //         },
+                //         preview_player_window
+                //     ]
+                // }
             ]
         }
     ]
@@ -925,7 +1472,6 @@ $$("display_list").filterByAll = function () {
 display_all_songs()();
 queue_actions.reload();
 update_queue_labels();
-update_suggestions();
 
 function move_displayed_queue_element(q_element, from_index, to_index) {
     $$('queue_list').data.each(
@@ -954,13 +1500,8 @@ webix.UIManager.removeHotKey('right');
 webix.UIManager.removeHotKey('shift+left');
 webix.UIManager.removeHotKey('shift+right');
 webix.UIManager.removeHotKey('tab');
-webix.UIManager.removeHotKey('shift+ctrl+s');
-
-//webix.UIManager.addHotKey("ctrl+shift+s", main_list_actions.set_as_short_list, $$('display_list'));
-
 
 webix.UIManager.addHotKey("alt+r", queue_actions.reload);
-
 webix.UIManager.addHotKey("t", queue_actions.move_selection_to_top, $$('queue_list'));
 webix.UIManager.addHotKey("u", queue_actions.move_selection_up, $$('queue_list'));
 webix.UIManager.addHotKey("d", queue_actions.move_selection_down, $$('queue_list'));
@@ -972,25 +1513,14 @@ webix.UIManager.addHotKey("enter", queue_actions.preview_selection, $$('queue_li
 
 webix.UIManager.addHotKey("shift+q", main_list_actions.add_selection_to_queue, $$('display_list'));
 webix.UIManager.addHotKey("shift+s", main_list_actions.add_selection_to_short_list, $$('display_list'));
-webix.UIManager.addHotKey("shift+ctrl+s", main_list_actions.save_shortlist_as_playlist, $$('display_list'));
 webix.UIManager.addHotKey("shift+u", main_list_actions.add_selection_to_unavailable, $$('display_list'));
 webix.UIManager.addHotKey("shift+a", main_list_actions.remove_selection_from_unavailable, $$('display_list'));
 webix.UIManager.addHotKey("escape", main_list_actions.display_all_songs, $$('display_list'));
 webix.UIManager.addHotKey("ctrl+e", main_list_actions.edit_track_data, $$('display_list'));
-webix.UIManager.addHotKey("ctrl+shift+enter", main_list_actions.preview_last_30_seconds, $$('display_list'));
+webix.UIManager.addHotKey("ctrl+shift+enter",  main_list_actions.preview_last_30_seconds, $$('display_list'));
 webix.UIManager.addHotKey("shift+enter",  main_list_actions.preview_last_10_seconds, $$('display_list'));
 webix.UIManager.addHotKey("enter",  main_list_actions.preview_selected, $$('display_list'));
 webix.UIManager.addHotKey("ctrl+f",  main_list_actions.filter_list, $$('display_list'));
-
-webix.UIManager.addHotKey("shift+q", suggestion_list_actions.add_selection_to_queue, $$('suggestion_list'));
-webix.UIManager.addHotKey("shift+s", suggestion_list_actions.add_selection_to_short_list, $$('suggestion_list'));
-webix.UIManager.addHotKey("shift+u", suggestion_list_actions.add_selection_to_unavailable, $$('suggestion_list'));
-webix.UIManager.addHotKey("shift+a", suggestion_list_actions.remove_selection_from_unavailable, $$('suggestion_list'));
-webix.UIManager.addHotKey("ctrl+e", suggestion_list_actions.edit_track_data, $$('suggestion_list'));
-webix.UIManager.addHotKey("ctrl+shift+enter",  suggestion_list_actions.preview_last_30_seconds, $$('suggestion_list'));
-webix.UIManager.addHotKey("shift+enter",  suggestion_list_actions.preview_last_10_seconds, $$('suggestion_list'));
-webix.UIManager.addHotKey("enter",  suggestion_list_actions.preview_selected, $$('suggestion_list'));
-webix.UIManager.addHotKey("ctrl+f",  suggestion_list_actions.filter_list, $$('suggestion_list'));
 
 webix.UIManager.addHotKey("space", playback_actions.preview_pause);
 webix.UIManager.addHotKey("shift+space", playback_actions.preview_stop);
@@ -1028,7 +1558,6 @@ webix.UIManager.addHotKey("ctrl+shift+m", track_edit_actions.move_end_marker_for
 
 webix.UIManager.addHotKey("ctrl+shift+x", track_edit_actions.zoom_waveform_last_30_seconds, $$('track_edit_window'));
 webix.UIManager.addHotKey("ctrl+shift+z", track_edit_actions.zoom_waveform_first_30_seconds, $$('track_edit_window'));
-
 
 
 $$('display_list').attachEvent('onItemDblClick',
@@ -1076,42 +1605,8 @@ webix.UIManager.addHotKey("right", function () {
 }, $$('display_list'));
 
 webix.UIManager.addHotKey("left", function () {
-    webix.UIManager.setFocus('suggestion_list');
-}, $$('display_list'));
-
-
-
-webix.UIManager.addHotKey("left", function () {
     webix.UIManager.setFocus($$('display_list'));
 }, $$('queue_list'));
-
-webix.UIManager.addHotKey("right", function () {
-    webix.UIManager.setFocus($$('suggestion_list'));
-}, $$('queue_list'));
-
-
-webix.UIManager.addHotKey("left", function () {
-    webix.UIManager.setFocus($$('queue_list'));
-}, $$('suggestion_list'));
-
-webix.UIManager.addHotKey("right", function () {
-    webix.UIManager.setFocus($$('display_list'));
-}, $$('suggestion_list'));
-
-
-
-$$('suggestion_list').attachEvent('onFocus',
-    function (x) {
-        s = $$('queue_list').getSelectedId();
-        if (s == '') {
-            $$('queue_list').select($$('queue_list').getFirstId());
-        }
-        webix.html.addCss( $$('suggestion_list_header_row').getNode(), "focus_header");
-        webix.html.removeCss( $$('main_list_header_row').getNode(), "focus_header");
-        webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
-    }
- );
-
 
 $$('queue_list').attachEvent('onFocus',
     function (x) {
@@ -1121,7 +1616,6 @@ $$('queue_list').attachEvent('onFocus',
         }
         webix.html.addCss( $$('queue_list_header_row').getNode(), "focus_header");
         webix.html.removeCss( $$('main_list_header_row').getNode(), "focus_header");
-        webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
     }
  );
 
@@ -1133,61 +1627,17 @@ $$('display_list').attachEvent('onFocus',
       }
       webix.html.addCss($$('main_list_header_row').getNode(), "focus_header");
       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
-      webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
+  }
+);
+
+$$('display_list').attachEvent('onFocus',
+  function (x) {
+      webix.html.addCss( $$('main_list_header_row').getNode(), "focus_header");
+      webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
   }
 );
 
 $$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})
 webix.UIManager.setFocus($$('display_list'));
 
-function checkTime(i) {
-     return (i < 10) ? "0" + i : i;
- }
-
- function startTime() {
-     var today = new Date()
-     h = checkTime(today.getHours())
-     m = checkTime(today.getMinutes())
-     s = checkTime(today.getSeconds())
-     d = checkTime(today.getDate())
-     M = checkTime(today.getMonth()+1)
-     Y = today.getFullYear()
-    $$('calendar').define('label', `<span style="color:rgb(200,200,200)">${Y}-${M}-${d}</span> | <b>${h}:${m}</b>`)
-    $$('calendar').refresh()
-     t = setTimeout(function () {
-         startTime()
-     }, 30000);
- }
- startTime();
-
-
- function load_sessions() {
-    let list_id = "sessions-list"
-    $QUERY(
-        `SELECT id, event_name as name, date(start_date) as date, counts.count as count
-        FROM sessions JOIN (select session_id, count(track_id) as count FROM session_tracks
-        GROUP BY session_id) counts ON sessions.id=counts.session_id ORDER BY date ASC`,
-        function (result_list) {
-            $$(list_id).clearAll()
-            $$(list_id).define('data', result_list);
-            $$(list_id).refresh()
-        }
-    )
-
- }
-
-function load_playlists() {
-    let list_id = "playlist-list"
-    DB.get_group_list(
-        function (result_list) {
-            $$(list_id).clearAll()
-            $$(list_id).define('data', result_list);
-            $$(list_id).refresh() 
-        }
-    )
- 
-}
-
-load_sessions()
-load_playlists()
 </script>
