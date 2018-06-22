@@ -12,7 +12,7 @@
 // }
 
 pl = new PydjayAudioPlayer()
-pl.connectOutputs({master:{left:4, right:5}})
+pl.connectOutputs({master:{left:0, right:1}})
 pl.on('playback-stopped', restore_monitor)
 pl.on('playback-paused', restore_monitor)
 pl.on('playback-started', mute_monitor)
@@ -53,7 +53,7 @@ pl.on("stream-position", function (pos) {
 })
 
 mpl = new PydjayAudioPlayer()
-mpl.connectOutputs({master:{left:0, right:1}, headphones:{left:4, right:5}})
+// mpl.connectOutputs({master:{left:0, right:1}, headphones:{left:4, right:5}})
 mpl.on("stream-position", function (pos) {
     remaining = Math.abs(mpl.source.duration*1000 - pos)
     $$('main_track_time').define('label', `-${format_nanoseconds(remaining*1000000)}`)

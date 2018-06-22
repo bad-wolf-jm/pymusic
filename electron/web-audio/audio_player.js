@@ -8,6 +8,9 @@ class PydjayAudioPlayer extends EventDispatcher {
         this.stream_end = null
         this.stream_position = null
         this.stream_start_timestamp = null
+        this.stream_pause_time = 0
+        this.stream_elapsed_time = 0
+        this.total_pause_time = 0
         this.output_channel_layout = null
         this.audio_context = new PydjayAudioContext()
         this.audio_context.on("timestamp", x => this.updateStreamPosition(x))
@@ -20,6 +23,9 @@ class PydjayAudioPlayer extends EventDispatcher {
         this.source.src = url
         this.source.onended = () => {this.onStreamEnded()}
         this.stream_start_timestamp = this.audio_context.audio_ctx.currentTime * 1000
+        this.stream_pause_time = 0
+        this.total_pause_time = 0
+        this.stream_elapsed_time = 0
         let x = this.audio_context.audio_ctx.createMediaElementSource(this.source)
         x.channelInterpretation = "discrete"
         x.connect(this.audio_context.splitter)
@@ -34,12 +40,14 @@ class PydjayAudioPlayer extends EventDispatcher {
     seek(timestamp) {
         if (this.source != null) {
             this.source.currentTime = timestamp
+            this.stream_start = timestamp
         }
     }
 
     skip(delta) {
         if (this.source != null) {
             this.source.currentTime += delta
+            this.stream_start += (delta*1000)
         }
     }
 
@@ -47,6 +55,8 @@ class PydjayAudioPlayer extends EventDispatcher {
         if (this.state == "PLAYING"){
             this.dispatch("playback-paused")
             this.state = "PAUSED"
+            this.pause_time = this.stream_elapsed
+            console.log(this.stream_elapsed, this.total_pause_time)
             if (this.source != null) {
                 this.source.pause()
             }
@@ -55,8 +65,12 @@ class PydjayAudioPlayer extends EventDispatcher {
 
     resume() {
         if (this.state == "PAUSED") {
-            this.source.play()
+            console.log("resuming", this.audio_context.audio_ctx.currentTime*1000, this.pause_time, this.audio_context.audio_ctx.currentTime*1000 - this.pause_time)
+            this.total_pause_time += (this.audio_context.audio_ctx.currentTime*1000 - this.stream_start_timestamp -this.pause_time)
+            console.log(this.total_pause_time, this.pause_time)
+            this.stream_pause_time = 0
             this.state = "PLAYING"
+            this.source.play()
             this.dispatch("playback-started")
         }
     }
@@ -76,6 +90,7 @@ class PydjayAudioPlayer extends EventDispatcher {
         this.stream_start = null
         this.stream_end = null
         this.stream_start_timestamp = null
+        this.total_pause_time = 0
         this.state = "STOPPED"
         this.dispatch("playback-stopped")
     }
@@ -107,11 +122,13 @@ class PydjayAudioPlayer extends EventDispatcher {
     }
 
     updateStreamPosition(playback_time) {
-        if (this.stream_start_timestamp != null) {
-            let stream_position = playback_time * 1000 - this.stream_start_timestamp + this.stream_start
+        if ((this.stream_start_timestamp != null)) {
+            let stream_elapsed = (playback_time * 1000) - this.stream_start_timestamp
+            let stream_position = stream_elapsed + this.stream_start
+            this.stream_elapsed = Math.round(stream_elapsed)
             stream_position = Math.round(stream_position)
-            if (stream_position != this.stream_position) {
-                this.stream_position = stream_position
+            if ((stream_position != this.stream_position) && (this.state == "PLAYING")) {
+                this.stream_position = stream_position - this.total_pause_time
                 this.dispatch("stream-position", this.stream_position)
                 if ((this.stream_end != undefined) && (this.stream_position > this.stream_end)) {
                     this.stop()
