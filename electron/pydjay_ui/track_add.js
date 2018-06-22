@@ -308,7 +308,7 @@ function parse_tag(filename, tag) {
         picture: tag.tags.picture,
     }
     if (tag.type == 'MP4') {
-        p_tag.bpm = tag.tags.tmpo.data;
+        p_tag.bpm = (tag.tags.tmpo != undefined) ? tag.tags.tmpo.data : null;
         p_tag.grouping = (tag.tags['\xa9grp'] != undefined) ? tag.tags['\xa9grp'].data : null;
         p_tag.category = (tag.tags['catg'] != undefined) ? tag.tags['catg'].data : null;
         p_tag.description = (tag.tags['desc'] != undefined) ? tag.tags['desc'].data : null;
