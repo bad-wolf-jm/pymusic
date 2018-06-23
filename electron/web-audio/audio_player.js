@@ -14,7 +14,6 @@ class PydjayAudioPlayer extends EventDispatcher {
         this.output_channel_layout = null
         this.audio_context = new PydjayAudioContext()
         this.audio_context.on("timestamp", x => this.updateStreamPosition(x))
-        //this.audio_context.setTimeMonitor(x => this.updateStreamPosition(x))
     }
 
     play(url, start_time, end_time) {

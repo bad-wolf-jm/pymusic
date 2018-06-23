@@ -58,57 +58,35 @@ function DATE(s) {
     return `'${d}'`
 }
 
-var track_add_progress_dialog =  webix.ui({
-    view:"window",
-    modal:true,
-    position:"center",
-    width:600,
-    height:400,
-    head: false,
-    body:{
-        rows:[
-            {height:10},
-            {
-                id:'track_add_progress',
-                view: "label",
-                label:"Processing track ### of ###",
-                css: {
-                    'text-align': 'center',
-                    'font-size':  '20px',
-                }
-            },
-            {height:10},
-            {
-                id:'track_add_title',
-                view: "label",
-                label:"Title Of Song",
-                css: {
-                    'text-align': 'center',
-                    'font-size': '20px',
-                }
+var fs = require('fs-extra');
 
-            },
-            {
-                id:'track_add_artist',
-                view: "label",
-                label:"Artist - Album",
-                css: {
-                    'text-align': 'center',
-                    'font-size':  '15px',
-                }
+function getFileExtension(f_nae) {
+    return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
+}
 
-            }
-        ]
-    }
-})
-track_add_progress_dialog.hide();
+
+function copyFile(source, target) {
+    var rd = fs.createReadStream(source, { flags: 'r',  encoding: "binary"});
+    var wr = fs.createWriteStream(target, { flags: 'w',  encoding: "binary"});
+    return new Promise(function(resolve, reject) {
+        rd.on('error', reject);
+        wr.on('error', reject);
+        wr.on('end', resolve);
+        rd.pipe(wr);
+    }).catch(function(error) {
+        rd.destroy();
+        wr.end();
+        throw error;
+    });
+}
+  
 
 function add_selected_files_to_database (settings, id, total) {
     if (items_to_add.length > 0) {
         let data = items_to_add.pop();
-        let mp3_file = `track_${id}.mp3`
+        let mp3_file = `track_${id}.${getFileExtension(data.filename)}`
         let mp3_path = `${settings.music_root}/${mp3_file}`
-        converter = spawn('avconv', ['-y', '-i', data.filename, '-acodec', 'libmp3lame', '-ab',  '320k', '-vn', '-r', '48000', mp3_path])
+        console.log(data.filename, mp3_path)
         var original_image_file = null;
         var large_image_file = null;
         var medium_image_file = null;
@@ -122,21 +100,7 @@ function add_selected_files_to_database (settings, id, total) {
         $$('track_add_artist').define('label', `${data.artist} - ${data.album}`)
         $$('track_add_artist').refresh()
 
-        converter.stdout.on(
-            'data',
-            function (data) {
-                console.log(data)
-            }
-        )
-        converter.on(
-            'error',
-            function (err) {
-                console.log(err)
-            }
-        )
-        converter.on(
-            'close',
-            function () {
+        fs.copy(data.filename, mp3_path).then(function () {
                 if (data.picture != undefined) {
                     image_type = data.picture.format;
                     extensions = {
@@ -161,81 +125,63 @@ function add_selected_files_to_database (settings, id, total) {
                         )
                     }
                 }
-                wave_file = `waveform_${id}.wv`
-                wave_path = `${settings.waveform_root}/${wave_file}`
-                waveform_generator = spawn(
-                    'python', ['-m', 'python.generate_waveform', mp3_path, wave_path]
-                )
-                waveform_generator.on(
-                    'close',
-                    function () {
-                        bit_output = ""
-                        bit_info = spawn(
-                            'python', ['-m', 'python.file_info', mp3_path]
-                        )
-                        bit_info.stdout.on(
-                            'data', function (x) {
-                                console.log(x.toString())
-                                bit_output += x.toString()
+                var foo = new Audio()
+                foo.onloadedmetadata = function (e) {
+                        length = foo.duration * 1000000000
+                        NOW = new Date()
+                        track_info = {
+                            'id': id,
+                            'title': STRING(addslashes(data.title)),
+                            'artist': STRING(addslashes(data.artist)),
+                            'album': STRING(addslashes(data.album)),
+                            'year': STRING(none_to_null(data.year)),
+                            'genre': STRING(addslashes(data.genre)),
+                            'bpm': STRING(none_to_null(data.bpm)),
+                            'rating': 0,
+                            'disabled': 0,
+                            'favorite': 0,
+                            'comments': STRING(addslashes(null)),
+                            'waveform': STRING(""), //STRING(addslashes(wave_file)),
+                            'cover_medium': STRING(addslashes(medium_image_file)),
+                            'cover_small': STRING(addslashes(small_image_file)),
+                            'cover_large': STRING(addslashes(large_image_file)),
+                            'cover_original': STRING(addslashes(original_image_file)),
+                            'track_length': length,
+                            'stream_start': 0,
+                            'stream_end': length,
+                            'stream_length': length,
+                            'date_added': DATE(NOW),
+                            'date_modified': DATE(NOW),
+                            'bitrate': 0, //bit_output.bitrate,
+                            'samplerate': 0, //bit_output.samplerate,
+                            'file_name': STRING(addslashes(mp3_file)),
+                            'original_file_name': STRING(addslashes(data.filename)),
+                            'file_size': 0, //bit_output.file_size,
+                            'hash': 'NULL',
+                            'grouping': STRING(none_to_null(addslashes(data.grouping))),
+                            'category': STRING(none_to_null(addslashes(data.category))),
+                            'description': STRING(none_to_null(addslashes(data.description)))
+                        }
+                        console.log(track_info);
+                        console.log(ADD_TRACK(track_info))
+                        db_connection.query(
+                            ADD_TRACK(track_info),
+                            function (error, _) {
+                                if (error) throw error;
+                                add_selected_files_to_database (settings, id+1, total)
                             }
                         )
-                        bit_info.on(
-                            'close',
-                            function () {
-                                console.log(bit_output);
-                                console.log(JSON.parse(bit_output));
-                                bit_output = JSON.parse(bit_output);
-                                NOW = new Date()
-                                track_info = {
-                                    'id': id,
-                                    'title': STRING(addslashes(data.title)),
-                                    'artist': STRING(addslashes(data.artist)),
-                                    'album': STRING(addslashes(data.album)),
-                                    'year': STRING(none_to_null(data.year)),
-                                    'genre': STRING(addslashes(data.genre)),
-                                    'bpm': STRING(none_to_null(data.bpm)),
-                                    'rating': 0,
-                                    'disabled': 0,
-                                    'favorite': 0,
-                                    'comments': STRING(addslashes(null)),
-                                    'waveform': STRING(addslashes(wave_file)),
-                                    'cover_medium': STRING(addslashes(medium_image_file)),
-                                    'cover_small': STRING(addslashes(small_image_file)),
-                                    'cover_large': STRING(addslashes(large_image_file)),
-                                    'cover_original': STRING(addslashes(original_image_file)),
-                                    'track_length': bit_output.length,
-                                    'stream_start': 0,
-                                    'stream_end': bit_output.length,
-                                    'stream_length': bit_output.length,
-                                    'date_added': DATE(NOW),
-                                    'date_modified': DATE(NOW),
-                                    'bitrate': bit_output.bitrate,
-                                    'samplerate': bit_output.samplerate,
-                                    'file_name': STRING(addslashes(mp3_file)),
-                                    'original_file_name': STRING(addslashes(data.filename)),
-                                    'file_size': bit_output.file_size,
-                                    'hash': 'NULL',
-                                    'grouping': STRING(none_to_null(addslashes(data.grouping))),
-                                    'category': STRING(none_to_null(addslashes(data.category))),
-                                    'description': STRING(none_to_null(addslashes(data.description)))
-                                }
-                                console.log(track_info);
-                                console.log(ADD_TRACK(track_info))
-                                db_connection.query(
-                                    ADD_TRACK(track_info),
-                                    function (error, _) {
-                                        if (error) throw error;
 
-                                        add_selected_files_to_database (settings, id+1, total)
-                                    }
-                                )
-
-                            }
-                        )
                     }
-                )
-            }
-        )
+                    foo.src = mp3_path
+
+                //)
+                //     }
+                // )
+        //    }
+        //)
+
+        }).catch(console.log)
     } else {
         track_add_progress_dialog.hide();
     }

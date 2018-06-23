@@ -4,7 +4,7 @@ function DataProvider() {
     var self = this
 
     self.get_track_by_id = function (id, k) {
-        $QUERY(`SELECT availability.track_id IS NULL as available, tracks.id as track_id, tracks.favorite, tracks.disabled as enabled, tracks.title, tracks.artist,
+        $QUERY(`SELECT availability.track_id IS NULL as available, tracks.id as id, tracks.id as track_id, tracks.favorite, tracks.disabled as enabled, tracks.title, tracks.artist,
         tracks.album, tracks.genre, tracks.rating, tracks.bpm, tracks.stream_length, foo.play_count, tracks.cover_small as cover, settings.db_image_cache as image_root, 
         max_play_times.time as last_played FROM tracks JOIN (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
         FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts ON tracks.id=play_counts.id_2) foo ON tracks.id=foo.id LEFT JOIN
@@ -21,7 +21,7 @@ function DataProvider() {
     }
 
     self.get_playlist_tracks = function (id, k) {
-        var sql = `SELECT availability.track_id IS NULL as available, playlist_tracks.track_id, favorite, disabled as enabled, 
+        var sql = `SELECT availability.track_id IS NULL as available, playlist_tracks.track_id, playlist_tracks.track_id as id, favorite, disabled as enabled, 
         title, artist, album, genre, rating, bpm, stream_length, foo.play_count, cover_small as cover, 
         settings.db_image_cache as image_root, max_play_times.time as last_played FROM playlist_tracks JOIN
         (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
