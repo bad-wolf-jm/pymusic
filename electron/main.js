@@ -14,5 +14,5 @@ app.on('ready', function() {
     });
     //mainWindow.setMenu(null);
     mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/main_ui.html');
-    // mainWindow.loadURL('file://' + __dirname + '/dbedit_ui/main_ui_edit.html');
+    // mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/winjs-test/index.html');
 });
