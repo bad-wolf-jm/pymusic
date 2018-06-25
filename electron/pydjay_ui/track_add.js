@@ -1,5 +1,7 @@
 var jsmediatags = require("jsmediatags");
 var fs = require('fs');
+path = require('path');
+
 const {spawn} = require ('child_process');
 var async = require('async');
 var Jimp = require("jimp");
@@ -65,20 +67,20 @@ function getFileExtension(f_nae) {
 }
 
 
-function copyFile(source, target) {
-    var rd = fs.createReadStream(source, { flags: 'r',  encoding: "binary"});
-    var wr = fs.createWriteStream(target, { flags: 'w',  encoding: "binary"});
-    return new Promise(function(resolve, reject) {
-        rd.on('error', reject);
-        wr.on('error', reject);
-        wr.on('end', resolve);
-        rd.pipe(wr);
-    }).catch(function(error) {
-        rd.destroy();
-        wr.end();
-        throw error;
-    });
-}
+// function copyFile(source, target) {
+//     var rd = fs.createReadStream(source, { flags: 'r',  encoding: "binary"});
+//     var wr = fs.createWriteStream(target, { flags: 'w',  encoding: "binary"});
+//     return new Promise(function(resolve, reject) {
+//         rd.on('error', reject);
+//         wr.on('error', reject);
+//         wr.on('end', resolve);
+//         rd.pipe(wr);
+//     }).catch(function(error) {
+//         rd.destroy();
+//         wr.end();
+//         throw error;
+//     });
+// }
   
 
 function add_selected_files_to_database (settings, id, total) {
@@ -86,12 +88,12 @@ function add_selected_files_to_database (settings, id, total) {
         let data = items_to_add.pop();
         let mp3_file = `track_${id}.${getFileExtension(data.filename)}`
         let mp3_path = `${settings.music_root}/${mp3_file}`
-        console.log(data.filename, mp3_path)
+        // console.log(data.filename, mp3_path)
         var original_image_file = null;
         var large_image_file = null;
         var medium_image_file = null;
         var small_image_file = null;
-        var wave_path = null;
+        // var wave_path = null;
 
         $$('track_add_progress').define('label', `ADDING TRACK ${total - items_to_add.length} OF ${total}`)
         $$('track_add_progress').refresh()
@@ -126,6 +128,7 @@ function add_selected_files_to_database (settings, id, total) {
                     }
                 }
                 var foo = new Audio()
+                filesize = fs.statSync(mp3_path).size
                 foo.onloadedmetadata = function (e) {
                         length = foo.duration * 1000000000
                         NOW = new Date()
@@ -156,14 +159,14 @@ function add_selected_files_to_database (settings, id, total) {
                             'samplerate': 0, //bit_output.samplerate,
                             'file_name': STRING(addslashes(mp3_file)),
                             'original_file_name': STRING(addslashes(data.filename)),
-                            'file_size': 0, //bit_output.file_size,
+                            'file_size': filesize, //0, //bit_output.file_size,
                             'hash': 'NULL',
                             'grouping': STRING(none_to_null(addslashes(data.grouping))),
                             'category': STRING(none_to_null(addslashes(data.category))),
                             'description': STRING(none_to_null(addslashes(data.description)))
                         }
-                        console.log(track_info);
-                        console.log(ADD_TRACK(track_info))
+                        // console.log(track_info);
+                        // console.log(ADD_TRACK(track_info))
                         db_connection.query(
                             ADD_TRACK(track_info),
                             function (error, _) {

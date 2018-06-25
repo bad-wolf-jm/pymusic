@@ -55,7 +55,7 @@ class EventDispatcher {
             return;
         }
         const handlers = this.handlers[event];
-        handlers &&
-        handlers.forEach(fn => {fn(...args)});
+        //console.log(event, args)
+        handlers && handlers.forEach(fn => {fn(...args)});
     }
 }

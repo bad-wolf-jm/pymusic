@@ -39,17 +39,7 @@ pl.on("stream-position", function (pos) {
     $$('preview_length').define('label', format_nanoseconds(pl.source.duration*1000000000))
     $$('preview_length').refresh();
     preview_seek.animate(pos / (1000*pl.source.duration));
-    if (track_data_edit_window.isVisible()) {
-        track_edit_waveform.xAxis[0].removePlotLine('position-marker');
-        track_edit_waveform.xAxis[0].addPlotLine({
-            color:'#FF0000',
-            width: 2,
-            zIndex:10,
-            value: pos * 1000000,
-            id: 'position-marker'});
-    }
     preview_track_position = pos;
-
 })
 
 mpl = new PydjayAudioPlayer()

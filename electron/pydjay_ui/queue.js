@@ -142,7 +142,7 @@ function save_session(name, location, address) {
                                                                             `UPDATE session_queue SET status='pending', start_time=NULL, end_time=NULL, position=position-(${result[0].first}-1)`,
                                                                             function (error, r) {
                                                                                 if (error) throw error;
-                                                                                console.log('session saved');
+                                                                                // console.log('session saved');
 
                                                                             }
                                                                         )

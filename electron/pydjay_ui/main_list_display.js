@@ -7,6 +7,8 @@ function custom_checkbox(obj, common, value){
         return "<div class='webix_table_checkbox notchecked'><span class='fa fa-heart-o' style='font-size: 12px'/></div>";
 };
 
+
+
 var preview_player_window = {
     height:75,
     css:{
@@ -61,58 +63,67 @@ var preview_player_window = {
                             ]
                         },
                         {width:10},
-                        {
-                            id:'preview_play_button',
-                            view:'button',
-                            type: 'icon',
-                            icon: 'pause',
-                            label:'PAUSE',
-                            width:100,
-                            click : function () {
-                                preview_pause();
-                            }
-                        },
+                        // {
+                        //     id:'preview_play_button',
+                        //     view:'button',
+                        //     type: 'icon',
+                        //     icon: 'pause',
+                        //     label:'PAUSE',
+                        //     width:100,
+                        //     click : function () {
+                        //         preview_pause();
+                        //     }
+                        // },
 
+                        // {
+                        //     id:'preview_play_last_30_seconds_button',
+                        //     view:'button',
+                        //     type: 'icon',
+                        //     icon: 'play',
+                        //     label: '-30 SECS',
+                        //     width:100,
+                        //     click : function () {
+                        //         if (preview_track_id != undefined) {
+                        //             preview_play_track_id(preview_track_id, -30000000000);
+                        //         }
+                        //         webix.UIManager.setFocus($$('track_edit_window'));
+                        //     }
+                        // },
+                        // {width:10},
+                        // {
+                        //     id:'preview_play_last_10_seconds_button',
+                        //     view:'button',
+                        //     type: 'icon',
+                        //     icon: 'play',
+                        //     label: '-10 SECS',
+                        //     width:100,
+                        //     click : function () {
+                        //         if (preview_track_id != undefined) {
+                        //             preview_play_track_id(preview_track_id, -10000000000);
+                        //         }
+                        //         webix.UIManager.setFocus($$('track_edit_window'));
+                        //     }
+                        // },
+                        // {
+                        //     id:'preview_stop_button',
+                        //     view:'button',
+                        //     type: 'icon',
+                        //     icon: 'stop',
+                        //     label:'STOP',
+                        //     width:100,
+                        //     click : function () {
+                        //         preview_stop();
+                        //     }
+
+                        // },
                         {
-                            id:'preview_play_last_30_seconds_button',
+                            id:'preview_test_play_button',
                             view:'button',
                             type: 'icon',
                             icon: 'play',
-                            label: '-30 SECS',
-                            width:100,
-                            click : function () {
-                                if (preview_track_id != undefined) {
-                                    preview_play_track_id(preview_track_id, -30000000000);
-                                }
-                                webix.UIManager.setFocus($$('track_edit_window'));
-                            }
-                        },
-                        {width:10},
-                        {
-                            id:'preview_play_last_10_seconds_button',
-                            view:'button',
-                            type: 'icon',
-                            icon: 'play',
-                            label: '-10 SECS',
-                            width:100,
-                            click : function () {
-                                if (preview_track_id != undefined) {
-                                    preview_play_track_id(preview_track_id, -10000000000);
-                                }
-                                webix.UIManager.setFocus($$('track_edit_window'));
-                            }
-                        },
-                        {
-                            id:'preview_stop_button',
-                            view:'button',
-                            type: 'icon',
-                            icon: 'stop',
-                            label:'STOP',
-                            width:100,
-                            click : function () {
-                                preview_stop();
-                            }
-
+                            width:30,
+                            // click : function () {
+                            // }
                         },
 
                     ]

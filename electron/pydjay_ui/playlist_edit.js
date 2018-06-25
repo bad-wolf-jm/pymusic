@@ -258,7 +258,6 @@ function PlaylistEditor(id) {
     self.remove_from_playlist = function () {
         id = $$(self.group_list).getSelectedId();
         next = $$(self.group_list).getNextId(id);
-        console.log(id)
         $$(self.group_list).remove(id);
         $$(self.group_list).select(next)
         self.update_track_count_label()    
