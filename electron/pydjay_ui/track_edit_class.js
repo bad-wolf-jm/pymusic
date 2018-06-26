@@ -8,8 +8,143 @@ class TrackEditWindow extends EventDispatcher {
         this._win = webix.ui(this.layout)
         this._track_info = track_info
         this._win.attachEvent("onShow", () => this.load_window_content())
+        webix.UIManager.addHotKey("escape", () => this.dismissChanges(), $$(this.id));
+        webix.UIManager.addHotKey("enter", () => this.play_track(), $$(this.id));
+        webix.UIManager.addHotKey("shift+enter", () => this.play_last_10_seconds(), $$(this.id));
+        webix.UIManager.addHotKey("ctrl+shift+enter", () => this.play_last_30_seconds(), $$(this.id));
+        webix.UIManager.addHotKey("space", () => this.pause_playback(), $$(this.id));
+        webix.UIManager.addHotKey("shift+left", () => this.preview_backward_seek_short(), $$(this.id));
+        webix.UIManager.addHotKey("shift+right", () => this.preview_forward_seek_short(), $$(this.id));
+        webix.UIManager.addHotKey("ctrl+shift+left", () => this.preview_backward_seek_long(), $$(this.id));
+        webix.UIManager.addHotKey("ctrl+shift+right", () => this.preview_forward_seek_long(), $$(this.id));
+        webix.UIManager.addHotKey("ctrl+x", () => this.zoom_waveform_last_10_seconds(), $$(this.id));
+        webix.UIManager.addHotKey("ctrl+z", () => this.zoom_waveform_first_10_seconds(), $$(this.id));
+        webix.UIManager.addHotKey("shift+c", () => this.set_start_marker(), $$(this.id));
+        webix.UIManager.addHotKey("shift+h", () => this.move_start_marker_backward_long(), $$(this.id));
+        webix.UIManager.addHotKey("shift+j", () => this.move_start_marker_forward_long(), $$(this.id));
+        webix.UIManager.addHotKey("shift+n", () => this.move_start_marker_backward_short(), $$(this.id));
+        webix.UIManager.addHotKey("shift+m", () => this.move_start_marker_forward_short(), $$(this.id));
+        webix.UIManager.addHotKey("ctrl+shift+c", () => this.set_end_marker(), $$(this.id));
+        webix.UIManager.addHotKey("ctrl+shift+h", () => this.move_end_marker_backward_long(), $$(this.id));
+        webix.UIManager.addHotKey("ctrl+shift+j", () => this.move_end_marker_forward_long(), $$(this.id));
+        webix.UIManager.addHotKey("ctrl+shift+n", () => this.move_end_marker_backward_short(), $$(this.id));
+        webix.UIManager.addHotKey("ctrl+shift+m", () => this.move_end_marker_forward_short(), $$(this.id));
+        // webix.UIManager.addHotKey("ctrl+plus", () => this.zoom_in(), $$(this.id));
+        // webix.UIManager.addHotKey("ctrl+minus", () => this.zoom_out(), $$(this.id));
         this._win.show()
     }
+
+
+    play_last_30_seconds() {
+        this.audio_player.playBuffer(this._waveform.backend.buffer, this.stream_end / 1000000 - 30000, this.stream_end / 1000000)
+    }
+
+    play_last_10_seconds() {
+        this.audio_player.playBuffer(this._waveform.backend.buffer, this.stream_end / 1000000 - 10000, this.stream_end / 1000000)
+    }
+
+    play_track() {
+        this.audio_player.playBuffer(this._waveform.backend.buffer, this.stream_start / 1000000, this.stream_end / 1000000)
+    }
+
+    pause_playback() {
+        this.audio_player.togglePause()
+    }
+
+    preview_forward_seek_short() {
+        this.audio_player.skip(5)
+    }
+
+    preview_forward_seek_long() {
+        this.audio_player.skip(20)
+    }
+
+    preview_backward_seek_short() {
+        this.audio_player.skip(-5)
+    }
+
+    preview_backward_seek_long() {
+        this.audio_player.skip(-20)
+    }
+
+    set_start_marker() {
+        let sec_pos = this.audio_player.stream_position / 1000
+        let region_start = this._region.start
+        this._region.onResize(sec_pos - region_start, "start")
+        // set_start_marker_to_current_time();
+    }
+
+    set_end_marker() {
+        let sec_pos = this.audio_player.stream_position / 1000
+        let region_end = this._region.end
+        this._region.onResize(sec_pos - region_end)
+        // set_end_marker_to_current_time();
+    }
+
+    move_start_marker_forward_short() {
+        this._region.onResize(0.1, 'start')
+        // set_start_marker(stream_start_edit + 100000000);
+    }
+
+    move_start_marker_forward_long() {
+        this._region.onResize(1, 'start')
+        // set_start_marker(stream_start_edit + 1000000000);
+    }
+
+    move_end_marker_forward_short() {
+        this._region.onResize(0.1)
+        // set_end_marker(stream_end_edit + 100000000);
+    }
+
+    move_end_marker_forward_long() {
+        this._region.onResize(1)
+                // set_end_marker(stream_end_edit + 1000000000);
+    }
+
+    move_start_marker_backward_short() {
+        this._region.onResize(-0.1, 'start')
+        // set_start_marker(stream_start_edit - 100000000);
+    }
+
+    move_start_marker_backward_long() {
+        this._region.onResize(-1, 'start')
+        // set_start_marker(stream_start_edit - 1000000000);
+    }
+
+    move_end_marker_backward_short() {
+        this._region.onResize(-0.1)
+        // set_end_marker(stream_end_edit - 100000000);
+    }
+
+    move_end_marker_backward_long() {
+        this._region.onResize(-1)
+        // set_end_marker(stream_end_edit - 1000000000);
+    }
+
+    // reset_waveform_zoom() {
+    //     // track_edit_waveform.xAxis[0].setExtremes(0, track_length_edit, true, false);
+    //     // webix.UIManager.setFocus($$('track_edit_window'));
+    // }
+
+    // zoom_waveform_first_10_seconds() {
+    //     // track_edit_waveform.xAxis[0].setExtremes(0, 10000000000, true, false);
+    //     // webix.UIManager.setFocus($$('track_edit_window'));
+    // }
+
+    // zoom_waveform_first_30_seconds() {
+    //     // track_edit_waveform.xAxis[0].setExtremes(0, 30000000000, true, false);
+    //     // webix.UIManager.setFocus($$('track_edit_window'));
+    // }
+
+    // zoom_waveform_last_10_seconds() {
+    //     // track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 10000000000, track_length_edit, true, false);
+    //     // webix.UIManager.setFocus($$('track_edit_window'));
+    // }
+
+    // zoom_waveform_last_30_seconds() {
+    //     // track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 30000000000, track_length_edit, true, false);
+    //     // webix.UIManager.setFocus($$('track_edit_window'));
+    // }
 
     setValue(id, value) {
         $$(id).define('value', value)
@@ -42,8 +177,8 @@ class TrackEditWindow extends EventDispatcher {
         this._waveform = WaveSurfer.create({
                 container: `#${this.main_waveform_id}`,
                 pixelRatio: 1,
-                scrollParent: false,
-                hideScrollbar: true,
+                scrollParent: true,
+                hideScrollbar: false,
                 waveColor: 'violet',
                 progressColor: 'purple',
                 plugins: [
@@ -57,10 +192,12 @@ class TrackEditWindow extends EventDispatcher {
             "ready", () => {
                 this.stream_start = this._track_info.stream_start
                 this.stream_end = this._track_info.stream_end
+                this._waveform.zoom($$("edit_zoom_last_30_seconds_button").getValue())
                 this._position_tracker = this.audio_player.on("stream-position", 
-                (pos) => {
-                    this._waveform.seekTo(pos*1000000 / this._track_info.track_length)
-                }
+                    (pos) => {
+                        this._waveform.seekAndCenter(pos*1000000 / this._track_info.track_length)
+                        //this._stream_position
+                    }
                 )
                 this._region = this._waveform.addRegion({start:this._track_info.stream_start / 1000000000, end:this._track_info.stream_end / 1000000000})
                 this._region.on("update", 
@@ -115,6 +252,7 @@ class TrackEditWindow extends EventDispatcher {
         this.audio_player.stop()
         this.audio_player.un("stream-position", this.updateWaveformPosition)
 
+        this.audio_player.audio_context.audio_ctx.close()
         this._win.hide()
     }
 
@@ -122,6 +260,7 @@ class TrackEditWindow extends EventDispatcher {
         this.dispatch("dismiss-changes")
         this.audio_player.stop()
         this.audio_player.un("stream-position", this.updateWaveformPosition)
+        this.audio_player.audio_context.audio_ctx.close()
 
         this._win.hide()
     }
@@ -147,9 +286,10 @@ class TrackEditWindow extends EventDispatcher {
         this.stream_start = 0
         this.stream_end = Infinity
         this.track_length = Infinity
-        this.audio_player = audio_context
+        this.audio_player = new PydjayAudioPlayer()
+        this.audio_player.connectOutputs({master:{left:0, right:1}})
         this.layout = {
-            id: "track_edit_window",
+            id: this.id,
             view: "window",
             modal: true,
             position: "center",
@@ -323,48 +463,47 @@ class TrackEditWindow extends EventDispatcher {
                     {height:50},
                     {
                         cols: [
+                            {width:20}, 
                             {
                                 id:'edit_zoom_first_10_seconds_button',
                                 view:'button',
                                 type:'icon',
-                                label: 'FIRST 10 SECONDS',
-                                click : function () {
-                                }
-                            },
-                            {
-                                id:'edit_zoom_first_30_seconds_button',
-                                view:'button',
-                                type:'icon',
-                                label: 'FIRST 30 SECONDS',
-                                click : function () {
+                                icon:"play",
+                                width:38,
+                                click : () => {
+                                    this.play_track()
                                 }
                             },
                             {},
                             {
-                                id:'edit_reset_zoom_button',
                                 view:'button',
                                 type:'icon',
-                                label: 'RESET',
+                                icon:'search-minus',
+                                width: 30,
                                 click : function () {
                                 }
                             },
-                            {},
                             {
                                 id:'edit_zoom_last_30_seconds_button',
-                                view:'button',
-                                type:'icon',
-                                label: 'LAST 30 SECONDS',
-                                click : function () {
+                                view:'slider',
+                                value:75,
+                                min: 0, 
+                                max: 300,
+                                on: {
+                                    "onSliderDrag": () => {
+                                        this._waveform.zoom($$("edit_zoom_last_30_seconds_button").getValue())
+                                    }
                                 }
                             },
                             {
-                                id:'edit_zoom_last_10_seconds_button',
                                 view:'button',
                                 type:'icon',
-                                label: 'LAST 10 SECONDS',
+                                icon:'search-plus',
+                                width: 30,
                                 click : function () {
                                 }
-                            }
+                            },
+                            {width:20}, 
                         ]
                     },
                     {
@@ -380,43 +519,6 @@ class TrackEditWindow extends EventDispatcher {
                                 template:`<div id="${this.main_waveform_id}" style="border: \'1px solid black\'; width:100%; height:100%; position:relative; top:0%;"></div>`
                             },
                             {width:20}
-                        ]
-                    },
-                    {height:30},
-                    {
-                        cols: [
-                            {width:30},
-                            {
-                                id:'edit_play_button',
-                                view:'button',
-                                label: 'PLAY FULL TRACK',
-                                click : () => {
-                                    this.audio_player.playBuffer(this._waveform.backend.buffer, this.stream_start / 1000000, this.stream_end / 1000000)
-                                }
-                            },
-                            {
-                                id:'edit_play_last_30_seconds_button',
-                                view:'button',
-                                label: 'LAST 30 SECONDS',
-                                click : function () {
-                                }
-                            },
-                            {
-                                id:'edit_play_last_10_seconds_button',
-                                view:'button',
-                                label: 'LAST 10 SECONDS',
-                                click : function () {
-                                }
-                            },
-                            {},
-                            {
-                                id:'edit_stop_button',
-                                view:'button',
-                                label: 'STOP',
-                                click : function () {
-                                }
-                            },
-                            {width:30}
                         ]
                     },
                     {height:60},

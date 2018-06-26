@@ -56,10 +56,10 @@ var queue_actions = {
                 $$('display_list').removeRowCss(selected_queue_element.track_id, 'unavailable_track');
                 $$('display_list').getItem(selected_queue_element.track_id).$css="";
                 $$('display_list').refresh();
-                $$('suggestion_list').removeCss(selected_queue_element.track_id, 'unavailable_track');
+                // $$('suggestion_list').removeCss(selected_queue_element.track_id, 'unavailable_track');
 
                 update_queue_labels();
-                update_suggestions();
+                //u pdate_suggestions();
             }
         )
     },
@@ -110,9 +110,9 @@ var main_list_actions = {
                     function (result) {
                         $$('queue_list').add(result[0]);
                         $$('display_list').addRowCss(id, 'unavailable_track');
-                        $$('suggestion_list').addCss(id, 'unavailable_track');
+                        //$$('suggestion_list').addCss(id, 'unavailable_track');
                         update_queue_labels();
-                        update_suggestions();                        
+                        //u pdate_suggestions();                        
                     }
                 )
             }
@@ -161,7 +161,7 @@ var main_list_actions = {
                         function (error, result) {
                             if (error) throw error;
                             $$('display_list').addRowCss(id, 'unavailable_track');
-                            $$('suggestion_list').addCss(id, 'unavailable_track');
+                            //$$('suggestion_list').addCss(id, 'unavailable_track');
 
                         }
                     )
@@ -185,7 +185,7 @@ var main_list_actions = {
                             $$('display_list').removeRowCss(id, 'unavailable_track');
                             $$('display_list').getItem(id).$css="";
                             $$('display_list').refresh();
-                            $$('suggestion_list').removeCss(id, 'unavailable_track');
+                            //$$('suggestion_list').removeCss(id, 'unavailable_track');
 
                         }
                     )
@@ -280,89 +280,89 @@ var playback_actions = {
 }
 
 
-var track_edit_actions = {
-    close_track_editor: function () {
-        preview_stop();
-        track_data_edit_window.hide()
-    },
+// var track_edit_actions = {
+//     close_track_editor: function () {
+//         preview_stop();
+//         track_data_edit_window.hide()
+//     },
 
-    play_last_30_seconds: function () {
-        preview_play_track_id(track_edited.id, -30000000000, stream_end_edit);
-    },
+//     play_last_30_seconds: function () {
+//         preview_play_track_id(track_edited.id, -30000000000, stream_end_edit);
+//     },
 
-    play_last_10_seconds: function () {
-        preview_play_track_id(track_edited.id, -10000000000, stream_end_edit);
-    },
+//     play_last_10_seconds: function () {
+//         preview_play_track_id(track_edited.id, -10000000000, stream_end_edit);
+//     },
 
-    play_track: function () {
-        preview_play_track_id(track_edited.id, stream_start_edit, stream_end_edit);
-    },
+//     play_track: function () {
+//         preview_play_track_id(track_edited.id, stream_start_edit, stream_end_edit);
+//     },
 
-    set_start_marker: function () {
-        set_start_marker_to_current_time();
-    },
+//     set_start_marker: function () {
+//         set_start_marker_to_current_time();
+//     },
 
-    set_end_marker: function () {
-        set_end_marker_to_current_time();
-    },
+//     set_end_marker: function () {
+//         set_end_marker_to_current_time();
+//     },
 
-    move_start_marker_forward_short: function () {
-        set_start_marker(stream_start_edit + 100000000);
-    },
+//     move_start_marker_forward_short: function () {
+//         set_start_marker(stream_start_edit + 100000000);
+//     },
 
-    move_start_marker_forward_long: function () {
-        set_start_marker(stream_start_edit + 1000000000);
-    },
+//     move_start_marker_forward_long: function () {
+//         set_start_marker(stream_start_edit + 1000000000);
+//     },
 
-    move_end_marker_forward_short: function () {
-        set_end_marker(stream_end_edit + 100000000);
-    },
+//     move_end_marker_forward_short: function () {
+//         set_end_marker(stream_end_edit + 100000000);
+//     },
 
-    move_end_marker_forward_long: function () {
-        set_end_marker(stream_end_edit + 1000000000);
-    },
+//     move_end_marker_forward_long: function () {
+//         set_end_marker(stream_end_edit + 1000000000);
+//     },
 
-    move_start_marker_backward_short: function () {
-        set_start_marker(stream_start_edit - 100000000);
-    },
+//     move_start_marker_backward_short: function () {
+//         set_start_marker(stream_start_edit - 100000000);
+//     },
 
-    move_start_marker_backward_long: function () {
-        set_start_marker(stream_start_edit - 1000000000);
-    },
+//     move_start_marker_backward_long: function () {
+//         set_start_marker(stream_start_edit - 1000000000);
+//     },
 
-    move_end_marker_backward_short:function () {
-        set_end_marker(stream_end_edit - 100000000);
-    },
+//     move_end_marker_backward_short:function () {
+//         set_end_marker(stream_end_edit - 100000000);
+//     },
 
-    move_end_marker_backward_long:function () {
-        set_end_marker(stream_end_edit - 1000000000);
-    },
+//     move_end_marker_backward_long:function () {
+//         set_end_marker(stream_end_edit - 1000000000);
+//     },
 
-    reset_waveform_zoom: function () {
-        track_edit_waveform.xAxis[0].setExtremes(0, track_length_edit, true, false);
-        webix.UIManager.setFocus($$('track_edit_window'));
-    },
+//     reset_waveform_zoom: function () {
+//         track_edit_waveform.xAxis[0].setExtremes(0, track_length_edit, true, false);
+//         webix.UIManager.setFocus($$('track_edit_window'));
+//     },
 
-    zoom_waveform_first_10_seconds: function () {
-        track_edit_waveform.xAxis[0].setExtremes(0, 10000000000, true, false);
-        webix.UIManager.setFocus($$('track_edit_window'));
-    },
+//     zoom_waveform_first_10_seconds: function () {
+//         track_edit_waveform.xAxis[0].setExtremes(0, 10000000000, true, false);
+//         webix.UIManager.setFocus($$('track_edit_window'));
+//     },
 
-    zoom_waveform_first_30_seconds: function () {
-        track_edit_waveform.xAxis[0].setExtremes(0, 30000000000, true, false);
-        webix.UIManager.setFocus($$('track_edit_window'));
-    },
+//     zoom_waveform_first_30_seconds: function () {
+//         track_edit_waveform.xAxis[0].setExtremes(0, 30000000000, true, false);
+//         webix.UIManager.setFocus($$('track_edit_window'));
+//     },
 
-    zoom_waveform_last_10_seconds: function () {
-        track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 10000000000, track_length_edit, true, false);
-        webix.UIManager.setFocus($$('track_edit_window'));
-    },
+//     zoom_waveform_last_10_seconds: function () {
+//         track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 10000000000, track_length_edit, true, false);
+//         webix.UIManager.setFocus($$('track_edit_window'));
+//     },
 
-    zoom_waveform_last_30_seconds: function () {
-        track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 30000000000, track_length_edit, true, false);
-        webix.UIManager.setFocus($$('track_edit_window'));
-    }
-}
+//     zoom_waveform_last_30_seconds: function () {
+//         track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 30000000000, track_length_edit, true, false);
+//         webix.UIManager.setFocus($$('track_edit_window'));
+//     }
+// }
 
 
 var suggestion_list_actions = {
@@ -376,7 +376,7 @@ var suggestion_list_actions = {
                         $$('display_list').addRowCss(id, 'unavailable_track');
                         $$('suggestion_list').addCss(id, 'unavailable_track');
                         update_queue_labels();
-                        update_suggestions();                        
+                        //upda te_suggestions();                        
                     }
                 )
             }

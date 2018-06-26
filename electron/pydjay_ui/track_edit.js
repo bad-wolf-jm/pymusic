@@ -22,7 +22,7 @@ function edit_track_data(id) {
             var edit_window = new TrackEditWindow(pl)
             edit_window.on("accept-changes", (info) => update_track_info(id, info))
             edit_window.show(t)
-
+            pl.stop()
         }
     )
 }

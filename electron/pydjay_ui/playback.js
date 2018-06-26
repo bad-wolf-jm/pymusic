@@ -43,7 +43,7 @@ pl.on("stream-position", function (pos) {
 })
 
 mpl = new PydjayAudioPlayer()
-// mpl.connectOutputs({master:{left:0, right:1}, headphones:{left:4, right:5}})
+//mpl.connectOutputs({master:{left:0, right:1}, headphones:{left:4, right:5}})
 mpl.on("stream-position", function (pos) {
     remaining = Math.abs(mpl.source.duration*1000 - pos)
     $$('main_track_time').define('label', `-${format_nanoseconds(remaining*1000000)}`)
@@ -78,6 +78,41 @@ mpl.on('end-of-stream', function () {
         $$('queue_stop_message').hide()
     }
 })
+
+
+// epl = new PydjayAudioPlayer()
+// epl.connectOutputs({master:{left:0, right:1}})
+// epl.on('playback-stopped', restore_monitor)
+// epl.on('playback-paused', restore_monitor)
+// epl.on('playback-started', mute_monitor)
+// //epl.on('playback-started', pl.)
+
+// function edit_play(file_name, start_time, end_time){
+//     epl.play(file_name, start_time / 1000000, end_time / 1000000)
+// }
+
+// function edit_pause(file_name){
+//     epl.togglePause()
+// }
+
+// function edit_stop(file_name){
+//     epl.stop()
+// }
+
+// function preview_seek_relative(time_delta){
+//     pl.skip(time_delta)
+// }
+
+// pl.on("stream-position", function (pos) {
+//     $$('preview_time').define('label', `${format_nanoseconds(pos*1000000)}`)
+//     $$('preview_time').refresh()
+//     $$('preview_length').define('label', format_nanoseconds(pl.source.duration*1000000000))
+//     $$('preview_length').refresh();
+//     preview_seek.animate(pos / (1000*pl.source.duration));
+//     preview_track_position = pos;
+// })
+
+
 
 
 
@@ -440,7 +475,7 @@ function skip_to_next_track() {
 
 function preview_play_track_id(id, stream_start, stream_end) {
     db_connection.query(
-        `SELECT title, artist, album, bpm, file_name, cover_small, stream_start, stream_end, settings.db_music_cache as music_root,
+        `SELECT title, artist, album, bpm, file_name, cover_small, track_length, genre, stream_start, year, stream_end, settings.db_music_cache as music_root,
          settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${id} LIMIT 1`,
         function(error, result) {
             if (error) throw error;
@@ -448,10 +483,10 @@ function preview_play_track_id(id, stream_start, stream_end) {
             file_name = path.join(result.music_root, result.file_name);
             cover_file_name = `${result.image_root}/${result.cover_small}`;
             stream_length = (result.stream_end-result.stream_start) / 1000000000;
-            $$('preview_title').define('label', result.title)
-            $$('preview_title').refresh()
-            $$('preview_artist').define('label', `${result.artist} - ${result.album}`)
-            $$('preview_artist').refresh()
+            // $$('preview_title').define('label', result.title)
+            // $$('preview_title').refresh()
+            // $$('preview_artist').define('label', `${result.artist}`)
+            // $$('preview_artist').refresh()
             if (result.cover_small == null) {
                 cover_source = "../resources/images/default_album_cover.png"
             } else {
@@ -460,11 +495,36 @@ function preview_play_track_id(id, stream_start, stream_end) {
             var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='75' width='75'></img>`
             $$('preview-cover-image').define('template', cover_image);
             $$('preview-cover-image').refresh();
-            stream_start = (stream_start == undefined) ? result.stream_start : stream_start;
-            stream_end = (stream_end == undefined) ? result.stream_end : stream_end;
-            if (stream_start < 0) {
-                stream_start = stream_end + stream_start;
+
+            if (stream_start == undefined) {
+                stream_start = Math.floor(Math.random() * Math.floor(result.stream_end - result.stream_start));
+                stream_end = result.stream_end
+            } else if (stream_end == undefined) {
+                stream_end = end = result.stream_end
+                if (stream_start < 0) {
+                    stream_start = stream_end + stream_start;
+                }
             }
+            $$("metadata").setValues(
+                {
+                    title: result.title || "",
+                    artist: result.artist || "",
+                    album: result.album || "",
+                    year: result.year || "",
+                    genre: result.genre || "",
+                    color: result.color || "#FFFFFF",
+                    bpm: result.bpm || "",
+                    track_length:`${format_nanoseconds(result.track_length)}`,
+                    track_start:`${format_nanoseconds(result.stream_start)}`,
+                    track_end: `${format_nanoseconds(result.stream_end)}`,
+                    file: file_name
+                }
+            )            
+            // rand_start = stream_start + Math.floor(Math.random() * Math.floor(stream_end - stream_start));
+            // if ((rand_start + 30000000000) < stream_end) {
+            //     preview_play(file_name, rand_start, rand_start + 30000000)
+            // }
+            //console.log(stream_start, stream_end)
             preview_play(file_name, stream_start, stream_end)
         }
     )
