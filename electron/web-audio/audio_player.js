@@ -21,7 +21,6 @@ class PydjayAudioPlayer extends EventDispatcher {
         this.stop()
         this.source = new Audio()
         this.source.src = url
-        this.url = url
         this.source.onended = () => {this.onStreamEnded()}
         this.stream_start_timestamp = this.audio_context.audio_ctx.currentTime * 1000
         this.stream_pause_time = 0
@@ -36,6 +35,7 @@ class PydjayAudioPlayer extends EventDispatcher {
         this.state = "PLAYING"
         this.stream_end = end_time
         this.input_type = "FILE"
+        this.url = url
         this.dispatch("playback-started")
     }
 

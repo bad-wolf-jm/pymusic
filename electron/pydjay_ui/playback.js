@@ -497,7 +497,7 @@ function preview_play_track_id(id, stream_start, stream_end) {
             $$('preview-cover-image').refresh();
 
             if (stream_start == undefined) {
-                stream_start = Math.floor(Math.random() * Math.floor(result.stream_end - result.stream_start));
+                stream_start = 0 // Math.floor(Math.random() * Math.floor(result.stream_end - result.stream_start));
                 stream_end = result.stream_end
             } else if (stream_end == undefined) {
                 stream_end = end = result.stream_end

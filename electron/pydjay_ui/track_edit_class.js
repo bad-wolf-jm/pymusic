@@ -44,7 +44,22 @@ class TrackEditWindow extends EventDispatcher {
     }
 
     play_track() {
-        this.audio_player.playBuffer(this._waveform.backend.buffer, this.stream_start / 1000000, this.stream_end / 1000000)
+        if (this.audio_player.state == "PLAYING") {
+            this.audio_player.stop()
+            this.current_stream_position = null
+            $$(this.play_button_id).define("icon", "play")
+            $$(this.play_button_id).refresh()
+        } else {
+            let start;
+            if (this.current_stream_position != null) {
+                start = this.current_stream_position * this._track_info.track_length  / 1000000               
+            } else {
+                start = this.stream_start / 1000000
+            }
+            this.audio_player.playBuffer(this._waveform.backend.buffer, start, this.stream_end / 1000000)
+            $$(this.play_button_id).define("icon", "stop")
+            $$(this.play_button_id).refresh()
+        }
     }
 
     pause_playback() {
@@ -192,9 +207,10 @@ class TrackEditWindow extends EventDispatcher {
             "ready", () => {
                 this.stream_start = this._track_info.stream_start
                 this.stream_end = this._track_info.stream_end
-                this._waveform.zoom($$("edit_zoom_last_30_seconds_button").getValue())
+                this._waveform.zoom($$(this.zoom_slider_id).getValue())
                 this._position_tracker = this.audio_player.on("stream-position", 
                     (pos) => {
+                        console.log(pos/ this._track_info.track_length)
                         this._waveform.seekAndCenter(pos*1000000 / this._track_info.track_length)
                         //this._stream_position
                     }
@@ -209,6 +225,30 @@ class TrackEditWindow extends EventDispatcher {
                 )
             }
         )
+        this._waveform.on(
+            "seek", (p) => {
+                console.log("seek", p)
+                this.current_stream_position = p
+                // this.stream_start = this._track_info.stream_start
+                // this.stream_end = this._track_info.stream_end
+                // this._waveform.zoom($$("edit_zoom_last_30_seconds_button").getValue())
+                // this._position_tracker = this.audio_player.on("stream-position", 
+                //     (pos) => {
+                //         this._waveform.seekAndCenter(pos*1000000 / this._track_info.track_length)
+                //         //this._stream_position
+                //     }
+                // )
+                // this._region = this._waveform.addRegion({start:this._track_info.stream_start / 1000000000, end:this._track_info.stream_end / 1000000000})
+                // this._region.on("update", 
+                //     () => {
+                //         this.stream_start = Math.round(this._region.start * 1000000000)
+                //         this.stream_end = Math.round(this._region.end * 1000000000)
+                //         this.setValue(this.main_stream_length_id, `${format_nanoseconds(this.stream_end - this.stream_start)}`)
+                //     }
+                // )
+            }
+        )
+
         this.setValue(this.main_title_edit_id, this._track_info.title)
         this.setValue(this.main_artist_edit_id, this._track_info.artist)
         this.setValue(this.main_album_edit_id, this._track_info.album)
@@ -283,11 +323,15 @@ class TrackEditWindow extends EventDispatcher {
         this.main_loved_edit_id = this.ID("main-loved-edit-edit")
         this.main_color_edit_id = this.ID("main-loved-edit-edit")
         this.main_waveform_id = this.ID("track_waveform")
+        this.play_button_id = this.ID("play_button")
+        this.zoom_slider_id = this.ID("zoom_slider")
+
         this.stream_start = 0
         this.stream_end = Infinity
         this.track_length = Infinity
         this.audio_player = new PydjayAudioPlayer()
         this.audio_player.connectOutputs({master:{left:0, right:1}})
+        this.current_stream_position = null
         this.layout = {
             id: this.id,
             view: "window",
@@ -465,7 +509,7 @@ class TrackEditWindow extends EventDispatcher {
                         cols: [
                             {width:20}, 
                             {
-                                id:'edit_zoom_first_10_seconds_button',
+                                id: this.play_button_id,
                                 view:'button',
                                 type:'icon',
                                 icon:"play",
@@ -484,14 +528,14 @@ class TrackEditWindow extends EventDispatcher {
                                 }
                             },
                             {
-                                id:'edit_zoom_last_30_seconds_button',
+                                id:this.zoom_slider_id,
                                 view:'slider',
                                 value:75,
                                 min: 0, 
                                 max: 300,
                                 on: {
                                     "onSliderDrag": () => {
-                                        this._waveform.zoom($$("edit_zoom_last_30_seconds_button").getValue())
+                                        this._waveform.zoom($$(this.zoom_slider_id).getValue())
                                     }
                                 }
                             },
