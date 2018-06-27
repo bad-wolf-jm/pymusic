@@ -1,13 +1,10 @@
 var jsmediatags = require("jsmediatags");
-//var fs = require('fs');
 var fs = require('fs-extra');
-
 var path = require('path');
-
 const {spawn} = require ('child_process');
 var async = require('async');
 var Jimp = require("jimp");
-var AV = require('av');
+// var AV = require('av');
 require('mp3.js');
 
 var files_to_add = null;
@@ -16,50 +13,6 @@ var conv_test_folder = '/Users/jihemme/Python/DJ/conv_test'
 var conv_test_folder_img = '/Users/jihemme/Python/DJ/conv_test/images'
 var audio_info = null;
 
-
-
-function addslashes(s) {
-    if (s == null) return null;
-    o = ""
-    d = {'"': '\\"',
-         "'": "\\'",
-         "\0":"\\\0",
-         "\\": "\\\\"}
-
-    for (var i=0; i<s.length; i++) {
-        if (s[i] in d) {
-            o += d[s[i]]
-        } else {
-            o += s[i]
-        }
-    }
-    return o
-}
-
-function none_to_null(v) {
-    return  (v == null) ? null : v
-}
-
-function none_to_zero(v) {
-    return  (v == null) ? 0 : v
-}
-
-function bool_to_int(b) {
-    return b ? 1 : 0
-}
-
-function STRING(s) {
-    return (s != null) ? `'${s}'` : 'NULL'
-}
-
-function DATE(s) {
-    pad = function(num) {
-        var norm = Math.floor(Math.abs(num));
-        return (norm < 10 ? '0' : '') + norm;
-    };
-    d = `${s.getFullYear()}-${pad(s.getMonth()+1)}-${pad(s.getDate())}T${pad(s.getHours())}:${pad(s.getMinutes())}:${pad(s.getSeconds())}`
-    return `'${d}'`
-}
 
 
 function getFileExtension(f_nae) {
@@ -266,15 +219,13 @@ function select_tracks_to_add() {
                 jsmediatags.read(filenames[i], {
                       onSuccess: function(tag) {
                           num --;
-                          console.log(i, tag);
-                          console.log(parse_tag(filenames[i], tag))
+                        //   console.log(i, tag);
+                        //   console.log(parse_tag(filenames[i], tag))
                           new_array.push(parse_tag(filenames[i], tag));
                           if (num == 0) {
                               $$('add_file_list').clearAll();
                               $$('add_file_list').define('data', new_array);
                               $$('add_file_list').refresh();
-                            //   console.log(new_array);
-                            //   console.log('DONE');
                               files_to_add = new_array;
                           }
                       },

@@ -143,7 +143,6 @@ function save_session(name, location, address) {
                                                                             function (error, r) {
                                                                                 if (error) throw error;
                                                                                 // console.log('session saved');
-
                                                                             }
                                                                         )
                                                                     }

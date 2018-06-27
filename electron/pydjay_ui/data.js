@@ -1,5 +1,49 @@
 var display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, grouping, rating, bpm, stream_length, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
 
+
+function addslashes(s) {
+    if (s == null) return null;
+    o = ""
+    d = {'"': '\\"',
+         "'": "\\'",
+         "\0":"\\\0",
+         "\\": "\\\\"}
+
+    for (var i=0; i<s.length; i++) {
+        if (s[i] in d) {
+            o += d[s[i]]
+        } else {
+            o += s[i]
+        }
+    }
+    return o
+}
+
+function none_to_null(v) {
+    return  (v == null) ? null : v
+}
+
+function none_to_zero(v) {
+    return  (v == null) ? 0 : v
+}
+
+function bool_to_int(b) {
+    return b ? 1 : 0
+}
+
+function STRING(s) {
+    return (s != null) ? `'${s}'` : 'NULL'
+}
+
+function DATE(s) {
+    pad = function(num) {
+        var norm = Math.floor(Math.abs(num));
+        return (norm < 10 ? '0' : '') + norm;
+    };
+    d = `${s.getFullYear()}-${pad(s.getMonth()+1)}-${pad(s.getDate())}T${pad(s.getHours())}:${pad(s.getMinutes())}:${pad(s.getSeconds())}`
+    return `'${d}'`
+}
+
 function DataProvider() {
     var self = this
 
