@@ -11,7 +11,7 @@
 //     command_socket.send(JSON.stringify({'name': name, 'args': args, 'kwargs': kwargs}));
 // }
 
-pl = new PydjayAudioPlayer()
+pl = new PydjayAudioFilePlayer()
 pl.connectOutputs({master:{left:0, right:1}})
 pl.on('playback-stopped', restore_monitor)
 pl.on('playback-paused', restore_monitor)
@@ -42,7 +42,7 @@ pl.on("stream-position", function (pos) {
     preview_track_position = pos;
 })
 
-mpl = new PydjayAudioPlayer()
+mpl = new PydjayAudioFilePlayer()
 //mpl.connectOutputs({master:{left:0, right:1}, headphones:{left:4, right:5}})
 mpl.on("stream-position", function (pos) {
     remaining = Math.abs(mpl.source.duration*1000 - pos)

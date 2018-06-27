@@ -95,7 +95,7 @@ class PydjayAudioBufferPlayer extends PydjayAudioBasePlayer {
             // this.dispatch("playback-paused")
             // this.state = "PAUSED"
             // this.pause_time = this.stream_elapsed
-            super.pause()
+            
             if (this.source != null) {
                 // if (this.source.pause){
                 //     this.source.pause()
@@ -104,10 +104,10 @@ class PydjayAudioBufferPlayer extends PydjayAudioBasePlayer {
                 // }
             }
         }
+        super.pause()
     }
 
     resume() {
-        super.resume()
         if (this.state == "PAUSED") {
             // this.total_pause_time += (this.audio_context.audio_ctx.currentTime*1000 - this.stream_start_timestamp -this.pause_time)
             // this.stream_pause_time = 0
@@ -119,6 +119,7 @@ class PydjayAudioBufferPlayer extends PydjayAudioBasePlayer {
             // }
             this.dispatch("playback-started")
         }
+        super.resume()
     }
 
     // togglePause() {

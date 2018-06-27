@@ -18,7 +18,7 @@ class PydjayAudioFilePlayer extends PydjayAudioBasePlayer {
     }
 
     play(url, start_time, end_time) {
-        this.stop()
+        super.play(start_time, end_time)
         this.url = url
         this.source = new Audio()
         this.source.src = url
@@ -89,23 +89,23 @@ class PydjayAudioFilePlayer extends PydjayAudioBasePlayer {
         }
     }
 
-    // pause() {
-    //     if (this.state == "PLAYING"){
-    //         this.dispatch("playback-paused")
-    //         this.state = "PAUSED"
-    //         this.pause_time = this.stream_elapsed
-    //         if (this.source != null) {
-    //             if (this.source.pause){
-    //                 this.source.pause()
-    //             } else {
-    //                 this.source.stop()
-    //             }
-    //         }
-    //     }
-    // }
+    pause() {
+        if (this.state == "PLAYING"){
+            // this.dispatch("playback-paused")
+            // this.state = "PAUSED"
+            // this.pause_time = this.stream_elapsed
+            if (this.source != null) {
+                //if (this.source.pause){
+                this.source.pause()
+                //} else {
+                //    this.source.stop()
+               // }
+            }
+        }
+        super.pause()
+    }
 
     resume() {
-        super.resume()
         if (this.state == "PAUSED") {
             // this.total_pause_time += (this.audio_context.audio_ctx.currentTime*1000 - this.stream_start_timestamp -this.pause_time)
             // this.stream_pause_time = 0
@@ -117,6 +117,7 @@ class PydjayAudioFilePlayer extends PydjayAudioBasePlayer {
             // }
             // this.dispatch("playback-started")
         }
+        super.resume()
     }
 
     // togglePause() {

@@ -36,11 +36,11 @@ class TrackEditWindow extends EventDispatcher {
 
 
     play_last_30_seconds() {
-        this.audio_player.playBuffer(this._waveform.backend.buffer, this.stream_end / 1000000 - 30000, this.stream_end / 1000000)
+        this.audio_player.play(this._waveform.backend.buffer, this.stream_end / 1000000 - 30000, this.stream_end / 1000000)
     }
 
     play_last_10_seconds() {
-        this.audio_player.playBuffer(this._waveform.backend.buffer, this.stream_end / 1000000 - 10000, this.stream_end / 1000000)
+        this.audio_player.play(this._waveform.backend.buffer, this.stream_end / 1000000 - 10000, this.stream_end / 1000000)
     }
 
     play_track() {
@@ -56,7 +56,7 @@ class TrackEditWindow extends EventDispatcher {
             } else {
                 start = this.stream_start / 1000000
             }
-            this.audio_player.playBuffer(this._waveform.backend.buffer, start, this.stream_end / 1000000)
+            this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end / 1000000)
             $$(this.play_button_id).define("icon", "stop")
             $$(this.play_button_id).refresh()
         }
@@ -329,7 +329,7 @@ class TrackEditWindow extends EventDispatcher {
         this.stream_start = 0
         this.stream_end = Infinity
         this.track_length = Infinity
-        this.audio_player = new PydjayAudioPlayer()
+        this.audio_player = new PydjayAudioBufferPlayer()
         this.audio_player.connectOutputs({master:{left:0, right:1}})
         this.current_stream_position = null
         this.layout = {
