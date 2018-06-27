@@ -7,29 +7,29 @@
 // var track_edited = undefined;
 // var track_length_edit = undefined;
 
-function edit_track_data(id) {
-    DB.get_track_by_id(id, 
-        function (t) {
-            t = t[0]
-            t.file_name = path.join(t.music_root, t.file_name);
-            t.stream_length = t.stream_end - t.stream_start
-            if (t.cover != null) {
-                t.cover_small = path.join(t.image_root, t.cover);
-                t.cover_medium = path.join(t.image_root, t.cover);
-                t.cover_large = path.join(t.image_root, t.cover);
-                t.cover_original = path.join(t.image_root, t.cover);
-            }
-            var edit_window = new TrackEditWindow(pl)
-            edit_window.on("accept-changes", (info) => update_track_info(id, info))
-            edit_window.show(t)
-            pl.stop()
-        }
-    )
-}
+// function edit_track_data(id) {
+//     DB.get_track_by_id(id, 
+//         function (t) {
+//             t = t[0]
+//             t.file_name = path.join(t.music_root, t.file_name);
+//             t.stream_length = t.stream_end - t.stream_start
+//             if (t.cover != null) {
+//                 t.cover_small = path.join(t.image_root, t.cover);
+//                 t.cover_medium = path.join(t.image_root, t.cover);
+//                 t.cover_large = path.join(t.image_root, t.cover);
+//                 t.cover_original = path.join(t.image_root, t.cover);
+//             }
+//             var edit_window = new TrackEditWindow(pl)
+//             edit_window.on("accept-changes", (info) => DB.update_track_data(id, info))
+//             edit_window.show(t)
+//             pl.stop()
+//         }
+//     )
+// }
 
-function update_track_info(id, info) {
-    console.log(id, info)
-}
+// function update_track_info(id, info) {
+//     console.log(id, info)
+// }
     // db_connection.query(
     //     `SELECT tracks.id as id, title, artist, album, bpm, file_name, cover_medium, waveform,
     //             stream_start, stream_end, track_length, settings.db_music_cache as music_root,
@@ -211,14 +211,14 @@ function update_track_info(id, info) {
 // }
 
 
-function save_new_track_info() {
-    $QUERY(
-        `UPDATE tracks SET
-         stream_start=${stream_start_edit},
-         stream_end=${stream_end_edit},
-         stream_length=${stream_end_edit-stream_start_edit} WHERE id=${track_id_edit}`,
-         function (r) {
-             console.log('track_edited')
-         }
-    )
-}
+// function save_new_track_info() {
+//     $QUERY(
+//         `UPDATE tracks SET
+//          stream_start=${stream_start_edit},
+//          stream_end=${stream_end_edit},
+//          stream_length=${stream_end_edit-stream_start_edit} WHERE id=${track_id_edit}`,
+//          function (r) {
+//              console.log('track_edited')
+//          }
+//     )
+// }

@@ -4,6 +4,4 @@ class AudioDeck extends EventDispatcher{
         this.main = new AudioPlayer()
         this.prelisten = new AudioPlayer()
     }
-
-
 }

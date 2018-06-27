@@ -1,6 +1,8 @@
 var jsmediatags = require("jsmediatags");
-var fs = require('fs');
-path = require('path');
+//var fs = require('fs');
+var fs = require('fs-extra');
+
+var path = require('path');
 
 const {spawn} = require ('child_process');
 var async = require('async');
@@ -52,36 +54,17 @@ function STRING(s) {
 
 function DATE(s) {
     pad = function(num) {
-                var norm = Math.floor(Math.abs(num));
-                //if (norm == 0)
-                return (norm < 10 ? '0' : '') + norm;
-            };
+        var norm = Math.floor(Math.abs(num));
+        return (norm < 10 ? '0' : '') + norm;
+    };
     d = `${s.getFullYear()}-${pad(s.getMonth()+1)}-${pad(s.getDate())}T${pad(s.getHours())}:${pad(s.getMinutes())}:${pad(s.getSeconds())}`
     return `'${d}'`
 }
 
-var fs = require('fs-extra');
 
 function getFileExtension(f_nae) {
     return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
 }
-
-
-// function copyFile(source, target) {
-//     var rd = fs.createReadStream(source, { flags: 'r',  encoding: "binary"});
-//     var wr = fs.createWriteStream(target, { flags: 'w',  encoding: "binary"});
-//     return new Promise(function(resolve, reject) {
-//         rd.on('error', reject);
-//         wr.on('error', reject);
-//         wr.on('end', resolve);
-//         rd.pipe(wr);
-//     }).catch(function(error) {
-//         rd.destroy();
-//         wr.end();
-//         throw error;
-//     });
-// }
-  
 
 function add_selected_files_to_database (settings, id, total) {
     if (items_to_add.length > 0) {
@@ -153,6 +136,7 @@ function add_selected_files_to_database (settings, id, total) {
                             'stream_start': 0,
                             'stream_end': length,
                             'stream_length': length,
+                            'color': "'#FFFFFF'",
                             'date_added': DATE(NOW),
                             'date_modified': DATE(NOW),
                             'bitrate': 0, //bit_output.bitrate,
@@ -167,13 +151,14 @@ function add_selected_files_to_database (settings, id, total) {
                         }
                         // console.log(track_info);
                         // console.log(ADD_TRACK(track_info))
-                        db_connection.query(
-                            ADD_TRACK(track_info),
-                            function (error, _) {
-                                if (error) throw error;
-                                add_selected_files_to_database (settings, id+1, total)
-                            }
-                        )
+                        DB.add_track(track_info, () => {add_selected_files_to_database (settings, id+1, total)})
+                        // db_connection.query(
+                        //     ADD_TRACK(track_info),
+                        //     function (error, _) {
+                        //         if (error) throw error;
+                        //         add_selected_files_to_database (settings, id+1, total)
+                        //     }
+                        // )
 
                     }
                     foo.src = mp3_path
@@ -190,22 +175,22 @@ function add_selected_files_to_database (settings, id, total) {
     }
 }
 
-function ADD_TRACK(track_info) {
-    return `
-    INSERT INTO tracks (
-    id, title, artist, album, year, genre, bpm, rating, favorite, comments, waveform, cover_medium,
-    cover_small, cover_large, cover_original, track_length, stream_start, stream_end, stream_length,
-    date_added, date_modified, bitrate, samplerate, file_name, file_size, hash, category, description,
-    disabled, original_file_name, grouping)
-    VALUES
-    (${track_info.id},${track_info.title}, ${track_info.artist}, ${track_info.album}, ${track_info.year},
-    ${track_info.genre}, ${track_info.bpm}, ${track_info.rating}, ${track_info.favorite}, ${track_info.comments},
-    ${track_info.waveform}, ${track_info.cover_medium}, ${track_info.cover_small}, ${track_info.cover_large},
-    ${track_info.cover_original}, ${track_info.track_length}, ${track_info.stream_start}, ${track_info.stream_end},
-    ${track_info.stream_length}, ${track_info.date_added}, ${track_info.date_modified}, ${track_info.bitrate},
-    ${track_info.samplerate}, ${track_info.file_name}, ${track_info.file_size}, ${track_info.hash}, ${track_info.category},
-    ${track_info.description}, ${track_info.disabled}, ${track_info.original_file_name}, ${track_info.grouping})`
-}
+// function ADD_TRACK(track_info) {
+//     return `
+//     INSERT INTO tracks (
+//     id, title, artist, album, year, genre, bpm, rating, favorite, comments, waveform, cover_medium,
+//     cover_small, cover_large, cover_original, track_length, stream_start, stream_end, stream_length,
+//     date_added, date_modified, bitrate, samplerate, file_name, file_size, hash, category, description,
+//     disabled, original_file_name, grouping)
+//     VALUES
+//     (${track_info.id},${track_info.title}, ${track_info.artist}, ${track_info.album}, ${track_info.year},
+//     ${track_info.genre}, ${track_info.bpm}, ${track_info.rating}, ${track_info.favorite}, ${track_info.comments},
+//     ${track_info.waveform}, ${track_info.cover_medium}, ${track_info.cover_small}, ${track_info.cover_large},
+//     ${track_info.cover_original}, ${track_info.track_length}, ${track_info.stream_start}, ${track_info.stream_end},
+//     ${track_info.stream_length}, ${track_info.date_added}, ${track_info.date_modified}, ${track_info.bitrate},
+//     ${track_info.samplerate}, ${track_info.file_name}, ${track_info.file_size}, ${track_info.hash}, ${track_info.category},
+//     ${track_info.description}, ${track_info.disabled}, ${track_info.original_file_name}, ${track_info.grouping})`
+// }
 
 
 function perform_add_to_database() {
@@ -288,8 +273,8 @@ function select_tracks_to_add() {
                               $$('add_file_list').clearAll();
                               $$('add_file_list').define('data', new_array);
                               $$('add_file_list').refresh();
-                              console.log(new_array);
-                              console.log('DONE');
+                            //   console.log(new_array);
+                            //   console.log('DONE');
                               files_to_add = new_array;
                           }
                       },
