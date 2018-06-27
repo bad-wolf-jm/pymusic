@@ -119,4 +119,45 @@ function DataProvider() {
         FROM tracks JOIN session_queue ON tracks.id=session_queue.track_id LEFT JOIN settings on 1
         WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`, k)
     }
+
+    self.add_track = function (track_info, k) {
+        sql = `INSERT INTO tracks (
+        id, title, artist, album, year, genre, bpm, rating, favorite, comments, waveform, cover_medium,
+        cover_small, cover_large, cover_original, track_length, stream_start, stream_end, stream_length,
+        date_added, date_modified, bitrate, samplerate, file_name, file_size, hash, category, description,
+        disabled, original_file_name, grouping)
+        VALUES (${track_info.id},${track_info.title}, ${track_info.artist}, ${track_info.album}, ${track_info.year},
+        ${track_info.genre}, ${track_info.bpm}, ${track_info.rating}, ${track_info.favorite}, ${track_info.comments},
+        ${track_info.waveform}, ${track_info.cover_medium}, ${track_info.cover_small}, ${track_info.cover_large},
+        ${track_info.cover_original}, ${track_info.track_length}, ${track_info.stream_start}, ${track_info.stream_end},
+        ${track_info.stream_length}, ${track_info.date_added}, ${track_info.date_modified}, ${track_info.bitrate},
+        ${track_info.samplerate}, ${track_info.file_name}, ${track_info.file_size}, ${track_info.hash}, ${track_info.category},
+        ${track_info.description}, ${track_info.disabled}, ${track_info.original_file_name}, ${track_info.grouping})`
+        $QUERY(sql, k)
+    }
+
+    self.update_track_data = function (id, track_info, k) {
+        let sql = "UPDATE TRACKS SET "
+        let fields = Object.keys(track_info);
+        sql += ("title" in fields) ? `title=${STRING(addslashes(track_info.title))}\n` : '' 
+        sql += ("artist" in fields) ? `artist=${STRING(addslashes(track_info.artist))}\n` : '' 
+        sql += ("album" in fields) ? `album=${STRING(addslashes(track_info.album))}\n` : '';
+        sql += ("year" in fields) ? `year=${track_info.year}\n` : '' 
+        sql += ("genre" in fields) ? `genre=${STRING(addslashes(track_info.genre))}\n` : '' 
+        sql += ("bpm" in fields) ? `bpm=${track_info.bpm}\n` : '' 
+        sql += ("rating" in fields) ? `rating=${track_info.rating}\n` : '' 
+        sql += ("favorite" in fields) ? `favorite=${track_info.favorite}\n` : '' 
+        sql += ("comments" in fields) ? `comments=${STRING(addslashes(track_info.comments))}\n` : '' 
+        sql += ("cover_medium" in fields) ? `cover_medium=${STRING(addslashes(track_info.cover_medium))}\n` : ''
+        sql += ("cover_small" in fields) ? `cover_small=${STRING(addslashes(track_info.cover_small))}\n` : '' 
+        sql += ("cover_large" in fields) ? `cover_large=${STRING(addslashes(track_info.cover_large))}\n` : '' 
+        sql += ("cover_original" in fields) ? `cover_original=${STRING(addslashes(track_info.cover_original))}\n` : '' 
+        sql += ("stream_start" in fields) ? `stream_start=${track_info.stream_start}\n` : '' 
+        sql += ("stream_end" in fields) ? `stream_end=${track_info.start_end}\n` : '' 
+        sql += ("stream_length" in fields) ? `stream_length=${track_info.start_length}\n` : ''
+        sql += ("date_modified" in fields) ? `date_modified=${DATE(new Date())}` : '' 
+        sql += ("disabled" in fields) ? `disabled=${track_info.disabled}\n` : '' 
+        sql += ("grouping" in fields) ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
+        console.log(sql)
+    }
 }

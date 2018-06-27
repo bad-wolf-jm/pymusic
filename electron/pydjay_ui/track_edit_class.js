@@ -1,3 +1,26 @@
+function edit_track_data(id) {
+    DB.get_track_by_id(id, 
+        function (t) {
+            t = t[0]
+            t.file_name = path.join(t.music_root, t.file_name);
+            t.stream_length = t.stream_end - t.stream_start
+            if (t.cover != null) {
+                t.cover_small = path.join(t.image_root, t.cover);
+                t.cover_medium = path.join(t.image_root, t.cover);
+                t.cover_large = path.join(t.image_root, t.cover);
+                t.cover_original = path.join(t.image_root, t.cover);
+            }
+            var edit_window = new TrackEditWindow(pl)
+            edit_window.on("accept-changes", (info) => DB.update_track_data(id, info))
+            edit_window.show(t)
+            pl.stop()
+        }
+    )
+}
+
+
+
+
 class TrackEditWindow extends EventDispatcher {
 
     ID () {
@@ -86,80 +109,45 @@ class TrackEditWindow extends EventDispatcher {
         let sec_pos = this.audio_player.stream_position / 1000
         let region_start = this._region.start
         this._region.onResize(sec_pos - region_start, "start")
-        // set_start_marker_to_current_time();
     }
 
     set_end_marker() {
         let sec_pos = this.audio_player.stream_position / 1000
         let region_end = this._region.end
         this._region.onResize(sec_pos - region_end)
-        // set_end_marker_to_current_time();
     }
 
     move_start_marker_forward_short() {
         this._region.onResize(0.1, 'start')
-        // set_start_marker(stream_start_edit + 100000000);
     }
 
     move_start_marker_forward_long() {
         this._region.onResize(1, 'start')
-        // set_start_marker(stream_start_edit + 1000000000);
     }
 
     move_end_marker_forward_short() {
         this._region.onResize(0.1)
-        // set_end_marker(stream_end_edit + 100000000);
     }
 
     move_end_marker_forward_long() {
         this._region.onResize(1)
-                // set_end_marker(stream_end_edit + 1000000000);
     }
 
     move_start_marker_backward_short() {
         this._region.onResize(-0.1, 'start')
-        // set_start_marker(stream_start_edit - 100000000);
     }
 
     move_start_marker_backward_long() {
         this._region.onResize(-1, 'start')
-        // set_start_marker(stream_start_edit - 1000000000);
     }
 
     move_end_marker_backward_short() {
         this._region.onResize(-0.1)
-        // set_end_marker(stream_end_edit - 100000000);
     }
 
     move_end_marker_backward_long() {
         this._region.onResize(-1)
-        // set_end_marker(stream_end_edit - 1000000000);
     }
-
-    // reset_waveform_zoom() {
-    //     // track_edit_waveform.xAxis[0].setExtremes(0, track_length_edit, true, false);
-    //     // webix.UIManager.setFocus($$('track_edit_window'));
-    // }
-
-    // zoom_waveform_first_10_seconds() {
-    //     // track_edit_waveform.xAxis[0].setExtremes(0, 10000000000, true, false);
-    //     // webix.UIManager.setFocus($$('track_edit_window'));
-    // }
-
-    // zoom_waveform_first_30_seconds() {
-    //     // track_edit_waveform.xAxis[0].setExtremes(0, 30000000000, true, false);
-    //     // webix.UIManager.setFocus($$('track_edit_window'));
-    // }
-
-    // zoom_waveform_last_10_seconds() {
-    //     // track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 10000000000, track_length_edit, true, false);
-    //     // webix.UIManager.setFocus($$('track_edit_window'));
-    // }
-
-    // zoom_waveform_last_30_seconds() {
-    //     // track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 30000000000, track_length_edit, true, false);
-    //     // webix.UIManager.setFocus($$('track_edit_window'));
-    // }
 
     setValue(id, value) {
         $$(id).define('value', value)
@@ -212,7 +200,6 @@ class TrackEditWindow extends EventDispatcher {
                     (pos) => {
                         console.log(pos/ this._track_info.track_length)
                         this._waveform.seekAndCenter(pos*1000000 / this._track_info.track_length)
-                        //this._stream_position
                     }
                 )
                 this._region = this._waveform.addRegion({start:this._track_info.stream_start / 1000000000, end:this._track_info.stream_end / 1000000000})
@@ -227,7 +214,7 @@ class TrackEditWindow extends EventDispatcher {
         )
         this._waveform.on(
             "seek", (p) => {
-                console.log("seek", p)
+                //console.log("seek", p)
                 this.current_stream_position = p
                 // this.stream_start = this._track_info.stream_start
                 // this.stream_end = this._track_info.stream_end
@@ -588,6 +575,4 @@ class TrackEditWindow extends EventDispatcher {
             }
         }
     }
-
-
 }
