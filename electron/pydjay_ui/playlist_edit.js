@@ -198,7 +198,7 @@ function PlaylistEditor(id) {
             ]
         }
     }
-    self.display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, grouping, rating, bpm, stream_length, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
+    self.display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, grouping, rating, color, bpm, stream_length, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
 
     self.save_track_group = function () {
         d = $$(self.group_list).data.serialize()

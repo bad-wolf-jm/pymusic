@@ -10,9 +10,13 @@
     height:100% !important;
 } */
 
+
 .unavailable_track {
-    color: #555555 !important;
+    background-color: #550000;
+    opacity: 0.5 !important;
+    fill-opacity: 0.5;
 }
+
 .webix_img_btn {
     color: #cccccc;
 }
