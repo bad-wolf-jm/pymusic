@@ -8,6 +8,9 @@ function display_track_list(list_name, list_elements) {
             if (!list_elements[i].available){
                 list_elements[i].$css = "unavailable_track";
             }
+            // if (list_element[i].color) {
+            //     list_elements[i].$css = "unavailable_track";
+            // }
         }
     }
     $$('display_list').define('data', list_elements);
@@ -59,6 +62,17 @@ function display_never_played_songs(){
         )
     }
 }
+
+function display_suggestions(){
+    return function () {
+        DB.get_suggested_tracks(
+            function (result) {
+                display_track_list('Suggested Tracks', result);
+            }
+        )
+    }
+}
+
 
 function display_played_songs(){
     return function () {
@@ -172,6 +186,15 @@ var sidebar_template = {
                     type:'icon',
                     icon:'database',
                     click:display_all_songs()
+                },
+                {
+                    id: 'show_suggestions',
+                    view:'button',
+                    label:'<b style="font-size:12px">SUGGESTIONS</b>',
+                    type:'icon',
+                    icon:'calendar',
+                    click:display_suggestions(),
+                    //hotkey:'ctrl+shift+s'
                 },
                 {
                     id: 'show_short_list',

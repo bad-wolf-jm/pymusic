@@ -11,7 +11,7 @@ function edit_track_data(id) {
                 t.cover_original = path.join(t.image_root, t.cover);
             }
             var edit_window = new TrackEditWindow(pl)
-            edit_window.on("accept-changes", (info) => DB.update_track_data(id, info))
+            edit_window.on("accept-changes", (info) => DB.update_track_data(id, info, (x) => {}))
             edit_window.show(t)
             pl.stop()
         }
@@ -198,7 +198,7 @@ class TrackEditWindow extends EventDispatcher {
                 this._waveform.zoom($$(this.zoom_slider_id).getValue())
                 this._position_tracker = this.audio_player.on("stream-position", 
                     (pos) => {
-                        console.log(pos/ this._track_info.track_length)
+                        //console.log(pos/ this._track_info.track_length)
                         this._waveform.seekAndCenter(pos*1000000 / this._track_info.track_length)
                     }
                 )
@@ -243,7 +243,7 @@ class TrackEditWindow extends EventDispatcher {
         this.setValue(this.main_year_edit_id, this._track_info.year)
         this.setValue(this.main_grouping_edit_id, this._track_info.grouping)
         this.setValue(this.main_track_bpm_edit_id, this._track_info.bpm)
-        this.setValue(this.main_color_edit_id, "#FAFAFA")
+        this.setValue(this.main_color_edit_id, this._track_info.color)
         this.setValue(this.main_stream_length_id, `${format_nanoseconds(this._track_info.stream_length)}`)
         this.setValue(this.main_track_length_id, `${format_nanoseconds(this._track_info.track_length)}`)
         this.setRating(this._track_info.rating)

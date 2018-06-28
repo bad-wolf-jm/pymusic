@@ -12,6 +12,7 @@ class PydjayAudioFilePlayer extends PydjayAudioBasePlayer {
         let x = this.audio_context.audio_ctx.createMediaElementSource(this.source)
         x.channelInterpretation = "discrete"
         x.connect(this.audio_context.splitter)
+        this.source.currentTime = this.stream_start / 1000
         this.source.play()
         this.dispatch("playback-started")
     }
