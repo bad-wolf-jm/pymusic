@@ -210,9 +210,9 @@ function DataProvider() {
         sql += fields.indexOf("stream_start") != -1 ? `stream_start=${track_info.stream_start},\n` : '' 
         sql += fields.indexOf("stream_end") != -1 ? `stream_end=${track_info.stream_end},\n` : '' 
         sql += fields.indexOf("stream_length") != -1 ? `stream_length=${track_info.sttream_length},\n` : ''
-        sql += fields.indexOf("date_modified") != -1 ? `date_modified=${DATE(new Date())},\n` : '' 
         sql += fields.indexOf("disabled") != -1 ? `disabled=${track_info.disabled},\n` : '' 
         sql += fields.indexOf("grouping") != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
+        sql += `date_modified=${DATE(new Date())},\n` 
         sql += `WHERE id=${id}`
         //console.log(sql)
         $QUERY(sql, k)
