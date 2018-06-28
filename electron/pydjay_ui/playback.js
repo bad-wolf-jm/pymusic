@@ -11,12 +11,17 @@
 //     command_socket.send(JSON.stringify({'name': name, 'args': args, 'kwargs': kwargs}));
 // }
 
-// pl_channel_config = {headphones:{left:0, right:1}}
-// mpl_channel_config = {master:{left:0, right:1}}
+
+pl_channel_config = {headphones:{left:0, right:1}}
+mpl_channel_config = {master:{left:0, right:1}}
 
 
-pl_channel_config = {headphones:{left:2, right:3}}
-mpl_channel_config = {master:{left:0, right:1}, headphones:{left:2, right:3}}
+// pl_channel_config = {headphones:{left:2, right:3}}
+// mpl_channel_config = {master:{left:0, right:1}, headphones:{left:2, right:3}}
+
+
+// pl_channel_config = {headphones:{left:4, right:5}}
+// mpl_channel_config = {master:{left:0, right:1}, headphones:{left:4, right:5}}
 
 
 var pl = new PydjayAudioFilePlayer()
