@@ -2,9 +2,9 @@
 
 function custom_checkbox(obj, common, value){
     if (value)
-        return "<div class='webix_table_checkbox checked'><span class='fa fa-heart' style='font-size: 12px'/></div>";
+        return `<div class='webix_table_checkbox checked'><span class='fa fa-heart' style='font-size: 12px; color:${obj.color}'/></div>`;
     else
-        return "<div class='webix_table_checkbox notchecked'><span class='fa fa-heart-o' style='font-size: 12px'/></div>";
+        return `<div class='webix_table_checkbox notchecked'><span class='fa fa-heart-o' style='font-size: 12px; color:${obj.color}'/></div>`;
 };
 
 var preview_player_window = {
@@ -332,16 +332,16 @@ var main_list_display_template = {
             columns:[
                 { id:"id",            header:"",  width:30, hidden:true, template:"<img src='../resources/images/precue.png' style='filter: invert(1);' height='20'>", checkValue:1, uncheckValue:0},
                 { id:"favorite",      header:{text:"<b><span class='fa fa-heart' style='font-size: 12px'/></b>", height:25},  width:30, template:custom_checkbox, checkValue:1, uncheckValue:0, sort:'int'},
-                { id:"title",         header:"<b style='font-size: 13px'>Title</b>",  fillspace:true, sort:'string'},
-                { id:"artist",        header:"<b style='font-size: 13px'>Artist</b>", fillspace:true, sort:'string'},
+                { id:"title",         header:"<b style='font-size: 13px'>Title</b>",  fillspace:true, sort:'string', template: (o) => {return `<span style="color:${o.color}">${o.title}</span>`}},
+                { id:"artist",        header:"<b style='font-size: 13px'>Artist</b>", fillspace:true, sort:'string', template: (o) => {return `<span style="color:${o.color}">${o.artist}</span>`}},
                 //{ id:"album",         header:"<b style='font-size: 13px'>Album</b>",  fillspace:true, sort:'string'},
-                { id:"genre",         header:"<b style='font-size: 13px'>Genre</b>",  width:100, sort:'string'},
+                { id:"genre",         header:"<b style='font-size: 13px'>Genre</b>",  width:100, sort:'string', template: (o) => {return `<span style="color:${o.color}">${o.genre}</span>`}},
                 //{ id:"grouping",      header:"<b style='font-size: 13px'>Grouping</b>",  width:80, sort:'string'},
-                { id:"play_count",    header:{text:"<b><span class='fa fa-play'/></b>", css:{"text-align":'center'}},  width:30, template:"<div style='text-align: right'>#play_count#</div>", sort:'int'},
-                { id:"last_played",   header:{text:"<b><span class='fa fa-calendar' style='font-size: 15px'/></b>", css:{"text-align":'right'}},  width:80, template: function(element) { return `${webix.Date.dateToStr("%Y-%m-%d")(element.last_played)}`}, sort:'int'},
+                { id:"play_count",    header:{text:"<b><span class='fa fa-play'/></b>", css:{"text-align":'center'}},  width:30, template:`<div style='text-align: right; color:#color#'>#play_count#</div>`, sort:'int'},
+                { id:"last_played",   header:{text:"<b><span class='fa fa-calendar' style='font-size: 15px'/></b>", css:{"text-align":'right'}},  width:80, template: function(element) { return `<span style="color:${element.color}">${webix.Date.dateToStr("%Y-%m-%d")(element.last_played)}</span>`}, sort:'int'},
                 { id:"rating",        header:{text:"<b style='font-size: 13px'>Rating</b>", css:{"text-align":'center'}}, width:75, template:"<img src='../resources/images/rating#rating#.png' style='' height='10'>", css:{"text-align":'right'}, sort:'int'},
-                { id:"bpm",           header:{text:"<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>", css:{"text-align":'center'}}, width:45, css:{"text-align":'right'}, sort:'int'},
-                { id:"stream_length", header:{text:"<b style='font-size: 13px'>Time</b>", css:{"text-align":'center'}}, width:55, format:format_nanoseconds, css:{"text-align":'right'}},
+                { id:"bpm",           header:{text:"<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>", css:{"text-align":'center'}}, width:45, css:{"text-align":'right'}, sort:'int', template: (o) => {return `<span style="color:${o.color}">${o.bpm}</span>`}},
+                { id:"stream_length", header:{text:"<b style='font-size: 13px'>Time</b>", css:{"text-align":'center'}}, width:55, /*format:format_nanoseconds*/ css:{"text-align":'right'}, template: (o) => {return `<span style="color:${o.color}">${format_nanoseconds(o.stream_length)}</span>`}},
             ],
             scroll:"y"
         },
