@@ -11,8 +11,16 @@
 //     command_socket.send(JSON.stringify({'name': name, 'args': args, 'kwargs': kwargs}));
 // }
 
-pl = new PydjayAudioFilePlayer()
-pl.connectOutputs({master:{left:0, right:1}})
+// pl_channel_config = {headphones:{left:0, right:1}}
+// mpl_channel_config = {master:{left:0, right:1}}
+
+
+pl_channel_config = {headphones:{left:2, right:3}}
+mpl_channel_config = {master:{left:0, right:1}, headphones:{left:2, right:3}}
+
+
+var pl = new PydjayAudioFilePlayer()
+pl.connectOutputs(pl_channel_config)
 pl.on('playback-stopped', restore_monitor)
 pl.on('playback-paused', restore_monitor)
 pl.on('playback-started', mute_monitor)
@@ -42,8 +50,8 @@ pl.on("stream-position", function (pos) {
     preview_track_position = pos;
 })
 
-mpl = new PydjayAudioFilePlayer()
-//mpl.connectOutputs({master:{left:0, right:1}, headphones:{left:4, right:5}})
+var mpl = new PydjayAudioFilePlayer()
+mpl.connectOutputs(mpl_channel_config)
 mpl.on("stream-position", function (pos) {
     remaining = Math.abs(mpl.source.duration*1000 - pos)
     $$('main_track_time').define('label', `-${format_nanoseconds(remaining*1000000)}`)
@@ -79,6 +87,22 @@ mpl.on('end-of-stream', function () {
     }
 })
 
+
+function reset_audio() {
+    if (mpl.source != undefined) {
+        time = mpl.source.currentTime * 1000
+        end_time = mpl.stream_end
+        url = mpl.url
+        mpl.stop()
+        mpl.reset_audio_context()
+        mpl.connectOutputs(mpl_channel_config)
+        pl.stop()
+        pl.reset_audio_context()
+        pl.connectOutputs(pl_channel_config)
+        mpl.play(url, time, end_time)
+
+    }
+}
 
 // epl = new PydjayAudioPlayer()
 // epl.connectOutputs({master:{left:0, right:1}})

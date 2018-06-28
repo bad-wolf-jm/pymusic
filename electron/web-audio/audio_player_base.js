@@ -17,6 +17,13 @@ class PydjayAudioBasePlayer extends EventDispatcher {
         this.input_type = null
     }
 
+    reset_audio_context() {
+        this.audio_context.audio_ctx.close()
+        this.audio_context.un("timestamp") 
+        this.audio_context = new PydjayAudioContext()
+        this.audio_context.on("timestamp", x => this.updateStreamPosition(x))
+    }
+
     play(start_time, end_time) {
         this.stop()
         this.stream_start_timestamp = this.audio_context.audio_ctx.currentTime * 1000
