@@ -189,10 +189,8 @@ function DataProvider() {
     }
 
     self.update_track_data = function (id, track_info, k) {
-        console.log(track_info)
         let sql = "UPDATE tracks SET "
         let fields = Object.keys(track_info);
-        console.log(fields)
         sql += fields.indexOf("title") != -1 ? `title=${STRING(addslashes(track_info.title))},\n` : '' 
         sql += fields.indexOf("artist") != -1 ? `artist=${STRING(addslashes(track_info.artist))},\n` : '' 
         sql += fields.indexOf("album") != -1 ? `album=${STRING(addslashes(track_info.album))},\n` : '';
