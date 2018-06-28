@@ -1,5 +1,3 @@
-//var display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, grouping, rating, bpm, stream_length, color, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
-
 
 function addslashes(s) {
     if (s == null) return null;
@@ -152,17 +150,40 @@ function DataProvider() {
     }
 
     self.get_suggested_tracks = function (k) {
-        $QUERY(`SELECT availability.track_id IS NULL as available, tracks.id, tracks.favorite, tracks.disabled as enabled, 
-        tracks.title, tracks.artist, tracks.album, tracks.genre, tracks.rating, tracks.bpm, tracks.stream_length, foo.play_count, tracks.cover_small as cover, tracks.color,
-        settings.db_image_cache as image_root, max_play_times.time as last_played FROM tracks JOIN
-        (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
-        FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts
-        ON tracks.id=play_counts.id_2) foo ON tracks.id=foo.id LEFT JOIN
-        ((select track_id from unavailable_tracks) UNION (select track_id from session_queue)) availability
-        ON availability.track_id=tracks.id LEFT JOIN (SELECT track_id, MAX(start_time) AS time
-        FROM session_tracks GROUP BY track_id) max_play_times ON tracks.id = max_play_times.track_id
-        LEFT JOIN settings on 1 WHERE tracks.id in (SELECT DISTINCT related_track_id FROM track_relations WHERE track_id IN (SELECT track_id FROM session_queue WHERE status='pending')) 
-        ORDER BY title ASC`, k)
+        $QUERY(`SELECT 
+            availability.track_id IS NULL as available, 
+            tracks.id, 
+            tracks.favorite, 
+            tracks.disabled AS enabled, 
+            tracks.title, 
+            tracks.artist, 
+            tracks.album, 
+            tracks.genre, 
+            tracks.rating, 
+            tracks.bpm, 
+            tracks.stream_length, 
+            foo.play_count, 
+            tracks.cover_small AS cover, 
+            tracks.color,
+            settings.db_image_cache AS image_root, 
+            max_play_times.time AS last_played 
+            FROM tracks JOIN
+            (SELECT * FROM tracks JOIN 
+                (SELECT 
+                    id as id_2, 
+                    count(session_tracks.track_id) as play_count 
+                FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id
+                ) play_counts
+            ON tracks.id=play_counts.id_2) foo ON tracks.id=foo.id 
+            LEFT JOIN ((SELECT track_id FROM unavailable_tracks) UNION (SELECT track_id FROM session_queue)) availability
+            ON availability.track_id=tracks.id 
+            LEFT JOIN 
+                (SELECT track_id, MAX(start_time) AS time 
+                FROM session_tracks GROUP BY track_id) max_play_times 
+            ON tracks.id = max_play_times.track_id
+            LEFT JOIN settings on 1 
+            WHERE tracks.id IN (SELECT DISTINCT related_track_id FROM track_relations WHERE track_id IN (SELECT track_id FROM session_queue WHERE status='pending')) 
+            ORDER BY title ASC`, k)
     }
 
     self.get_queue_duration = function (k) {
@@ -212,7 +233,6 @@ function DataProvider() {
         sql += fields.indexOf("grouping") != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
         sql += `date_modified=${DATE(new Date())},\n` 
         sql += `WHERE id=${id}`
-        //console.log(sql)
         $QUERY(sql, k)
     }
 }

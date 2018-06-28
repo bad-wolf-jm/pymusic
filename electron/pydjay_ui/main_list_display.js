@@ -322,12 +322,10 @@ var main_list_display_template = {
             select:"row",
             resizeColumn:{headerOnly:true},
             rowHeight:25,
-            //autoheight:true,
             css:{
                 'background-color':'#303030',
                 border: '0px solid #5c5c5c',
                 "font-size":'13px',
-                //height: "87.5% !important"
              },
             columns:[
                 { id:"id",            header:"",  width:30, hidden:true, template:"<img src='../resources/images/precue.png' style='filter: invert(1);' height='20'>", checkValue:1, uncheckValue:0},
@@ -345,7 +343,6 @@ var main_list_display_template = {
             ],
             scroll:"y"
         },
-        //preview_player_window,
         {height:18}
 
     ]

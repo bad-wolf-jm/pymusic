@@ -198,7 +198,6 @@ class TrackEditWindow extends EventDispatcher {
                 this._waveform.zoom($$(this.zoom_slider_id).getValue())
                 this._position_tracker = this.audio_player.on("stream-position", 
                     (pos) => {
-                        //console.log(pos/ this._track_info.track_length)
                         this._waveform.seekAndCenter(pos*1000000 / this._track_info.track_length)
                     }
                 )
@@ -214,25 +213,7 @@ class TrackEditWindow extends EventDispatcher {
         )
         this._waveform.on(
             "seek", (p) => {
-                //console.log("seek", p)
                 this.current_stream_position = p
-                // this.stream_start = this._track_info.stream_start
-                // this.stream_end = this._track_info.stream_end
-                // this._waveform.zoom($$("edit_zoom_last_30_seconds_button").getValue())
-                // this._position_tracker = this.audio_player.on("stream-position", 
-                //     (pos) => {
-                //         this._waveform.seekAndCenter(pos*1000000 / this._track_info.track_length)
-                //         //this._stream_position
-                //     }
-                // )
-                // this._region = this._waveform.addRegion({start:this._track_info.stream_start / 1000000000, end:this._track_info.stream_end / 1000000000})
-                // this._region.on("update", 
-                //     () => {
-                //         this.stream_start = Math.round(this._region.start * 1000000000)
-                //         this.stream_end = Math.round(this._region.end * 1000000000)
-                //         this.setValue(this.main_stream_length_id, `${format_nanoseconds(this.stream_end - this.stream_start)}`)
-                //     }
-                // )
             }
         )
 
@@ -317,7 +298,7 @@ class TrackEditWindow extends EventDispatcher {
         this.stream_end = Infinity
         this.track_length = Infinity
         this.audio_player = new PydjayAudioBufferPlayer()
-        this.audio_player.connectOutputs({master:{left:0, right:1}})
+        this.audio_player.connectOutputs(pl_channel_config)
         this.current_stream_position = null
         this.layout = {
             id: this.id,
