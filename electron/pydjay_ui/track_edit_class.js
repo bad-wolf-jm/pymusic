@@ -502,6 +502,9 @@ class TrackEditWindow extends EventDispatcher {
                                 min: 0, 
                                 max: 300,
                                 on: {
+                                    "onChange": () => {
+                                        this._waveform.zoom($$(this.zoom_slider_id).getValue())
+                                    },
                                     "onSliderDrag": () => {
                                         this._waveform.zoom($$(this.zoom_slider_id).getValue())
                                     }
