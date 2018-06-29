@@ -647,72 +647,72 @@ function playback_settings() {
     )
 }
 
-main_list_display_template.gravity = 2.25;
-var session_popup = webix.ui(
-    {
-        view:"popup",
-        id:"session_popup",
-        height:700,
-        width:500,
-        body:{
-            rows:[
-                {
-                    cols: [
-                        {
-                            view:'label',
-                            label:"<b>PLAYED SONGS</b>",
-                            height:30
-                        },
-                        {
-                            gravity:.5,
-                            id: 'session_save_button',
-                            view:'button',
-                            label:"SAVE",
-                            height:30,
-                            click: save_current_session,
-                        }
-                    ]
-                },
-                {height:10},
-                {
-                    view:'list',
-                    id:'session_list_view',
-                    template: queue_element_template,
-                    type: { height: cover_size  }
-                }
-            ]
-        }
-})
-session_popup.hide();
-$$('session_save_button').hide();
-session_popup.attachEvent('onShow', function () {
-    var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist,
-                    tracks.album, tracks.bpm, tracks.stream_length,
-                    settings.db_image_cache as image_root, tracks.cover_small as cover,
-                    session_queue.position as position
-             FROM
-                 (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
-             ON
-                 tracks.id=session_queue.track_id WHERE session_queue.status='played'
-             ORDER BY session_queue.position`
+// main_list_display_template.gravity = 2.25;
+// var session_popup = webix.ui(
+//     {
+//         view:"popup",
+//         id:"session_popup",
+//         height:700,
+//         width:500,
+//         body:{
+//             rows:[
+//                 {
+//                     cols: [
+//                         {
+//                             view:'label',
+//                             label:"<b>PLAYED SONGS</b>",
+//                             height:30
+//                         },
+//                         {
+//                             gravity:.5,
+//                             id: 'session_save_button',
+//                             view:'button',
+//                             label:"SAVE",
+//                             height:30,
+//                             click: save_current_session,
+//                         }
+//                     ]
+//                 },
+//                 {height:10},
+//                 {
+//                     view:'list',
+//                     id:'session_list_view',
+//                     template: queue_element_template,
+//                     type: { height: cover_size  }
+//                 }
+//             ]
+//         }
+// })
+// session_popup.hide();
+// $$('session_save_button').hide();
+// session_popup.attachEvent('onShow', function () {
+//     var sql = `SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist,
+//                     tracks.album, tracks.bpm, tracks.stream_length,
+//                     settings.db_image_cache as image_root, tracks.cover_small as cover,
+//                     session_queue.position as position
+//              FROM
+//                  (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue
+//              ON
+//                  tracks.id=session_queue.track_id WHERE session_queue.status='played'
+//              ORDER BY session_queue.position`
 
-    db_connection.query(sql, function (err, result) {
-      if (err) throw err;
-      $$('session_list_view').clearAll();
-      if (result.length == 0) {
-          $$('session_save_button').hide();
-      } else {
-          if (!queue_playing) {
-              $$('session_save_button').show();
-          } else {
-              $$('session_save_button').hide();
-          }
-      }
-      for(var i=0; i < result.length; i++){
-          $$('session_list_view').add(result[i])
-      }
-    });
-})
+//     db_connection.query(sql, function (err, result) {
+//       if (err) throw err;
+//       $$('session_list_view').clearAll();
+//       if (result.length == 0) {
+//           $$('session_save_button').hide();
+//       } else {
+//           if (!queue_playing) {
+//               $$('session_save_button').show();
+//           } else {
+//               $$('session_save_button').hide();
+//           }
+//       }
+//       for(var i=0; i < result.length; i++){
+//           $$('session_list_view').add(result[i])
+//       }
+//     });
+// })
 
 
 
