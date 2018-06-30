@@ -221,7 +221,7 @@ function set_precue_player_volume(value){
 // }
 
 
-
+var preview_play_id = undefined
 var preview_track_duration = 1;
 var main_track_seconds_elapsed = 0;
 var next_track_delay = 5;
@@ -540,10 +540,11 @@ function preview_play_track_id(id, stream_start, stream_end) {
             file_name = path.join(result.music_root, result.file_name);
             cover_file_name = `${result.image_root}/${result.cover_small}`;
             stream_length = (result.stream_end-result.stream_start) / 1000000000;
-            // $$('preview_title').define('label', result.title)
-            // $$('preview_title').refresh()
-            // $$('preview_artist').define('label', `${result.artist}`)
-            // $$('preview_artist').refresh()
+            preview_play_id = result.id
+            $$('preview_title').define('label', result.title)
+            $$('preview_title').refresh()
+            $$('preview_artist').define('label', `${result.artist}`)
+            $$('preview_artist').refresh()
             if (result.cover_small == null) {
                 cover_source = "../resources/images/default_album_cover.png"
             } else {
@@ -562,26 +563,21 @@ function preview_play_track_id(id, stream_start, stream_end) {
                     stream_start = stream_end + stream_start;
                 }
             }
-            $$("metadata").setValues(
-                {
-                    title: result.title || "",
-                    artist: result.artist || "",
-                    album: result.album || "",
-                    year: result.year || "",
-                    genre: result.genre || "",
-                    color: result.color || "#FFFFFF",
-                    bpm: result.bpm || "",
-                    track_length:`${format_nanoseconds(result.track_length)}`,
-                    track_start:`${format_nanoseconds(result.stream_start)}`,
-                    track_end: `${format_nanoseconds(result.stream_end)}`,
-                    file: file_name
-                }
-            )            
-            // rand_start = stream_start + Math.floor(Math.random() * Math.floor(stream_end - stream_start));
-            // if ((rand_start + 30000000000) < stream_end) {
-            //     preview_play(file_name, rand_start, rand_start + 30000000)
-            // }
-            //console.log(stream_start, stream_end)
+            // $$("metadata").setValues(
+            //     {
+            //         title: result.title || "",
+            //         artist: result.artist || "",
+            //         album: result.album || "",
+            //         year: result.year || "",
+            //         genre: result.genre || "",
+            //         color: result.color || "#FFFFFF",
+            //         bpm: result.bpm || "",
+            //         track_length:`${format_nanoseconds(result.track_length)}`,
+            //         track_start:`${format_nanoseconds(result.stream_start)}`,
+            //         track_end: `${format_nanoseconds(result.stream_end)}`,
+            //         file: file_name
+            //     }
+            // )            
             preview_play(file_name, stream_start, stream_end)
         }
     )

@@ -14,6 +14,7 @@
 <script src="./utils.js"></script>
 <script src="./sql.js"></script>
 <script src="./data.js"></script>
+<script src="./data_class.js"></script>
 <script src="./main_list_display.js"></script>
 <script src="./queue_display.js"></script>
 <script src="./playlist_edit.js"></script>
@@ -767,8 +768,10 @@ var preview_popup = webix.ui({
                 label:'Play full track',
                 maxHeight:35,
                 click: () => {
-                    url = pl.url
-                    pl.play(url)
+                    url = preview_track_id
+                    if (url != undefined) {
+                        preview_play_track_id(url)
+                    }
                     $$("preview_popup_menu").hide()
                 }
             },
@@ -778,6 +781,10 @@ var preview_popup = webix.ui({
                 label:'Play last 30 seconds',
                 maxHeight:35,
                 click: () => {
+                    url = preview_track_id
+                    if (url != undefined) {
+                        preview_play_track_id(url, -30000000000)
+                    }
                     $$("preview_popup_menu").hide()
                 }
             },
@@ -788,6 +795,10 @@ var preview_popup = webix.ui({
                 label:'Play last 10 seconds',
                 maxHeight:35,
                 click: () => {
+                    url = preview_track_id
+                    if (url != undefined) {
+                        preview_play_track_id(url, -10000000000)
+                    }
                     $$("preview_popup_menu").hide()
                 }
                 //click: stop_queue_now
@@ -926,25 +937,22 @@ var datatable = webix.ui({
                         //         'border-color':"0px solid #3c3c3c"
                         //     }
                         // },
-                        { view:"property", id:"metadata", width:100,disable:true,height:285, labelWidth:100,
-                            elements:[
-                            { label:"Metadata", type:"label"},
-                            { label:"<b>Title:</b>", type:"text", id:"title"},
-                            { label:"<b>Artist:</b>", type:"text", id:"artist"},
-                            { label:"<b>Album:</b>", type:"text", id:"album"},
-                            { label:"<b>Year:</b>", type:"text", id:"year"},
-                            { label:"<b>Genre:</b>", type:"text", id:"genre"},
-                            { label:"<b>Color:</b>", type:"color", id:"color"},
-                            { label:"Info", type:"label"},
-                            { label:"<b>BPM:</b>", type:"text", id:"bpm"},
-                            { label:"<b>Duration:</b>", type:"text", id:"track_length"},
-                            // { label:"<b>Bitrate:</b>", type:"text", id:"track_start"},
-                            // { label:"<b>Samplerate:</b>", type:"text", id:"track_end"},
-                            // { label:"<b>Samplerate:</b>", type:"text", id:"track_end"},
-                            // { label:"<b>Samplerate:</b>", type:"text", id:"track_end"},
-                            // { label:"<b>Samplerate:</b>", type:"text", id:"track_end"},
-                            ]
-                        },
+
+
+                        // { view:"property", id:"metadata", width:100,disable:true,height:285, labelWidth:100,
+                        //     elements:[
+                        //     { label:"Metadata", type:"label"},
+                        //     { label:"<b>Title:</b>", type:"text", id:"title"},
+                        //     { label:"<b>Artist:</b>", type:"text", id:"artist"},
+                        //     { label:"<b>Album:</b>", type:"text", id:"album"},
+                        //     { label:"<b>Year:</b>", type:"text", id:"year"},
+                        //     { label:"<b>Genre:</b>", type:"text", id:"genre"},
+                        //     { label:"<b>Color:</b>", type:"color", id:"color"},
+                        //     { label:"Info", type:"label"},
+                        //     { label:"<b>BPM:</b>", type:"text", id:"bpm"},
+                        //     { label:"<b>Duration:</b>", type:"text", id:"track_length"},
+                        //     ]
+                        // },
                         preview_player_window,
                         //suggestions_display_template
                     ]

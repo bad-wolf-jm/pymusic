@@ -5,19 +5,45 @@ class MusicDatabase extends EventDispatcher {
             id, favorite, disabled as enabled, title, artist, album, genre, grouping, rating, bpm, stream_length, 
             color, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played
         `;
-        this.db_connection = mysql.createConnection({
-            host: "localhost",
-            user: "root",
-            password: "root",
-            database:'pymusic'
-          });
-        this.db_connection.connect(
-            function(err) {
-              if (err) throw err;
-              console.log("Connected!");
-          });
-          
+        this.db_connection = mysql.createConnection({host: "localhost", user: "root", password: "root", database:'pymusic'});
+    }
     
+    query(sql) {
+        return new Promise(
+            (accept, reject) => {
+                this.db_connection.query(sql, (error, rows) => {
+                    if (error) {
+                        return reject(error)
+                    } else {
+                        return accept(rows)    
+                    }
+                })
+            }
+        )
+    }
+
+    execute(sql) {
+        return new Promise(
+            (accept, reject) => {
+                this.db_connection.query(sql, (error) => {
+                    if (error) {
+                        return reject(error)
+                    } else {
+                        return accept()    
+                    }
+                })
+            }
+        )
+    }
+
+    close() {
+        return new Promise( ( resolve, reject ) => {
+            this.db_connection.end( err => {
+                if ( err )
+                    return reject( err );
+                return resolve();
+            } );
+        } );
     }
 
     $QUERY(sql, with_result) {
@@ -36,7 +62,7 @@ class MusicDatabase extends EventDispatcher {
     
     
     get_track_by_id (id, k) {
-        this.$QUERY(`SELECT availability.track_id IS NULL as available, tracks.id as id, tracks.id as track_id, tracks.favorite, tracks.disabled as enabled, tracks.title, tracks.artist, tracks.file_name as file_name,
+         return this.query(`SELECT availability.track_id IS NULL as available, tracks.id as id, tracks.id as track_id, tracks.favorite, tracks.disabled as enabled, tracks.title, tracks.artist, tracks.file_name as file_name,
         tracks.stream_start as stream_start, tracks.stream_end as stream_end, tracks.track_length as track_length, tracks.grouping, tracks.year, tracks.color as color,
         tracks.album, tracks.genre, tracks.rating, tracks.bpm, tracks.stream_length, foo.play_count, tracks.cover_small as cover, settings.db_image_cache as image_root, settings.db_music_cache as music_root,
         max_play_times.time as last_played FROM tracks JOIN (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
@@ -50,7 +76,7 @@ class MusicDatabase extends EventDispatcher {
         var sql =`SELECT availability.track_id IS NULL as available, ${this.display_list_fields} FROM tracks LEFT JOIN session_tracks
         ON tracks.id = session_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
         (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title`;
-        this.$QUERY(sql, k);
+         return this.query(sql, k);
     }
 
     get_playlist_tracks (id, k) {
@@ -64,7 +90,7 @@ class MusicDatabase extends EventDispatcher {
         ON availability.track_id=playlist_tracks.track_id LEFT JOIN (SELECT track_id, MAX(start_time) AS time
         FROM session_tracks GROUP BY track_id) max_play_times ON playlist_tracks.track_id = max_play_times.track_id
         LEFT JOIN settings on 1 WHERE playlist_tracks.playlist_id=${id} ORDER BY title`;
-        this.$QUERY(sql, k)        
+         return this.query(sql, k)        
     }
 
     get_session_tracks (id, k) {
@@ -78,21 +104,21 @@ class MusicDatabase extends EventDispatcher {
         availability.track_id=session_tracks.track_id LEFT JOIN (SELECT track_id, MAX(start_time) AS time
         FROM session_tracks GROUP BY track_id) max_play_times ON id = max_play_times.track_id
         WHERE session_tracks.session_id=${id}`;
-        this.$QUERY(sql, k)
+         return this.query(sql, k)
     }
 
     get_never_played_tracks (k) {
         var sql =`SELECT * FROM (SELECT availability.track_id IS NULL as available, ${this.display_list_fields} FROM tracks LEFT JOIN session_tracks ON
         tracks.id = session_tracks.track_id LEFT JOIN
         (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title) q WHERE q.play_count = 0`;
-        this.$QUERY(sql, k)
+         return this.query(sql, k)
     }
 
     get_played_tracks (k) {
         var sql =`SELECT * FROM (SELECT availability.track_id IS NULL as available, ${this.display_list_fields} FROM tracks LEFT JOIN session_tracks ON
         tracks.id = session_tracks.track_id LEFT JOIN
         (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title) q WHERE q.play_count != 0`;
-        this.$QUERY(sql, k)
+         return this.query(sql, k)
     }
 
     get_shortlisted_tracks (k) {
@@ -100,44 +126,44 @@ class MusicDatabase extends EventDispatcher {
         FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
         JOIN short_listed_tracks ON tracks.id=short_listed_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
         (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title`;
-        this.$QUERY(sql, k)
+         return this.query(sql, k)
     }
 
     get_unavailable_tracks (k) {
         var sql = `SELECT availability.track_id IS NULL as available, ${this.display_list_fields} FROM tracks LEFT JOIN session_tracks ON
         tracks.id = session_tracks.track_id JOIN unavailable_tracks ON tracks.id=unavailable_tracks.track_id LEFT JOIN
         (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title`
-        this.$QUERY(sql, k)
+         return this.query(sql, k)
     }
 
     get_sessions_list (k) {
-        this.$QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions 
+         return this.query(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions 
         JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts 
         ON sessions.id=counts.session_id ORDER BY date ASC`, k)
     }
 
     get_group_list (k) {
-        this.$QUERY(`SELECT playlists.id as id , playlists.name, IFNULL(counts.count, 0) as count FROM
+         return this.query(`SELECT playlists.id as id , playlists.name, IFNULL(counts.count, 0) as count FROM
         playlists LEFT JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
         ON playlists.id=counts.playlist_id ORDER BY name`, k)
     }
  
     get_queue_elements (k) {
-        this.$QUERY(`SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist, tracks.album, tracks.color as color,
+         return this.query(`SELECT tracks.id as track_id, session_queue.id as id, session_queue.position, tracks.title, tracks.artist, tracks.album, tracks.color as color,
         tracks.bpm, tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
         FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id WHERE session_queue.status='pending'
         ORDER BY session_queue.position`, k)
     }
 
-    get_queue_track = function(id, k) {
-        this.$QUERY(`SELECT tracks.id as track_id, session_queue.position, tracks.title, tracks.artist, tracks.album, tracks.bpm,
+    get_queue_track (id, k) {
+         return this.query(`SELECT tracks.id as track_id, session_queue.position, tracks.title, tracks.artist, tracks.album, tracks.bpm,
         tracks.stream_length, settings.db_image_cache as image_root, tracks.cover_small as cover, session_queue.position as position
         FROM (tracks LEFT JOIN settings ON 1) LEFT JOIN session_queue ON tracks.id=session_queue.track_id
         WHERE session_queue.status='pending' AND session_queue.track_id=${id} ORDER BY session_queue.position`, k)
     }
 
     get_suggested_tracks (k) {
-        this.$QUERY(`SELECT 
+         return this.query(`SELECT 
             availability.track_id IS NULL as available, 
             tracks.id, 
             tracks.favorite, 
@@ -174,7 +200,7 @@ class MusicDatabase extends EventDispatcher {
     }
 
     get_queue_duration (k) {
-        this.$QUERY(`SELECT SUM(duration) as duration, COUNT(id) as count, AVG(wait_time) as wait_time FROM
+         return this.query(`SELECT SUM(duration) as duration, COUNT(id) as count, AVG(wait_time) as wait_time FROM
         (SELECT 1 as id, tracks.stream_length as duration, session_queue.id as count, settings.wait_time as wait_time
         FROM tracks JOIN session_queue ON tracks.id=session_queue.track_id LEFT JOIN settings on 1
         WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`, k)
@@ -193,7 +219,7 @@ class MusicDatabase extends EventDispatcher {
         ${track_info.stream_length}, ${track_info.date_added}, ${track_info.date_modified}, ${track_info.bitrate},
         ${track_info.samplerate}, ${track_info.file_name}, ${track_info.file_size}, ${track_info.hash}, ${track_info.category},
         ${track_info.description}, ${track_info.disabled}, ${track_info.original_file_name}, ${track_info.grouping})`
-        this.$QUERY(sql, k)
+         return this.query(sql, k)
     }
 
     update_track_data (id, track_info, k) {
@@ -220,7 +246,7 @@ class MusicDatabase extends EventDispatcher {
         sql += fields.indexOf("grouping") != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
         sql += `date_modified=${DATE(new Date())},\n` 
         sql += `WHERE id=${id}`
-        this.$QUERY(sql, () => {
+        return this.execute(sql, () => {
             this.dispatch('track_data_updated', id, track_info)
         })
     }
@@ -228,7 +254,7 @@ class MusicDatabase extends EventDispatcher {
 
     get_queue_boundary_positions (cont){
         sql = "SELECT min(position) as min, max(position) as max FROM session_queue WHERE status='pending'"
-        this.$QUERY(sql, function(result){
+         return this.query(sql, function(result){
             cont(result[0].min, result[0].max)
         })
     }
@@ -583,9 +609,4 @@ class MusicDatabase extends EventDispatcher {
             }
         )
     }
-    
-
-
-
-
 }
