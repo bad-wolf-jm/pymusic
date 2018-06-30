@@ -13,8 +13,10 @@
 
 
 pl_channel_config = {headphones:{left:0, right:1}}
-mpl_channel_config = {master:{left:0, right:1}}
+mpl_channel_config = {master:{left:4, right:5}}
 
+pl_channel_config2 = {headphones:{left:0, right:1}}
+mpl_channel_config2 = {master:{left:0, right:1}}
 
 // pl_channel_config = {headphones:{left:2, right:3}}
 // mpl_channel_config = {master:{left:0, right:1}, headphones:{left:2, right:3}}
@@ -25,7 +27,7 @@ mpl_channel_config = {master:{left:0, right:1}}
 
 
 var pl = new PydjayAudioFilePlayer()
-pl.connectOutputs(pl_channel_config)
+//pl.connectOutputs(pl_channel_config)
 pl.on('playback-stopped', restore_monitor)
 pl.on('playback-paused', restore_monitor)
 pl.on('playback-started', mute_monitor)
@@ -56,7 +58,7 @@ pl.on("stream-position", function (pos) {
 })
 
 var mpl = new PydjayAudioFilePlayer()
-mpl.connectOutputs(mpl_channel_config)
+//mpl.connectOutputs(mpl_channel_config)
 mpl.on("stream-position", function (pos) {
     remaining = Math.abs(mpl.source.duration*1000 - pos)
     $$('main_track_time').define('label', `-${format_nanoseconds(remaining*1000000)}`)
@@ -99,15 +101,40 @@ function reset_audio() {
         end_time = mpl.stream_end
         url = mpl.url
         mpl.stop()
-        mpl.reset_audio_context()
-        mpl.connectOutputs(mpl_channel_config)
-        pl.stop()
-        pl.reset_audio_context()
-        pl.connectOutputs(pl_channel_config)
-        mpl.play(url, time, end_time)
+    }
+    mpl.reset_audio_context()
+    pl.stop()
+    pl.reset_audio_context()
+    init_audio()
+    // console.log(mpl.audio_context.audio_ctx.destination.maxChannelCount)
+    // if (mpl.audio_context.audio_ctx.destination.maxChannelCount == 6) {
+    //     mpl.connectOutputs(mpl_channel_config)
+    //     pl.connectOutputs(pl_channel_config)    
+    // } else {
+    //     mpl.connectOutputs(mpl_channel_config2)
+    //     pl.connectOutputs(pl_channel_config2)    
+    // }
 
+
+    if (mpl.source != undefined) {
+        mpl.play(url, time, end_time)
     }
 }
+
+function init_audio() {
+    console.log(mpl.audio_context.audio_ctx.destination.maxChannelCount)
+    if (mpl.audio_context.audio_ctx.destination.maxChannelCount == 6) {
+        mpl.connectOutputs(mpl_channel_config)
+        pl.connectOutputs(pl_channel_config)    
+    } else {
+        mpl.connectOutputs(mpl_channel_config2)
+        pl.connectOutputs(pl_channel_config2)    
+    }
+}
+
+
+
+init_audio()
 
 // epl = new PydjayAudioPlayer()
 // epl.connectOutputs({master:{left:0, right:1}})
