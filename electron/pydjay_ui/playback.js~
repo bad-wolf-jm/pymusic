@@ -12,8 +12,8 @@
 // }
 
 
-pl_channel_config = {headphones:{left:4, right:5}}
-mpl_channel_config = {master:{left:0, right:1}, headphones:{left:4, right:5}}
+pl_channel_config = {headphones:{left:0, right:1}}
+mpl_channel_config = {master:{left:4, right:5}}
 
 pl_channel_config2 = {headphones:{left:0, right:1}}
 mpl_channel_config2 = {master:{left:0, right:1}}
@@ -96,7 +96,6 @@ mpl.on('end-of-stream', function () {
 
 
 function reset_audio() {
-    let url = undefined
     if (mpl.source != undefined) {
         time = mpl.source.currentTime * 1000
         end_time = mpl.stream_end
@@ -117,7 +116,7 @@ function reset_audio() {
     // }
 
 
-    if (url != undefined) {
+    if (mpl.source != undefined) {
         mpl.play(url, time, end_time)
     }
 }
