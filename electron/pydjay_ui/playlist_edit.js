@@ -34,6 +34,14 @@ function PlaylistEditor(id) {
 
     self.database = new DataProvider()
 
+    self.audio_player = new PydjayAudioFilePlayer()
+    if (self.audio_player.audio_context.audio_ctx.destination.maxChannelCount == 6) {
+        self.audio_player.connectOutputs(pl_channel_config)    
+    } else {
+        self.audio_player.connectOutputs(pl_channel_config2)    
+    }
+
+
     self.track_list_columns = [
         { id:"id",            header:"",  width:30, hidden:true, template:"<img src='../resources/images/precue.png' style='filter: invert(1);' height='20'>", checkValue:1, uncheckValue:0},
         { id:"favorite",      header:{text:"<b><span class='fa fa-heart' style='font-size: 12px'/></b>", height:25},  width:30, template:custom_checkbox, checkValue:1, uncheckValue:0, sort:'int'},
@@ -345,40 +353,96 @@ function PlaylistEditor(id) {
         $$(self.track_count_label).refresh();
     }
 
+    self.preview_play_track_id = function (id, stream_start, stream_end) {
+        db_connection.query(
+            `SELECT title, artist, album, bpm, file_name, cover_small, track_length, genre, stream_start, year, stream_end, settings.db_music_cache as music_root,
+             settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${id} LIMIT 1`,
+            function(error, result) {
+                if (error) throw error;
+                result = result[0];
+                file_name = path.join(result.music_root, result.file_name);
+                // cover_file_name = `${result.image_root}/${result.cover_small}`;
+                // stream_length = (result.stream_end-result.stream_start) / 1000000000;
+                // preview_play_id = result.id
+                // $$('preview_title').define('label', result.title)
+                // $$('preview_title').refresh()
+                // $$('preview_artist').define('label', `${result.artist}`)
+                // $$('preview_artist').refresh()
+                // if (result.cover_small == null) {
+                //     cover_source = "../resources/images/default_album_cover.png"
+                // } else {
+                //     cover_source = `file://${result.image_root}/${result.cover_small}`;
+                // }
+                // var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='75' width='75'></img>`
+                // $$('preview-cover-image').define('template', cover_image);
+                // $$('preview-cover-image').refresh();
+    
+                if (stream_start == undefined) {
+                    stream_start = result.stream_start // Math.floor(Math.random() * Math.floor(result.stream_end - result.stream_start));
+                    stream_end = result.stream_end
+                } else if (stream_end == undefined) {
+                    stream_end = end = result.stream_end
+                    if (stream_start < 0) {
+                        stream_start = stream_end + stream_start;
+                    }
+                }
+                // $$("metadata").setValues(
+                //     {
+                //         title: result.title || "",
+                //         artist: result.artist || "",
+                //         album: result.album || "",
+                //         year: result.year || "",
+                //         genre: result.genre || "",
+                //         color: result.color || "#FFFFFF",
+                //         bpm: result.bpm || "",
+                //         track_length:`${format_nanoseconds(result.track_length)}`,
+                //         track_start:`${format_nanoseconds(result.stream_start)}`,
+                //         track_end: `${format_nanoseconds(result.stream_end)}`,
+                //         file: file_name
+                //     }
+                // )            
+                self.audio_player.play(file_name, stream_start, stream_end)
+            }
+        )
+    
+    }
+
     self.preview_selected = function () {
         var id = $$(self.track_list).getSelectedId().id;
-        preview_track_id = id;
-        preview_play_track_id(id);
+        // preview_track_id = id;
+        self.preview_play_track_id(id);
     }
 
     self.preview_last_10_seconds = function () {
         var id = $$(self.track_list).getSelectedId().id;
-        preview_track_id = id;
-        preview_play_track_id(id, -10000000000);
+        // preview_track_id = id;
+        self.preview_play_track_id(id, -10000000000);
     }
 
     self.preview_last_30_seconds = function () {
         var id = $$(self.track_list).getSelectedId().id;
-        preview_track_id = id;
-        preview_play_track_id(id, -30000000000);
+        // preview_track_id = id;
+        self.preview_play_track_id(id, -30000000000);
     }
 
     self.group_preview_selected = function () {
-        var id = $$(self.track_list).getSelectedId().id;
-        preview_track_id = id;
-        preview_play_track_id(id);
+        var id = $$(self.group_list).getSelectedItem().id;        
+        // preview_track_id = id;
+        self.preview_play_track_id(id);
     }
 
     self.group_preview_last_10_seconds = function () {
-        var id = $$(self.track_list).getSelectedId().id;
-        preview_track_id = id;
-        preview_play_track_id(id, -10000000000);
+        var id = $$(self.group_list).getSelectedItem().id;        
+        // preview_track_id = id;
+        // preview_track_id = id;
+        self.preview_play_track_id(id, -10000000000);
     }
 
     self.group_preview_last_30_seconds = function () {
-        var id = $$(self.track_list).getSelectedId().id;
-        preview_track_id = id;
-        preview_play_track_id(id, -30000000000);
+        var id = $$(self.group_list).getSelectedItem().id;        
+        // preview_track_id = id;
+        // preview_track_id = id;
+        self.preview_play_track_id(id, -30000000000);
     }
 
 
@@ -394,6 +458,11 @@ function PlaylistEditor(id) {
                 self.display_playlist_tracks()
                 $$(self.group_name_label).define('label', name);
                 $$(self.group_name_label).refresh();        
+                webix.UIManager.addHotKey("space", () => self.audio_player.togglePause(), $$(self.track_list));        
+                webix.UIManager.addHotKey("shift+space", () => self.audio_player.stop(), $$(self.track_list));        
+                webix.UIManager.addHotKey("space", () => self.audio_player.togglePause(), $$(self.group_list));        
+                webix.UIManager.addHotKey("shift+space", () => self.audio_player.stop(), $$(self.group_list));        
+
                 webix.UIManager.addHotKey("shift+a", self.add_to_playlist, $$(self.track_list));
                 webix.UIManager.addHotKey("ctrl+shift+enter", self.preview_last_30_seconds, $$(self.track_list));
                 webix.UIManager.addHotKey("shift+enter", self.preview_last_10_seconds, $$(self.track_list));
@@ -408,7 +477,9 @@ function PlaylistEditor(id) {
     }
     self.hide = function () {
         self._win.hide()
+        self.audio_player.stop()
         if (self.onHide != undefined) {
+
             self.onHide()
         }
     }

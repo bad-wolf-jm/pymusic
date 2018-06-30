@@ -298,7 +298,13 @@ class TrackEditWindow extends EventDispatcher {
         this.stream_end = Infinity
         this.track_length = Infinity
         this.audio_player = new PydjayAudioBufferPlayer()
-        this.audio_player.connectOutputs(pl_channel_config)
+        if (this.audio_player.audio_context.audio_ctx.destination.maxChannelCount == 6) {
+            this.audio_player.connectOutputs(pl_channel_config)    
+        } else {
+            this.audio_player.connectOutputs(pl_channel_config2)    
+        }
+    
+        // this.audio_player.connectOutputs(pl_channel_config)
         this.current_stream_position = null
         this.layout = {
             id: this.id,
