@@ -29,8 +29,15 @@ function PlaylistEditor(id) {
     self.track_list = `playlist_track_list_${ID()}`
     self.track_list_filter = `playlist_track_list_filter_${ID()}`
     self.group_list = `playlist_group_list_${ID()}`
-    self.track_count_label = `plylist_track_count_${ID()}`
-    self.group_name_label = `plylist_name_${ID()}`
+    self.track_count_label = `playlist_track_count_${ID()}`
+    self.group_name_label = `playlist_name_${ID()}`
+    self.player_cover_label = `playlist_cover_image_${ID()}`
+    self.player_title_label = `playlist_title_name_${ID()}`
+    self.player_artist_label = `playlist_artist_name_${ID()}`
+    self.player_position_label = `playlist_position_name_${ID()}`
+    self.player_duration_label = `playlist_duration_name_${ID()}`
+    self.player_play_button = `playlist_duration_name_${ID()}`
+    self.player_progress = `playlist_progress_${ID()}`
 
     self.database = new DataProvider()
 
@@ -40,7 +47,15 @@ function PlaylistEditor(id) {
     } else {
         self.audio_player.connectOutputs(pl_channel_config2)    
     }
-
+    self.audio_player.on("stream-position", function (pos) {
+        $$(self.player_position_label).define('label', `${format_nanoseconds(pos*1000000)}`)
+        $$(self.player_position_label).refresh()
+        $$(self.player_duration_label).define('label', format_nanoseconds(self.audio_player.source.duration*1000000000))
+        $$(self.player_duration_label).refresh();
+        self.preview_seek.animate(pos / (1000*self.audio_player.source.duration));
+        self.preview_track_position = pos;
+    })
+    
 
     self.track_list_columns = [
         { id:"id",            header:"",  width:30, hidden:true, template:"<img src='../resources/images/precue.png' style='filter: invert(1);' height='20'>", checkValue:1, uncheckValue:0},
@@ -180,7 +195,109 @@ function PlaylistEditor(id) {
                                     template: playlist_element_template,
                                     type: { height: cover_size  },
                                     scroll:"y"
-                                }]
+                                },
+                                {
+                                    height:95,
+                                    css:{
+                                        'background-color':'#6c6c6c',
+                                        'padding':'1px',
+                                        border: '1px solid #3c3c3c'
+                                     },
+                                    cols:[
+                                        {
+                                            id:self.player_cover_label,
+                                            view: 'template',
+                                            width:95,
+                                            height:95,
+                                            template: ""
+                                        },
+                                        {width:10},
+                                        {
+                                            cols: [
+                                                {
+                                
+                                                    rows: [
+                                                        {},
+                                                        {
+                                                            cols: [
+                                                                {
+                                                                    rows: [
+                                                                        {
+                                                                            id: self.player_title_label,
+                                                                            view: 'label',
+                                                                            label: "<b>NO TRACK</b>",
+                                                                            height:20
+                                                                        },
+                                                                        {
+                                                                            id: self.player_artist_label,
+                                                                            view: 'label',
+                                                                            label: "NO ARTIST",
+                                                                            height:20
+                                                                        },                
+                                                                    ]
+                                                                },
+                                                                {width:5},
+                                                                {
+                                                                    id:self.player_play_button,
+                                                                    view:'button',
+                                                                    type: 'icon',
+                                                                    icon: 'headphones',
+                                                                    width:30,
+                                                                    popup: "preview_popup_menu"
+                                                                },
+                                
+                                
+                                                            ]
+                                                        },
+                                
+                                
+                                                        {},
+                                                        {
+                                                            cols: [
+                                                                {
+                                                                    rows: [
+                                                                        {
+                                                                            height:18,
+                                                                            template:`<div id="${self.player_progress}" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%;"></div>`
+                                                                        },
+                                                                        {height: 7},
+                                                                        {cols:[
+                                                                            {
+                                                                                id:self.player_position_label,
+                                                                                view: 'label',
+                                                                                css:{
+                                                                                    'text-align':'left',
+                                                                                    'text-transform':'uppercase'
+                                                                                },
+                                                                                label: '0:00',
+                                                                                height:15
+                                                                            },
+                                                                            {},
+                                                                            {
+                                                                                id:self.player_duration_label,
+                                                                                view: 'label',
+                                                                                css:{'text-align':'right'},
+                                                                                label: '0:00',
+                                                                                height:15
+                                                                            }
+                                                        
+                                                                        ]},                
+                                                                    ]
+                                                                },
+                                                            ]
+                                                        },
+                                                        {}
+                                                    ]
+                                        
+                                                },
+                                                {width:10}
+                                            ]
+                                        }
+                                    ]
+                                }
+                                                            
+                            
+                            ]
                         }
                     ]
                 },
@@ -361,21 +478,21 @@ function PlaylistEditor(id) {
                 if (error) throw error;
                 result = result[0];
                 file_name = path.join(result.music_root, result.file_name);
-                // cover_file_name = `${result.image_root}/${result.cover_small}`;
-                // stream_length = (result.stream_end-result.stream_start) / 1000000000;
-                // preview_play_id = result.id
-                // $$('preview_title').define('label', result.title)
-                // $$('preview_title').refresh()
-                // $$('preview_artist').define('label', `${result.artist}`)
-                // $$('preview_artist').refresh()
-                // if (result.cover_small == null) {
-                //     cover_source = "../resources/images/default_album_cover.png"
-                // } else {
-                //     cover_source = `file://${result.image_root}/${result.cover_small}`;
-                // }
-                // var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='75' width='75'></img>`
-                // $$('preview-cover-image').define('template', cover_image);
-                // $$('preview-cover-image').refresh();
+                cover_file_name = `${result.image_root}/${result.cover_small}`;
+                stream_length = (result.stream_end-result.stream_start) / 1000000000;
+                preview_play_id = result.id
+                $$(self.player_title_label).define('label', result.title)
+                $$(self.player_title_label).refresh()
+                $$(self.player_artist_label).define('label', `${result.artist}`)
+                $$(self.player_artist_label).refresh()
+                if (result.cover_small == null) {
+                    cover_source = "../resources/images/default_album_cover.png"
+                } else {
+                    cover_source = `file://${result.image_root}/${result.cover_small}`;
+                }
+                var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='95' width='95'></img>`
+                $$(self.player_cover_label).define('template', cover_image);
+                $$(self.player_cover_label).refresh();
     
                 if (stream_start == undefined) {
                     stream_start = result.stream_start // Math.floor(Math.random() * Math.floor(result.stream_end - result.stream_start));
@@ -453,6 +570,19 @@ function PlaylistEditor(id) {
                 name = r[0].name
                 self._win = webix.ui(self.template)
                 self._win.show()
+
+                self.preview_seek = new ProgressBar.Line(`#${self.player_progress}`,
+                    {
+                        strokeWidth: 1,
+                        duration: 5,
+                        color: '#5a5a5a',
+                        trailColor: '#eee',
+                        trailWidth: 1,
+                        svgStyle: {width: '100%', height: '100%'}
+                    }
+                )
+                self.preview_seek.animate(0)
+
                 $$(self.track_list).filterByAll = self.filter_track_list
                 self.display_all_tracks()
                 self.display_playlist_tracks()
