@@ -122,8 +122,7 @@ class MusicDatabase extends EventDispatcher {
     }
 
     get_shortlisted_tracks (k) {
-        var sql =`SELECT availability.track_id IS NULL as available, ${this.display_list_fields}
-        FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
+        var sql =`SELECT availability.track_id IS NULL as available, ${this.display_list_fields} FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
         JOIN short_listed_tracks ON tracks.id=short_listed_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
         (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title`;
          return this.query(sql)
@@ -608,6 +607,10 @@ class MusicDatabase extends EventDispatcher {
                 )
             }
         )
+    }
+
+    get_pending_tracks() {
+
     }
 
     // save playlist
