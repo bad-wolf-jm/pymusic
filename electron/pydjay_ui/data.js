@@ -45,7 +45,8 @@ function DATE(s) {
 function DataProvider() {
     var self = this
 
-    //self.display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, grouping, rating, bpm, stream_length, color, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
+    //self.display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, 
+    // rouping, rating, bpm, stream_length, color, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
 
     self.base_track_view_sql = function () {
         return `SELECT availability.track_id IS NULL AS available, 
@@ -102,13 +103,18 @@ function DataProvider() {
         sql = self.base_track_view_sql()
         sql += ` WHERE tracks.id=${id} ORDER BY title`
         $QUERY(sql, k)
-        // $QUERY(`SELECT availability.track_id IS NULL as available, tracks.id as id, tracks.id as track_id, tracks.favorite, tracks.disabled as enabled, tracks.title, tracks.artist, tracks.file_name as file_name,
-        // tracks.stream_start as stream_start, tracks.stream_end as stream_end, tracks.track_length as track_length, tracks.grouping, tracks.year, tracks.color as color,
-        // tracks.album, tracks.genre, tracks.rating, tracks.bpm, tracks.stream_length, foo.play_count, tracks.cover_small as cover, settings.db_image_cache as image_root, settings.db_music_cache as music_root,
+        // $QUERY(`SELECT availability.track_id IS NULL as available, tracks.id as id, tracks.id as track_id, tracks.favorite, 
+        // tracks.disabled as enabled, tracks.title, tracks.artist, tracks.file_name as file_name,
+        // tracks.stream_start as stream_start, tracks.stream_end as stream_end, tracks.track_length as track_length, 
+        // tracks.grouping, tracks.year, tracks.color as color,
+        // tracks.album, tracks.genre, tracks.rating, tracks.bpm, tracks.stream_length, foo.play_count, tracks.cover_small as cover, 
+        // settings.db_image_cache as image_root, settings.db_music_cache as music_root,
         // max_play_times.time as last_played FROM tracks JOIN (SELECT * FROM tracks JOIN (SELECT id as id_2, count(session_tracks.track_id) as play_count
-        // FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts ON tracks.id=play_counts.id_2) foo ON tracks.id=foo.id LEFT JOIN
+        // FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id GROUP BY id) play_counts ON tracks.id=play_counts.id_2) foo 
+        // ON tracks.id=foo.id LEFT JOIN
         // ((select track_id from unavailable_tracks) UNION (select track_id from session_queue)) availability ON availability.track_id=tracks.id LEFT JOIN 
-        // (SELECT track_id, MAX(start_time) AS time FROM session_tracks GROUP BY track_id) max_play_times ON tracks.id = max_play_times.track_id LEFT JOIN settings on 1 
+        // (SELECT track_id, MAX(start_time) AS time FROM session_tracks GROUP BY track_id) max_play_times ON tracks.id = max_play_times.track_id 
+        // LEFT JOIN settings on 1 
         // WHERE tracks.id=${id} ORDER BY title`, k)
     }
 
