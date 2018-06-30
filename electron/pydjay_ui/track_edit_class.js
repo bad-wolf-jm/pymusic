@@ -219,45 +219,97 @@ class TrackEditWindow extends EventDispatcher {
             }
         )
 
-        this.setValue(this.main_title_edit_id, this._track_info.title)
-        this.setValue(this.main_artist_edit_id, this._track_info.artist)
-        this.setValue(this.main_album_edit_id, this._track_info.album)
-        this.setValue(this.main_genre_edit_id, this._track_info.genre)
-        this.setValue(this.main_year_edit_id, this._track_info.year)
-        this.setValue(this.main_grouping_edit_id, this._track_info.grouping)
-        this.setValue(this.main_track_bpm_edit_id, this._track_info.bpm)
-        this.setValue(this.main_color_edit_id, this._track_info.color)
-        this.setValue(this.main_stream_length_id, `${format_nanoseconds(this._track_info.stream_length)}`)
-        this.setValue(this.main_track_length_id, `${format_nanoseconds(this._track_info.track_length)}`)
-        this.setRating(this._track_info.rating)
-        this.setLoved(this._track_info.favorite)
+        $$(this.main_property_edit_id).registerType("toggle",{
+            template:function(value, config){
+                if (value)
+                    return `<div class='webix_toggle_button_custom checked'><span class='fa fa-heart' style='font-size: 13px;'/></div>`;
+                else
+                    return `<div class='webix_toggle_button_custom notchecked'><span class='fa fa-heart-o' style='font-size: 13px;'/></div>`;
+            },
+            click:{
+                webix_toggle_button_custom: function(e, id){
+                    var data = this.getItem(id);
+                    if (data.value == 0)
+                        data.value = 1;
+                    else
+                        data.value = 0;
+         
+                    this.editStop();
+                    this.refresh(id);
+                    this.callEvent("onCheck",[id, data.value]);
+                }
+            },
+            editor:"inline-text"
+        });
+
+        $$(this.main_property_edit_id).registerType("rating",{
+            template:function(value, config){
+                var html = "";
+                for (var i=1; i<6; i++) {
+                    html+="<div rating='"+i+"' class='rating_star fa " + ( i <= value ? "fa-star" : "fa-star-o") +"' style='font-size: 14px'></div>";
+                }
+                return html
+            },
+            click:{
+                rating_star: function(e, id){
+                    // var data = this.getItem(id);
+                    //console.log(e.target.getAttribute('rating'))
+                    //if (data.value == 0)
+                    data.value = e.target.getAttribute('rating');
+                    //else
+                    //    data.value = 0;         
+                    this.editStop();
+                    this.refresh(id);
+                    // this.callEvent("onCheck",[id, data.value]);
+                }
+            },
+            editor:"inline-text"
+        });
+
+
+
+        $$(this.main_property_edit_id).setValues(this._track_info)
+        // this.setValue(this.main_title_edit_id, this._track_info.title)
+        // this.setValue(this.main_artist_edit_id, this._track_info.artist)
+        // this.setValue(this.main_album_edit_id, this._track_info.album)
+        // this.setValue(this.main_genre_edit_id, this._track_info.genre)
+        // this.setValue(this.main_year_edit_id, this._track_info.year)
+        // this.setValue(this.main_grouping_edit_id, this._track_info.grouping)
+        // this.setValue(this.main_track_bpm_edit_id, this._track_info.bpm)
+        // this.setValue(this.main_color_edit_id, this._track_info.color)
+        // this.setValue(this.main_stream_length_id, `${format_nanoseconds(this._track_info.stream_length)}`)
+        // this.setValue(this.main_track_length_id, `${format_nanoseconds(this._track_info.track_length)}`)
+        // this.setRating(this._track_info.rating)
+        // this.setLoved(this._track_info.favorite)
         let cover_source = undefined;
         if (this._track_info.cover_medium == null) {
             cover_source = "../resources/images/default_album_cover.png"
         } else {
             cover_source = `file://${this._track_info.cover_medium}`;
         }
-        var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='225' width='225'></img>`
+        var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='285' width='285'></img>`
         $$(this.main_cover_image_edit_id).define('template', cover_image);
         $$(this.main_cover_image_edit_id).refresh();
         this._waveform.load(this._track_info.file_name)
     }
 
     applyChanges() {
-        let values = {
-            title: this.getValue(this.main_title_edit_id), 
-            artist: this.getValue(this.main_artist_edit_id),
-            album: this.getValue(this.main_album_edit_id),
-            genre: this.getValue(this.main_genre_edit_id),
-            grouping: this.getValue(this.main_grouping_edit_id),
-            yeaar: this.getValue(this.main_year_edit_id),
-            bpm: this.getValue(this.main_track_bpm_edit_id),
-            stream_start: this.stream_start,
-            stream_end: this.stream_end,
-            loved: this.loved,
-            rating: this.rating,
-            color: this.getValue(this.main_color_edit_id)
-        }        
+        let values = $$(this.main_property_edit_id).getValues()
+        console.log(values)
+        // let values = {
+        //     title: this.getValue(this.main_title_edit_id), 
+        //     artist: this.getValue(this.main_artist_edit_id),
+        //     album: this.getValue(this.main_album_edit_id),
+        //     genre: this.getValue(this.main_genre_edit_id),
+        //     grouping: this.getValue(this.main_grouping_edit_id),
+        //     yeaar: this.getValue(this.main_year_edit_id),
+        //     bpm: this.getValue(this.main_track_bpm_edit_id),
+        //     stream_start: this.stream_start,
+        //     stream_end: this.stream_end,
+        //     loved: this.loved,
+        //     rating: this.rating,
+        //     color: this.getValue(this.main_color_edit_id)
+        // }        
         this.dispatch("accept-changes", values)
         this.audio_player.stop()
         this.audio_player.un("stream-position", this.updateWaveformPosition)
@@ -279,6 +331,7 @@ class TrackEditWindow extends EventDispatcher {
         super()
         this.id = this.ID("track_edit_window")
         this.main_cover_image_edit_id = this.ID("main-cover-image-edit")
+        this.main_property_edit_id = this.ID("main-property-edit")
         this.main_title_edit_id = this.ID("main-title-edit")
         this.main_artist_edit_id = this.ID("main-artist-edit")
         this.main_album_edit_id = this.ID("main-album-edit")
@@ -327,152 +380,175 @@ class TrackEditWindow extends EventDispatcher {
                                     {
                                         id:this.main_cover_image_edit_id,
                                         view: 'template',
-                                        width:225,
-                                        height:225,
+                                        width:285,
+                                        height:285,
                                         template: ""
                                     },
-                                    {
-                                        height: 40,
-                                        cols: [
-                                            {
-                                                id:this.main_loved_edit_id,
-                                                view: 'template',
-                                                width:25,
-                                                template: "<b><span class='fa fa-heart' style='font-size: 15px'/></b>"
-                                            },
-                                            {
-                                                id:this.main_rating_edit_id,
-                                                view: 'template',
-                                                width:75,
-                                                template: ""
-                                            },
-                                            {
-                                                id:this.main_color_edit_id,
-                                                view: 'colorpicker',
-                                                width:125,
-                                                label: ""
-                                            },
-                                        ]
-                                    }
+                                    // {
+                                    //     height: 40,
+                                    //     cols: [
+                                    //         {
+                                    //             id:this.main_loved_edit_id,
+                                    //             view: 'template',
+                                    //             width:25,
+                                    //             template: "<b><span class='fa fa-heart' style='font-size: 15px'/></b>"
+                                    //         },
+                                    //         {
+                                    //             id:this.main_rating_edit_id,
+                                    //             view: 'template',
+                                    //             width:75,
+                                    //             template: ""
+                                    //         },
+                                    //         {
+                                    //             id:this.main_color_edit_id,
+                                    //             view: 'colorpicker',
+                                    //             width:125,
+                                    //             label: ""
+                                    //         },
+                                    //     ]
+                                    // }
         
                                 ]
                             },
                             {width:20},
                             {
                                 rows:[
-                                    {height:7},
+                                    // {height:7},
                                     {
                                         cols: [
-                                            {
-                                                rows: [
-                                                    {
-                                                        id: this.main_title_edit_id,
-                                                        view: 'text',
-                                                        css: {
-                                                            'text-align': 'left',
-                                                            'text-transform': 'uppercase',
-                                                            'font-size': '20px'
-                                                        },
-                                                        label: 'Title:',
-                                                        labelWidth: 75,
-                                                        height:30
-                                                    },
-                                                    {
-                                                        id: this.main_artist_edit_id,
-                                                        view: 'text',
-                                                        css: {
-                                                            'text-align':'left',
-                                                            'font-size': '20px',
-                                                            'color': '#bfbfbf'
-                                                        },
-                                                        label: 'Artist:',
-                                                        labelWidth: 75,
-                                                        height:30
-                                                    },
-                                                    {
-                                                        id: this.main_album_edit_id,
-                                                        view: 'text',
-                                                        css: {
-                                                            'text-align':'left',
-                                                            'font-size': '20px',
-                                                            'color': '#bfbfbf'
-                                                        },
-                                                        label: 'Album:',
-                                                        labelWidth: 75,
-                                                        height:30
-                                                    },
-                                                    {
-                                                        id: this.main_year_edit_id,
-                                                        view: 'text',
-                                                        css: {
-                                                            'text-align':'left',
-                                                            'font-size': '20px',
-                                                            'color': '#bfbfbf'
-                                                        },
-                                                        label: 'Year:',
-                                                        labelWidth: 75,
-                                                        height:30
-                                                    },
-                                                    {
-                                                        id:this.main_genre_edit_id,
-                                                        view: 'text',
-                                                        css: {
-                                                            'text-align':'left',
-                                                            'font-size': '20px',
-                                                            'color': '#bfbfbf'
-                                                        },
-                                                        label: 'Genre:',
-                                                        labelWidth: 75,
-                                                        height:30
-                                                    },
-                                                    {
-                                                        id:this.main_grouping_edit_id,
-                                                        view: 'text',
-                                                        css: {
-                                                            'text-align':'left',
-                                                            'font-size': '20px',
-                                                            'color': '#bfbfbf'
-                                                        },
-                                                        label: 'Grouping:',
-                                                        labelWidth: 75,
-                                                        height:30
-                                                    },
-                                                    {},
-                                                    {
-                                                        id:this.main_track_bpm_edit_id,
-                                                        view: 'text',
-                                                        css: {
-                                                            'text-align':'left',
-                                                            'font-size':'20px'
-                                                        },
-                                                        label: 'BPM:',
-                                                        labelWidth: 75,
-                                                        height:30
-                                                    },
-                                                    {
-                                                        id:this.main_track_length_id,
-                                                        view: 'text',
-                                                        css: {
-                                                            'text-align':'left',
-                                                            'font-size':'20px'
-                                                        },
-                                                        labelWidth: 100,
-                                                        label: 'File duration:',
-                                                        height:30
-                                                    },
-                                                    {
-                                                        id:this.main_stream_length_id,
-                                                        view: 'text',
-                                                        css: {
-                                                            'text-align':'left',
-                                                            'font-size':'20px'
-                                                        },
-                                                        label: 'Cut duration:',
-                                                        labelWidth: 100,
-                                                        height:30
-                                                    }
+                                            { 
+                                                view:"property", 
+                                                id:this.main_property_edit_id, 
+                                                //width:100,
+                                                disable:true,
+                                                height:285, 
+                                                labelWidth:100,
+                                                elements:[
+                                                    { label:"Metadata", type:"label"},
+                                                    { label:"<b>Title:</b>", type:"text", id:"title"},
+                                                    { label:"<b>Artist:</b>", type:"text", id:"artist"},
+                                                    { label:"<b>Album:</b>", type:"text", id:"album"},
+                                                    { label:"<b>Year:</b>", type:"text", id:"year"},
+                                                    { label:"<b>Genre:</b>", type:"text", id:"genre"},
+                                                    { label:"<b>Color:</b>", type:"color", id:"color"},
+                                                    { label:"<b>Rating:</b>", type:"rating", id:"rating"},
+                                                    { label:"<b>Loved:</b>", type:"toggle",  id:"favorite"},
+                                                    // { label:"Info", type:"label"},
+                                                    // { label:"<b>BPM:</b>", type:"text", id:"bpm"},
+                                                    // { label:"<b>Duration:</b>", id:"track_length", template:format_nanoseconds},
                                                 ]
-                                            }
+                                            },
+
+                                            // {
+                                            //     rows: [
+                                            //         {
+                                            //             id: this.main_title_edit_id,
+                                            //             view: 'text',
+                                            //             css: {
+                                            //                 'text-align': 'left',
+                                            //                 'text-transform': 'uppercase',
+                                            //                 'font-size': '20px'
+                                            //             },
+                                            //             label: 'Title:',
+                                            //             labelWidth: 75,
+                                            //             height:30
+                                            //         },
+                                            //         {
+                                            //             id: this.main_artist_edit_id,
+                                            //             view: 'text',
+                                            //             css: {
+                                            //                 'text-align':'left',
+                                            //                 'font-size': '20px',
+                                            //                 'color': '#bfbfbf'
+                                            //             },
+                                            //             label: 'Artist:',
+                                            //             labelWidth: 75,
+                                            //             height:30
+                                            //         },
+                                            //         {
+                                            //             id: this.main_album_edit_id,
+                                            //             view: 'text',
+                                            //             css: {
+                                            //                 'text-align':'left',
+                                            //                 'font-size': '20px',
+                                            //                 'color': '#bfbfbf'
+                                            //             },
+                                            //             label: 'Album:',
+                                            //             labelWidth: 75,
+                                            //             height:30
+                                            //         },
+                                            //         {
+                                            //             id: this.main_year_edit_id,
+                                            //             view: 'text',
+                                            //             css: {
+                                            //                 'text-align':'left',
+                                            //                 'font-size': '20px',
+                                            //                 'color': '#bfbfbf'
+                                            //             },
+                                            //             label: 'Year:',
+                                            //             labelWidth: 75,
+                                            //             height:30
+                                            //         },
+                                            //         {
+                                            //             id:this.main_genre_edit_id,
+                                            //             view: 'text',
+                                            //             css: {
+                                            //                 'text-align':'left',
+                                            //                 'font-size': '20px',
+                                            //                 'color': '#bfbfbf'
+                                            //             },
+                                            //             label: 'Genre:',
+                                            //             labelWidth: 75,
+                                            //             height:30
+                                            //         },
+                                            //         {
+                                            //             id:this.main_grouping_edit_id,
+                                            //             view: 'text',
+                                            //             css: {
+                                            //                 'text-align':'left',
+                                            //                 'font-size': '20px',
+                                            //                 'color': '#bfbfbf'
+                                            //             },
+                                            //             label: 'Grouping:',
+                                            //             labelWidth: 75,
+                                            //             height:30
+                                            //         },
+                                            //         {},
+                                            //         {
+                                            //             id:this.main_track_bpm_edit_id,
+                                            //             view: 'text',
+                                            //             css: {
+                                            //                 'text-align':'left',
+                                            //                 'font-size':'20px'
+                                            //             },
+                                            //             label: 'BPM:',
+                                            //             labelWidth: 75,
+                                            //             height:30
+                                            //         },
+                                            //         {
+                                            //             id:this.main_track_length_id,
+                                            //             view: 'text',
+                                            //             css: {
+                                            //                 'text-align':'left',
+                                            //                 'font-size':'20px'
+                                            //             },
+                                            //             labelWidth: 100,
+                                            //             label: 'File duration:',
+                                            //             height:30
+                                            //         },
+                                            //         {
+                                            //             id:this.main_stream_length_id,
+                                            //             view: 'text',
+                                            //             css: {
+                                            //                 'text-align':'left',
+                                            //                 'font-size':'20px'
+                                            //             },
+                                            //             label: 'Cut duration:',
+                                            //             labelWidth: 100,
+                                            //             height:30
+                                            //         }
+                                            //    ]
+                                           // }
                                         ]
                                     }
                                 ]
