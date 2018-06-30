@@ -122,7 +122,11 @@ function DataProvider() {
 
     self.get_playlist_tracks = function (id, k) {
         var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* FROM playlist_tracks JOIN ${tracks_sql} ON playlist_tracks.track_id=tracks_view.id WHERE playlist_tracks.playlist_id=${id} ORDER BY title`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM playlist_tracks 
+                    JOIN ${tracks_sql} 
+                    ON playlist_tracks.track_id=tracks_view.id 
+                    WHERE playlist_tracks.playlist_id=${id} ORDER BY title`
         // var sql = `SELECT availability.track_id IS NULL as available, playlist_tracks.track_id, playlist_tracks.track_id as id, favorite, disabled as enabled, 
         // title, artist, album, genre, rating, bpm, stream_length, foo.play_count, cover_small as cover, color,
         // settings.db_image_cache as image_root, max_play_times.time as last_played FROM playlist_tracks JOIN
@@ -133,13 +137,18 @@ function DataProvider() {
         // ON availability.track_id=playlist_tracks.track_id LEFT JOIN (SELECT track_id, MAX(start_time) AS time
         // FROM session_tracks GROUP BY track_id) max_play_times ON playlist_tracks.track_id = max_play_times.track_id
         // LEFT JOIN settings on 1 WHERE playlist_tracks.playlist_id=${id} ORDER BY title`;
-        console.log(sql)
+        //console.log(sql)
         $QUERY(sql, k)        
     }
 
     self.get_session_tracks = function (id, k) {
         var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* FROM session_tracks JOIN ${tracks_sql} ON session_tracks.track_id=tracks_view.id WHERE session_tracks.session_id=${id} ORDER BY session_tracks.position`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM session_tracks 
+                    JOIN ${tracks_sql} 
+                    ON session_tracks.track_id=tracks_view.id 
+                    WHERE session_tracks.session_id=${id} 
+                    ORDER BY session_tracks.position`
         // var sql = `SELECT availability.track_id IS NULL as available,  id, favorite, disabled as enabled, title, artist,
         // album, genre, rating, bpm, stream_length, foo.play_count, max_play_times.time as last_played, color
         // FROM session_tracks JOIN
@@ -155,7 +164,10 @@ function DataProvider() {
 
     self.get_never_played_tracks = function(k) {
         var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* FROM ${tracks_sql} WHERE tracks_view.play_count=0 ORDER BY tracks_view.title`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM ${tracks_sql} 
+                    WHERE tracks_view.play_count=0 
+                    ORDER BY tracks_view.title`
         // var sql =`SELECT * FROM (SELECT availability.track_id IS NULL as available, ${self.display_list_fields} FROM tracks LEFT JOIN session_tracks ON
         // tracks.id = session_tracks.track_id LEFT JOIN
         // (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title) q WHERE q.play_count = 0`;
@@ -164,7 +176,10 @@ function DataProvider() {
 
     self.get_played_tracks = function(k) {
         var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* FROM ${tracks_sql} WHERE tracks_view.play_count != 0 ORDER BY tracks_view.title`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM ${tracks_sql} 
+                    WHERE tracks_view.play_count != 0 
+                    ORDER BY tracks_view.title`
         // var sql =`SELECT * FROM (SELECT availability.track_id IS NULL as available, ${self.display_list_fields} FROM tracks LEFT JOIN session_tracks ON
         // tracks.id = session_tracks.track_id LEFT JOIN
         // (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title) q WHERE q.play_count = 0`;
@@ -177,7 +192,11 @@ function DataProvider() {
 
     self.get_shortlisted_tracks = function (k) {
         var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* FROM short_listed_tracks JOIN ${tracks_sql} ON tracks_view.id=short_listed_tracks.track_id ORDER BY tracks_view.title`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM short_listed_tracks 
+                    JOIN ${tracks_sql} 
+                    ON tracks_view.id=short_listed_tracks.track_id 
+                    ORDER BY tracks_view.title`
         // var sql =`SELECT availability.track_id IS NULL as available, ${self.display_list_fields}
         // FROM tracks LEFT JOIN session_tracks ON tracks.id = session_tracks.track_id
         // JOIN short_listed_tracks ON tracks.id=short_listed_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
@@ -187,7 +206,11 @@ function DataProvider() {
 
     self.get_unavailable_tracks = function (k) {
         var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* FROM unavailable_tracks JOIN ${tracks_sql} ON tracks_view.id = unavailable_tracks.track_id ORDER BY tracks_view.title`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM unavailable_tracks 
+                    JOIN ${tracks_sql} 
+                    ON tracks_view.id = unavailable_tracks.track_id 
+                    ORDER BY tracks_view.title`
         // var sql = `SELECT availability.track_id IS NULL as available, ${self.display_list_fields} FROM tracks LEFT JOIN session_tracks ON
         // tracks.id = session_tracks.track_id JOIN unavailable_tracks ON tracks.id=unavailable_tracks.track_id LEFT JOIN
         // (select track_id from session_queue) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title`
@@ -328,8 +351,9 @@ function DataProvider() {
         sql += fields.indexOf("stream_length") != -1 ? `stream_length=${track_info.sttream_length},\n` : ''
         sql += fields.indexOf("disabled") != -1 ? `disabled=${track_info.disabled},\n` : '' 
         sql += fields.indexOf("grouping") != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
-        sql += `date_modified=${DATE(new Date())},\n` 
+        sql += `date_modified=${DATE(new Date())}\n` 
         sql += `WHERE id=${id}`
+        console.log(sql)
         $QUERY(sql, k)
     }
 }
