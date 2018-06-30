@@ -401,7 +401,7 @@ function PlaylistEditor(id) {
                 //         file: file_name
                 //     }
                 // )            
-                self.audio_player.play(file_name, stream_start, stream_end)
+                self.audio_player.play(file_name, stream_start / 1000000, stream_end / 1000000)
             }
         )
     
