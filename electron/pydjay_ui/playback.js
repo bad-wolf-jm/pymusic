@@ -541,7 +541,7 @@ function preview_play_track_id(id, stream_start, stream_end) {
             cover_file_name = `${result.image_root}/${result.cover_small}`;
             stream_length = (result.stream_end-result.stream_start) / 1000000000;
             preview_play_id = result.id
-            $$('preview_title').define('label', result.title)
+            $$('preview_title').define('label', `<b>${result.title}</b>`)
             $$('preview_title').refresh()
             $$('preview_artist').define('label', `${result.artist}`)
             $$('preview_artist').refresh()
@@ -550,7 +550,7 @@ function preview_play_track_id(id, stream_start, stream_end) {
             } else {
                 cover_source = `file://${result.image_root}/${result.cover_small}`;
             }
-            var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='75' width='75'></img>`
+            var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='95' width='95'></img>`
             $$('preview-cover-image').define('template', cover_image);
             $$('preview-cover-image').refresh();
 

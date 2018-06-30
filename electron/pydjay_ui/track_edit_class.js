@@ -184,6 +184,8 @@ class TrackEditWindow extends EventDispatcher {
                 hideScrollbar: false,
                 waveColor: 'violet',
                 progressColor: 'purple',
+                height:125,
+                barHeight:1.5,
                 plugins: [
                     WaveSurferRegions.create({
                         container: `#${this.main_waveform_id}`,

@@ -8,7 +8,7 @@ function custom_checkbox(obj, common, value){
 };
 
 var preview_player_window = {
-    height:105,
+    height:95,
     css:{
         'background-color':'#6c6c6c',
         'padding':'1px',
@@ -18,8 +18,8 @@ var preview_player_window = {
         {
             id:'preview-cover-image',
             view: 'template',
-            width:75,
-            height:75,
+            width:95,
+            height:95,
             template: ""
         },
         {width:10},
@@ -36,11 +36,13 @@ var preview_player_window = {
                                         {
                                             id: "preview_title",
                                             view: 'label',
+                                            label: "<b>NO TRACK</b>",
                                             height:20
                                         },
                                         {
                                             id: "preview_artist",
                                             view: 'label',
+                                            label: "NO ARTIST",
                                             height:20
                                         },                
                                     ]
