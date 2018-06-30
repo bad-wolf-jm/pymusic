@@ -252,7 +252,7 @@ class TrackEditWindow extends EventDispatcher {
             },
             click:{
                 rating_star: function(e, id){
-                    // var data = this.getItem(id);
+                    var data = this.getItem(id);
                     //console.log(e.target.getAttribute('rating'))
                     //if (data.value == 0)
                     data.value = e.target.getAttribute('rating');
