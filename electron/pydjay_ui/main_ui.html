@@ -921,7 +921,9 @@ var datatable = webix.ui({
                                         color: '#fbbbbbb',
                                         'background-color': '#870053'
                                     },
-                                    template:'<span style="vertical-align:bottom"><b>Queue will stop after this song</b></span>',
+                                    template:`<span style="vertical-align:bottom">
+                                                <b>Queue will stop after this song</b>
+                                              </span>`,
                                     maxHeight:35
                                 },
                                 {width:15}
@@ -1253,13 +1255,15 @@ webix.UIManager.addHotKey("ctrl+shift+right", playback_actions.preview_forward_s
 
 
 
-$$(main_track_table.track_list).attachEvent('onItemDblClick',
-    function (id) {
-        var id = $$(main_track_table.track_list).getSelectedId().id;
-        preview_track_id = id;
-        preview_play_track_id(id);
-    }
-);
+// $$(main_track_table.track_list).attachEvent('onItemDblClick',
+//     function (id) {
+//         var id = $$(main_track_table.track_list).getSelectedId().id;
+//         preview_track_id = id;
+//         preview_play_track_id(id);
+//     }
+// );
+
+main_track_table.on('item-selected', (track) => preview_play_track_id(track.id))
 
 $$('queue_list').attachEvent('onItemDblClick',
     function (id) {
@@ -1347,17 +1351,29 @@ $$('queue_list').attachEvent('onFocus',
     }
  );
 
-$$(main_track_table.track_list).attachEvent('onFocus',
-  function (x) {
+// $$(main_track_table.track_list).attachEvent('onFocus',
+//   function (x) {
+//       s = $$(main_track_table.track_list).getSelectedId();
+//       if (s == '') {
+//           $$(main_track_table.track_list).select($$(main_track_table.track_list).getFirstId());
+//       }
+//       webix.html.addCss($$(main_track_table.header).getNode(), "focus_header");
+//       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
+//       //webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
+//   }
+// );
+
+main_track_table.on('focus-in-list',
+  (x) => {
       s = $$(main_track_table.track_list).getSelectedId();
       if (s == '') {
           $$(main_track_table.track_list).select($$(main_track_table.track_list).getFirstId());
       }
       webix.html.addCss($$(main_track_table.header).getNode(), "focus_header");
       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
-      //webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
   }
 );
+
 
 // $$(main_track_table.track_list).attachEvent('onAfterLoad', () => {update_list_labels()})
 webix.UIManager.setFocus($$(main_track_table.track_list));

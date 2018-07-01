@@ -26,8 +26,8 @@ function PlaylistEditor(id) {
     var self = this
 
     self.playlist_id = id
-    self.track_list = `playlist_track_list_${ID()}`
-    self.track_list_filter = `playlist_track_list_filter_${ID()}`
+    // self.track_list = `playlist_track_list_${ID()}`
+    // self.track_list_filter = `playlist_track_list_filter_${ID()}`
     self.group_list = `playlist_group_list_${ID()}`
     self.track_count_label = `playlist_track_count_${ID()}`
     self.group_name_label = `playlist_name_${ID()}`

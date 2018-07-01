@@ -1,0 +1,3 @@
+class TrackList extends EventDispatcher {
+    
+}

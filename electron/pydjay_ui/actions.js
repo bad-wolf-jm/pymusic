@@ -231,11 +231,11 @@ var main_list_actions = {
 
 var playback_actions = {
     preview_pause: function () {
-        !filtering ? preview_pause(): undefined;
+        !main_track_table.filtering ? preview_pause(): undefined;
     },
 
     preview_stop: function () {
-        !filtering ? preview_stop(): undefined;
+        !main_track_table.filtering ? preview_stop(): undefined;
     },
 
     increase_main_player_volume: function () {

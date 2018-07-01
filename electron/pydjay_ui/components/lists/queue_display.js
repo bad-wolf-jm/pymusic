@@ -47,20 +47,20 @@ function update_queue_labels() {
 }
 
 
-function update_suggestions() {
-    DB.get_suggested_tracks(
-        function (suggestions) {
-            $$('suggestion_list').clearAll();
-            for(var i=0; i < suggestions.length; i++){
-                $$('suggestion_list').add(suggestions[i])
-                if (!(suggestions[i].available)) {
-                    $$('suggestion_list').addCss(suggestions[i].id, 'unavailable_track');
-                }
-            }
-        }
+// function update_suggestions() {
+//     DB.get_suggested_tracks(
+//         function (suggestions) {
+//             $$('suggestion_list').clearAll();
+//             for(var i=0; i < suggestions.length; i++){
+//                 $$('suggestion_list').add(suggestions[i])
+//                 if (!(suggestions[i].available)) {
+//                     $$('suggestion_list').addCss(suggestions[i].id, 'unavailable_track');
+//                 }
+//             }
+//         }
 
-    )
-}
+//     )
+// }
 
 
 
@@ -89,20 +89,21 @@ var queue_display_template = {
                 },
                 {height:5},
             ]
-
         },
         {
             view:"list",
             id:'queue_list',
             css:{
                 border: '1px solid #3c3c3c',
-                //height: "100% !important"
              },
             select:true,
             template: queue_element_template,
-            type: { height: cover_size  },
+            type: { 
+                height: cover_size
+            },
             scroll:"y"
-        }]
+        }
+    ]
 }
 
 

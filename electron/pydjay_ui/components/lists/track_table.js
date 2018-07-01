@@ -8,6 +8,7 @@ class TrackTable extends EventDispatcher {
         this.playlist_name = `playlist_name_${ID()}`
         this.playlist_track_count = `playlist_track_count_filter_${ID()}`
         this.header = `header_${ID()}`
+        this.filtering = false
     }
 
     ID () {
@@ -22,6 +23,32 @@ class TrackTable extends EventDispatcher {
                 this.update_list_labels()
             }
         )
+        $$(this.track_list).attachEvent('onItemDblClick',
+            (id) => {
+                var id = this.get_selected_item()
+                this.dispatch("item-selected", id)
+            }
+        );
+        $$(this.track_list).attachEvent('onFocus',
+            (id) => {
+                this.dispatch("focus-in-list", id)
+            }
+        );
+        $$(this.track_list).attachEvent('onBlur',
+            (id) => {
+                this.dispatch("focus-out-list", id)
+            }
+        );
+        $$(this.track_list_filter).attachEvent('onFocus', (x) => {
+                this.filtering=true;
+                this.dispatch("focus-in-filter", id)
+            }
+        );
+        $$(this.track_list_filter).attachEvent('onBlur', (x) => {
+                this.filtering=false;
+                this.dispatch("focus-out-filter", id)
+            }
+        );
     }
 
     update_list_labels() {
@@ -106,7 +133,7 @@ class TrackTable extends EventDispatcher {
         $$(this.track_list).filter(
             function (obj) {
                 for(i=0; i<search_f.length; i++) {
-                    x = search_f[i](obj);
+                    let x = search_f[i](obj);
                     if (!x) {
                         return false;
                     }
@@ -267,7 +294,9 @@ class TrackTable extends EventDispatcher {
                             },  
                             width:    80, 
                             template: function(element) { 
-                                return `<span style="color:${element.color}">${webix.Date.dateToStr("%Y-%m-%d")(element.last_played)}</span>`
+                                return `<span style="color:${element.color}">
+                                            ${webix.Date.dateToStr("%Y-%m-%d")(element.last_played)}
+                                        </span>`
                             }, 
                             sort: 'int'
                         },
