@@ -716,6 +716,46 @@ session_popup.attachEvent('onShow', function () {
 })
 
 
+var track_info_popup = webix.ui(
+    {
+        view:"popup",
+        id:"info_popup",
+        height:300,
+        width:500,
+        body:{
+            // { 
+            view:"property", 
+            id:"info_popup_property_sheet", 
+            //width:100,
+            disable:true,
+            height:285, 
+            labelWidth:100,
+            elements:[
+                { label:"Metadata", type:"label"},
+                { label:"<b>Title:</b>", type:"text", id:"title"},
+                { label:"<b>Artist:</b>", type:"text", id:"artist"},
+                { label:"<b>Album:</b>", type:"text", id:"album"},
+                { label:"<b>Year:</b>", type:"text", id:"year"},
+                { label:"<b>Genre:</b>", type:"text", id:"genre"},
+                { label:"<b>Color:</b>", type:"color", id:"color"},
+                { label:"<b>Rating:</b>", type:"rating", id:"rating"},
+                { label:"<b>Loved:</b>", type:"toggle",  id:"favorite"},
+            ]
+        },
+    }
+)
+track_info_popup.hide();
+track_info_popup.attachEvent('onShow', function () {
+    if (preview_track_id != undefined) {
+        DB.get_track_by_id(preview_track_id,
+            function (track_info) {
+                $$("info_popup_property_sheet").setValues(track_info[0])
+            }
+        )
+    }
+})
+
+
 
 var popup = webix.ui({
     view:"popup",

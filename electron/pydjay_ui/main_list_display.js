@@ -56,6 +56,15 @@ var preview_player_window = {
                                     width:30,
                                     popup: "preview_popup_menu"
                                 },
+                                {
+                                    id:'preview_test_info_button',
+                                    view:'button',
+                                    type: 'icon',
+                                    icon: 'info',
+                                    width:30,
+                                    popup: "info_popup"
+                                },
+
 
 
                             ]
