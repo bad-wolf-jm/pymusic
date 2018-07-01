@@ -7,7 +7,8 @@ function custom_checkbox(obj, common, value){
         return `<div class='webix_table_checkbox notchecked'><span class='fa fa-heart-o' style='font-size: 12px; color:${obj.color}'/></div>`;
 };
 
-var preview_player_window = {
+var preview_player_window = 
+{
     height:95,
     css:{
         'background-color':'#6c6c6c',
@@ -123,7 +124,8 @@ var preview_player_window = {
     ]
 }
 
-var main_list_display_template = {
+var main_list_display_template = 
+{
     type:'line',
     autoheight:true,
     css:{

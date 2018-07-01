@@ -8,9 +8,6 @@ function display_track_list(list_name, list_elements) {
             if (!list_elements[i].available){
                 list_elements[i].$css = "unavailable_track";
             }
-            // if (list_element[i].color) {
-            //     list_elements[i].$css = "unavailable_track";
-            // }
         }
     }
     $$('display_list').define('data', list_elements);
