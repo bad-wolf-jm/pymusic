@@ -7,7 +7,7 @@ class TrackTable extends EventDispatcher {
         this.track_list_filter = `playlist_track_list_filter_${ID()}`
         this.playlist_name = `playlist_name_${ID()}`
         this.playlist_track_count = `playlist_track_count_filter_${ID()}`
-
+        this.header = `header_${ID()}`
     }
 
     ID () {
@@ -18,7 +18,10 @@ class TrackTable extends EventDispatcher {
         $$(this.track_list).filterByAll = () => {
             this.filter_list($$(this.track_list_filter).getValue())
         } 
-        $$(this.track_list).attachEvent('onAfterLoad', () => {this.update_list_labels()})
+        $$(this.track_list).attachEvent('onAfterLoad', () => {
+                this.update_list_labels()
+            }
+        )
     }
 
     update_list_labels() {
@@ -116,7 +119,7 @@ class TrackTable extends EventDispatcher {
     set_track_list (name, list_elements) {
         $$(this.track_list).clearAll()
         if (list_elements.length > 0) {
-            for(i=0; i<list_elements.length; i++){
+            for(let i=0; i<list_elements.length; i++){
                 if (!list_elements[i].available){
                     list_elements[i].$css = "unavailable_track";
                 }
@@ -141,7 +144,7 @@ class TrackTable extends EventDispatcher {
             },
             rows: [
                 {
-                    // id: 'main_list_header_row',
+                    id: this.header,
                     css:{
                         'background-color':'#5c5c5c',
                         'padding':'5px',

@@ -865,6 +865,8 @@ main_menu_popup  = webix.ui({
 })
 main_menu_popup.hide()
 
+main_track_table = new TrackTable()
+
 var datatable = webix.ui({
     css:{
                 'background-color':'#515151',
@@ -970,7 +972,8 @@ var datatable = webix.ui({
         {
             cols:[
                 sidebar_template,
-                main_list_display_template,
+                //main_list_display_template,
+                main_track_table.create_layout(),
                 {
                     width:494,
                     rows: [
@@ -1065,79 +1068,81 @@ var datatable = webix.ui({
 });
 $$('queue_stop_message').hide();
 
-$$("display_list").filterByAll = function () {
-    var text = $$('track_filter').getValue()
-    var i=0;
-    search_tokens = text.split(' ')
-    search_f = [];
-    for (var i=0; i<search_tokens.length; i++) {
-        let token = search_tokens[i];
-        if (token.length > 0) {
-            if (search_tokens[i].startsWith('@bpm<')) {
-                let x = parseInt(search_tokens[i].split('<')[1]);
-                if (!isNaN(x)) {
-                    search_f.push(
-                        function (obj) {
-                            return obj.bpm <= x;
-                        }
-                    )
-                } else {
-                    search_f.push( (x) => {return true} )
-                }
-            } else if (search_tokens[i].startsWith('@bpm>')) {
-                let x = parseInt(search_tokens[i].split('>')[1]);
-                if (!isNaN(x)) {
-                    search_f.push(
-                        function (obj) {
-                            return (obj.bpm >= x);
-                        }
-                    )
-                } else {
-                    search_f.push( (x) => {return true} )
-                }
-            } else if (search_tokens[i].startsWith('@bpm~')) {
-                let x = parseInt(search_tokens[i].split('~')[1]);
-                if (!isNaN(x)) {
-                    search_f.push(
-                        function (obj) {
-                            return (obj.bpm < x*1.2) && (obj.bpm > x*0.9) ;
-                        }
-                    )
-                } else {
-                    search_f.push( (x) => {return true} )
-                }
-            } else {
-                search_f.push(
-                    function (x) {
-                        fields = [x.title, x.artist, x.genre, `@rat=${x.rating}`, '@bpm']
-                        if (x.favorite) {
-                            fields.push('@loved')
-                        }
-                        for (j=0; j<fields.length; j++) {
-                            if (fields[j] != null) {
-                                if ((fields[j].toLowerCase().search(token) != -1)) {
-                                    return true;
-                                }
-                            }
-                        }
-                        return false;
-                    }
-                )
-            }
-        }
-    }
-    this.filter(
-        function (obj) {
-            for(i=0; i<search_f.length; i++) {
-                x = search_f[i](obj);
-                if (!x) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    )
-};
+
+main_track_table.init()
+// $$("display_list").filterByAll = function () {
+//     var text = $$('track_filter').getValue()
+//     var i=0;
+//     search_tokens = text.split(' ')
+//     search_f = [];
+//     for (var i=0; i<search_tokens.length; i++) {
+//         let token = search_tokens[i];
+//         if (token.length > 0) {
+//             if (search_tokens[i].startsWith('@bpm<')) {
+//                 let x = parseInt(search_tokens[i].split('<')[1]);
+//                 if (!isNaN(x)) {
+//                     search_f.push(
+//                         function (obj) {
+//                             return obj.bpm <= x;
+//                         }
+//                     )
+//                 } else {
+//                     search_f.push( (x) => {return true} )
+//                 }
+//             } else if (search_tokens[i].startsWith('@bpm>')) {
+//                 let x = parseInt(search_tokens[i].split('>')[1]);
+//                 if (!isNaN(x)) {
+//                     search_f.push(
+//                         function (obj) {
+//                             return (obj.bpm >= x);
+//                         }
+//                     )
+//                 } else {
+//                     search_f.push( (x) => {return true} )
+//                 }
+//             } else if (search_tokens[i].startsWith('@bpm~')) {
+//                 let x = parseInt(search_tokens[i].split('~')[1]);
+//                 if (!isNaN(x)) {
+//                     search_f.push(
+//                         function (obj) {
+//                             return (obj.bpm < x*1.2) && (obj.bpm > x*0.9) ;
+//                         }
+//                     )
+//                 } else {
+//                     search_f.push( (x) => {return true} )
+//                 }
+//             } else {
+//                 search_f.push(
+//                     function (x) {
+//                         fields = [x.title, x.artist, x.genre, `@rat=${x.rating}`, '@bpm']
+//                         if (x.favorite) {
+//                             fields.push('@loved')
+//                         }
+//                         for (j=0; j<fields.length; j++) {
+//                             if (fields[j] != null) {
+//                                 if ((fields[j].toLowerCase().search(token) != -1)) {
+//                                     return true;
+//                                 }
+//                             }
+//                         }
+//                         return false;
+//                     }
+//                 )
+//             }
+//         }
+//     }
+//     this.filter(
+//         function (obj) {
+//             for(i=0; i<search_f.length; i++) {
+//                 x = search_f[i](obj);
+//                 if (!x) {
+//                     return false;
+//                 }
+//             }
+//             return true;
+//         }
+//     )
+// };
 
 display_all_songs()();
 queue_actions.reload();
@@ -1173,7 +1178,7 @@ webix.UIManager.removeHotKey('shift+right');
 webix.UIManager.removeHotKey('tab');
 webix.UIManager.removeHotKey('shift+ctrl+s');
 
-//webix.UIManager.addHotKey("ctrl+shift+s", main_list_actions.set_as_short_list, $$('display_list'));
+//webix.UIManager.addHotKey("ctrl+shift+s", main_list_actions.set_as_short_list, $$(main_track_table.track_list));
 
 
 webix.UIManager.addHotKey("alt+r", queue_actions.reload);
@@ -1187,17 +1192,17 @@ webix.UIManager.addHotKey("ctrl+shift+enter", queue_actions.preview_last_30_seco
 webix.UIManager.addHotKey("shift+enter", queue_actions.preview_last_10_seconds, $$('queue_list'));
 webix.UIManager.addHotKey("enter", queue_actions.preview_selection, $$('queue_list'));
 
-webix.UIManager.addHotKey("shift+q", main_list_actions.add_selection_to_queue, $$('display_list'));
-webix.UIManager.addHotKey("shift+s", main_list_actions.add_selection_to_short_list, $$('display_list'));
-webix.UIManager.addHotKey("shift+ctrl+s", main_list_actions.save_shortlist_as_playlist, $$('display_list'));
-webix.UIManager.addHotKey("shift+u", main_list_actions.add_selection_to_unavailable, $$('display_list'));
-webix.UIManager.addHotKey("shift+a", main_list_actions.remove_selection_from_unavailable, $$('display_list'));
-webix.UIManager.addHotKey("escape", main_list_actions.display_all_songs, $$('display_list'));
-webix.UIManager.addHotKey("ctrl+e", main_list_actions.edit_track_data, $$('display_list'));
-webix.UIManager.addHotKey("ctrl+shift+enter", main_list_actions.preview_last_30_seconds, $$('display_list'));
-webix.UIManager.addHotKey("shift+enter",  main_list_actions.preview_last_10_seconds, $$('display_list'));
-webix.UIManager.addHotKey("enter",  main_list_actions.preview_selected, $$('display_list'));
-webix.UIManager.addHotKey("ctrl+f",  main_list_actions.filter_list, $$('display_list'));
+webix.UIManager.addHotKey("shift+q", main_list_actions.add_selection_to_queue, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+s", main_list_actions.add_selection_to_short_list, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+ctrl+s", main_list_actions.save_shortlist_as_playlist, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+u", main_list_actions.add_selection_to_unavailable, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+a", main_list_actions.remove_selection_from_unavailable, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("escape", main_list_actions.display_all_songs, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("ctrl+e", main_list_actions.edit_track_data, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("ctrl+shift+enter", main_list_actions.preview_last_30_seconds, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+enter",  main_list_actions.preview_last_10_seconds, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("enter",  main_list_actions.preview_selected, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("ctrl+f",  main_list_actions.filter_list, $$(main_track_table.track_list));
 
 // webix.UIManager.addHotKey("shift+q", suggestion_list_actions.add_selection_to_queue, $$('suggestion_list'));
 // webix.UIManager.addHotKey("shift+s", suggestion_list_actions.add_selection_to_short_list, $$('suggestion_list'));
@@ -1248,9 +1253,9 @@ webix.UIManager.addHotKey("ctrl+shift+right", playback_actions.preview_forward_s
 
 
 
-$$('display_list').attachEvent('onItemDblClick',
+$$(main_track_table.track_list).attachEvent('onItemDblClick',
     function (id) {
-        var id = $$('display_list').getSelectedId().id;
+        var id = $$(main_track_table.track_list).getSelectedId().id;
         preview_track_id = id;
         preview_play_track_id(id);
     }
@@ -1272,38 +1277,38 @@ webix.UIManager.addHotKey("alt+f",
 );
 
 webix.UIManager.addHotKey("escape", function () {
-    webix.UIManager.setFocus($$('display_list'));
+    webix.UIManager.setFocus($$(main_track_table.track_list));
 }, $$('track_filter'));
 
 webix.UIManager.addHotKey("enter", function () {
-    webix.UIManager.setFocus($$('display_list'));
+    webix.UIManager.setFocus($$(main_track_table.track_list));
 }, $$('track_filter'));
 
 var filtering = false;
 
-$$('track_filter').attachEvent('onFocus', function (x) {
+$$(main_track_table.track_list_filter).attachEvent('onFocus', function (x) {
     filtering=true;
 });
-$$('track_filter').attachEvent('onBlur', function (x) {
+$$(main_track_table.track_list_filter).attachEvent('onBlur', function (x) {
     filtering=false;
 });
 
 webix.UIManager.addHotKey("right", function () {
     webix.UIManager.setFocus('queue_list');
-}, $$('display_list'));
+}, $$(main_track_table.track_list));
 
 webix.UIManager.addHotKey("left", function () {
     webix.UIManager.setFocus('queue_list');
-}, $$('display_list'));
+}, $$(main_track_table.track_list));
 
 
 
 webix.UIManager.addHotKey("left", function () {
-    webix.UIManager.setFocus($$('display_list'));
+    webix.UIManager.setFocus($$(main_track_table.track_list));
 }, $$('queue_list'));
 
 webix.UIManager.addHotKey("right", function () {
-    webix.UIManager.setFocus($$('display_list'));
+    webix.UIManager.setFocus($$(main_track_table.track_list));
 }, $$('queue_list'));
 
 
@@ -1312,7 +1317,7 @@ webix.UIManager.addHotKey("right", function () {
 // }, $$('suggestion_list'));
 
 // webix.UIManager.addHotKey("right", function () {
-//     webix.UIManager.setFocus($$('display_list'));
+//     webix.UIManager.setFocus($$(main_track_table.track_list));
 // }, $$('suggestion_list'));
 
 
@@ -1337,25 +1342,25 @@ $$('queue_list').attachEvent('onFocus',
             $$('queue_list').select($$('queue_list').getFirstId());
         }
         webix.html.addCss( $$('queue_list_header_row').getNode(), "focus_header");
-        webix.html.removeCss( $$('main_list_header_row').getNode(), "focus_header");
+        webix.html.removeCss( $$(main_track_table.header).getNode(), "focus_header");
         //webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
     }
  );
 
-$$('display_list').attachEvent('onFocus',
+$$(main_track_table.track_list).attachEvent('onFocus',
   function (x) {
-      s = $$('display_list').getSelectedId();
+      s = $$(main_track_table.track_list).getSelectedId();
       if (s == '') {
-          $$('display_list').select($$('display_list').getFirstId());
+          $$(main_track_table.track_list).select($$(main_track_table.track_list).getFirstId());
       }
-      webix.html.addCss($$('main_list_header_row').getNode(), "focus_header");
+      webix.html.addCss($$(main_track_table.header).getNode(), "focus_header");
       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
       //webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
   }
 );
 
-$$('display_list').attachEvent('onAfterLoad', () => {update_list_labels()})
-webix.UIManager.setFocus($$('display_list'));
+// $$(main_track_table.track_list).attachEvent('onAfterLoad', () => {update_list_labels()})
+webix.UIManager.setFocus($$(main_track_table.track_list));
 
 function checkTime(i) {
      return (i < 10) ? "0" + i : i;

@@ -124,100 +124,100 @@ var preview_player_window =
     ]
 }
 
-var main_list_display_template = 
-{
-    type:'line',
-    autoheight:true,
-    css:{
-        border: '0px solid #3c3c3c',
-        //height: "100% !important"
-     },
-    rows: [
-        {
-            id: 'main_list_header_row',
-            css:{
-                'background-color':'#5c5c5c',
-                'padding':'5px',
-                border: '1px solid #3c3c3c'
-             },
+// var main_list_display_template = 
+// {
+//     type:'line',
+//     autoheight:true,
+//     css:{
+//         border: '0px solid #3c3c3c',
+//         //height: "100% !important"
+//      },
+//     rows: [
+//         {
+//             id: 'main_list_header_row',
+//             css:{
+//                 'background-color':'#5c5c5c',
+//                 'padding':'5px',
+//                 border: '1px solid #3c3c3c'
+//              },
 
-            cols: [
-                {width:5},
-                {
-                    rows:[
-                    {
-                        view: 'label',
-                        id: 'playlist_name',
-                        label: '<b>ALL SONGS</b>',
-                        height: 20,
-                        css:{
-                            'font-weight':  'bold',
-                            "text-transform": "uppercase"}
-                    },
-                    {
-                        view: 'label',
-                        id: 'playlist_track_count',
-                        css: {'text-align':'left'},
-                        label: 'Ends at:',
-                        height: 20
-                    }
-                    ]
-                },
-                {
-                    gravity:1,
-                    id: 'track_filter',
-                    view: 'search',
-                    placeholder:"Filter list...",
-                    keyPressTimeout:50,
-                    on: {
-                        onTimedKeyPress: function (){
-                            $$("display_list").filterByAll();
-                        }
-                    }
+//             cols: [
+//                 {width:5},
+//                 {
+//                     rows:[
+//                     {
+//                         view: 'label',
+//                         id: 'playlist_name',
+//                         label: '<b>ALL SONGS</b>',
+//                         height: 20,
+//                         css:{
+//                             'font-weight':  'bold',
+//                             "text-transform": "uppercase"}
+//                     },
+//                     {
+//                         view: 'label',
+//                         id: 'playlist_track_count',
+//                         css: {'text-align':'left'},
+//                         label: 'Ends at:',
+//                         height: 20
+//                     }
+//                     ]
+//                 },
+//                 {
+//                     gravity:1,
+//                     id: 'track_filter',
+//                     view: 'search',
+//                     placeholder:"Filter list...",
+//                     keyPressTimeout:50,
+//                     on: {
+//                         onTimedKeyPress: function (){
+//                             $$("display_list").filterByAll();
+//                         }
+//                     }
 
-                },
-                {width:10}
-            ]
-        },
-        {
-            view:"datatable",
-            id:"display_list",
-            select:"row",
-            resizeColumn:{headerOnly:true},
-            rowHeight:25,
-            css:{
-                'background-color':'#303030',
-                border: '0px solid #5c5c5c',
-                "font-size":'13px',
-             },
-            columns:[
-                { id:"id",            header:"",  width:30, hidden:true, template:"<img src='../resources/images/precue.png' style='filter: invert(1);' height='20'>", checkValue:1, uncheckValue:0},
-                { id:"favorite",      header:{text:"<b><span class='fa fa-heart' style='font-size: 12px'/></b>", height:25},  width:30, template:custom_checkbox, checkValue:1, uncheckValue:0, sort:'int'},
-                { id:"title",         header:"<b style='font-size: 13px'>Title</b>",  fillspace:true, sort:'string', template: (o) => {return `<span style="color:${o.color}">${o.title}</span>`}},
-                { id:"artist",        header:"<b style='font-size: 13px'>Artist</b>", fillspace:true, sort:'string', template: (o) => {return `<span style="color:${o.color}">${o.artist}</span>`}},
-                //{ id:"album",         header:"<b style='font-size: 13px'>Album</b>",  fillspace:true, sort:'string'},
-                { id:"genre",         header:"<b style='font-size: 13px'>Genre</b>",  width:100, sort:'string', template: (o) => {return `<span style="color:${o.color}">${o.genre}</span>`}},
-                //{ id:"grouping",      header:"<b style='font-size: 13px'>Grouping</b>",  width:80, sort:'string'},
-                { id:"play_count",    header:{text:"<b><span class='fa fa-play'/></b>", css:{"text-align":'center'}},  width:30, template:`<div style='text-align: right; color:#color#'>#play_count#</div>`, sort:'int'},
-                { id:"last_played",   header:{text:"<b><span class='fa fa-calendar' style='font-size: 15px'/></b>", css:{"text-align":'right'}},  width:80, template: function(element) { return `<span style="color:${element.color}">${webix.Date.dateToStr("%Y-%m-%d")(element.last_played)}</span>`}, sort:'int'},
-                { id:"rating",        header:{text:"<b style='font-size: 13px'>Rating</b>", css:{"text-align":'center'}}, width:75, template:"<img src='../resources/images/rating#rating#.png' style='' height='10'>", css:{"text-align":'right'}, sort:'int'},
-                { id:"bpm",           header:{text:"<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>", css:{"text-align":'center'}}, width:45, css:{"text-align":'right'}, sort:'int', template: (o) => {return `<span style="color:${o.color}">${o.bpm}</span>`}},
-                { id:"stream_length", header:{text:"<b style='font-size: 13px'>Time</b>", css:{"text-align":'center'}}, width:55, /*format:format_nanoseconds*/ css:{"text-align":'right'}, template: (o) => {return `<span style="color:${o.color}">${format_nanoseconds(o.stream_length)}</span>`}},
-            ],
-            scroll:"y"
-        },
-        {height:18}
+//                 },
+//                 {width:10}
+//             ]
+//         },
+//         {
+//             view:"datatable",
+//             id:"display_list",
+//             select:"row",
+//             resizeColumn:{headerOnly:true},
+//             rowHeight:25,
+//             css:{
+//                 'background-color':'#303030',
+//                 border: '0px solid #5c5c5c',
+//                 "font-size":'13px',
+//              },
+//             columns:[
+//                 { id:"id",            header:"",  width:30, hidden:true, template:"<img src='../resources/images/precue.png' style='filter: invert(1);' height='20'>", checkValue:1, uncheckValue:0},
+//                 { id:"favorite",      header:{text:"<b><span class='fa fa-heart' style='font-size: 12px'/></b>", height:25},  width:30, template:custom_checkbox, checkValue:1, uncheckValue:0, sort:'int'},
+//                 { id:"title",         header:"<b style='font-size: 13px'>Title</b>",  fillspace:true, sort:'string', template: (o) => {return `<span style="color:${o.color}">${o.title}</span>`}},
+//                 { id:"artist",        header:"<b style='font-size: 13px'>Artist</b>", fillspace:true, sort:'string', template: (o) => {return `<span style="color:${o.color}">${o.artist}</span>`}},
+//                 //{ id:"album",         header:"<b style='font-size: 13px'>Album</b>",  fillspace:true, sort:'string'},
+//                 { id:"genre",         header:"<b style='font-size: 13px'>Genre</b>",  width:100, sort:'string', template: (o) => {return `<span style="color:${o.color}">${o.genre}</span>`}},
+//                 //{ id:"grouping",      header:"<b style='font-size: 13px'>Grouping</b>",  width:80, sort:'string'},
+//                 { id:"play_count",    header:{text:"<b><span class='fa fa-play'/></b>", css:{"text-align":'center'}},  width:30, template:`<div style='text-align: right; color:#color#'>#play_count#</div>`, sort:'int'},
+//                 { id:"last_played",   header:{text:"<b><span class='fa fa-calendar' style='font-size: 15px'/></b>", css:{"text-align":'right'}},  width:80, template: function(element) { return `<span style="color:${element.color}">${webix.Date.dateToStr("%Y-%m-%d")(element.last_played)}</span>`}, sort:'int'},
+//                 { id:"rating",        header:{text:"<b style='font-size: 13px'>Rating</b>", css:{"text-align":'center'}}, width:75, template:"<img src='../resources/images/rating#rating#.png' style='' height='10'>", css:{"text-align":'right'}, sort:'int'},
+//                 { id:"bpm",           header:{text:"<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>", css:{"text-align":'center'}}, width:45, css:{"text-align":'right'}, sort:'int', template: (o) => {return `<span style="color:${o.color}">${o.bpm}</span>`}},
+//                 { id:"stream_length", header:{text:"<b style='font-size: 13px'>Time</b>", css:{"text-align":'center'}}, width:55, /*format:format_nanoseconds*/ css:{"text-align":'right'}, template: (o) => {return `<span style="color:${o.color}">${format_nanoseconds(o.stream_length)}</span>`}},
+//             ],
+//             scroll:"y"
+//         },
+//         {height:18}
 
-    ]
-}
+//     ]
+// }
 
-function update_list_labels() {
-    var count = $$('display_list').data.count();
-    var length = 0;
-    $$('display_list').data.each((row) => {length += row.stream_length})
-    $$('playlist_track_count').define('label', `${count} tracks - ${format_seconds_long(length / 1000000000)}`);
-    $$('playlist_track_count').refresh();
-}
+// function update_list_labels() {
+//     var count = $$('display_list').data.count();
+//     var length = 0;
+//     $$('display_list').data.each((row) => {length += row.stream_length})
+//     $$('playlist_track_count').define('label', `${count} tracks - ${format_seconds_long(length / 1000000000)}`);
+//     $$('playlist_track_count').refresh();
+// }
 
 
 

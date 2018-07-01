@@ -2,21 +2,22 @@ DB = new DataProvider()
 
 
 function display_track_list(list_name, list_elements) {
-    $$('display_list').clearAll()
+    // $$('display_list').clearAll()
+    // if (list_elements.length > 0) {
+    //     for(i=0; i<list_elements.length; i++){
+    //         if (!list_elements[i].available){
+    //             list_elements[i].$css = "unavailable_track";
+    //         }
+    //     }
+    // }
+    main_track_table.set_track_list(list_name, list_elements)
+    // $$('display_list').define('data', list_elements);
+    // $$('display_list').refresh();
+    // $$('playlist_name').define('label', list_name);
+    // $$('playlist_name').refresh();
+    webix.UIManager.setFocus($$(main_track_table.track_list));
     if (list_elements.length > 0) {
-        for(i=0; i<list_elements.length; i++){
-            if (!list_elements[i].available){
-                list_elements[i].$css = "unavailable_track";
-            }
-        }
-    }
-    $$('display_list').define('data', list_elements);
-    $$('display_list').refresh();
-    $$('playlist_name').define('label', list_name);
-    $$('playlist_name').refresh();
-    webix.UIManager.setFocus($$('display_list'));
-    if (list_elements.length > 0) {
-        $$('display_list').select($$('display_list').getFirstId());
+        $$(main_track_table.track_list).select($$(main_track_table.track_list).getFirstId());
     }
 }
 
