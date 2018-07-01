@@ -139,7 +139,6 @@ $(document).ready( () => {
      trailWidth: 1,
      svgStyle: {width: '100%', height: '100%'}});
     main_player_progress.animate(0);
-    //$$("preview-play-context-menu").attachTo($$('preview_test_play_button'))
 });
 
 
@@ -156,23 +155,7 @@ webix.ready( () => {
     }
  );
     preview_seek.animate(0);
-    //$$("preview-play-context-menu").attachTo($$("preview_test_play_button"));
 });
-
-//var preview_context_menu = webix.ui({
-//        id: "preview-play-context-menu",
-//        view:"contextmenu",
-//        data:["Add","Rename","Delete",{ $template:"Separator" },"Info"],
-//        on:{
-//            onItemClick:function(id){
-//                var context = this.getContext();
-//                var list = context.obj; //list item object
-//                var listId = context.id; //id of the clicked list item
-//                webix.message("List item: <i>"+list.getItem(listId).title+"</i> <br/> Context menu item: <i>"+this.getItem(id).value+"</i>");
-//            }
-//        }
-//    }//
-//)
 
 var track_add_progress_dialog =  webix.ui({
     view:"window",
@@ -219,311 +202,6 @@ var track_add_progress_dialog =  webix.ui({
 })
 track_add_progress_dialog.hide();
 
-// var track_data_edit_window = webix.ui({
-//     id: "track_edit_window",
-//     view: "window",
-//     modal: true,
-//     position: "center",
-//     width: 1275,
-//     height: 700,
-//     head: "EDIT TRACK DATA",
-//     body:{
-//         rows:[
-//             {height:30},
-//             {
-//                 cols:[
-//                     {width:20},
-//                     {
-//                         id:'main-cover-image-edit',
-//                         view: 'template',
-//                         width:128,
-//                         height:128,
-//                         template: ""
-//                     },
-//                     {width:20},
-//                     {
-//                         rows:[
-//                             {height:7},
-//                             {
-//                                 cols: [
-//                                     {
-//                                         rows: [
-//                                             {
-//                                                 id:'main-title-edit',
-//                                                 view: 'label',
-//                                                 css: {
-//                                                     'text-align': 'left',
-//                                                     'text-transform': 'uppercase',
-//                                                     'font-weight': 'bold',
-//                                                     'font-size': '20px'
-//                                                 },
-//                                                 label: 'Title Of Song',
-//                                                 height:30
-//                                             },
-//                                             {height:5},
-//                                             {
-//                                                 id:'main-artist-edit',
-//                                                 view: 'label',
-//                                                 css: {
-//                                                     'text-align':'left',
-//                                                     'font-size': '20px',
-//                                                     'color': '#bfbfbf'
-//                                                 },
-//                                                 label: 'Artist',
-//                                                 height:30
-//                                             },
-//                                             {},
-//                                             {
-//                                                 id:'track-data',
-//                                                 view: 'label',
-//                                                 css: {
-//                                                     'text-align':'left',
-//                                                     'font-size':'20px'
-//                                                 },
-//                                                 label: 'length - BPM',
-//                                                 height:30
-//                                             }//,
-//                                             // {
-//                                             //     id:'track-data-bpm',
-//                                             //     view: 'label',
-//                                             //     css: {
-//                                             //         'text-align':'left',
-//                                             //         'font-size':'20px'
-//                                             //     },
-//                                             //     label: ' - BPM',
-//                                             //     height:30
-//                                             // }
-//                                         ]
-//                                     }
-//                                 ]
-//                             }
-//                         ]
-//                     },
-//                     {width:20}
-//                 ]
-//             },
-//             {height:50},
-//             {
-//                 cols: [
-//                     {
-//                         id:'edit_zoom_first_10_seconds_button',
-//                         view:'button',
-//                         type:'icon',
-//                         label: 'FIRST 10 SECONDS',
-//                         click : function () {
-//                             track_edit_waveform.xAxis[0].setExtremes(0, 10000000000, true, false);
-//                             webix.UIManager.setFocus($$('track_edit_window'));
-//                         }
-//                     },
-//                     {
-//                         id:'edit_zoom_first_30_seconds_button',
-//                         view:'button',
-//                         type:'icon',
-//                         label: 'FIRST 30 SECONDS',
-//                         click : function () {
-//                             track_edit_waveform.xAxis[0].setExtremes(0, 30000000000, true, false);
-//                             webix.UIManager.setFocus($$('track_edit_window'));
-//                         }
-//                     },
-//                     {},
-//                     {
-//                         id:'edit_reset_zoom_button',
-//                         view:'button',
-//                         type:'icon',
-//                         label: 'RESET',
-//                         click : function () {
-//                             track_edit_waveform.xAxis[0].setExtremes(0, track_length_edit, true, false);
-//                             webix.UIManager.setFocus($$('track_edit_window'));
-//                         }
-//                     },
-//                     {},
-//                     {
-//                         id:'edit_zoom_last_30_seconds_button',
-//                         view:'button',
-//                         type:'icon',
-//                         label: 'LAST 30 SECONDS',
-//                         click : function () {
-//                             track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 30000000000, track_length_edit, true, false);
-//                             webix.UIManager.setFocus($$('track_edit_window'));
-//                         }
-//                     },
-//                     {
-//                         id:'edit_zoom_last_10_seconds_button',
-//                         view:'button',
-//                         type:'icon',
-//                         label: 'LAST 10 SECONDS',
-//                         click : function () {
-//                             track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 10000000000, track_length_edit, true, false);
-//                             webix.UIManager.setFocus($$('track_edit_window'));
-//                         }
-//                     }
-//                 ]
-//             },
-//             {
-//                 cols:[
-//                     {width:20},
-//                     {
-//                         height:175,
-//                         css:{
-//                             margin:0,
-//                             padding:0,
-//                             border: '0px solid #3c3c3c'
-//                         },
-//                         template:'<div id="track-waveform" style="border: \'1px solid black\'; width:100%; height:100%; position:relative; top:0%;"></div>'
-//                     },
-//                     {width:20}
-//                 ]
-//             },
-//             {height:30},
-//             {
-//                 cols: [
-//                     {width:30},
-//                     {
-//                         id:'edit_play_button',
-//                         view:'button',
-//                         label: 'PLAY FULL TRACK',
-//                         click : function () {
-//                             preview_play_track_id(track_edited.id, stream_start_edit, stream_end_edit);
-//                             webix.UIManager.setFocus($$('track_edit_window'));
-//                         }
-//                     },
-//                     {
-//                         id:'edit_play_last_30_seconds_button',
-//                         view:'button',
-//                         label: 'LAST 30 SECONDS',
-//                         click : function () {
-//                             preview_play_track_id(track_edited.id, -30000000000, stream_end_edit);
-//                             webix.UIManager.setFocus($$('track_edit_window'));
-//                         }
-//                     },
-//                     {
-//                         id:'edit_play_last_10_seconds_button',
-//                         view:'button',
-//                         label: 'LAST 10 SECONDS',
-//                         click : function () {
-//                             preview_play_track_id(track_edited.id, -10000000000, stream_end_edit);
-//                             webix.UIManager.setFocus($$('track_edit_window'));
-//                         }
-//                     },
-//                     {},
-//                     {
-//                         id:'edit_stop_button',
-//                         view:'button',
-//                         label: 'STOP',
-//                         click : function () {
-//                             preview_stop();
-//                             webix.UIManager.setFocus($$('track_edit_window'));
-//                         }
-//                     },
-//                     {width:30}
-//                 ]
-//             },
-//             {height:60},
-//             {
-//                 cols:[
-//                     {width:30},
-//                     {
-//                         view: 'button',
-//                         label: 'APPLY',
-//                         click: function () {
-//                             save_new_track_info();
-//                             preview_stop();
-//                             track_data_edit_window.hide()
-//                         }
-//                     },
-//                     {},
-//                     {
-//                         view: 'button',
-//                         label: 'CANCEL',
-//                         click: () => {
-//                             preview_stop();
-//                             track_data_edit_window.hide()
-//                         }
-//                     },
-//                     {width:30}
-//                 ]
-//             },
-//             {height:10}
-//         ]
-//     }
-// })
-// track_data_edit_window.hide();
-// var track_edit_waveform = undefined
-// track_data_edit_window.attachEvent(
-//     'onShow',
-//     function () {
-//         if (track_edit_waveform == undefined) {
-//             create_waveform_visualizer();
-//         }
-//         track_edit_waveform.xAxis[0].removePlotLine('position-marker');
-//         track_edit_waveform.xAxis[0].addPlotLine({
-//             color:'#FF0000',
-//             width: 2,
-//             zIndex: 10,
-//             value: 0,
-//             id: 'position-marker'});
-//         preview_stop()
-//     }
-// )
-
-
-// function create_waveform_visualizer () {
-//     // track_edit_waveform = WaveSurfer.create({
-//     //         container: '#track-waveform',
-//     //         pixelRatio: 1,
-//     //         scrollParent: false,
-//     //         hideScrollbar: true,
-//     //         waveColor: 'violet'
-//     //         //audioContext:main_context
-//     //     });
-//     track_edit_waveform = new Highcharts.chart({
-
-//         chart: {
-//             renderTo: 'track-waveform',
-//             type: 'spline',
-//             zoomType:'x',
-//             spacingLeft:0,
-//             spacingBottom:0,
-//             backgroundColor: '#3c3c3c',
-//             plotBackgroundColor: '#3c3c3c',
-//             plotBorderWidth: 0,
-//             events: {
-//                 redraw: function() {
-//                     webix.UIManager.setFocus($$('track_edit_window'));
-//                 }
-//             },
-//             resetZoomButton: {
-//                 theme: {
-//                     display: 'none'
-//                 }
-//             }
-//         },
-//         tooltip: { enabled: false },
-//         yAxis: {title: {text: ''},
-//         labels: {enabled: false},
-//         tickPositioner: function () {
-//                     var maxDeviation = Math.max(Math.abs(this.dataMax), Math.abs(this.dataMin));
-//                     var halfMaxDeviation = Math.ceil(maxDeviation / 2);
-//                     return [-maxDeviation, -halfMaxDeviation, 0, halfMaxDeviation, maxDeviation];
-//                     }},
-//         xAxis: {title: {text: ''}, labels: {enabled: true}},
-//         legend: {enabled: false},
-//         title: {text: ''},
-//         plotOptions: {
-//             spline: {
-//                 marker: {
-//                     enabled: false
-//                 }
-//             }
-//         },
-
-//         series: [{
-//             name: '',
-//             states: {hover: {enabled: false}},
-//             data: []
-//         }]
-//     });
-// }
 
 function save_current_session() {
     x = webix.ui({
@@ -653,7 +331,6 @@ function playback_settings() {
     )
 }
 
-// main_list_display_template.gravity = 2.25;
 var session_popup = webix.ui(
     {
         view:"popup",
@@ -1072,79 +749,6 @@ $$('queue_stop_message').hide();
 
 
 main_track_table.init()
-// $$("display_list").filterByAll = function () {
-//     var text = $$('track_filter').getValue()
-//     var i=0;
-//     search_tokens = text.split(' ')
-//     search_f = [];
-//     for (var i=0; i<search_tokens.length; i++) {
-//         let token = search_tokens[i];
-//         if (token.length > 0) {
-//             if (search_tokens[i].startsWith('@bpm<')) {
-//                 let x = parseInt(search_tokens[i].split('<')[1]);
-//                 if (!isNaN(x)) {
-//                     search_f.push(
-//                         function (obj) {
-//                             return obj.bpm <= x;
-//                         }
-//                     )
-//                 } else {
-//                     search_f.push( (x) => {return true} )
-//                 }
-//             } else if (search_tokens[i].startsWith('@bpm>')) {
-//                 let x = parseInt(search_tokens[i].split('>')[1]);
-//                 if (!isNaN(x)) {
-//                     search_f.push(
-//                         function (obj) {
-//                             return (obj.bpm >= x);
-//                         }
-//                     )
-//                 } else {
-//                     search_f.push( (x) => {return true} )
-//                 }
-//             } else if (search_tokens[i].startsWith('@bpm~')) {
-//                 let x = parseInt(search_tokens[i].split('~')[1]);
-//                 if (!isNaN(x)) {
-//                     search_f.push(
-//                         function (obj) {
-//                             return (obj.bpm < x*1.2) && (obj.bpm > x*0.9) ;
-//                         }
-//                     )
-//                 } else {
-//                     search_f.push( (x) => {return true} )
-//                 }
-//             } else {
-//                 search_f.push(
-//                     function (x) {
-//                         fields = [x.title, x.artist, x.genre, `@rat=${x.rating}`, '@bpm']
-//                         if (x.favorite) {
-//                             fields.push('@loved')
-//                         }
-//                         for (j=0; j<fields.length; j++) {
-//                             if (fields[j] != null) {
-//                                 if ((fields[j].toLowerCase().search(token) != -1)) {
-//                                     return true;
-//                                 }
-//                             }
-//                         }
-//                         return false;
-//                     }
-//                 )
-//             }
-//         }
-//     }
-//     this.filter(
-//         function (obj) {
-//             for(i=0; i<search_f.length; i++) {
-//                 x = search_f[i](obj);
-//                 if (!x) {
-//                     return false;
-//                 }
-//             }
-//             return true;
-//         }
-//     )
-// };
 
 display_all_songs()();
 queue_actions.reload();
@@ -1204,17 +808,7 @@ webix.UIManager.addHotKey("ctrl+e", main_list_actions.edit_track_data, $$(main_t
 webix.UIManager.addHotKey("ctrl+shift+enter", main_list_actions.preview_last_30_seconds, $$(main_track_table.track_list));
 webix.UIManager.addHotKey("shift+enter",  main_list_actions.preview_last_10_seconds, $$(main_track_table.track_list));
 webix.UIManager.addHotKey("enter",  main_list_actions.preview_selected, $$(main_track_table.track_list));
-webix.UIManager.addHotKey("ctrl+f",  main_list_actions.filter_list, $$(main_track_table.track_list));
-
-// webix.UIManager.addHotKey("shift+q", suggestion_list_actions.add_selection_to_queue, $$('suggestion_list'));
-// webix.UIManager.addHotKey("shift+s", suggestion_list_actions.add_selection_to_short_list, $$('suggestion_list'));
-// webix.UIManager.addHotKey("shift+u", suggestion_list_actions.add_selection_to_unavailable, $$('suggestion_list'));
-// webix.UIManager.addHotKey("shift+a", suggestion_list_actions.remove_selection_from_unavailable, $$('suggestion_list'));
-// webix.UIManager.addHotKey("ctrl+e", suggestion_list_actions.edit_track_data, $$('suggestion_list'));
-// webix.UIManager.addHotKey("ctrl+shift+enter",  suggestion_list_actions.preview_last_30_seconds, $$('suggestion_list'));
-// webix.UIManager.addHotKey("shift+enter",  suggestion_list_actions.preview_last_10_seconds, $$('suggestion_list'));
-// webix.UIManager.addHotKey("enter",  suggestion_list_actions.preview_selected, $$('suggestion_list'));
-// webix.UIManager.addHotKey("ctrl+f",  suggestion_list_actions.filter_list, $$('suggestion_list'));
+//webix.UIManager.addHotKey("ctrl+f",  main_list_actions.filter_list, $$(main_track_table.track_list));
 
 webix.UIManager.addHotKey("space", playback_actions.preview_pause);
 webix.UIManager.addHotKey("shift+space", playback_actions.preview_stop);
@@ -1228,40 +822,6 @@ webix.UIManager.addHotKey("shift+left", playback_actions.preview_backward_seek_s
 webix.UIManager.addHotKey("shift+right", playback_actions.preview_forward_seek_short);
 webix.UIManager.addHotKey("ctrl+shift+left", playback_actions.preview_backward_seek_long);
 webix.UIManager.addHotKey("ctrl+shift+right", playback_actions.preview_forward_seek_long);
-
-//webix.UIManager.addHotKey("escape", track_edit_actions.close_track_editor, $$('track_edit_window'));
-//webix.UIManager.addHotKey("ctrl+shift+enter", track_edit_actions.play_last_30_seconds, $$('track_edit_window'));
-//webix.UIManager.addHotKey("shift+enter", track_edit_actions.play_last_10_seconds, $$('track_edit_window'));
-//webix.UIManager.addHotKey("enter", track_edit_actions.play_track, $$('track_edit_window'));
-
-// webix.UIManager.addHotKey("ctrl+c", track_edit_actions.reset_waveform_zoom, $$('track_edit_window'));
-// webix.UIManager.addHotKey("ctrl+x", track_edit_actions.zoom_waveform_last_10_seconds, $$('track_edit_window'));
-// webix.UIManager.addHotKey("ctrl+z", track_edit_actions.zoom_waveform_first_10_seconds, $$('track_edit_window'));
-
-// webix.UIManager.addHotKey("shift+c", track_edit_actions.set_start_marker, $$('track_edit_window'));
-// webix.UIManager.addHotKey("shift+h", track_edit_actions.move_start_marker_backward_long, $$('track_edit_window'));
-// webix.UIManager.addHotKey("shift+j", track_edit_actions.move_start_marker_forward_long, $$('track_edit_window'));
-// webix.UIManager.addHotKey("shift+n", track_edit_actions.move_start_marker_backward_short, $$('track_edit_window'));
-// webix.UIManager.addHotKey("shift+m", track_edit_actions.move_start_marker_forward_short, $$('track_edit_window'));
-
-// webix.UIManager.addHotKey("ctrl+shift+c", track_edit_actions.set_end_marker, $$('track_edit_window'));
-// webix.UIManager.addHotKey("ctrl+shift+h", track_edit_actions.move_end_marker_backward_long, $$('track_edit_window'));
-// webix.UIManager.addHotKey("ctrl+shift+j", track_edit_actions.move_end_marker_forward_long, $$('track_edit_window'));
-// webix.UIManager.addHotKey("ctrl+shift+n", track_edit_actions.move_end_marker_backward_short, $$('track_edit_window'));
-// webix.UIManager.addHotKey("ctrl+shift+m", track_edit_actions.move_end_marker_forward_short, $$('track_edit_window'));
-
-// webix.UIManager.addHotKey("ctrl+shift+x", track_edit_actions.zoom_waveform_last_30_seconds, $$('track_edit_window'));
-// webix.UIManager.addHotKey("ctrl+shift+z", track_edit_actions.zoom_waveform_first_30_seconds, $$('track_edit_window'));
-
-
-
-// $$(main_track_table.track_list).attachEvent('onItemDblClick',
-//     function (id) {
-//         var id = $$(main_track_table.track_list).getSelectedId().id;
-//         preview_track_id = id;
-//         preview_play_track_id(id);
-//     }
-// );
 
 main_track_table.on('item-selected', (track) => preview_play_track_id(track.id))
 
@@ -1280,22 +840,22 @@ webix.UIManager.addHotKey("alt+f",
     }
 );
 
-webix.UIManager.addHotKey("escape", function () {
-    webix.UIManager.setFocus($$(main_track_table.track_list));
-}, $$('track_filter'));
+// webix.UIManager.addHotKey("escape", function () {
+//     webix.UIManager.setFocus($$(main_track_table.track_list));
+// }, $$('track_filter'));
 
-webix.UIManager.addHotKey("enter", function () {
-    webix.UIManager.setFocus($$(main_track_table.track_list));
-}, $$('track_filter'));
+// webix.UIManager.addHotKey("enter", function () {
+//     webix.UIManager.setFocus($$(main_track_table.track_list));
+// }, $$('track_filter'));
 
 var filtering = false;
 
-$$(main_track_table.track_list_filter).attachEvent('onFocus', function (x) {
-    filtering=true;
-});
-$$(main_track_table.track_list_filter).attachEvent('onBlur', function (x) {
-    filtering=false;
-});
+// $$(main_track_table.track_list_filter).attachEvent('onFocus', function (x) {
+//     filtering=true;
+// });
+// $$(main_track_table.track_list_filter).attachEvent('onBlur', function (x) {
+//     filtering=false;
+// });
 
 webix.UIManager.addHotKey("right", function () {
     webix.UIManager.setFocus('queue_list');

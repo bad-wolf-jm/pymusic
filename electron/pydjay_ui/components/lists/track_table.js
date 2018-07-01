@@ -19,36 +19,55 @@ class TrackTable extends EventDispatcher {
         $$(this.track_list).filterByAll = () => {
             this.filter_list($$(this.track_list_filter).getValue())
         } 
+
         $$(this.track_list).attachEvent('onAfterLoad', () => {
                 this.update_list_labels()
             }
         )
+
         $$(this.track_list).attachEvent('onItemDblClick',
             (id) => {
                 var id = this.get_selected_item()
                 this.dispatch("item-selected", id)
             }
         );
+
         $$(this.track_list).attachEvent('onFocus',
             (id) => {
                 this.dispatch("focus-in-list", id)
             }
         );
+
         $$(this.track_list).attachEvent('onBlur',
             (id) => {
                 this.dispatch("focus-out-list", id)
             }
         );
+
         $$(this.track_list_filter).attachEvent('onFocus', (x) => {
                 this.filtering=true;
-                this.dispatch("focus-in-filter", id)
+                this.dispatch("focus-in-filter", x)
             }
         );
+
         $$(this.track_list_filter).attachEvent('onBlur', (x) => {
                 this.filtering=false;
-                this.dispatch("focus-out-filter", id)
+                this.dispatch("focus-out-filter", x)
             }
         );
+
+        webix.UIManager.addHotKey("escape", () => {
+            webix.UIManager.setFocus($$(this.track_list));
+        }, $$(this.track_list_filter));
+        
+        webix.UIManager.addHotKey("enter", () => {
+            webix.UIManager.setFocus($$(this.track_list));
+        }, $$(this.track_list_filter));
+
+        webix.UIManager.addHotKey("ctrl+f", () => {
+            webix.UIManager.setFocus($$(this.track_list_filter));
+        }, $$(this.track_list));
+        
     }
 
     update_list_labels() {
