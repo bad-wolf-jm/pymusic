@@ -86,7 +86,11 @@ class TrackList extends EventDispatcher {
     get_selected() {
         return $$(this.list_id).getSelectedItem();
     }
-    
+
+    get_next_id(id) {
+        return $$(this.list_id).getNextId(id);
+    }
+
     moveTop (x) {
         $$(this.list_id).moveTop(x.id)
     }
@@ -99,7 +103,21 @@ class TrackList extends EventDispatcher {
         $$(this.list_id).moveDown(x.id)
     }
 
+    add(x) {
+        $$(this.list_id).add(x)
+    }
+
+    sort(t, d, s) {
+        $$(this.list_id).sort(t, d, s)
+    }
+
     remove (x) {
+        let next = this.get_next_id(x.id)
         $$(this.list_id).remove(x.id)
+        $$(this.list_id).select(next)
+    }
+
+    select(id) {
+        $$(this.list_id).select(id)
     }
 }
