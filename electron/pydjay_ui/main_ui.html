@@ -721,7 +721,7 @@ var track_info_popup = webix.ui(
         view:"popup",
         id:"info_popup",
         height:300,
-        width:500,
+        width:350,
         body:{
             // { 
             view:"property", 
@@ -732,14 +732,14 @@ var track_info_popup = webix.ui(
             labelWidth:100,
             elements:[
                 { label:"Metadata", type:"label"},
-                { label:"<b>Title:</b>", type:"text", id:"title"},
-                { label:"<b>Artist:</b>", type:"text", id:"artist"},
-                { label:"<b>Album:</b>", type:"text", id:"album"},
-                { label:"<b>Year:</b>", type:"text", id:"year"},
-                { label:"<b>Genre:</b>", type:"text", id:"genre"},
-                { label:"<b>Color:</b>", type:"color", id:"color"},
-                { label:"<b>Rating:</b>", type:"rating", id:"rating"},
-                { label:"<b>Loved:</b>", type:"toggle",  id:"favorite"},
+                { label:"<b>Title:</b>", id:"title"},
+                { label:"<b>Artist:</b>", id:"artist"},
+                { label:"<b>Album:</b>", id:"album"},
+                { label:"<b>Year:</b>", id:"year"},
+                { label:"<b>Genre:</b>", id:"genre"},
+                { label:"<b>Color:</b>", id:"color"},
+                { label:"<b>Rating:</b>", id:"rating"},
+                { label:"<b>Loved:</b>", id:"favorite"},
             ]
         },
     }

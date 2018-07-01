@@ -26,7 +26,6 @@ var preview_player_window = {
         {
             cols: [
                 {
-
                     rows: [
                         {},
                         {
@@ -64,13 +63,8 @@ var preview_player_window = {
                                     width:30,
                                     popup: "info_popup"
                                 },
-
-
-
                             ]
                         },
-
-
                         {},
                         {
                             cols: [
@@ -122,7 +116,6 @@ var preview_player_window = {
                         },
                         {}
                     ]
-        
                 },
                 {width:10}
             ]
