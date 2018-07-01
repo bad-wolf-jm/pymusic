@@ -57,6 +57,7 @@ function PlaylistEditor(id) {
     })
     
     self.track_table = new TrackTable()
+    self.track_list = new TrackList()
 
     // self.track_list_columns = [
     //     { 
@@ -262,6 +263,7 @@ function PlaylistEditor(id) {
                                 border: '0px solid #3c3c3c'
                             },
                             rows:[
+                                self.track_list.create_layout(),
                                 {
                                     id: 'playlist_edit_list_header_row',
                                     height:30,
@@ -458,9 +460,10 @@ function PlaylistEditor(id) {
                 $QUERY(
                     `SELECT name FROM playlists WHERE id=${id}`,
                     function (r) {
-                        $$(self.group_list).clearAll()
-                        $$(self.group_list).define("data", result)
-                        $$(self.group_list).refresh()
+                        self.track_list.set_track_list(result)
+                        // $$(self.group_list).clearAll()
+                        // $$(self.group_list).define("data", result)
+                        // $$(self.group_list).refresh()
                         self.update_track_count_label()
                     }
                 );
@@ -473,8 +476,10 @@ function PlaylistEditor(id) {
         var id = self.track_table.get_selected_item().id //$$(self.track_list).getSelectedId().id;
         self.database.get_track_by_id(id,
             function(result) {
-                $$(self.group_list).add(result[0]);
-                $$(self.group_list).data.sort("#title#","asc","string")
+                self.track_list.add(result[0])
+                self.track_list.sort("#title#","asc","string")
+                // $$(self.group_list).add(result[0]);
+                // $$(self.group_list).data.sort("#title#","asc","string")
                 self.update_track_count_label()
             }                
         )
