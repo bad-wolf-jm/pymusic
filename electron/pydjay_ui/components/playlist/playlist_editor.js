@@ -1,4 +1,4 @@
-var display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, grouping, rating, bpm, stream_length, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
+// var display_list_fields = 'id, favorite, disabled as enabled, title, artist, album, genre, grouping, rating, bpm, stream_length, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played';
 
 function playlist_element_template(element) {
     var cover_source = null;
@@ -712,486 +712,486 @@ function PlaylistEditor(id) {
 
 }
 
-function NewPlaylist() {
-    var self = this
+// function NewPlaylist() {
+//     var self = this
 
-    self.playlist_name = `new_playlist_name_${ID()}`
-    self.playlist_desc = `new_playlist_desc_${ID()}`
+//     self.playlist_name = `new_playlist_name_${ID()}`
+//     self.playlist_desc = `new_playlist_desc_${ID()}`
 
-    self.template = {
-        view:"window",
-        modal:true,
-        position:"center",
-        width:600,
-        height:400,
-        head: "NEW PLAYLIST",
-        body:{
-            rows:[
-                {height:10},
-                {
-                    id:self.playlist_name,
-                    view: "text",
-                    value:'',
-                    label:"Name:",
-                    labelWidth:100
-                },
-                {height:30},
-                {
-                    cols:[
-                        {},
-                        {
-                            view: 'button',
-                            label: 'CREATE',
-                            click: function () {
-                                self.create_playlist(self.hide)
-                            }
-                        },
-                        {},
-                        {
-                            view: 'button',
-                            label: 'CANCEL',
-                            click: () => {self.hide()}
-                        },
-                        {}
-                    ]
-                },
-                {height:10}
-            ]
-        }
-    }
+//     self.template = {
+//         view:"window",
+//         modal:true,
+//         position:"center",
+//         width:600,
+//         height:400,
+//         head: "NEW PLAYLIST",
+//         body:{
+//             rows:[
+//                 {height:10},
+//                 {
+//                     id:self.playlist_name,
+//                     view: "text",
+//                     value:'',
+//                     label:"Name:",
+//                     labelWidth:100
+//                 },
+//                 {height:30},
+//                 {
+//                     cols:[
+//                         {},
+//                         {
+//                             view: 'button',
+//                             label: 'CREATE',
+//                             click: function () {
+//                                 self.create_playlist(self.hide)
+//                             }
+//                         },
+//                         {},
+//                         {
+//                             view: 'button',
+//                             label: 'CANCEL',
+//                             click: () => {self.hide()}
+//                         },
+//                         {}
+//                     ]
+//                 },
+//                 {height:10}
+//             ]
+//         }
+//     }
 
-    self.create_playlist = function (done) {
-        name = $$(self.playlist_name).getValue()
-        $QUERY(
-        `SELECT id FROM playlists WHERE name='${name}'`,
-        function (x) {
-            if (x.length == 0) {
-                current_time = webix.Date.dateToStr('%Y-%m-%d %H:%i:%s')(new Date());
-                $QUERY(
-                    `INSERT INTO playlists (name, created) VALUES ('${name}', '${current_time}')`,
-                    function (x) {
-                        webix.message({
-                            text:`Created new playlist '${name}'`,
-                            type:"info",
-                            expire: 3000,
-                            id:"message1"
-                        });
-                        done()
-                    }
-                )
-            } else {
-                webix.message({
-                    text:`Playlist '${name}' could not be created.</br>The name already exists`,
-                    type:"error",
-                    expire: 3000,
-                    id:"message1"
-                });
-                done()
+//     self.create_playlist = function (done) {
+//         name = $$(self.playlist_name).getValue()
+//         $QUERY(
+//         `SELECT id FROM playlists WHERE name='${name}'`,
+//         function (x) {
+//             if (x.length == 0) {
+//                 current_time = webix.Date.dateToStr('%Y-%m-%d %H:%i:%s')(new Date());
+//                 $QUERY(
+//                     `INSERT INTO playlists (name, created) VALUES ('${name}', '${current_time}')`,
+//                     function (x) {
+//                         webix.message({
+//                             text:`Created new playlist '${name}'`,
+//                             type:"info",
+//                             expire: 3000,
+//                             id:"message1"
+//                         });
+//                         done()
+//                     }
+//                 )
+//             } else {
+//                 webix.message({
+//                     text:`Playlist '${name}' could not be created.</br>The name already exists`,
+//                     type:"error",
+//                     expire: 3000,
+//                     id:"message1"
+//                 });
+//                 done()
     
-            }
-        }
-    )
-    }
-    
-
-    self.show = function () {
-        self._win = webix.ui(self.template)
-        self._win.show()
-    }
-
-    self.hide = function () {
-        self._win.hide()
-        if (self.onHide != undefined) {
-            self.onHide()
-        }
-    }
-}
-
-
-
-
-function PlaylistDuplicator(id) {
-
-    var self = this
-    self.playlist_id = id
-    self.playlist_name = `duplicate_playlist_name_${ID()}`
-    self.playlist_desc = `duplicate_playlist_desc_${ID()}`
-
-    self.template = {
-        view:"window",
-        modal:true,
-        position:"center",
-        width:600,
-        height:400,
-        head: "DUPLICATE PLAYLIST",
-        body:{
-            rows:[
-                {height:10},
-                {
-                    id:self.playlist_name,
-                    view: "text",
-                    value:'',
-                    label:"Name:",
-                    labelWidth:75
-                },
-                {height:30},
-                {
-                    cols:[
-                        {},
-                        {
-                            view: 'button',
-                            label: 'DUPLICATE',
-                            click: function () {
-                                self.create_playlist(self.hide)
-                                //self.hide();
-                            }
-                        },
-                        {},
-                        {
-                            view: 'button',
-                            label: 'CANCEL',
-                            click: () => {self.hide()}
-                        },
-                        {}
-                    ]
-                },
-                {height:10}
-            ]
-        }
-    }
-
-    self.create_playlist = function (done) {
-        name = $$(self.playlist_name).getValue()
-        $QUERY(
-        `SELECT id FROM playlists WHERE name='${name}'`,
-        function (x) {
-            if (x.length == 0) {
-                current_time = webix.Date.dateToStr('%Y-%m-%d %H:%i:%s')(new Date());
-                $QUERY(
-                    `INSERT INTO playlists (name, created) VALUES ('${name}',  '${current_time}')`,
-                    function (x) {
-                        new_playlist_id = x.insertId
-                        $QUERY(
-                            `SELECT track_id FROM playlist_tracks WHERE playlist_id=${self.playlist_id}`,
-                            function (list) {
-                                playlist_data = []
-                                if (list.length > 0) {
-                                    for (i=0; i<list.length; i++) {
-                                        playlist_data.push(`(${new_playlist_id}, ${list[i].track_id})`)
-                                    }
-                                    replace_sql = `INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`
-                                    $QUERY(replace_sql, function () {
-                                        webix.message({
-                                            text:`Created new playlist '${name}'`,
-                                            type:"info",
-                                            expire: 3000,
-                                            id:"message1"
-                                        });
-                                        done();
-                                    })
-                                }
-                            }
-                        )
-                    }
-                )
-            } else {
-                webix.message({
-                    text:`Playlist '${name}' could not be created.</br>The name already exists`,
-                    type:"error",
-                    expire: 3000,
-                    id:"message1"
-                });
-                done();
-            }
-        }
-    )
-    }
+//             }
+//         }
+//     )
+//     }
     
 
-    self.show = function () {
-        self._win = webix.ui(self.template)
-        self._win.show()
-    }
-    self.hide = function () {
-        self._win.hide()
-        if (self.onHide != undefined) {
-            self.onHide()
-        }
+//     self.show = function () {
+//         self._win = webix.ui(self.template)
+//         self._win.show()
+//     }
 
-    }
-}
-
-function DeletePlaylist(id) {
-
-    var self = this
-    self.playlist_id = id
-    self.playlist_name = `delete_playlist_name_${ID()}`
-    self.playlist_desc = `delte_playlist_desc_${ID()}`
-
-    self.template = {
-        view:"window",
-        modal:true,
-        position:"center",
-        width:600,
-        height:400,
-        head: "DELETE PLAYLIST",
-        body:{
-            rows:[
-                {height:10},
-                {
-                    id:self.playlist_name,
-                    view: "label",
-                    label:'Delete playlist (name)? This cannot be undone',
-                    labelWidth:75
-                },
-                {height:30},
-                {
-                    cols:[
-                        {},
-                        {
-                            view: 'button',
-                            label: 'DELETE',
-                            click: function () {
-                                self.delete_playlist(self.hide)
-                            }
-                        },
-                        {},
-                        {
-                            view: 'button',
-                            label: 'CANCEL',
-                            click: () => {self.hide()}
-                        },
-                        {}
-                    ]
-                },
-                {height:10}
-            ]
-        }
-    }
-
-    self.delete_playlist = function (done) {
-        $QUERY(
-            `DELETE FROM playlists WHERE id=${self.playlist_id}`,
-            function (r) {
-                $QUERY(
-                    `DELETE FROM playlist_tracks WHERE playlist_id=${self.playlist_id}`,
-                    function (r) {
-                        done()
-                    }
-                )
-            }
-        )
-    }
-    
-    self.show = function () {
-        self._win = webix.ui(self.template)
-        self._win.show()
-    }
-
-    self.hide = function () {
-        self._win.hide()
-        if (self.onHide != undefined) {
-            self.onHide()
-        }
-
-    }
-}
-
-function SetAsShortlist(id) {
-    var self = this
-    self.playlist_id = id
-    self.playlist_name = `set_as_shortlist_name_${ID()}`
-    self.playlist_desc = `set_as_shortlist_desc_${ID()}`
-    self.database = new DataProvider()
-    self.template = {
-        view:"window",
-        modal:true,
-        position:"center",
-        width:600,
-        height:400,
-        head: "SET PLAYLIST AS SHORT LIST",
-        body:{
-            rows:[
-                {height:10},
-                {
-                    id:self.playlist_name,
-                    view: "label",
-                    label:'Set playlist (name)? as the current short list? The current short list will be lost.',
-                    labelWidth:75
-                },
-                {height:30},
-                {
-                    cols:[
-                        {},
-                        {
-                            view: 'button',
-                            label: 'SET AS SHORTLIST',
-                            width:200,
-                            click: function () {
-                                self.set_as_shortlist(self.hide)
-                            }
-                        },
-                        {},
-                        {
-                            view: 'button',
-                            label: 'CANCEL',
-                            click: () => {self.hide()}
-                        },
-                        {}
-                    ]
-                },
-                {height:10}
-            ]
-        }
-    }
-
-    self.set_as_shortlist = function (done) {
-        $QUERY("DELETE FROM short_listed_tracks",
-            function () {
-                self.database.get_playlist_tracks(self.playlist_id,
-                    function (tracks) {
-                         d = []
-                         for(i=0; i<tracks.length; i++) {
-                             d.push(`(${tracks[i].track_id})`)
-                         }
-                         $QUERY(
-                             `INSERT IGNORE INTO short_listed_tracks VALUES ${d.join(',')}`,
-                             function (r) {
-                                webix.message({
-                                    text:`Playlist set as short list`,
-                                    type:"info",
-                                    expire: 3000,
-                                    id:"message1"
-                                })
-                                done();        
-                             }
-                        )
-                    }
-                )
-            }
-        )
-    }
-    
-    self.show = function () {
-        self._win = webix.ui(self.template)
-        self._win.show()
-    }
-    self.hide = function () {
-        self._win.hide()
-        if (self.onHide != undefined) {
-            self.onHide()
-        }
-
-    }
-}
+//     self.hide = function () {
+//         self._win.hide()
+//         if (self.onHide != undefined) {
+//             self.onHide()
+//         }
+//     }
+// }
 
 
-function SaveAsPlaylist() {
 
-    var self = this
-    //self.playlist_id = id
-    self.playlist_name = `duplicate_playlist_name_${ID()}`
-    self.playlist_desc = `duplicate_playlist_desc_${ID()}`
 
-    self.template = {
-        view:"window",
-        modal:true,
-        position:"center",
-        width:600,
-        height:400,
-        head: "SAVE THE SHORTLISTED TRACKS",
-        body:{
-            rows:[
-                {height:10},
-                {
-                    id:self.playlist_name,
-                    view: "text",
-                    value:'',
-                    label:"Name:",
-                    labelWidth:75
-                },
-                {height:30},
-                {
-                    cols:[
-                        {},
-                        {
-                            view: 'button',
-                            label: 'SAVE',
-                            click: function () {
-                                self.create_playlist(self.hide)
-                            }
-                        },
-                        {},
-                        {
-                            view: 'button',
-                            label: 'CANCEL',
-                            click: () => {self.hide()}
-                        },
-                        {}
-                    ]
-                },
-                {height:10}
-            ]
-        }
-    }
+// function PlaylistDuplicator(id) {
 
-    self.create_playlist = function (done) {
-        name = $$(self.playlist_name).getValue()
-        $QUERY(
-        `SELECT id FROM playlists WHERE name='${name}'`,
-        function (x) {
-            if (x.length == 0) {
-                current_time = webix.Date.dateToStr('%Y-%m-%d %H:%i:%s')(new Date());
-                $QUERY(
-                    `INSERT INTO playlists (name, created) VALUES ('${name}',  '${current_time}')`,
-                    function (x) {
-                        new_playlist_id = x.insertId
-                        $QUERY(
-                            `SELECT track_id FROM short_listed_tracks`,
-                            function (list) {
-                                playlist_data = []
-                                if (list.length > 0) {
-                                    for (i=0; i<list.length; i++) {
-                                        playlist_data.push(`(${new_playlist_id}, ${list[i].track_id})`)
-                                    }
-                                    replace_sql = `INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`
-                                    $QUERY(replace_sql, function () {
-                                        webix.message({
-                                            text:`Created new playlist '${name}'`,
-                                            type:"info",
-                                            expire: 3000,
-                                            id:"message1"
-                                        });
-                                        done();
-                                    })
-                                }
-                            }
-                        )
-                    }
-                )
-            } else {
-                webix.message({
-                    text:`Playlist '${name}' could not be created.</br>The name already exists`,
-                    type:"error",
-                    expire: 3000,
-                    id:"message1"
-                });
-                done();
-            }
-        }
-    )
-    }
+//     var self = this
+//     self.playlist_id = id
+//     self.playlist_name = `duplicate_playlist_name_${ID()}`
+//     self.playlist_desc = `duplicate_playlist_desc_${ID()}`
+
+//     self.template = {
+//         view:"window",
+//         modal:true,
+//         position:"center",
+//         width:600,
+//         height:400,
+//         head: "DUPLICATE PLAYLIST",
+//         body:{
+//             rows:[
+//                 {height:10},
+//                 {
+//                     id:self.playlist_name,
+//                     view: "text",
+//                     value:'',
+//                     label:"Name:",
+//                     labelWidth:75
+//                 },
+//                 {height:30},
+//                 {
+//                     cols:[
+//                         {},
+//                         {
+//                             view: 'button',
+//                             label: 'DUPLICATE',
+//                             click: function () {
+//                                 self.create_playlist(self.hide)
+//                                 //self.hide();
+//                             }
+//                         },
+//                         {},
+//                         {
+//                             view: 'button',
+//                             label: 'CANCEL',
+//                             click: () => {self.hide()}
+//                         },
+//                         {}
+//                     ]
+//                 },
+//                 {height:10}
+//             ]
+//         }
+//     }
+
+//     self.create_playlist = function (done) {
+//         name = $$(self.playlist_name).getValue()
+//         $QUERY(
+//         `SELECT id FROM playlists WHERE name='${name}'`,
+//         function (x) {
+//             if (x.length == 0) {
+//                 current_time = webix.Date.dateToStr('%Y-%m-%d %H:%i:%s')(new Date());
+//                 $QUERY(
+//                     `INSERT INTO playlists (name, created) VALUES ('${name}',  '${current_time}')`,
+//                     function (x) {
+//                         new_playlist_id = x.insertId
+//                         $QUERY(
+//                             `SELECT track_id FROM playlist_tracks WHERE playlist_id=${self.playlist_id}`,
+//                             function (list) {
+//                                 playlist_data = []
+//                                 if (list.length > 0) {
+//                                     for (i=0; i<list.length; i++) {
+//                                         playlist_data.push(`(${new_playlist_id}, ${list[i].track_id})`)
+//                                     }
+//                                     replace_sql = `INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`
+//                                     $QUERY(replace_sql, function () {
+//                                         webix.message({
+//                                             text:`Created new playlist '${name}'`,
+//                                             type:"info",
+//                                             expire: 3000,
+//                                             id:"message1"
+//                                         });
+//                                         done();
+//                                     })
+//                                 }
+//                             }
+//                         )
+//                     }
+//                 )
+//             } else {
+//                 webix.message({
+//                     text:`Playlist '${name}' could not be created.</br>The name already exists`,
+//                     type:"error",
+//                     expire: 3000,
+//                     id:"message1"
+//                 });
+//                 done();
+//             }
+//         }
+//     )
+//     }
     
 
-    self.show = function () {
-        self._win = webix.ui(self.template)
-        self._win.show()
-    }
-    self.hide = function () {
-        self._win.hide()
-        if (self.onHide != undefined) {
-            self.onHide()
-        }
+//     self.show = function () {
+//         self._win = webix.ui(self.template)
+//         self._win.show()
+//     }
+//     self.hide = function () {
+//         self._win.hide()
+//         if (self.onHide != undefined) {
+//             self.onHide()
+//         }
 
-    }
-}
+//     }
+// }
+
+// function DeletePlaylist(id) {
+
+//     var self = this
+//     self.playlist_id = id
+//     self.playlist_name = `delete_playlist_name_${ID()}`
+//     self.playlist_desc = `delte_playlist_desc_${ID()}`
+
+//     self.template = {
+//         view:"window",
+//         modal:true,
+//         position:"center",
+//         width:600,
+//         height:400,
+//         head: "DELETE PLAYLIST",
+//         body:{
+//             rows:[
+//                 {height:10},
+//                 {
+//                     id:self.playlist_name,
+//                     view: "label",
+//                     label:'Delete playlist (name)? This cannot be undone',
+//                     labelWidth:75
+//                 },
+//                 {height:30},
+//                 {
+//                     cols:[
+//                         {},
+//                         {
+//                             view: 'button',
+//                             label: 'DELETE',
+//                             click: function () {
+//                                 self.delete_playlist(self.hide)
+//                             }
+//                         },
+//                         {},
+//                         {
+//                             view: 'button',
+//                             label: 'CANCEL',
+//                             click: () => {self.hide()}
+//                         },
+//                         {}
+//                     ]
+//                 },
+//                 {height:10}
+//             ]
+//         }
+//     }
+
+//     self.delete_playlist = function (done) {
+//         $QUERY(
+//             `DELETE FROM playlists WHERE id=${self.playlist_id}`,
+//             function (r) {
+//                 $QUERY(
+//                     `DELETE FROM playlist_tracks WHERE playlist_id=${self.playlist_id}`,
+//                     function (r) {
+//                         done()
+//                     }
+//                 )
+//             }
+//         )
+//     }
+    
+//     self.show = function () {
+//         self._win = webix.ui(self.template)
+//         self._win.show()
+//     }
+
+//     self.hide = function () {
+//         self._win.hide()
+//         if (self.onHide != undefined) {
+//             self.onHide()
+//         }
+
+//     }
+// }
+
+// function SetAsShortlist(id) {
+//     var self = this
+//     self.playlist_id = id
+//     self.playlist_name = `set_as_shortlist_name_${ID()}`
+//     self.playlist_desc = `set_as_shortlist_desc_${ID()}`
+//     self.database = new DataProvider()
+//     self.template = {
+//         view:"window",
+//         modal:true,
+//         position:"center",
+//         width:600,
+//         height:400,
+//         head: "SET PLAYLIST AS SHORT LIST",
+//         body:{
+//             rows:[
+//                 {height:10},
+//                 {
+//                     id:self.playlist_name,
+//                     view: "label",
+//                     label:'Set playlist (name)? as the current short list? The current short list will be lost.',
+//                     labelWidth:75
+//                 },
+//                 {height:30},
+//                 {
+//                     cols:[
+//                         {},
+//                         {
+//                             view: 'button',
+//                             label: 'SET AS SHORTLIST',
+//                             width:200,
+//                             click: function () {
+//                                 self.set_as_shortlist(self.hide)
+//                             }
+//                         },
+//                         {},
+//                         {
+//                             view: 'button',
+//                             label: 'CANCEL',
+//                             click: () => {self.hide()}
+//                         },
+//                         {}
+//                     ]
+//                 },
+//                 {height:10}
+//             ]
+//         }
+//     }
+
+//     self.set_as_shortlist = function (done) {
+//         $QUERY("DELETE FROM short_listed_tracks",
+//             function () {
+//                 self.database.get_playlist_tracks(self.playlist_id,
+//                     function (tracks) {
+//                          d = []
+//                          for(i=0; i<tracks.length; i++) {
+//                              d.push(`(${tracks[i].track_id})`)
+//                          }
+//                          $QUERY(
+//                              `INSERT IGNORE INTO short_listed_tracks VALUES ${d.join(',')}`,
+//                              function (r) {
+//                                 webix.message({
+//                                     text:`Playlist set as short list`,
+//                                     type:"info",
+//                                     expire: 3000,
+//                                     id:"message1"
+//                                 })
+//                                 done();        
+//                              }
+//                         )
+//                     }
+//                 )
+//             }
+//         )
+//     }
+    
+//     self.show = function () {
+//         self._win = webix.ui(self.template)
+//         self._win.show()
+//     }
+//     self.hide = function () {
+//         self._win.hide()
+//         if (self.onHide != undefined) {
+//             self.onHide()
+//         }
+
+//     }
+// }
+
+
+// function SaveAsPlaylist() {
+
+//     var self = this
+//     //self.playlist_id = id
+//     self.playlist_name = `duplicate_playlist_name_${ID()}`
+//     self.playlist_desc = `duplicate_playlist_desc_${ID()}`
+
+//     self.template = {
+//         view:"window",
+//         modal:true,
+//         position:"center",
+//         width:600,
+//         height:400,
+//         head: "SAVE THE SHORTLISTED TRACKS",
+//         body:{
+//             rows:[
+//                 {height:10},
+//                 {
+//                     id:self.playlist_name,
+//                     view: "text",
+//                     value:'',
+//                     label:"Name:",
+//                     labelWidth:75
+//                 },
+//                 {height:30},
+//                 {
+//                     cols:[
+//                         {},
+//                         {
+//                             view: 'button',
+//                             label: 'SAVE',
+//                             click: function () {
+//                                 self.create_playlist(self.hide)
+//                             }
+//                         },
+//                         {},
+//                         {
+//                             view: 'button',
+//                             label: 'CANCEL',
+//                             click: () => {self.hide()}
+//                         },
+//                         {}
+//                     ]
+//                 },
+//                 {height:10}
+//             ]
+//         }
+//     }
+
+//     self.create_playlist = function (done) {
+//         name = $$(self.playlist_name).getValue()
+//         $QUERY(
+//         `SELECT id FROM playlists WHERE name='${name}'`,
+//         function (x) {
+//             if (x.length == 0) {
+//                 current_time = webix.Date.dateToStr('%Y-%m-%d %H:%i:%s')(new Date());
+//                 $QUERY(
+//                     `INSERT INTO playlists (name, created) VALUES ('${name}',  '${current_time}')`,
+//                     function (x) {
+//                         new_playlist_id = x.insertId
+//                         $QUERY(
+//                             `SELECT track_id FROM short_listed_tracks`,
+//                             function (list) {
+//                                 playlist_data = []
+//                                 if (list.length > 0) {
+//                                     for (i=0; i<list.length; i++) {
+//                                         playlist_data.push(`(${new_playlist_id}, ${list[i].track_id})`)
+//                                     }
+//                                     replace_sql = `INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`
+//                                     $QUERY(replace_sql, function () {
+//                                         webix.message({
+//                                             text:`Created new playlist '${name}'`,
+//                                             type:"info",
+//                                             expire: 3000,
+//                                             id:"message1"
+//                                         });
+//                                         done();
+//                                     })
+//                                 }
+//                             }
+//                         )
+//                     }
+//                 )
+//             } else {
+//                 webix.message({
+//                     text:`Playlist '${name}' could not be created.</br>The name already exists`,
+//                     type:"error",
+//                     expire: 3000,
+//                     id:"message1"
+//                 });
+//                 done();
+//             }
+//         }
+//     )
+//     }
+    
+
+//     self.show = function () {
+//         self._win = webix.ui(self.template)
+//         self._win.show()
+//     }
+//     self.hide = function () {
+//         self._win.hide()
+//         if (self.onHide != undefined) {
+//             self.onHide()
+//         }
+
+//     }
+// }
