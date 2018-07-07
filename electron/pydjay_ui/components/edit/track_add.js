@@ -1,3 +1,5 @@
+// TODO
+
 var jsmediatags = require("jsmediatags");
 var fs = require('fs-extra');
 var path = require('path');
@@ -15,7 +17,7 @@ var audio_info = null;
 
 
 
-function getFileExtension(f_nae) {
+function getFileExtension(f_name) {
     return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
 }
 

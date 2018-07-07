@@ -24,6 +24,7 @@
 <script src="./components/playlist/delete.js"></script>
 <script src="./components/playlist/duplicate.js"></script>
 <script src="./components/playlist/short_list.js"></script>
+<script src="./components/playback/precue_player.js"></script>
 <script src="./sidebar.js"></script>
 <script src="./playback.js"></script>
 <!-- <script src="./track_edit.js"></script> -->
@@ -681,7 +682,7 @@ var datatable = webix.ui({
                         //     { label:"<b>Duration:</b>", type:"text", id:"track_length"},
                         //     ]
                         // },
-                        preview_player_window,
+                        pl.create_layout() //preview_player_window,
                         //suggestions_display_template
                     ]
                 }
