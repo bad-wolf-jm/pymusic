@@ -1,6 +1,6 @@
 
-var cover_size = 45
 
+var cover_size = 42
 
 function queue_element_template(element) {
     var cover_source = null;

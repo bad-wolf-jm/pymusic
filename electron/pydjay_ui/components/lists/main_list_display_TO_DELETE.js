@@ -1,128 +1,128 @@
 //<span class='fa fa-heart'/>
 
-function custom_checkbox(obj, common, value){
-    if (value)
-        return `<div class='webix_table_checkbox checked'><span class='fa fa-heart' style='font-size: 12px; color:${obj.color}'/></div>`;
-    else
-        return `<div class='webix_table_checkbox notchecked'><span class='fa fa-heart-o' style='font-size: 12px; color:${obj.color}'/></div>`;
-};
+// function custom_checkbox(obj, common, value){
+//     if (value)
+//         return `<div class='webix_table_checkbox checked'><span class='fa fa-heart' style='font-size: 12px; color:${obj.color}'/></div>`;
+//     else
+//         return `<div class='webix_table_checkbox notchecked'><span class='fa fa-heart-o' style='font-size: 12px; color:${obj.color}'/></div>`;
+// };
 
-var preview_player_window = 
-{
-    height:95,
-    css:{
-        'background-color':'#6c6c6c',
-        'padding':'1px',
-        border: '1px solid #3c3c3c'
-     },
-    cols:[
-        {
-            id:'preview-cover-image',
-            view: 'template',
-            width:95,
-            height:95,
-            template: ""
-        },
-        {width:10},
-        {
-            cols: [
-                {
-                    rows: [
-                        {},
-                        {
-                            cols: [
-                                {
-                                    rows: [
-                                        {
-                                            id: "preview_title",
-                                            view: 'label',
-                                            label: "<b>NO TRACK</b>",
-                                            height:20
-                                        },
-                                        {
-                                            id: "preview_artist",
-                                            view: 'label',
-                                            label: "NO ARTIST",
-                                            height:20
-                                        },                
-                                    ]
-                                },
-                                {width:5},
-                                {
-                                    id:'preview_test_play_button',
-                                    view:'button',
-                                    type: 'icon',
-                                    icon: 'headphones',
-                                    width:30,
-                                    popup: "preview_popup_menu"
-                                },
-                                {
-                                    id:'preview_test_info_button',
-                                    view:'button',
-                                    type: 'icon',
-                                    icon: 'info',
-                                    width:30,
-                                    popup: "info_popup"
-                                },
-                            ]
-                        },
-                        {},
-                        {
-                            cols: [
-                                // {
-                                //     id:'preview_play_button',
-                                //     view:'button',
-                                //     type: 'icon',
-                                //     icon: 'headphones',
-                                //     width: 30,
-                                //     click: () => {
-                                //         url = pl.url
-                                //         pl.play(url)
+// var preview_player_window = 
+// {
+//     height:95,
+//     css:{
+//         'background-color':'#6c6c6c',
+//         'padding':'1px',
+//         border: '1px solid #3c3c3c'
+//      },
+//     cols:[
+//         {
+//             id:'preview-cover-image',
+//             view: 'template',
+//             width:95,
+//             height:95,
+//             template: ""
+//         },
+//         {width:10},
+//         {
+//             cols: [
+//                 {
+//                     rows: [
+//                         {},
+//                         {
+//                             cols: [
+//                                 {
+//                                     rows: [
+//                                         {
+//                                             id: "preview_title",
+//                                             view: 'label',
+//                                             label: "<b>NO TRACK</b>",
+//                                             height:20
+//                                         },
+//                                         {
+//                                             id: "preview_artist",
+//                                             view: 'label',
+//                                             label: "NO ARTIST",
+//                                             height:20
+//                                         },                
+//                                     ]
+//                                 },
+//                                 {width:5},
+//                                 {
+//                                     id:'preview_test_play_button',
+//                                     view:'button',
+//                                     type: 'icon',
+//                                     icon: 'headphones',
+//                                     width:30,
+//                                     popup: "preview_popup_menu"
+//                                 },
+//                                 {
+//                                     id:'preview_test_info_button',
+//                                     view:'button',
+//                                     type: 'icon',
+//                                     icon: 'info',
+//                                     width:30,
+//                                     popup: "info_popup"
+//                                 },
+//                             ]
+//                         },
+//                         {},
+//                         {
+//                             cols: [
+//                                 // {
+//                                 //     id:'preview_play_button',
+//                                 //     view:'button',
+//                                 //     type: 'icon',
+//                                 //     icon: 'headphones',
+//                                 //     width: 30,
+//                                 //     click: () => {
+//                                 //         url = pl.url
+//                                 //         pl.play(url)
                                                                 
-                                //     }
-                                // },
-                                // {width:5},
-                                {
-                                    rows: [
-                                        {
-                                            height:18,
-                                            template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%;"></div>'
-                                            // template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%; transform: translateY(-200%)"></div>'
-                                        },
-                                        {height: 7},
-                                        {cols:[
-                                            {
-                                                id:'preview_time',
-                                                view: 'label',
-                                                css:{
-                                                    'text-align':'left',
-                                                    'text-transform':'uppercase'
-                                                },
-                                                label: '0:00',
-                                                height:15
-                                            },
-                                            {},
-                                            {
-                                                id:'preview_length',
-                                                view: 'label',
-                                                css:{'text-align':'right'},
-                                                label: '0:00',
-                                                height:15
-                                            }
+//                                 //     }
+//                                 // },
+//                                 // {width:5},
+//                                 {
+//                                     rows: [
+//                                         {
+//                                             height:18,
+//                                             template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%;"></div>'
+//                                             // template:'<div id="preview-progress" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%; transform: translateY(-200%)"></div>'
+//                                         },
+//                                         {height: 7},
+//                                         {cols:[
+//                                             {
+//                                                 id:'preview_time',
+//                                                 view: 'label',
+//                                                 css:{
+//                                                     'text-align':'left',
+//                                                     'text-transform':'uppercase'
+//                                                 },
+//                                                 label: '0:00',
+//                                                 height:15
+//                                             },
+//                                             {},
+//                                             {
+//                                                 id:'preview_length',
+//                                                 view: 'label',
+//                                                 css:{'text-align':'right'},
+//                                                 label: '0:00',
+//                                                 height:15
+//                                             }
                         
-                                        ]},                
-                                    ]
-                                },
-                            ]
-                        },
-                        {}
-                    ]
-                },
-                {width:10}
-            ]
-        }
-    ]
-}
+//                                         ]},                
+//                                     ]
+//                                 },
+//                             ]
+//                         },
+//                         {}
+//                     ]
+//                 },
+//                 {width:10}
+//             ]
+//         }
+//     ]
+// }
 
 // var main_list_display_template = 
 // {

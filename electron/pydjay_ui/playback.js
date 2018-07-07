@@ -48,14 +48,14 @@ function preview_seek_relative(time_delta){
     pl.skip(time_delta)
 }
 
-pl.on("stream-position", function (pos) {
-    $$('preview_time').define('label', `${format_nanoseconds(pos*1000000)}`)
-    $$('preview_time').refresh()
-    $$('preview_length').define('label', format_nanoseconds(pl.source.duration*1000000000))
-    $$('preview_length').refresh();
-    preview_seek.animate(pos / (1000*pl.source.duration));
-    preview_track_position = pos;
-})
+// pl.on("stream-position", function (pos) {
+//     $$('preview_time').define('label', `${format_nanoseconds(pos*1000000)}`)
+//     $$('preview_time').refresh()
+//     $$('preview_length').define('label', format_nanoseconds(pl.source.duration*1000000000))
+//     $$('preview_length').refresh();
+//     preview_seek.animate(pos / (1000*pl.source.duration));
+//     preview_track_position = pos;
+// })
 
 var mpl = new PydjayAudioFilePlayer()
 //mpl.connectOutputs(mpl_channel_config)
@@ -531,55 +531,58 @@ function skip_to_next_track() {
 }
 
 function preview_play_track_id(id, stream_start, stream_end) {
-    db_connection.query(
-        `SELECT title, artist, album, bpm, file_name, cover_small, track_length, genre, stream_start, year, stream_end, settings.db_music_cache as music_root,
-         settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${id} LIMIT 1`,
-        function(error, result) {
-            if (error) throw error;
-            pl.play(result[0], strem_start, stream_end)
-            // result = result[0];
-            // file_name = path.join(result.music_root, result.file_name);
-            // cover_file_name = `${result.image_root}/${result.cover_small}`;
-            // stream_length = (result.stream_end-result.stream_start) / 1000000000;
-            // preview_play_id = result.id
-            // $$('preview_title').define('label', `<b>${result.title}</b>`)
-            // $$('preview_title').refresh()
-            // $$('preview_artist').define('label', `${result.artist}`)
-            // $$('preview_artist').refresh()
-            // if (result.cover_small == null) {
-            //     cover_source = "../resources/images/default_album_cover.png"
-            // } else {
-            //     cover_source = `file://${result.image_root}/${result.cover_small}`;
-            // }
-            // var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='95' width='95'></img>`
-            // $$('preview-cover-image').define('template', cover_image);
-            // $$('preview-cover-image').refresh();
+    DB.get_track_by_id(id, (result) => {
+        pl.play(result[0], stream_start, stream_end)
+    })
+    // db_connection.query(
+    //     `SELECT title, artist, album, bpm, file_name, cover_small, track_length, genre, stream_start, year, stream_end, settings.db_music_cache as music_root,
+    //      settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${id} LIMIT 1`,
+    //     function(error, result) {
+    //         if (error) throw error;
+    //         pl.play(result[0], stream_start, stream_end)
+    //         // result = result[0];
+    //         // file_name = path.join(result.music_root, result.file_name);
+    //         // cover_file_name = `${result.image_root}/${result.cover_small}`;
+    //         // stream_length = (result.stream_end-result.stream_start) / 1000000000;
+    //         // preview_play_id = result.id
+    //         // $$('preview_title').define('label', `<b>${result.title}</b>`)
+    //         // $$('preview_title').refresh()
+    //         // $$('preview_artist').define('label', `${result.artist}`)
+    //         // $$('preview_artist').refresh()
+    //         // if (result.cover_small == null) {
+    //         //     cover_source = "../resources/images/default_album_cover.png"
+    //         // } else {
+    //         //     cover_source = `file://${result.image_root}/${result.cover_small}`;
+    //         // }
+    //         // var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='95' width='95'></img>`
+    //         // $$('preview-cover-image').define('template', cover_image);
+    //         // $$('preview-cover-image').refresh();
 
-            // if (stream_start == undefined) {
-            //     stream_start = result.stream_start // Math.floor(Math.random() * Math.floor(result.stream_end - result.stream_start));
-            //     stream_end = result.stream_end
-            // } else if (stream_end == undefined) {
-            //     stream_end = end = result.stream_end
-            //     if (stream_start < 0) {
-            //         stream_start = stream_end + stream_start;
-            //     }
-            // }
-            // // $$("metadata").setValues(
-            // //     {
-            // //         title: result.title || "",
-            // //         artist: result.artist || "",
-            // //         album: result.album || "",
-            // //         year: result.year || "",
-            // //         genre: result.genre || "",
-            // //         color: result.color || "#FFFFFF",
-            // //         bpm: result.bpm || "",
-            // //         track_length:`${format_nanoseconds(result.track_length)}`,
-            // //         track_start:`${format_nanoseconds(result.stream_start)}`,
-            // //         track_end: `${format_nanoseconds(result.stream_end)}`,
-            // //         file: file_name
-            // //     }
-            // // )            
-            // preview_play(file_name, stream_start, stream_end)
-        }
-    )
+    //         // if (stream_start == undefined) {
+    //         //     stream_start = result.stream_start // Math.floor(Math.random() * Math.floor(result.stream_end - result.stream_start));
+    //         //     stream_end = result.stream_end
+    //         // } else if (stream_end == undefined) {
+    //         //     stream_end = end = result.stream_end
+    //         //     if (stream_start < 0) {
+    //         //         stream_start = stream_end + stream_start;
+    //         //     }
+    //         // }
+    //         // // $$("metadata").setValues(
+    //         // //     {
+    //         // //         title: result.title || "",
+    //         // //         artist: result.artist || "",
+    //         // //         album: result.album || "",
+    //         // //         year: result.year || "",
+    //         // //         genre: result.genre || "",
+    //         // //         color: result.color || "#FFFFFF",
+    //         // //         bpm: result.bpm || "",
+    //         // //         track_length:`${format_nanoseconds(result.track_length)}`,
+    //         // //         track_start:`${format_nanoseconds(result.stream_start)}`,
+    //         // //         track_end: `${format_nanoseconds(result.stream_end)}`,
+    //         // //         file: file_name
+    //         // //     }
+    //         // // )            
+    //         // preview_play(file_name, stream_start, stream_end)
+    //     }
+    // )
 }

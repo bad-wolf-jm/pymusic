@@ -17,7 +17,7 @@
 <script src="./data_class.js"></script>
 <script src="./components/lists/track_table.js"></script>
 <script src="./components/lists/track_list.js"></script>
-<script src="./components/lists/main_list_display.js"></script>
+<!-- <script src="./components/lists/main_list_display.js"></script> -->
 <script src="./components/lists/queue_display.js"></script>
 <script src="./components/playlist/playlist_editor.js"></script>
 <script src="./components/playlist/create.js"></script>
@@ -144,20 +144,20 @@ $(document).ready( () => {
 });
 
 
-var preview_seek = undefined;
-webix.ready( () => {
-    preview_seek = new ProgressBar.Line('#preview-progress',
-    {
-        strokeWidth: 1,
-        duration: 5,
-        color: '#5a5a5a',
-        trailColor: '#eee',
-        trailWidth: 1,
-        svgStyle: {width: '100%', height: '100%'}
-    }
- );
-    preview_seek.animate(0);
-});
+// var preview_seek = undefined;
+// webix.ready( () => {
+//     preview_seek = new ProgressBar.Line('#preview-progress',
+//     {
+//         strokeWidth: 1,
+//         duration: 5,
+//         color: '#5a5a5a',
+//         trailColor: '#eee',
+//         trailWidth: 1,
+//         svgStyle: {width: '100%', height: '100%'}
+//     }
+//  );
+//     preview_seek.animate(0);
+// });
 
 var track_add_progress_dialog =  webix.ui({
     view:"window",
@@ -332,6 +332,24 @@ function playback_settings() {
         }
     )
 }
+var cover_size = 45
+function queue_element_template(element) {
+    var cover_source = null;
+    if (element.cover == null) {
+        cover_source = "../resources/images/default_album_cover.png"
+    } else {
+        cover_source = `file://${element.image_root}/${element.cover}`
+    }
+    return `<img style="float:left; padding-right:7px; padding-left:-3px" src="${cover_source}" height='${cover_size}' width='${cover_size}'></img>
+            <div style="margin:0px; padding:0px; float:left; width:275px">
+                <div class="queue_element_title"><b>${element.title}</b></div>
+                <div class="queue_element_artist"><i>${element.artist}</i></div>
+            </div>
+            <div class="queue_element_bpm">${element.bpm} BPM</div>
+            <div class="queue_element_duration">
+                <b>${format_nanoseconds(element.stream_length)}</b>
+            </div>`
+}
 
 var session_popup = webix.ui(
     {
@@ -400,44 +418,44 @@ session_popup.attachEvent('onShow', function () {
 })
 
 
-var track_info_popup = webix.ui(
-    {
-        view:"popup",
-        id:"info_popup",
-        height:300,
-        width:350,
-        body:{
-            // { 
-            view:"property", 
-            id:"info_popup_property_sheet", 
-            //width:100,
-            disable:true,
-            height:285, 
-            labelWidth:100,
-            elements:[
-                { label:"Metadata", type:"label"},
-                { label:"<b>Title:</b>", id:"title"},
-                { label:"<b>Artist:</b>", id:"artist"},
-                { label:"<b>Album:</b>", id:"album"},
-                { label:"<b>Year:</b>", id:"year"},
-                { label:"<b>Genre:</b>", id:"genre"},
-                { label:"<b>Color:</b>", id:"color"},
-                { label:"<b>Rating:</b>", id:"rating"},
-                { label:"<b>Loved:</b>", id:"favorite"},
-            ]
-        },
-    }
-)
-track_info_popup.hide();
-track_info_popup.attachEvent('onShow', function () {
-    if (preview_track_id != undefined) {
-        DB.get_track_by_id(preview_track_id,
-            function (track_info) {
-                $$("info_popup_property_sheet").setValues(track_info[0])
-            }
-        )
-    }
-})
+// var track_info_popup = webix.ui(
+//     {
+//         view:"popup",
+//         id:"info_popup",
+//         height:300,
+//         width:350,
+//         body:{
+//             // { 
+//             view:"property", 
+//             id:"info_popup_property_sheet", 
+//             //width:100,
+//             disable:true,
+//             height:285, 
+//             labelWidth:100,
+//             elements:[
+//                 { label:"Metadata", type:"label"},
+//                 { label:"<b>Title:</b>", id:"title"},
+//                 { label:"<b>Artist:</b>", id:"artist"},
+//                 { label:"<b>Album:</b>", id:"album"},
+//                 { label:"<b>Year:</b>", id:"year"},
+//                 { label:"<b>Genre:</b>", id:"genre"},
+//                 { label:"<b>Color:</b>", id:"color"},
+//                 { label:"<b>Rating:</b>", id:"rating"},
+//                 { label:"<b>Loved:</b>", id:"favorite"},
+//             ]
+//         },
+//     }
+// )
+// track_info_popup.hide();
+// track_info_popup.attachEvent('onShow', function () {
+//     if (preview_track_id != undefined) {
+//         DB.get_track_by_id(preview_track_id,
+//             function (track_info) {
+//                 $$("info_popup_property_sheet").setValues(track_info[0])
+//             }
+//         )
+//     }
+// })
 
 
 
@@ -478,71 +496,71 @@ var popup = webix.ui({
 popup.hide();
 
 
-var preview_popup = webix.ui({
-    view:"popup",
-    id:"preview_popup_menu",
-    height:650,
-    width:200,
-    body:{
-        rows: [
-            {
-                view:'button',
-                type:'icon',
-                // icon:'stop',
-                label:'Play full track',
-                maxHeight:35,
-                click: () => {
-                    url = preview_track_id
-                    if (url != undefined) {
-                        preview_play_track_id(url)
-                    }
-                    $$("preview_popup_menu").hide()
-                }
-            },
-            {
-                view:'button',
-                type:'icon',
-                label:'Play last 30 seconds',
-                maxHeight:35,
-                click: () => {
-                    url = preview_track_id
-                    if (url != undefined) {
-                        preview_play_track_id(url, -30000000000)
-                    }
-                    $$("preview_popup_menu").hide()
-                }
-            },
-            {
-                view:'button',
-                type:'icon',
-                // icon:'stop',
-                label:'Play last 10 seconds',
-                maxHeight:35,
-                click: () => {
-                    url = preview_track_id
-                    if (url != undefined) {
-                        preview_play_track_id(url, -10000000000)
-                    }
-                    $$("preview_popup_menu").hide()
-                }
-                //click: stop_queue_now
-            }
-        ]
-    }
-})
-popup.hide();
+// var preview_popup = webix.ui({
+//     view:"popup",
+//     id:"preview_popup_menu",
+//     height:650,
+//     width:200,
+//     body:{
+//         rows: [
+//             {
+//                 view:'button',
+//                 type:'icon',
+//                 // icon:'stop',
+//                 label:'Play full track',
+//                 maxHeight:35,
+//                 click: () => {
+//                     url = preview_track_id
+//                     if (url != undefined) {
+//                         preview_play_track_id(url)
+//                     }
+//                     $$("preview_popup_menu").hide()
+//                 }
+//             },
+//             {
+//                 view:'button',
+//                 type:'icon',
+//                 label:'Play last 30 seconds',
+//                 maxHeight:35,
+//                 click: () => {
+//                     url = preview_track_id
+//                     if (url != undefined) {
+//                         preview_play_track_id(url, -30000000000)
+//                     }
+//                     $$("preview_popup_menu").hide()
+//                 }
+//             },
+//             {
+//                 view:'button',
+//                 type:'icon',
+//                 // icon:'stop',
+//                 label:'Play last 10 seconds',
+//                 maxHeight:35,
+//                 click: () => {
+//                     url = preview_track_id
+//                     if (url != undefined) {
+//                         preview_play_track_id(url, -10000000000)
+//                     }
+//                     $$("preview_popup_menu").hide()
+//                 }
+//                 //click: stop_queue_now
+//             }
+//         ]
+//     }
+// })
+// popup.hide();
 
 
 
-main_menu_popup  = webix.ui({
-    view: 'popup',
-    id: "main_menu_popup",
-    width: 400,
-    autoheight: true,
-    relative: 'bottom',
-    body: sidebar_template
-})
-main_menu_popup.hide()
+//main_menu_popup  = webix.ui({
+//    view: 'popup',
+//    id: "main_menu_popup",
+//    width: 400,
+//    autoheight: true,
+//    relative: 'bottom',
+ //   body: sidebar_template
+//})//
+//main_menu_popup.hide()
 
 main_track_table = new TrackTable()
 
