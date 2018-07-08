@@ -16,7 +16,7 @@ class PrecuePlayer extends PydjayAudioFilePlayer {
         this.on("stream-position", (pos) => {
             $$(this.time_label_id).define('label', `${format_nanoseconds(pos*1000000)}`)
             $$(this.time_label_id).refresh()
-            $$(this.length_label_id).define('label', format_nanoseconds(pl.source.duration*1000000000))
+            $$(this.length_label_id).define('label', format_nanoseconds(this.source.duration*1000000000))
             $$(this.length_label_id).refresh();
             this.preview_seek.animate(pos / (1000*this.source.duration));
             this.preview_track_position = pos;
@@ -118,7 +118,13 @@ class PrecuePlayer extends PydjayAudioFilePlayer {
                     )
                 }
             })
-            this.preview_seek = new ProgressBar.Line(`#${this.position_id}`,
+        });
+        
+        
+    }
+
+    init_progress() {
+        this.preview_seek = new ProgressBar.Line(`#${this.position_id}`,
             {
                 strokeWidth: 1,
                 duration: 5,
@@ -127,11 +133,9 @@ class PrecuePlayer extends PydjayAudioFilePlayer {
                 trailWidth: 1,
                 svgStyle: {width: '100%', height: '100%'}
             }
-        );
+        
+        )
         this.preview_seek.animate(0);
-        });
-        
-        
     }
 
     ID () {
