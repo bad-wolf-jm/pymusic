@@ -24,6 +24,7 @@
 <script src="./components/playlist/delete.js"></script>
 <script src="./components/playlist/duplicate.js"></script>
 <script src="./components/playlist/short_list.js"></script>
+<script src="./components/playback/main_player.js"></script>
 <script src="./sidebar.js"></script>
 <script src="./playback.js"></script>
 <!-- <script src="./track_edit.js"></script> -->
@@ -544,7 +545,12 @@ main_menu_popup  = webix.ui({
 main_menu_popup.hide()
 
 main_track_table = new TrackTable()
-
+var main_player_interface = new MainPlayer()
+webix.ready(
+    () => {
+        main_player_interface.setRating(3)
+    }
+)
 var datatable = webix.ui({
     css:{
                 'background-color':'#515151',
@@ -552,6 +558,7 @@ var datatable = webix.ui({
                 'border-bottom': "1px solid #CCCCCC",
             },
     rows:[
+        main_player_interface.create_layout(),
         {
             css:{
                 'background-color':'#515151',
