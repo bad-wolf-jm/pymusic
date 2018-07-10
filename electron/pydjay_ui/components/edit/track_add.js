@@ -345,3 +345,49 @@ function add_track() {
     })
     x.show();
 }
+
+
+var track_add_progress_dialog =  webix.ui({
+    view:"window",
+    modal:true,
+    position:"center",
+    width:600,
+    height:400,
+    head: false,
+    body:{
+        rows:[
+            {height:10},
+            {
+                id:'track_add_progress',
+                view: "label",
+                label:"Processing track ### of ###",
+                css: {
+                    'text-align': 'center',
+                    'font-size':  '20px',
+                }
+            },
+            {height:10},
+            {
+                id:'track_add_title',
+                view: "label",
+                label:"Title Of Song",
+                css: {
+                    'text-align': 'center',
+                    'font-size': '20px',
+                }
+
+            },
+            {
+                id:'track_add_artist',
+                view: "label",
+                label:"Artist - Album",
+                css: {
+                    'text-align': 'center',
+                    'font-size':  '15px',
+                }
+
+            }
+        ]
+    }
+})
+track_add_progress_dialog.hide();

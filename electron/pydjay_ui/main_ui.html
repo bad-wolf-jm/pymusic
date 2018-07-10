@@ -160,51 +160,51 @@ webix.ready( () => {
 //  );
 //     preview_seek.animate(0);
 // });
+//
+// var track_add_progress_dialog =  webix.ui({
+//     view:"window",
+//     modal:true,
+//     position:"center",
+//     width:600,
+//     height:400,
+//     head: false,
+//     body:{
+//         rows:[
+//             {height:10},
+//             {
+//                 id:'track_add_progress',
+//                 view: "label",
+//                 label:"Processing track ### of ###",
+//                 css: {
+//                     'text-align': 'center',
+//                     'font-size':  '20px',
+//                 }
+//             },
+//             {height:10},
+//             {
+//                 id:'track_add_title',
+//                 view: "label",
+//                 label:"Title Of Song",
+//                 css: {
+//                     'text-align': 'center',
+//                     'font-size': '20px',
+//                 }
 
-var track_add_progress_dialog =  webix.ui({
-    view:"window",
-    modal:true,
-    position:"center",
-    width:600,
-    height:400,
-    head: false,
-    body:{
-        rows:[
-            {height:10},
-            {
-                id:'track_add_progress',
-                view: "label",
-                label:"Processing track ### of ###",
-                css: {
-                    'text-align': 'center',
-                    'font-size':  '20px',
-                }
-            },
-            {height:10},
-            {
-                id:'track_add_title',
-                view: "label",
-                label:"Title Of Song",
-                css: {
-                    'text-align': 'center',
-                    'font-size': '20px',
-                }
+//             },
+//             {
+//                 id:'track_add_artist',
+//                 view: "label",
+//                 label:"Artist - Album",
+//                 css: {
+//                     'text-align': 'center',
+//                     'font-size':  '15px',
+//                 }
 
-            },
-            {
-                id:'track_add_artist',
-                view: "label",
-                label:"Artist - Album",
-                css: {
-                    'text-align': 'center',
-                    'font-size':  '15px',
-                }
-
-            }
-        ]
-    }
-})
-track_add_progress_dialog.hide();
+//             }
+//         ]
+//     }
+// })
+// track_add_progress_dialog.hide();
 
 
 function save_current_session() {
@@ -736,30 +736,30 @@ var datatable = webix.ui({
                     label: '<b>ENDS:</b> 0:00',
                     height: 20
                 },
-                {
-                    id:'main-player-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'volume-up',
-                    label:'100%',
-                    width:75
-                },
-                {
-                    id:'monitor-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'volume-control-phone',
-                    label:'100%',
-                    width:75
-                },
-                {
-                    id:'precue-player-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'headphones',
-                    label:'100%',
-                    width:75
-                },
+                // {
+                //     id:'main-player-volume',
+                //     view:'button',
+                //     type:'icon',
+                //     icon:'volume-up',
+                //     label:'100%',
+                //     width:75
+                // },
+                // {
+                //     id:'monitor-volume',
+                //     view:'button',
+                //     type:'icon',
+                //     icon:'volume-control-phone',
+                //     label:'100%',
+                //     width:75
+                // },
+                // {
+                //     id:'precue-player-volume',
+                //     view:'button',
+                //     type:'icon',
+                //     icon:'headphones',
+                //     label:'100%',
+                //     width:75
+                // },
                 {
                     width:15
                 }
