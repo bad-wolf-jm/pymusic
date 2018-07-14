@@ -57,6 +57,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
     play(track) {
         //result = result[0];
         console.log(track)
+
         let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
         $$(this.title_id ).define('label', track.title)
@@ -84,8 +85,52 @@ class MainPlayer extends PydjayAudioFilePlayer {
         //$$('queue_list').remove($$('queue_list').getFirstId())
         // update_queue_labels();
         //main_play(file_name, result.stream_start, result.stream_end)
-
+        this._waveform.load(file_name)
+        this._track = track
         super.play(file_name,  track.stream_start / 1000000, track.stream_end / 1000000) //start_time / 1000000, end_time / 1000000)
+    }
+
+    init() {
+        this._waveform = WaveSurfer.create({
+            container: `#${this.waveform_id }`,
+            pixelRatio: 1,
+            scrollParent: true,
+            hideScrollbar: false,
+            waveColor: 'violet',
+            progressColor: 'purple',
+            height:125,
+            barHeight:1.5,
+            plugins: [
+                WaveSurferRegions.create({
+                    container: `#${this.main_waveform_id}`,
+                    deferInit: false,
+                })
+            ]
+        });       
+        this._waveform.on(
+            "ready", () => {
+                // this.stream_start = this._track_info.stream_start
+                // this.stream_end = this._track_info.stream_end
+                // this._waveform.zoom($$(this.zoom_slider_id).getValue())
+                this._position_tracker = this.on("stream-position", 
+                    (pos) => {
+                        p = pos*1000000 / this._track.track_length
+                        p = max(p,0.0)
+                        p = min(p,1.0)
+                        this._waveform.seekAndCenter(pos*1000000 / this._track.track_length)
+                    }
+                )
+                // this._region = this._waveform.addRegion({start:this._track_info.stream_start / 1000000000, end:this._track_info.stream_end / 1000000000})
+                // this._region.on("update", 
+                //     () => {
+                //         this.stream_start = Math.round(this._region.start * 1000000000)
+                //         this.stream_end = Math.round(this._region.end * 1000000000)
+                //         this.setValue(this.main_stream_length_id, `${format_nanoseconds(this.stream_end - this.stream_start)}`)
+                //     }
+                // )
+            }
+        )
+ 
     }
     
 
@@ -94,8 +139,9 @@ class MainPlayer extends PydjayAudioFilePlayer {
             height: 265,
             rows: [
                 {
+                    //id: this.waveform_id,
                     view:'template',
-                    template:this.waveform_id,
+                    template:`<div id="${this.waveform_id}" style="border: \'1px solid black\'; width:100%; height:100%; position:relative; top:0%;"></div>`,
                     height:100
                 },
 
