@@ -61,13 +61,13 @@ pl.on("stream-position", function (pos) {
 var mpl = new MainPlayer()
 //var mpl = new PydjayAudioFilePlayer()
 //mpl.connectOutputs(mpl_channel_config)
-mpl.on("stream-position", function (pos) {
-    remaining = Math.abs(mpl.source.duration*1000 - pos)
-    $$('main_track_time').define('label', `-${format_nanoseconds(remaining*1000000)}`)
-    $$('main_track_time').refresh()
-    main_player_progress.animate(pos / (1000*mpl.source.duration));
+// mpl.on("stream-position", function (pos) {
+//     remaining = Math.abs(mpl.source.duration*1000 - pos)
+//     $$('main_track_time').define('label', `-${format_nanoseconds(remaining*1000000)}`)
+//     $$('main_track_time').refresh()
+//     main_player_progress.animate(pos / (1000*mpl.source.duration));
 
-})
+// })
 mpl.on('end-of-stream', function () {
     if (!stop_request){
         db_connection.query(

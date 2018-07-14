@@ -58,24 +58,30 @@ class MainPlayer extends PydjayAudioFilePlayer {
         //result = result[0];
         console.log(track)
         let file_name = path.join(track.music_root, track.file_name);
-        let stream_length = (track.stream_end-track.stream_start) / 1000000000;
+        let stream_length = (track.stream_end-track.stream_start);
         $$(this.title_id ).define('label', track.title)
         $$(this.title_id ).refresh()
         $$(this.artist_id ).define('label', `${track.artist}`)
         $$(this.artist_id ).refresh()
         $$(this.album_id ).define('label', `${track.album}`)
         $$(this.album_id ).refresh()
+        $$(this.duration_id ).define('label', `${format_nanoseconds(stream_length)}`)
+        $$(this.duration_id ).refresh()
+        $$(this.bpm_id ).define('label', `${track.bpm}`)
+        $$(this.bpm_id ).refresh()
+        this.setRating(track.rating)
+        this.setFavorite(track.favorite)
         let cover_source = undefined
-        if (track.cover_small == null) {
+        if (track.cover == null) {
             cover_source = "../resources/images/default_album_cover.png"
         } else {
-            cover_source = `file://${track.image_root}/${v.cover_small}`;
+            cover_source = `file://${track.image_root}/${track.cover}`;
         }
-        let cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
-        $$('main-cover-image').define('template', cover_image);
-        $$('main-cover-image').refresh();
+        let cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='135' width='135'></img>`
+        $$(this.cover_id).define('template', cover_image);
+        $$(this.cover_id).refresh();
         // current_queue_position = position;
-        $$('queue_list').remove($$('queue_list').getFirstId())
+        //$$('queue_list').remove($$('queue_list').getFirstId())
         // update_queue_labels();
         //main_play(file_name, result.stream_start, result.stream_end)
 
@@ -96,10 +102,11 @@ class MainPlayer extends PydjayAudioFilePlayer {
                 {
                     cols: [
                         {
+                            id: this.cover_id,
                             view: 'template',
                             width:135,
                             height:135,
-                            template: this.cover_id
+                            template: ""
                         },
                         {
                             width:10
@@ -190,7 +197,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                 {height:10},
                                 {
                                     cols: [
-                                        {},
                                         {
                                             width:100,
 
@@ -312,19 +318,20 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                 {
                                                     id: this.favorite_id,
                                                     view:'label',
-                                                    label:`<div class='webix_toggle_button_custom checked'><span class='fa fa-heart' style='font-size: 10pt;'/></div>`,
+                                                    label:`<div class='webix_toggle_button_custom checked'><span class='fa fa-heart'/></div>`,
                                                     height:15,
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
                                                         'font-weight':'bold',
-                                                        'font-size':"20pt",
+                                                        'font-size':"9pt",
                                                         'text-align': 'center',
                                                         color:"#AFAFAF"
                                                     },
                                                 }
                                             ]
                                         },
+                                        {},
                 
                                     ]
                                 }
@@ -367,6 +374,20 @@ class MainPlayer extends PydjayAudioFilePlayer {
         }
         $$(this.rating_id).define('label', html)
         $$(this.rating_id).refresh()
-        console.log(html)
+        //console.log(html)
     }
+
+    setFavorite(value) {
+        var html = "";
+        if (value) {
+            html = `<div class='webix_toggle_button_custom checked'><span class='fa fa-heart'></div>`
+        } else {
+            html= `<div class='webix_toggle_button_custom checked'><span class='fa fa-heart-o'></div>`
+        }
+        $$(this.favorite_id).define('label', html)
+        $$(this.favorite_id).refresh()
+        //console.log(html)
+    }
+
+
 }
