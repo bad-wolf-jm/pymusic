@@ -16,38 +16,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
             let remaining = Math.abs(mpl.source.duration*1000 - pos)
             $$(this.remaining_id).define('label', `-${format_nanoseconds(remaining*1000000)}`)
             $$(this.remaining_id).refresh()
-            //main_player_progress.animate(pos / (1000*mpl.source.duration));
-        
         })
-        // this.on('end-of-stream', function () {
-        //     if (!stop_request){
-        //         db_connection.query(
-        //             'SELECT COUNT(id) as queue_count FROM session_queue WHERE status="pending"',
-        //             function (error, result) {
-        //                 if (error) throw error;
-        //                 if (result[0].queue_count > 0) {
-        //                     mark_as_played(current_queue_position, play_next_track_after_time);
-        //                 } else {
-        //                     mark_as_played(current_queue_position, false);
-        //                     queue_playing = false;
-        //                     $$('start-stop-button').define('label', 'START');
-        //                     $$('start-stop-button').define('icon', 'play');
-        //                     $$('start-stop-button').refresh();
-        //                     $$('queue_stop_message').hide()
-        //                 }
-        //             }
-        //         )
-        //     } else {
-        //         mark_as_played(current_queue_position, false);
-        //         queue_playing = false;
-        //         $$('start-stop-button').define('label', 'START');
-        //         $$('start-stop-button').define('icon', 'play');
-        //         $$('start-stop-button').refresh();
-        //         $$('queue_stop_message').hide()
-        //     }
-        // })
-          
-
     }
 
     ID () {
@@ -81,10 +50,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
         let cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='135' width='135'></img>`
         $$(this.cover_id).define('template', cover_image);
         $$(this.cover_id).refresh();
-        // current_queue_position = position;
-        //$$('queue_list').remove($$('queue_list').getFirstId())
-        // update_queue_labels();
-        //main_play(file_name, result.stream_start, result.stream_end)
         this._waveform.load(file_name)
         this._track = track
         super.play(file_name,  track.stream_start / 1000000, track.stream_end / 1000000) //start_time / 1000000, end_time / 1000000)
@@ -98,7 +63,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
             hideScrollbar: false,
             waveColor: 'violet',
             progressColor: 'purple',
-            height:125,
+            height:135,
             barHeight:1.5,
             plugins: [
                 WaveSurferRegions.create({
@@ -109,25 +74,15 @@ class MainPlayer extends PydjayAudioFilePlayer {
         });       
         this._waveform.on(
             "ready", () => {
-                // this.stream_start = this._track_info.stream_start
-                // this.stream_end = this._track_info.stream_end
-                // this._waveform.zoom($$(this.zoom_slider_id).getValue())
+                this._waveform.zoom(150)
                 this._position_tracker = this.on("stream-position", 
                     (pos) => {
-                        p = pos*1000000 / this._track.track_length
-                        p = max(p,0.0)
-                        p = min(p,1.0)
-                        this._waveform.seekAndCenter(pos*1000000 / this._track.track_length)
+                        let p = pos*1000000 / this._track.track_length
+                        p = Math.max(p,0.0)
+                        p = Math.min(p,1.0)
+                        this._waveform.seekAndCenter(p)
                     }
                 )
-                // this._region = this._waveform.addRegion({start:this._track_info.stream_start / 1000000000, end:this._track_info.stream_end / 1000000000})
-                // this._region.on("update", 
-                //     () => {
-                //         this.stream_start = Math.round(this._region.start * 1000000000)
-                //         this.stream_end = Math.round(this._region.end * 1000000000)
-                //         this.setValue(this.main_stream_length_id, `${format_nanoseconds(this.stream_end - this.stream_start)}`)
-                //     }
-                // )
             }
         )
  
@@ -139,7 +94,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
             height: 265,
             rows: [
                 {
-                    //id: this.waveform_id,
                     view:'template',
                     template:`<div id="${this.waveform_id}" style="border: \'1px solid black\'; width:100%; height:100%; position:relative; top:0%;"></div>`,
                     height:100
@@ -207,18 +161,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                         {
                                             width:100,
                                             rows: [
-                                                // {
-                                                //     view:'label',
-                                                //     label:'REMAINING',
-                                                //     css: {
-                                                //         'text-align':'left',
-                                                //         'text-transform':'uppercase',
-                                                //         'text-align': 'center',
-                                                //         'font-weight':'bold',
-                                                //         'font-size':"10pt",
-                                                //         color:"#909090"
-                                                //     },
-                                                // },
                                                 {
                                                     id: this.remaining_id,
                                                     view:'label',
@@ -230,7 +172,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                         'text-align': 'center',
                                                         'font-weight':'bold',
                                                         'font-size':"18pt"//,
-                                                        // color:"#909090"
                                                     },
                 
                                                 }
@@ -383,30 +324,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                 }
                             ]
                         },
-                        //############################
-                        // { 
-                        //     view:"property", 
-                        //     id:this.main_property_edit_id, 
-                        //     width:250,
-                        //     disable:true,
-                        //     height:118, 
-                        //     labelWidth:100,
-                        //     elements:[
-                        //         // { label:"Metadata", type:"label"},
-                        //         // { label:"<b>Title:</b>", type:"text", id:"title"},
-                        //         // { label:"<b>Artist:</b>", type:"text", id:"artist"},
-                        //         // { label:"<b>Album:</b>", type:"text", id:"album"},
-                        //         // { label:"<b>Year:</b>", type:"text", id:"year"},
-                        //         // { label:"<b>Genre:</b>", type:"text", id:"genre"},
-                        //         // { label:"<b>Color:</b>", type:"color", id:"color"},
-                        //         { label:"<b>Rating:</b>", type:"rating", id:"rating"},
-                        //         { label:"<b>Loved:</b>", type:"toggle",  id:"favorite"},
-                        //         // { label:"Info", type:"label"},
-                        //         { label:"<b>BPM:</b>", type:"text", id:"bpm"},
-                        //         { label:"<b>Duration:</b>", id:"track_length", template:format_nanoseconds},
-                        //     ]
-                        // },
-
                     ]
                 }
             ]
