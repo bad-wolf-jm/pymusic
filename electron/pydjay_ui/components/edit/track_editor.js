@@ -208,7 +208,7 @@ class TrackEditWindow extends EventDispatcher {
                     () => {
                         this.stream_start = Math.round(this._region.start * 1000000000)
                         this.stream_end = Math.round(this._region.end * 1000000000)
-                        this.setValue(this.main_stream_length_id, `${format_nanoseconds(this.stream_end - this.stream_start)}`)
+                        //this.setValue(this.main_stream_length_id, `${format_nanoseconds(this.stream_end - this.stream_start)}`)
                     }
                 )
             }
@@ -295,7 +295,9 @@ class TrackEditWindow extends EventDispatcher {
 
     applyChanges() {
         let values = $$(this.main_property_edit_id).getValues()
-        console.log(values)
+        values.stream_start = this.stream_start
+        values.stream_end = this.stream_end
+        //console.log(values)
         // let values = {
         //     title: this.getValue(this.main_title_edit_id), 
         //     artist: this.getValue(this.main_artist_edit_id),
@@ -313,7 +315,6 @@ class TrackEditWindow extends EventDispatcher {
         this.dispatch("accept-changes", values)
         this.audio_player.stop()
         this.audio_player.un("stream-position", this.updateWaveformPosition)
-
         this.audio_player.audio_context.audio_ctx.close()
         this._win.hide()
     }
@@ -323,7 +324,6 @@ class TrackEditWindow extends EventDispatcher {
         this.audio_player.stop()
         this.audio_player.un("stream-position", this.updateWaveformPosition)
         this.audio_player.audio_context.audio_ctx.close()
-
         this._win.hide()
     }
 
@@ -435,7 +435,7 @@ class TrackEditWindow extends EventDispatcher {
                                                     { label:"<b>Loved:</b>", type:"toggle",  id:"favorite"},
                                                     // { label:"Info", type:"label"},
                                                     // { label:"<b>BPM:</b>", type:"text", id:"bpm"},
-                                                    // { label:"<b>Duration:</b>", id:"track_length", template:format_nanoseconds},
+                                                    //{ label:"<b>Duration:</b>", id:"track_length", template:format_nanoseconds},
                                                 ]
                                             },
 

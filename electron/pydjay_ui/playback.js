@@ -398,15 +398,15 @@ function play_next_track_after_time(time_in_seconds) {
         function () {
             if (delay <= 0) {
                 clearInterval(id);
-                $$('main-artist').define('label', `Next track will start now...`)
+                $$(mpl.title_id).define('label', ``)
                 play_next_track();
             } else {
                 if (delay > 1) {
-                    $$('main-artist').define('label', `Next track will start in ${delay} seconds`)
+                    $$(mpl.title_id).define('label', `Next track will start in ${delay} seconds`)
                 } else {
-                    $$('main-artist').define('label', `Next track will start in 1 second`)
+                    $$(mpl.title_id).define('label', `Next track will start in 1 second`)
                 }
-                $$('main-artist').refresh()
+                $$(mpl.title_id).refresh()
                 delay--;
             }
         }, 1000)

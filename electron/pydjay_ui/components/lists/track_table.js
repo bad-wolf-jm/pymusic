@@ -184,15 +184,15 @@ class TrackTable extends EventDispatcher {
     create_layout() {
         return {
             type:'line',
-            autoheight:true,
-            css:{
-                border: '0px solid #3c3c3c',
-            },
+            // autoheight:true,
+            // css:{
+            //     border: '0px solid #3c3c3c',
+            // },
             rows: [
                 {
                     id: this.header,
                     css:{
-                        'background-color':'#5c5c5c',
+                        'background-color':'#3c3c3c',
                         'padding':'5px',
                         border: '1px solid #3c3c3c'
                      },
@@ -240,11 +240,11 @@ class TrackTable extends EventDispatcher {
                     id: this.track_list,
                     select:"row",
                     resizeColumn:{headerOnly:true},
-                    rowHeight:25,
+                    rowHeight:22,
                     css:{
                         'background-color':'#303030',
-                        border: '0px solid #5c5c5c',
-                        "font-size":'13px',
+                        // border: '0px solid #5c5c5c',
+                        "font-size":'10pt',
                      },
                     columns:[
                         { 
@@ -366,7 +366,7 @@ class TrackTable extends EventDispatcher {
                     ],
                     scroll:"y"
                 },
-                {height:18}
+                {height:12}
             ]
         }
         
