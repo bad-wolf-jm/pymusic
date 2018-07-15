@@ -115,7 +115,7 @@ function save_session(name, location, address) {
 
                                          for(var i =0; i<played_tracks.length; i++){
                                              start_time = format(played_tracks[i].start_time);
-                                             end_time = format(played_tracks[i].start_time);
+                                             end_time = format(played_tracks[i].end_time);
                                              session_data.push(`(${new_session_id}, ${played_tracks[i].track_id}, '${start_time}', '${end_time}', ${i+1})`)
                                              if (i+1 < played_tracks.length) {
                                                  relation_time = format(played_tracks[i+1].start_time);
