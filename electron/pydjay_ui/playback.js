@@ -431,6 +431,7 @@ function play_next_track() {
                             DB.get_track_by_id(track_id, 
                                 function (track) {
                                     $$('queue_list').remove($$('queue_list').getFirstId())
+                                    current_queue_position = position;
                                     update_queue_labels();
                                     mpl.play(track[0])
                                 }
