@@ -108,9 +108,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
     }
 
     play(track) {
-        //result = result[0];
-        //console.log(track)
-
         let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
         $$(this.title_id ).define('label', track.title)

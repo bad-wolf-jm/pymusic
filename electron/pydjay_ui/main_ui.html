@@ -50,98 +50,6 @@ var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.mi
 var path = require('path');
 var dialog = require('electron').remote.dialog;
 
-// var player_window = {
-//     height:58,
-//     gravity:1,
-//     css:{
-//         'background-color':'#3c3c3c',
-//         'padding':'0px',
-//         border: '1px solid #5c5c5c',
-//      },
-//     cols:[
-//         {
-//             id:'main-cover-image',
-//             view: 'template',
-//             width:58,
-//             height:58,
-//             template: ""
-//         },
-//         {width:5},
-//         {
-//             rows:[
-//                 {height:7},
-//                 {
-//                     cols: [
-//                         {
-//                             rows: [
-//                                 {
-//                                     id:'main-title',
-//                                     view: 'label',
-//                                     css: {
-//                                         'text-align':'left',
-//                                         'text-transform':'uppercase',
-//                                         'font-weight':'bold'
-//                                     },
-//                                     label: 'Title Of Song',
-//                                     height:20
-//                                 },
-//                                 {
-//                                     id:'main-artist',
-//                                     view: 'label',
-//                                     css: {
-//                                         'text-align':'left',
-//                                         'white-space':'nowrap',
-//                                         'overflow': 'hidden',
-//                                         'text-overflow': 'ellipsis'
-//                                     },
-//                                     label: 'Artist - Album',
-//                                     height:20
-//                                 }
-//                             ]
-//                         },
-//                         {
-//                             id:'main_track_time',
-//                             view: 'label',
-//                             css: {
-//                                 'text-align':'right',
-//                                 'font-size':'20px',
-//                                 'font-weight':800
-//                             },
-//                             label: '-00:00',
-//                             height:15,
-//                             width:75
-//                         },
-//                         {width:5}
-//                     ]
-//                 },
-//                 {height:2},
-//                 {cols:[
-//                     {width:2},
-//                     {
-//                         height:5,
-//                         css:{margin:0, padding:0, border: '0px solid #3c3c3c'},
-//                         template:'<div id="main-player-progress" style="border: \'0px solid black\'; width:100%; height:100%; position:relative; top:0%; transform: translateY(-150%)"></div>'
-//                     },
-//                     {width:7}
-//                 ]}
-//             ]
-//         }
-//     ]
-// }
-
-// var main_player_progress =undefined;
-// $(document).ready( () => {
-//     main_player_progress = new ProgressBar.Line('#main-player-progress',
-//     {
-//      strokeWidth: 1,
-//      easing: 'easeInOut',
-//      duration: 5,
-//      color: '#5a5a5a',
-//      trailColor: '#eee',
-//      trailWidth: 1,
-//      svgStyle: {width: '100%', height: '100%'}});
-//     main_player_progress.animate(0);
-// });
 
 
 var preview_seek = undefined;
@@ -556,157 +464,22 @@ var datatable = webix.ui({
     css:{
                 'background-color':'#515151',
                 'padding':'0px',
-                'border-bottom': "1px solid #CCCCCC",
+                //'border-bottom': "1px solid #CCCCCC",
             },
     rows:[
-        main_player_interface.create_layout(),
-        // {
-        //     css:{
-        //         'background-color':'#515151',
-        //         'padding':'0px',
-        //         'border-bottom': "1px solid #CCCCCC",
-        //     },
-        //     cols:[
-        //         {
-        //             cols:[
-        //                 {},
-        //                 {
-        //                     view:'button',
-        //                     type:'icon',
-        //                     icon:'list',
-        //                     label:'SESSION',
-        //                     height:25,
-        //                     width:100,
-        //                     popup:'session_popup'
-        //                 }
-        //             ]
-        //         },
-        //         player_window,
-        //         {
-        //             cols:[
-        //                 // {
-        //                 //     css: {
-        //                 //         //'background-color':'#515151',
-        //                 //         //'padding':'0px',
-        //                 //         //'border-bottom': "1px solid #CCCCCC",
-        //                 //         //'height': "100% !important"
-        //                 //     },
-        //                 //     width:1
-        //                 // },
-        //                 {
-        //                     width:250,
-        //                     cols:[
-        //                         {width:7},
-        //                         {
-        //                             gravity:.5,
-        //                             view:'template',
-        //                             id: 'queue_stop_message',
-        //                             css: {
-        //                                 'text-align':'center',
-        //                                 'vertical-align': 'middle',
-        //                                 color: '#fbbbbbb',
-        //                                 'background-color': '#870053'
-        //                             },
-        //                             template:`<span style="vertical-align:bottom">
-        //                                         <b>Queue will stop after this song</b>
-        //                                       </span>`,
-        //                             maxHeight:35
-        //                         },
-        //                         {width:15}
-        //                     ]
-        //                 },
-        //                 {
-        //                     gravity:.5,
-        //                     id:'start-stop-button',
-        //                     view:'button',
-        //                     type:'icon',
-        //                     icon:'play',
-        //                     label:'START',
-        //                     click: start_queue,
-        //                     maxHeight:35
-        //                 },
-        //                 {
-        //                     gravity:.5,
-        //                     view:'button',
-        //                     type:'icon',
-        //                     icon:'step-forward',
-        //                     label:'SKIP/STOP',
-        //                     popup: "skip_stop_dialog",
-        //                     maxHeight:35
-        //                 },
-        //                 {
-        //                     gravity:.5,
-        //                     view:'button',
-        //                     type:'icon',
-        //                     icon:'cog',
-        //                     label:'SETTINGS',
-        //                     click: playback_settings,
-        //                     maxHeight:35
-        //                 },
-        //                 // {
-        //                 //     gravity:.5,
-        //                 //     view:'button',
-        //                 //     type:'icon',
-        //                 //     icon:'plus',
-        //                 //     label:'ADD',
-        //                 //     autowidth:true,
-        //                 //     click: add_track,
-        //                 //     maxHeight:35
-        //                 // }
-        //             ]
-        //         }
-        //     ]
-        // },
-        {
-            cols:[
-                sidebar_template,
-                //{view:"resizer"},
-                //main_list_display_template,
-                main_track_table.create_layout(),
-                //{view:"resizer"},
-
-                {
-                    width:494,
-                    rows: [
-                        queue_display_template,
-                        // {
-                        //     height:5,
-                        //     css: {
-                        //         'background-color': '#3c3c3c',
-                        //         'border-color':"0px solid #3c3c3c"
-                        //     }
-                        // },
-
-
-                        // { view:"property", id:"metadata", width:100,disable:true,height:285, labelWidth:100,
-                        //     elements:[
-                        //     { label:"Metadata", type:"label"},
-                        //     { label:"<b>Title:</b>", type:"text", id:"title"},
-                        //     { label:"<b>Artist:</b>", type:"text", id:"artist"},
-                        //     { label:"<b>Album:</b>", type:"text", id:"album"},
-                        //     { label:"<b>Year:</b>", type:"text", id:"year"},
-                        //     { label:"<b>Genre:</b>", type:"text", id:"genre"},
-                        //     { label:"<b>Color:</b>", type:"color", id:"color"},
-                        //     { label:"Info", type:"label"},
-                        //     { label:"<b>BPM:</b>", type:"text", id:"bpm"},
-                        //     { label:"<b>Duration:</b>", type:"text", id:"track_length"},
-                        //     ]
-                        // },
-                        preview_player_window,
-                        //suggestions_display_template
-                    ]
-                }
-            ]
-        },
-        {
+    {
             height:40,
             css: {
-                'background-color': '#202020',
-                'border-top':"1px solid #3f3f3f",
+                'background-color': '#2a2a2a',
+                'padding':'0px',
+                'border-bottom':"2px solid #a2a2a2 !important",
             },
             cols:[
                 {
                     width:15
+                },
+                {
+
                 },
                 {
                     view: 'label',
@@ -727,34 +500,25 @@ var datatable = webix.ui({
                     height: 20
                 },
                 {
-                    id:'main-player-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'volume-up',
-                    label:'100%',
-                    width:75
-                },
-                {
-                    id:'monitor-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'volume-control-phone',
-                    label:'100%',
-                    width:75
-                },
-                {
-                    id:'precue-player-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'headphones',
-                    label:'100%',
-                    width:75
-                },
-                {
                     width:15
                 }
             ]
-        }
+        },
+
+        main_player_interface.create_layout(),
+        {
+            cols:[
+                sidebar_template,
+                main_track_table.create_layout(),
+                {
+                    width:494,
+                    rows: [
+                        queue_display_template,
+                        preview_player_window,
+                    ]
+                }
+            ]
+        },
     ]
 });
 $$('queue_stop_message').hide();
