@@ -252,8 +252,54 @@
     line-height: 25px;
 }
 
+.webix_menu-x .webix_list_item {
+    overflow: hidden !important;
+    /*height:20px;*/
+    background-color: #707070 !important;
+    padding: 5px 15px 5px 10px !important;
+    margin: 2px;
+    line-height: 25px;
+    width:100% !important;
+    border-radius:5px !important
+}
+
 
 .webix_full_screen {
     overflow: hidden !important;
     height:100% !important;
+}
+
+
+
+/* Customize the label (the container) */
+.favorite {
+    display: block;
+    position: relative;
+    /* padding-left: 35px;
+    margin-bottom: 12px; */
+    cursor: pointer;
+    font-size: 10pt;
+    text-align:center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+
+
+.favorite input[type="checkbox"],
+.favorite .checked {
+    display: none;
+}
+  
+
+.favorite input[type="checkbox"]:checked ~ .checked
+{
+    display: inline-block;
+}
+ 
+.favorite input[type="checkbox"]:checked ~ .unchecked
+{
+    display: none;
 }

@@ -25,9 +25,11 @@
 <script src="./components/playlist/duplicate.js"></script>
 <script src="./components/playlist/short_list.js"></script>
 <script src="./components/playback/main_player.js"></script>
+<script src="./menu.js"></script>
 <script src="./sidebar.js"></script>
 <script src="./playback.js"></script>
 <!-- <script src="./track_edit.js"></script> -->
+<script src="./components/edit/mp3_fileinfo.js"></script>
 <script src="./components/edit/track_editor.js"></script>
 <script src="./components/edit/track_add.js"></script>
 <script src="./queue.js"></script>
@@ -67,50 +69,50 @@ webix.ready( () => {
     preview_seek.animate(0);
 });
 
-var track_add_progress_dialog =  webix.ui({
-    view:"window",
-    modal:true,
-    position:"center",
-    width:600,
-    height:400,
-    head: false,
-    body:{
-        rows:[
-            {height:10},
-            {
-                id:'track_add_progress',
-                view: "label",
-                label:"Processing track ### of ###",
-                css: {
-                    'text-align': 'center',
-                    'font-size':  '20px',
-                }
-            },
-            {height:10},
-            {
-                id:'track_add_title',
-                view: "label",
-                label:"Title Of Song",
-                css: {
-                    'text-align': 'center',
-                    'font-size': '20px',
-                }
+// var track_add_progress_dialog =  webix.ui({
+//     view:"window",
+//     modal:true,
+//     position:"center",
+//     width:600,
+//     height:400,
+//     head: false,
+//     body:{
+//         rows:[
+//             {height:10},
+//             {
+//                 id:'track_add_progress',
+//                 view: "label",
+//                 label:"Processing track ### of ###",
+//                 css: {
+//                     'text-align': 'center',
+//                     'font-size':  '20px',
+//                 }
+//             },
+//             {height:10},
+//             {
+//                 id:'track_add_title',
+//                 view: "label",
+//                 label:"Title Of Song",
+//                 css: {
+//                     'text-align': 'center',
+//                     'font-size': '20px',
+//                 }
 
-            },
-            {
-                id:'track_add_artist',
-                view: "label",
-                label:"Artist - Album",
-                css: {
-                    'text-align': 'center',
-                    'font-size':  '15px',
-                }
+//             },
+//             {
+//                 id:'track_add_artist',
+//                 view: "label",
+//                 label:"Artist - Album",
+//                 css: {
+//                     'text-align': 'center',
+//                     'font-size':  '15px',
+//                 }
 
-            }
-        ]
-    }
-})
-track_add_progress_dialog.hide();
+//             }
+//         ]
+//     }
+// })
+// track_add_progress_dialog.hide();
 
 
 function save_current_session() {
@@ -453,6 +455,7 @@ main_menu_popup  = webix.ui({
 main_menu_popup.hide()
 
 main_track_table = new TrackTable()
+main_menu = new TopMenu()
 var main_player_interface = mpl
 webix.ready(
     () => {
@@ -478,8 +481,18 @@ var datatable = webix.ui({
                 {
                     width:15
                 },
+                // {
+                //     view:"button",
+                //     type:"icon",
+                //     icon:"cog",
+                //     width:30,
+                //     // css: {
+                //     //     "font-size": "15pt"
+                //     // }
+                // },
+                main_menu.create_layout(),
                 {
-
+                    // width:15
                 },
                 {
                     view: 'label',
