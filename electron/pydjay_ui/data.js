@@ -224,14 +224,14 @@ function DataProvider() {
         id, title, artist, album, year, genre, bpm, rating, favorite, comments, waveform, cover_medium,
         cover_small, cover_large, cover_original, track_length, stream_start, stream_end, stream_length,
         date_added, date_modified, bitrate, samplerate, file_name, file_size, hash, category, description,
-        disabled, original_file_name, grouping)
+        disabled, original_file_name, grouping, color)
         VALUES (${track_info.id},${track_info.title}, ${track_info.artist}, ${track_info.album}, ${track_info.year},
         ${track_info.genre}, ${track_info.bpm}, ${track_info.rating}, ${track_info.favorite}, ${track_info.comments},
         ${track_info.waveform}, ${track_info.cover_medium}, ${track_info.cover_small}, ${track_info.cover_large},
         ${track_info.cover_original}, ${track_info.track_length}, ${track_info.stream_start}, ${track_info.stream_end},
         ${track_info.stream_length}, ${track_info.date_added}, ${track_info.date_modified}, ${track_info.bitrate},
         ${track_info.samplerate}, ${track_info.file_name}, ${track_info.file_size}, ${track_info.hash}, ${track_info.category},
-        ${track_info.description}, ${track_info.disabled}, ${track_info.original_file_name}, ${track_info.grouping})`
+        ${track_info.description}, ${track_info.disabled}, ${track_info.original_file_name}, ${track_info.grouping},  ${track_info.color})`
         $QUERY(sql, k)
     }
 
