@@ -11,6 +11,11 @@ class TrackAddProgressDialog {
         this.id_start = id_start
         this.settings = settings
         this.num = this.track_list.length
+
+        this.track_add_progress_id = this.ID()
+        this.track_add_title_id = this.ID()
+        this.track_add_artist_id = this.ID()
+
         this._win = webix.ui({
             view:"window",
             modal:true,
@@ -22,7 +27,7 @@ class TrackAddProgressDialog {
                 rows:[
                     {height:10},
                     {
-                        id:'track_add_progress',
+                        id:this.track_add_progress_id,
                         view: "label",
                         label:"Processing track ### of ###",
                         css: {
@@ -32,7 +37,7 @@ class TrackAddProgressDialog {
                     },
                     {height:10},
                     {
-                        id:'track_add_title',
+                        id:this.track_add_title_id,
                         view: "label",
                         label:"Title Of Song",
                         css: {
@@ -42,7 +47,7 @@ class TrackAddProgressDialog {
         
                     },
                     {
-                        id:'track_add_artist',
+                        id:this.track_add_artist_id,
                         view: "label",
                         label:"Artist - Album",
                         css: {
@@ -57,6 +62,10 @@ class TrackAddProgressDialog {
         this._add_tracks({}, this.id_start, this.track_list.length)
         this._win.show()
     }
+
+    ID () {
+        return '_' + Math.random().toString(36).substr(2, 9);
+      };
 
     getFileExtension(f_name) {
         return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
@@ -74,12 +83,12 @@ class TrackAddProgressDialog {
             var small_image_file = null;
             // var wave_path = null;
     
-            $$('track_add_progress').define('label', `ADDING TRACK ${total - this.track_list.length} OF ${total}`)
-            $$('track_add_progress').refresh()
-            $$('track_add_title').define('label', `<b>${data.title}</b>`)
-            $$('track_add_title').refresh()
-            $$('track_add_artist').define('label', `${data.artist} - ${data.album}`)
-            $$('track_add_artist').refresh()
+            $$(this.track_add_progress_id).define('label', `ADDING TRACK ${total - this.track_list.length} OF ${total}`)
+            $$(this.track_add_progress_id).refresh()
+            $$(this.track_add_title_id).define('label', `<b>${data.title}</b>`)
+            $$(this.track_add_title_id).refresh()
+            $$(this.track_add_artist_id).define('label', `${data.artist} - ${data.album}`)
+            $$(this.track_add_artist_id).refresh()
     
             fs.copy(data.filename, mp3_path).then( () => {
                     if (data.picture != undefined) {
@@ -129,7 +138,7 @@ class TrackAddProgressDialog {
                         'stream_start': 0,
                         'stream_end': data.duration,
                         'stream_length': data.duration,
-                        'color': "NULL",
+                        'color': (data.color == undefined || data.color == "") ? "NULL" : STRING(data.color),
                         'date_added': DATE(NOW),
                         'date_modified': DATE(NOW),
                         'bitrate': data.bit_rate,    
@@ -143,8 +152,6 @@ class TrackAddProgressDialog {
                         'description': 'NULL', 
                     }
                     DB.add_track(track_info, () => {this._add_tracks (settings, id+1, total)})
-                // }
-            //             foo.src = mp3_path
              }).catch(console.log)
         } else {
             this._win.hide();
@@ -164,8 +171,16 @@ class TrackAdder extends EventDispatcher {
         this._num = this.filenames.length
         this.track_info_array = []
         this.track_info_editor = undefined
+
+        this.add_file_list_id = this.ID()
+
         this.display_track_info()
     }
+
+    ID () {
+        return '_' + Math.random().toString(36).substr(2, 9);
+      };
+
 
     parse_tag(filename, tag) {
         var p_tag = {
@@ -214,10 +229,11 @@ class TrackAdder extends EventDispatcher {
     }
 
     color(e) {
-        if (e.color != undefined) {
-            return `<span style='background-color:${e.color}; border-radius:4px; padding-right:10px;'>&nbsp</span> ${e.color}`
+        console.log(e.color)
+        if ((e.color != undefined) && (e.color != "")) {
+            return `<span style='background-color:${e.color}; border-radius:4px; padding-right:10px;'>&nbsp&nbsp&nbsp</span> ${e.color}`
         } else {
-            return `<span style='background-color:#ffffff; border-radius:4px; padding-right:10px;'>&nbsp</span> Default`
+            return `<span style='background-color:#ffffff; border-radius:4px; padding-right:10px;'>&nbsp&nbsp&nbsp</span> Default`
         }
     }
 
@@ -250,7 +266,7 @@ class TrackAdder extends EventDispatcher {
                     {height:10},
                     {
                         view:"datatable",
-                        id:"add_file_list",
+                        id:this.add_file_list_id,
                         select:"row",
                         editaction:'dblclick',
                         editable: true,
@@ -270,7 +286,7 @@ class TrackAdder extends EventDispatcher {
                             { 
                                 id:"color",      
                                 header:"<b>Color</b>",  
-                                width:125, 
+                                width:100, 
                                 sort:'string', 
                                 template: this.color , 
                                 editor: 'color'
@@ -298,10 +314,16 @@ class TrackAdder extends EventDispatcher {
                             },
                             { 
                                 id:"year",          
-                                header:"<b>Year</b>",   
-                                width:75, 
+                                header: {
+                                    text:"<b>Year</b>", 
+                                    css:{"text-align":'right'}
+                                }, 
+                                width:55, 
                                 sort:'string', 
-                                editor: 'text'
+                                editor: 'text',
+                                css: { 
+                                    "text-align":'right'
+                                }, 
                             },
                             { 
                                 id:"genre",         
@@ -313,34 +335,60 @@ class TrackAdder extends EventDispatcher {
                             { 
                                 id:"grouping",      
                                 header:"<b>Grouping</b>", 
-                                fillspace:true, 
+                                width:135, 
                                 sort:'string', 
                                 editor: 'text'
                             },
                             { 
                                 id:"bit_rate",      
-                                header:"<b>Kbps</b>", 
-                                width:75,
+                                header: {
+                                    text: "<b>Kb/s</b>", 
+                                    css:{"text-align":'right'},
+                                    height:25
+                                },  
+                                width:55,
                                 sort:'int', 
+                                css: { 
+                                    "text-align":'right'
+                                }, 
+
                                 // editor: 'text'
                             },
                             { 
                                 id:"samplerate",      
-                                header:"<b>Freq</b>", 
+                                header: {
+                                    text: "<b>Freq.</b>", 
+                                    css:{"text-align":'right'},
+                                    height:25
+                                },  
                                 width:75,
-                                sort:'int', 
+                                sort:'int',                                 
+                                css: { 
+                                    "text-align":'right'
+                                }, 
+
                             },
                             { 
                                 id:"file_size",      
-                                header:"<b>Size</b>", 
+                                header: {
+                                    text: "<b>Size</b>", 
+                                    css:{"text-align":'right'},
+                                    height:25
+                                },  
                                 width:75,
+                                template: (o) => {
+                                    return humanFileSize(o.file_size)
+                                },
+                                css: { 
+                                    "text-align":'right'
+                                }, 
                                 sort:'int', 
                             },
                             { 
                                 id:"bpm", 
                                 header: {
                                     text:"<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>", 
-                                    css:{"text-align":'center'}
+                                    css:{"text-align":'right'}
                                 }, 
                                 width:50, 
                                 css: { 
@@ -350,15 +398,24 @@ class TrackAdder extends EventDispatcher {
                             },
                             { 
                                 id:"rating",        
-                                header:"<b>Rating</b>", 
-                                width:125, 
-                                sort:'string', 
+                                //header:"<b>Rating</b>", 
+                                header: {
+                                    text:"<b>Rating</b>", 
+                                    css:{"text-align":'right'}
+                                }, 
+                                width:80, 
+                                sort:'string',                                 
+                                css: { 
+                                    "text-align":'right'
+                                }, 
+
                                 template: (x, y, z) => this.rating(x, y, z),
                             },
                             { 
                                 id:"favorite",      
                                 header: {
                                     text: "<b><span class='fa fa-heart' style='font-size: 12px'/></b>", 
+                                    css:{"text-align":'right'},
                                     height:25
                                 },  
                                 width:30, 
@@ -366,33 +423,44 @@ class TrackAdder extends EventDispatcher {
                                 uncheckValue:0,
                                 template: (x, y, z) => this.custom_checkbox(x, y, z),
                                 sort:'int', 
+                                css: { 
+                                    "text-align":'center'
+                                }, 
                             },
                             { 
                                 id:"length",        
                                 header:"<b>Time</b>", 
-                                width:100, 
+                                header: {
+                                    text: "<b>Time</b>", 
+                                    css:{"text-align":'right'},
+                                    height:25
+                                },  
+                                width:65, 
                                 sort:'int',
                                 template: (o) => {
                                     return `${format_nanoseconds(o.duration)}`
-                                }
+                                },
+                                css: { 
+                                    "text-align":'right'
+                                }, 
     
                             },
                         ],
                         onClick:{
                             favorite: (e, id)=> {
-                                var item = $$("add_file_list").getItem(id.row);
+                                var item = $$(this.add_file_list_id).getItem(id.row);
                                 if (item.favorite == 1) {
                                     item.favorite = 0
                                 } else {
                                     item.favorite = 1
                                 }
-                                $$("add_file_list").updateItem(id.row, item)
+                                $$(this.add_file_list_id).updateItem(id.row, item)
                             },
                             rating_star: (e, id) => {
                                 console.log(e)
-                                var item = $$("add_file_list").getItem(id.row);
+                                var item = $$(this.add_file_list_id).getItem(id.row);
                                 item.rating = e.target.getAttribute('rating')
-                                $$("add_file_list").updateItem(id.row, item)
+                                $$(this.add_file_list_id).updateItem(id.row, item)
                             }
                         },
                     },
@@ -427,12 +495,12 @@ class TrackAdder extends EventDispatcher {
     perform_add_to_database() {
         db_connection.query(
             "SELECT db_image_cache as image_root, db_music_cache as music_root, db_waveform_cache as waveform_root FROM settings",
-            function (error, settings) {
+            (error, settings) => {
                 settings=settings[0]
                 if (error) throw error;
                 db_connection.query(
                     "SELECT max(id) + 1 AS first_available_id FROM tracks",
-                    function (error, id_result) {
+                    (error, id_result) => {
                         if (error) throw error;
                         var first_available_id = null;
                         if (id_result[0].first_available_id != null) {
@@ -441,9 +509,9 @@ class TrackAdder extends EventDispatcher {
                             first_available_id = 1;
                         }
                         let items_to_add = []
-                        $$('add_file_list').eachRow(
-                            function (row) {
-                                items_to_add.push($$('add_file_list').getItem(row))
+                        $$(this.add_file_list_id).eachRow(
+                            (row) => {
+                                items_to_add.push($$(this.add_file_list_id).getItem(row))
                             }
                         )
                         var x = new TrackAddProgressDialog(settings, first_available_id, items_to_add)
