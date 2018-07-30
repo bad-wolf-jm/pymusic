@@ -76,12 +76,10 @@ class TrackAddProgressDialog {
             let data = this.track_list.pop();
             let mp3_file = `track_${id}.${this.getFileExtension(data.filename)}`
             let mp3_path = `${this.settings.music_root}/${mp3_file}`
-            // console.log(data.filename, mp3_path)
             var original_image_file = null;
             var large_image_file = null;
             var medium_image_file = null;
             var small_image_file = null;
-            // var wave_path = null;
     
             $$(this.track_add_progress_id).define('label', `ADDING TRACK ${total - this.track_list.length} OF ${total}`)
             $$(this.track_add_progress_id).refresh()
@@ -493,30 +491,15 @@ class TrackAdder extends EventDispatcher {
     }
 
     perform_add_to_database() {
-        db_connection.query(
-            "SELECT db_image_cache as image_root, db_music_cache as music_root, db_waveform_cache as waveform_root FROM settings",
-            (error, settings) => {
-                settings=settings[0]
-                if (error) throw error;
-                db_connection.query(
-                    "SELECT max(id) + 1 AS first_available_id FROM tracks",
-                    (error, id_result) => {
-                        if (error) throw error;
-                        var first_available_id = null;
-                        if (id_result[0].first_available_id != null) {
-                            first_available_id = id_result[0].first_available_id;
-                        } else {
-                            first_available_id = 1;
-                        }
-                        let items_to_add = []
-                        $$(this.add_file_list_id).eachRow(
-                            (row) => {
-                                items_to_add.push($$(this.add_file_list_id).getItem(row))
-                            }
-                        )
-                        var x = new TrackAddProgressDialog(settings, first_available_id, items_to_add)
+        DB.get_settings(
+            (settings) => {
+                let items_to_add = []
+                $$(this.add_file_list_id).eachRow(
+                    (row) => {
+                        items_to_add.push($$(this.add_file_list_id).getItem(row))
                     }
                 )
+                var x = new TrackAddProgressDialog(settings, settings.next_id, items_to_add)
             }
         )
     }    

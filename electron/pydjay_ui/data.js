@@ -103,7 +103,8 @@ function DataProvider() {
     }
 
     self.get_all_tracks = function (k) {
-        var sql =self.base_track_view_sql()
+        let sql = self.base_track_view_sql()
+        sql += ` ORDER BY title`
         $QUERY(sql, k);
     }
 
@@ -217,6 +218,24 @@ function DataProvider() {
         (SELECT 1 as id, tracks.stream_length as duration, session_queue.id as count, settings.wait_time as wait_time
         FROM tracks JOIN session_queue ON tracks.id=session_queue.track_id LEFT JOIN settings on 1
         WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`, k)
+    }
+
+    self.get_settings = function (k) {
+       $QUERY("SELECT db_image_cache as image_root, db_music_cache as music_root, db_waveform_cache as waveform_root FROM settings",
+            (settings) => {
+                let S=settings[0]
+                $QUERY("SELECT max(id) + 1 AS first_available_id FROM tracks",
+                    (id_result) => {
+                        if (id_result[0].first_available_id != null) {
+                            S.next_id = id_result[0].first_available_id;
+                        } else {
+                            S.next_id = 1;
+                        }
+                        return k(S)
+                    }
+                )
+            }
+        )
     }
 
     self.add_track = function (track_info, k) {
