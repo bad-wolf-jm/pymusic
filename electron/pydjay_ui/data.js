@@ -103,7 +103,8 @@ function DataProvider() {
     }
 
     self.get_all_tracks = function (k) {
-        var sql =self.base_track_view_sql()
+        let sql = self.base_track_view_sql()
+        sql += ` ORDER BY title`
         $QUERY(sql, k);
     }
 
@@ -219,19 +220,37 @@ function DataProvider() {
         WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`, k)
     }
 
+    self.get_settings = function (k) {
+       $QUERY("SELECT db_image_cache as image_root, db_music_cache as music_root, db_waveform_cache as waveform_root FROM settings",
+            (settings) => {
+                let S=settings[0]
+                $QUERY("SELECT max(id) + 1 AS first_available_id FROM tracks",
+                    (id_result) => {
+                        if (id_result[0].first_available_id != null) {
+                            S.next_id = id_result[0].first_available_id;
+                        } else {
+                            S.next_id = 1;
+                        }
+                        return k(S)
+                    }
+                )
+            }
+        )
+    }
+
     self.add_track = function (track_info, k) {
         sql = `INSERT INTO tracks (
         id, title, artist, album, year, genre, bpm, rating, favorite, comments, waveform, cover_medium,
         cover_small, cover_large, cover_original, track_length, stream_start, stream_end, stream_length,
         date_added, date_modified, bitrate, samplerate, file_name, file_size, hash, category, description,
-        disabled, original_file_name, grouping)
+        disabled, original_file_name, grouping, color)
         VALUES (${track_info.id},${track_info.title}, ${track_info.artist}, ${track_info.album}, ${track_info.year},
         ${track_info.genre}, ${track_info.bpm}, ${track_info.rating}, ${track_info.favorite}, ${track_info.comments},
         ${track_info.waveform}, ${track_info.cover_medium}, ${track_info.cover_small}, ${track_info.cover_large},
         ${track_info.cover_original}, ${track_info.track_length}, ${track_info.stream_start}, ${track_info.stream_end},
         ${track_info.stream_length}, ${track_info.date_added}, ${track_info.date_modified}, ${track_info.bitrate},
         ${track_info.samplerate}, ${track_info.file_name}, ${track_info.file_size}, ${track_info.hash}, ${track_info.category},
-        ${track_info.description}, ${track_info.disabled}, ${track_info.original_file_name}, ${track_info.grouping})`
+        ${track_info.description}, ${track_info.disabled}, ${track_info.original_file_name}, ${track_info.grouping},  ${track_info.color})`
         $QUERY(sql, k)
     }
 
@@ -259,7 +278,6 @@ function DataProvider() {
         sql += fields.indexOf("grouping") != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
         sql += `date_modified=${DATE(new Date())}\n` 
         sql += `WHERE id=${id}`
-        console.log(sql)
         $QUERY(sql, k)
     }
 }

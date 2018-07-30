@@ -9,6 +9,7 @@
 <script src="../web-audio/audio_player_base.js"></script>
 <script src="../web-audio/audio_player_buffer.js"></script>
 <script src="../web-audio/audio_player_file.js"></script>
+<script src="../web-audio/mp3_fileinfo.js"></script>
 
 
 <script src="./utils.js"></script>
@@ -26,6 +27,7 @@
 <script src="./components/playlist/short_list.js"></script>
 <script src="./components/playback/precue_player.js"></script>
 <script src="./components/playback/main_player.js"></script>
+<script src="./menu.js"></script>
 <script src="./sidebar.js"></script>
 <script src="./playback.js"></script>
 <!-- <script src="./track_edit.js"></script> -->
@@ -34,8 +36,8 @@
 <script src="./queue.js"></script>
 <script src="./actions.js"></script>
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
-<link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">
-<link rel="stylesheet" href="../node_modules/webix/skins/contrast.css">
+<!-- <link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">-->
+<link rel="stylesheet" href="../node_modules/webix/skins/contrast.css"> 
 <link rel="stylesheet" href="./pymusic_style.css">
 
 
@@ -474,6 +476,7 @@ popup.hide();
 //main_menu_popup.hide()
 
 main_track_table = new TrackTable()
+main_menu = new TopMenu()
 var main_player_interface = mpl
 webix.ready(
     () => {
@@ -499,27 +502,49 @@ var datatable = webix.ui({
                 {
                     width:15
                 },
+                // {
+                //     view:"button",
+                //     type:"icon",
+                //     icon:"cog",
+                //     width:30,
+                //     // css: {
+                //     //     "font-size": "15pt"
+                //     // }
+                // },
+                main_menu.create_layout(),
                 {
-
-                },
-                {
-                    view: 'label',
-                    id: 'calendar',
-                    label: '<span style="color:rgb(200,200,200)">2018-01-09</span> | 0:45',
-                    height: 20
+                    // width:15
                 },
                 {
                     view: 'label',
                     id: 'queue_duration',
                     label: '<b>QUEUE DURATION:</b> 0:00',
-                    height: 20
+                    height: 20,
+                    css: {
+                        "text-align": 'center'//,
+                        // "font-size": "15pt"
+                    }
                 },
                 {
                     view: 'label',
                     id:'queue_ends_at',
                     label: '<b>ENDS:</b> 0:00',
-                    height: 20
+                    height: 20,
+                    css: {
+                        "text-align": 'center'//,
+                        // "font-size": "15pt"
+                    }
                 },
+                {
+                    view: 'label',
+                    id: 'calendar',
+                    label: '<span style="color:rgb(200,200,200)">2018-01-09</span> | 0:45',
+                    height: 20,
+                    css: {
+                        "text-align": 'right'//,
+                        // "font-size": "15pt"
+                    }
+            },
                 {
                     width:15
                 }
