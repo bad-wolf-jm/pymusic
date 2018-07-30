@@ -351,8 +351,6 @@ class TrackAdder extends EventDispatcher {
                                 css: { 
                                     "text-align":'right'
                                 }, 
-
-                                // editor: 'text'
                             },
                             { 
                                 id:"samplerate",      
@@ -398,7 +396,6 @@ class TrackAdder extends EventDispatcher {
                             },
                             { 
                                 id:"rating",        
-                                //header:"<b>Rating</b>", 
                                 header: {
                                     text:"<b>Rating</b>", 
                                     css:{"text-align":'right'}
@@ -457,7 +454,6 @@ class TrackAdder extends EventDispatcher {
                                 $$(this.add_file_list_id).updateItem(id.row, item)
                             },
                             rating_star: (e, id) => {
-                                console.log(e)
                                 var item = $$(this.add_file_list_id).getItem(id.row);
                                 item.rating = e.target.getAttribute('rating')
                                 $$(this.add_file_list_id).updateItem(id.row, item)

@@ -47,75 +47,57 @@
 </body>
 <script type="text/javascript">
 $ = require('jquery')
-// Highcharts = require('highcharts')
 WaveSurfer = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path = require('path');
 var dialog = require('electron').remote.dialog;
 
-
-
-// var preview_seek = undefined;
 webix.ready( () => {
         pl.init_progress()
     }
 )
-    //     {
-//         strokeWidth: 1,
-//         duration: 5,
-//         color: '#5a5a5a',
-//         trailColor: '#eee',
-//         trailWidth: 1,
-//         svgStyle: {width: '100%', height: '100%'}
-//     }
-//  );
-//     preview_seek.animate(0);
-// });
-//
-// var track_add_progress_dialog =  webix.ui({
-//     view:"window",
-//     modal:true,
-//     position:"center",
-//     width:600,
-//     height:400,
-//     head: false,
-//     body:{
-//         rows:[
-//             {height:10},
-//             {
-//                 id:'track_add_progress',
-//                 view: "label",
-//                 label:"Processing track ### of ###",
-//                 css: {
-//                     'text-align': 'center',
-//                     'font-size':  '20px',
-//                 }
-//             },
-//             {height:10},
-//             {
-//                 id:'track_add_title',
-//                 view: "label",
-//                 label:"Title Of Song",
-//                 css: {
-//                     'text-align': 'center',
-//                     'font-size': '20px',
-//                 }
 
-//             },
-//             {
-//                 id:'track_add_artist',
-//                 view: "label",
-//                 label:"Artist - Album",
-//                 css: {
-//                     'text-align': 'center',
-//                     'font-size':  '15px',
-//                 }
-
-//             }
-//         ]
-//     }
-// })
-// track_add_progress_dialog.hide();
+var queue_display_template = {
+    type:'line',
+    css:{
+        border: '0px solid #3c3c3c',
+    },
+    rows:[
+        {
+            id: 'queue_list_header_row',
+            height:30,
+            css:{
+                'background-color':'#303030',
+                border: '1px solid #3c3c3c'
+             },
+             rows: [
+                 {height:7},
+                {
+                    view: 'label',
+                    label: '<b>QUEUE</b>',
+                    height: 20,
+                    css:{
+                        'padding-left':'10px',
+                     }
+                },
+                {height:5},
+            ]
+        },
+        {
+            view:"list",
+            id:'queue_list',
+            css:{
+                border: '1px solid #3c3c3c',
+             },
+            select:true,
+            template: queue_element_template,
+            type: { 
+                height: cover_size
+            },
+            scroll:"y"
+        }
+    ]
+}
 
 
 function save_current_session() {
@@ -330,48 +312,6 @@ session_popup.attachEvent('onShow', function () {
     });
 })
 
-
-// var track_info_popup = webix.ui(
-//     {
-//         view:"popup",
-//         id:"info_popup",
-//         height:300,
-//         width:350,
-//         body:{
-//             // { 
-//             view:"property", 
-//             id:"info_popup_property_sheet", 
-//             //width:100,
-//             disable:true,
-//             height:285, 
-//             labelWidth:100,
-//             elements:[
-//                 { label:"Metadata", type:"label"},
-//                 { label:"<b>Title:</b>", id:"title"},
-//                 { label:"<b>Artist:</b>", id:"artist"},
-//                 { label:"<b>Album:</b>", id:"album"},
-//                 { label:"<b>Year:</b>", id:"year"},
-//                 { label:"<b>Genre:</b>", id:"genre"},
-//                 { label:"<b>Color:</b>", id:"color"},
-//                 { label:"<b>Rating:</b>", id:"rating"},
-//                 { label:"<b>Loved:</b>", id:"favorite"},
-//             ]
-//         },
-//     }
-// )
-// track_info_popup.hide();
-// track_info_popup.attachEvent('onShow', function () {
-//     if (preview_track_id != undefined) {
-//         DB.get_track_by_id(preview_track_id,
-//             function (track_info) {
-//                 $$("info_popup_property_sheet").setValues(track_info[0])
-//             }
-//         )
-//     }
-// })
-
-
-
 var popup = webix.ui({
     view:"popup",
     id:"skip_stop_dialog",
@@ -409,72 +349,6 @@ var popup = webix.ui({
 popup.hide();
 
 
-// var preview_popup = webix.ui({
-//     view:"popup",
-//     id:"preview_popup_menu",
-//     height:650,
-//     width:200,
-//     body:{
-//         rows: [
-//             {
-//                 view:'button',
-//                 type:'icon',
-//                 // icon:'stop',
-//                 label:'Play full track',
-//                 maxHeight:35,
-//                 click: () => {
-//                     url = preview_track_id
-//                     if (url != undefined) {
-//                         preview_play_track_id(url)
-//                     }
-//                     $$("preview_popup_menu").hide()
-//                 }
-//             },
-//             {
-//                 view:'button',
-//                 type:'icon',
-//                 label:'Play last 30 seconds',
-//                 maxHeight:35,
-//                 click: () => {
-//                     url = preview_track_id
-//                     if (url != undefined) {
-//                         preview_play_track_id(url, -30000000000)
-//                     }
-//                     $$("preview_popup_menu").hide()
-//                 }
-//             },
-//             {
-//                 view:'button',
-//                 type:'icon',
-//                 // icon:'stop',
-//                 label:'Play last 10 seconds',
-//                 maxHeight:35,
-//                 click: () => {
-//                     url = preview_track_id
-//                     if (url != undefined) {
-//                         preview_play_track_id(url, -10000000000)
-//                     }
-//                     $$("preview_popup_menu").hide()
-//                 }
-//                 //click: stop_queue_now
-//             }
-//         ]
-//     }
-// })
-// popup.hide();
-
-
-
-//main_menu_popup  = webix.ui({
-//    view: 'popup',
-//    id: "main_menu_popup",
-//    width: 400,
-//    autoheight: true,
-//    relative: 'bottom',
- //   body: sidebar_template
-//})//
-//main_menu_popup.hide()
-
 main_track_table = new TrackTable()
 main_menu = new TopMenu()
 var main_player_interface = mpl
@@ -486,10 +360,9 @@ webix.ready(
 )
 var datatable = webix.ui({
     css:{
-                'background-color':'#515151',
-                'padding':'0px',
-                //'border-bottom': "1px solid #CCCCCC",
-            },
+            'background-color':'#515151',
+            'padding':'0px',
+        },
     rows:[
     {
             height:40,
@@ -502,19 +375,7 @@ var datatable = webix.ui({
                 {
                     width:15
                 },
-                // {
-                //     view:"button",
-                //     type:"icon",
-                //     icon:"cog",
-                //     width:30,
-                //     // css: {
-                //     //     "font-size": "15pt"
-                //     // }
-                // },
                 main_menu.create_layout(),
-                {
-                    // width:15
-                },
                 {
                     view: 'label',
                     id: 'queue_duration',
@@ -522,7 +383,6 @@ var datatable = webix.ui({
                     height: 20,
                     css: {
                         "text-align": 'center'//,
-                        // "font-size": "15pt"
                     }
                 },
                 {
@@ -532,7 +392,6 @@ var datatable = webix.ui({
                     height: 20,
                     css: {
                         "text-align": 'center'//,
-                        // "font-size": "15pt"
                     }
                 },
                 {
@@ -542,9 +401,8 @@ var datatable = webix.ui({
                     height: 20,
                     css: {
                         "text-align": 'right'//,
-                        // "font-size": "15pt"
                     }
-            },
+                },
                 {
                     width:15
                 }
@@ -662,23 +520,8 @@ webix.UIManager.addHotKey("alt+f",
     }
 );
 
-// webix.UIManager.addHotKey("escape", function () {
-//     webix.UIManager.setFocus($$(main_track_table.track_list));
-// }, $$('track_filter'));
-
-// webix.UIManager.addHotKey("enter", function () {
-//     webix.UIManager.setFocus($$(main_track_table.track_list));
-// }, $$('track_filter'));
-
 var filtering = false;
 
-// $$(main_track_table.track_list_filter).attachEvent('onFocus', function (x) {
-//     filtering=true;
-// });
-// $$(main_track_table.track_list_filter).attachEvent('onBlur', function (x) {
-//     filtering=false;
-// });
-
 webix.UIManager.addHotKey("right", function () {
     webix.UIManager.setFocus('queue_list');
 }, $$(main_track_table.track_list));
@@ -696,29 +539,6 @@ webix.UIManager.addHotKey("left", function () {
 webix.UIManager.addHotKey("right", function () {
     webix.UIManager.setFocus($$(main_track_table.track_list));
 }, $$('queue_list'));
-
-
-// webix.UIManager.addHotKey("left", function () {
-//     webix.UIManager.setFocus($$('queue_list'));
-// }, $$('suggestion_list'));
-
-// webix.UIManager.addHotKey("right", function () {
-//     webix.UIManager.setFocus($$(main_track_table.track_list));
-// }, $$('suggestion_list'));
-
-
-
-// $$('suggestion_list').attachEvent('onFocus',
-//     function (x) {
-//         s = $$('queue_list').getSelectedId();
-//         if (s == '') {
-//             $$('queue_list').select($$('queue_list').getFirstId());
-//         }
-//         webix.html.addCss( $$('suggestion_list_header_row').getNode(), "focus_header");
-//         webix.html.removeCss( $$('main_list_header_row').getNode(), "focus_header");
-//         webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
-//     }
-//  );
 
 
 $$('queue_list').attachEvent('onFocus',
@@ -729,21 +549,9 @@ $$('queue_list').attachEvent('onFocus',
         }
         webix.html.addCss( $$('queue_list_header_row').getNode(), "focus_header");
         webix.html.removeCss( $$(main_track_table.header).getNode(), "focus_header");
-        //webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
     }
  );
 
-// $$(main_track_table.track_list).attachEvent('onFocus',
-//   function (x) {
-//       s = $$(main_track_table.track_list).getSelectedId();
-//       if (s == '') {
-//           $$(main_track_table.track_list).select($$(main_track_table.track_list).getFirstId());
-//       }
-//       webix.html.addCss($$(main_track_table.header).getNode(), "focus_header");
-//       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
-//       //webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
-//   }
-// );
 
 main_track_table.on('focus-in-list',
   (x) => {
@@ -756,8 +564,6 @@ main_track_table.on('focus-in-list',
   }
 );
 
-
-// $$(main_track_table.track_list).attachEvent('onAfterLoad', () => {update_list_labels()})
 webix.UIManager.setFocus($$(main_track_table.track_list));
 
 function checkTime(i) {
@@ -804,8 +610,7 @@ function load_playlists() {
             $$(list_id).define('data', result_list);
             $$(list_id).refresh() 
         }
-    )
- 
+    ) 
 }
 
 load_sessions()

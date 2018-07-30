@@ -31,7 +31,6 @@ function PlaylistDuplicator(id) {
                             label: 'DUPLICATE',
                             click: function () {
                                 self.create_playlist(self.hide)
-                                //self.hide();
                             }
                         },
                         {},
