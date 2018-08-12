@@ -499,14 +499,20 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                             width:10
                                         },
                                         {
-                                            view:'button',
-                                            type:'icon',
-                                            icon:'list',
-                                            label:'SESSION',
-                                            height:35,
-                                            width:100,
-                                            popup:'session_popup'
-                                        },        
+                                            rows: [
+                                                //{},
+                                                {
+                                                    view:'button',
+                                                    type:'icon',
+                                                    icon:'list',
+                                                    label:'SESSION',
+                                                    //height:15,
+                                                    width:100,
+                                                    popup:'session_popup'
+                                                },        
+                                                //{}        
+                                            ]
+                                        },
                                         {width:50},        
                                         // {
                                         //     gravity:.5,
