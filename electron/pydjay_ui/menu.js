@@ -21,6 +21,75 @@ class TopMenu {
         )
     }
     
+    playback_settings() {
+        db_connection.query(
+            'SELECT wait_time FROM settings',
+            function (e, r) {
+                if (e) throw e;
+                wait_time = r[0].wait_time;
+                let x = webix.ui({
+                    view:"window",
+                    modal:true,
+                    position:"center",
+                    width:600,
+                    height:400,
+                    head: "PLAYBACK SETTINGS",
+                    body:{
+                        rows:[
+                            {height:10},
+                            {
+                                id:'wait_time',
+                                view: "text",
+                                value: `${wait_time}`,
+                                labelWidth:225,
+                                label:"Delay between tracks (seconds):"
+                            },
+                            {height:30},
+                            {
+                                view: "button",
+                                type: 'icon',
+                                icon: "headphones",
+                                label: "Reset audio system",
+                                click: reset_audio
+    
+                            },
+                            {height:30},
+                            {
+                                cols:[
+                                    {},
+                                    {
+                                        view: 'button',
+                                        label: 'APPLY',
+                                        click: function () {
+                                            db_connection.query(
+                                                `UPDATE settings SET wait_time=${parseInt($$('wait_time').getValue())}`,
+                                                function (error, x) {
+                                                    if (error) throw error;
+                                                    x.hide();
+                                                }
+                                            )
+                                            x.hide();
+                                        }
+                                    },
+                                    {},
+                                    {
+                                        view: 'button',
+                                        label: 'CANCEL',
+                                        click: () => {x.hide()}
+                                    },
+                                    {}
+                                ]
+                            },
+                            {height:10}
+                        ]
+                    }
+                })
+                x.show();
+            }
+        )
+    }
+    
+
 
     create_layout() {
         return {
@@ -39,6 +108,10 @@ class TopMenu {
                         {
                             $template: "Separator"
                         },
+                        {
+                            id: 'settings',
+                            value: "Settings"
+                        },
                     ]
                 }
             ],
@@ -46,6 +119,8 @@ class TopMenu {
                 onMenuItemClick: (id) => {
                     if (id == "add-tracks") {
                         this.add_files()
+                    } else if (id == "settings") {
+                        this.playback_settings()
                     }
                 }
             }

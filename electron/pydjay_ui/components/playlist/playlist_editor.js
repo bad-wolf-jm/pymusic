@@ -72,10 +72,10 @@ function PlaylistEditor(id) {
                              },
                             rows: [
                                 this.track_table.create_layout(),          
-                                {height:18}
+                                //{height:18}
                             ]
                         },
-                        {width:12},
+                        {width:1},
                         {
                             width:550,
                             css:{

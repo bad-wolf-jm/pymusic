@@ -208,7 +208,8 @@ class TrackTable extends EventDispatcher {
                                 height: 20,
                                 css:{
                                     'font-weight':  'bold',
-                                    "text-transform": "uppercase"}
+                                    "text-transform": "uppercase"
+                                }
                             },
                             {
                                 view: 'label',

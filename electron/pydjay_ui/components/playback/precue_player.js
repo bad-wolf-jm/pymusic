@@ -147,8 +147,8 @@ class PrecuePlayer extends PydjayAudioFilePlayer {
             height:95,
             css:{
                 'background-color':'#6c6c6c',
-                'padding':'1px',
-                border: '1px solid #3c3c3c'
+                'padding':'0px',
+                border: '0px solid #3c3c3c'
              },
             cols:[
                 {

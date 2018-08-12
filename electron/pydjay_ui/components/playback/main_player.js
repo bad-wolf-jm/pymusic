@@ -241,7 +241,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                     id: this.artist_id,
                                                     view:'label',
                                                     label:'ARTIST',
-                                                    height:25,
+                                                    height:20,
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
@@ -255,7 +255,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                     id: this.album_id,
                                                     view:'label',
                                                     label:'ALBUM',
-                                                    height:25,
+                                                    height:20,
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
@@ -268,7 +268,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                             ]
                                         },
                                         {
-                                            width:100,
+                                            width:200,
                                             rows: [
                                                 {
                                                     id: this.remaining_id,
@@ -278,18 +278,46 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
-                                                        'text-align': 'center',
+                                                        'text-align': 'right',
                                                         'font-weight':'bold',
                                                         'font-size':"18pt"//,
                                                     },
                 
+                                                },
+                                                {height:15},
+                                                {
+                                                    cols: [
+                                                        {
+                                                            gravity:.5,
+                                                            id:'start-stop-button',
+                                                            view:'button',
+                                                            type:'icon',
+                                                            icon:'play',
+                                                            label:'START',
+                                                            click: start_queue,
+                                                            //maxHeight:35,
+                                                            width:100
+                                                        },
+                                                        {
+                                                            gravity:.5,
+                                                            view:'button',
+                                                            type:'icon',
+                                                            icon:'step-forward',
+                                                            label:'SKIP/STOP',
+                                                            popup: "skip_stop_dialog",
+                                                            //maxHeight:35,
+                                                            width:100
+                                                        },        
+                                                    ]
                                                 }
+    
                                             ]
                                         },
+                                        {width:10},
                                         {
                                             view: 'template',
                                             width:500,
-                                            height:100,
+                                            height:90,
                                             template: `<canvas id='${this.spectrum_analyzer_id}' style="border: \'1px solid black\'; width:100%; height:100%">`,
                                             // template: `<canvas id='${this.spectrum_analyzer_id}' style="border: \'1px solid black\'; width:600; height:100">`,
                                             css: {
@@ -297,7 +325,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                 // 'margin-bottom': "1px",
                                                 "background-color": "#1E1E1E"
                                             },
-                                    }
+                                        }
                                     ]
                                 },
                                 {
@@ -311,7 +339,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
                 
                                 // {height:3},
                                 {
-                                    //height:35,
+                                    height:55,
                                     css: {
                                         'border-top': '1px solid white',
                                         //'margin-bottom': "10px"
@@ -319,30 +347,31 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                     cols: [
                                         {
                                             width:100,
+                                            height:30,
                                             css: {
                                                 'border-right': '1px solid white !important',
                                                 // 'margin-bottom': "10px"
                                             },
         
                                             rows: [
-                                                {},
+                                                {height:10},
                                                 {
                                                     view:'label',
                                                     label:'DURATION',
-                                                    height:15,
+                                                    height:8,
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
                                                         'font-weight':'bold',
                                                         'text-align': 'center',
-                                                        'font-size':"10pt",
+                                                        'font-size':"8pt",
                                                         color:"#909090"
                                                     },
                                                 },
                                                 {
                                                     id: this.duration_id,
                                                     view:'label',
-                                                    height:15,
+                                                    height:20,
                                                     label:'03:26',
                                                     css: {
                                                         'text-align':'left',
@@ -353,28 +382,28 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                         color:"#AFAFAF"
                                                     },
                                                 },
-                                                {}
+                                                //{}
                                             ]
                                         },
                                         {
                                             width:100,
-                                            //height:35,
+                                            height:35,
                                             css: {
                                                 'border-right': '1px solid white !important',
                                                 // 'margin-bottom': "10px"
                                             },
 
                                             rows: [
-                                                {},
+                                                {height:10},
                                                 {
                                                     view:'label',
                                                     label:'BPM',
-                                                    height:15,
+                                                    height:8,
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
                                                         'font-weight':'bold',
-                                                        'font-size':"10pt",
+                                                        'font-size':"8pt",
                                                         'text-align': 'center',
                                                         color:"#909090"
                                                     },
@@ -383,7 +412,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                     id: this.bpm_id,
                                                     view:'label',
                                                     label:'120',
-                                                    height:15,
+                                                    height:20,
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
@@ -393,7 +422,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                         color:"#AFAFAF"
                                                     },
                                                 },
-                                                {}
+                                                //{}
                                             ]
                                         },
                                         {
@@ -403,11 +432,11 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                             },
 
                                             rows: [
-                                                {},
+                                                //{},
                                                 {
                                                     id: this.rating_id,
                                                     view:'label',
-                                                    height:30,
+                                                    height:40,
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
@@ -417,7 +446,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                         color:"#AFAFAF"
                                                     },
                                                 },
-                                                {}
+                                                //{}
                                             ]
                                         },
                                         {
@@ -427,12 +456,12 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                             },
 
                                             rows: [
-                                                {},
+                                                //{},
                                                 {
                                                     id: this.favorite_id,
                                                     view:'label',
                                                     label:`<div class='webix_toggle_button_custom checked'><span class='fa fa-heart'/></div>`,
-                                                    height:30,
+                                                    height:40,
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
@@ -442,7 +471,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                         color:"#AFAFAF"
                                                     },
                                                 },
-                                                {}
+                                                //{}
                                             ]
                                         },
                                         {},
@@ -474,42 +503,21 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                             type:'icon',
                                             icon:'list',
                                             label:'SESSION',
-                                            height:25,
+                                            height:35,
                                             width:100,
                                             popup:'session_popup'
                                         },        
                                         {width:50},        
-                                        {
-                                            gravity:.5,
-                                            id:'start-stop-button',
-                                            view:'button',
-                                            type:'icon',
-                                            icon:'play',
-                                            label:'START',
-                                            click: start_queue,
-                                            maxHeight:35,
-                                            width:100
-                                        },
-                                        {
-                                            gravity:.5,
-                                            view:'button',
-                                            type:'icon',
-                                            icon:'step-forward',
-                                            label:'SKIP/STOP',
-                                            popup: "skip_stop_dialog",
-                                            maxHeight:35,
-                                            width:100
-                                        },
-                                        {
-                                            gravity:.5,
-                                            view:'button',
-                                            type:'icon',
-                                            icon:'cog',
-                                            label:'SETTINGS',
-                                            click: playback_settings,
-                                            maxHeight:35,
-                                            width:100
-                                        },
+                                        // {
+                                        //     gravity:.5,
+                                        //     view:'button',
+                                        //     type:'icon',
+                                        //     icon:'cog',
+                                        //     label:'SETTINGS',
+                                        //     click: playback_settings,
+                                        //     maxHeight:35,
+                                        //     width:100
+                                        // },
                 
                                     ]
                                 }
