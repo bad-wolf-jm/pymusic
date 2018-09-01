@@ -71,18 +71,23 @@ function format_seconds(t_seconds, units, pluralize=true)
 }
 
 function format_seconds_long(seconds){
-  return format_seconds(seconds, {seconds:'second',
-                                  minutes:'minute',
-                                  hours:'hour',
-                                  days:'day'}, true)
+  return format_seconds(seconds, 
+    {
+        seconds:'second',
+        minutes:'minute',
+        hours:'hour',
+        days:'day'
+    }, true)
 }
 
 function format_seconds_short(seconds)
 {
-    return format_seconds(seconds, {seconds:'s',
-                                    minutes:'m',
-                                    hours:'h',
-                                    days:'d'}, false)
+    return format_seconds(seconds, {
+        seconds:'s',
+        minutes:'m',
+        hours:'h',
+        days:'d'
+    }, false)
 }
 
 function humanFileSize(bytes) {

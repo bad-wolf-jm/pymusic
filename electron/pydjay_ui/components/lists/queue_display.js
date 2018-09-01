@@ -46,24 +46,6 @@ function update_queue_labels() {
     )
 }
 
-
-// function update_suggestions() {
-//     DB.get_suggested_tracks(
-//         function (suggestions) {
-//             $$('suggestion_list').clearAll();
-//             for(var i=0; i < suggestions.length; i++){
-//                 $$('suggestion_list').add(suggestions[i])
-//                 if (!(suggestions[i].available)) {
-//                     $$('suggestion_list').addCss(suggestions[i].id, 'unavailable_track');
-//                 }
-//             }
-//         }
-
-//     )
-// }
-///
-///
-///
 var  queue_display_template = {
     type:'line',
     css:{
@@ -105,48 +87,3 @@ var  queue_display_template = {
         }
     ]
 }
-
-
-
-// var suggestions_display_template = {
-//     type:'line',
-//     css:{
-//         border: '0px solid #3c3c3c',
-//         'background-color':'#5c5c5c',
-//     },
-//     rows:[
-//         {
-//             id: 'suggestion_list_header_row',
-//             height:30,
-//             css:{
-//                 'background-color':'#303030',
-//                 border: '1px solid #3c3c3c',
-//              },
-//              rows: [
-//                  {height:7},
-//                 {
-//                     view: 'label',
-//                     label: '<b>SUGGESTIONS</b>',
-//                     height: 20,
-//                     css:{
-//                         'padding-left':'10px',
-//                      },
-//                 },
-//                 {height:5},
-//             ]
-//         },
-//         {
-//             view:"list",
-//             id:'suggestion_list',
-//             itemHeight:45,
-//             autoHeight: true,
-//             css:{
-//                 border: '1px solid #3c3c3c',
-//                 height: "93.5% !important"
-//              },
-//             select:true,
-//             template: queue_element_template,
-//             type: { height: cover_size },
-
-//         }]
-// }
