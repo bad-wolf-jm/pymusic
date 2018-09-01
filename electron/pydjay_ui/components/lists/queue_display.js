@@ -61,10 +61,10 @@ function update_queue_labels() {
 
 //     )
 // }
-
-
-
-var queue_display_template = {
+///
+///
+///
+var  queue_display_template = {
     type:'line',
     css:{
         border: '0px solid #3c3c3c',
@@ -72,13 +72,13 @@ var queue_display_template = {
     rows:[
         {
             id: 'queue_list_header_row',
-            height:30,
+            height:50,
             css:{
                 'background-color':'#303030',
                 border: '1px solid #3c3c3c'
              },
              rows: [
-                 {height:7},
+                {height:15},
                 {
                     view: 'label',
                     label: '<b>QUEUE</b>',
@@ -87,7 +87,7 @@ var queue_display_template = {
                         'padding-left':'10px',
                      }
                 },
-                {height:5},
+                {height:15},
             ]
         },
         {

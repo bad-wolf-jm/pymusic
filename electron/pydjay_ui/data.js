@@ -81,12 +81,10 @@ function DataProvider() {
                                     GROUP  BY id) play_counts 
                                 ON tracks.id = play_counts.id_2) foo 
                     ON tracks.id = foo.id 
-                    LEFT JOIN ((SELECT track_id 
-                                FROM   unavailable_tracks) 
-                            UNION 
-                            (SELECT track_id 
-                                FROM   session_queue)) availability 
-                        ON availability.track_id = tracks.id 
+                    LEFT JOIN ((SELECT track_id FROM   unavailable_tracks) 
+                                UNION 
+                                (SELECT track_id FROM   session_queue)) availability 
+                    ON availability.track_id = tracks.id 
                     LEFT JOIN (SELECT track_id, 
                                     MAX(start_time) AS time 
                             FROM   session_tracks 
@@ -98,7 +96,7 @@ function DataProvider() {
     
     self.get_track_by_id = function (id, k) {
         sql = self.base_track_view_sql()
-        sql += ` WHERE tracks.id=${id} ORDER BY title`
+        sql += ` WHERE tracks.id=${id}`
         $QUERY(sql, k)
     }
 
