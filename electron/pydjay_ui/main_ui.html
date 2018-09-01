@@ -18,7 +18,6 @@
 <script src="./data_class.js"></script>
 <script src="./components/lists/track_table.js"></script>
 <script src="./components/lists/track_list.js"></script>
-<!-- <script src="./components/lists/main_list_display.js"></script> -->
 <script src="./components/lists/queue_display.js"></script>
 <script src="./components/playlist/playlist_editor.js"></script>
 <script src="./components/playlist/create.js"></script>
@@ -30,13 +29,10 @@
 <script src="./menu.js"></script>
 <script src="./sidebar.js"></script>
 <script src="./playback.js"></script>
-<!-- <script src="./track_edit.js"></script> -->
 <script src="./components/edit/track_editor.js"></script>
 <script src="./components/edit/track_add.js"></script>
-<script src="./queue.js"></script>
 <script src="./actions.js"></script>
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
-<!-- <link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">-->
 <link rel="stylesheet" href="../node_modules/webix/skins/contrast.css"> 
 <link rel="stylesheet" href="./pymusic_style.css">
 
@@ -56,49 +52,6 @@ webix.ready( () => {
         pl.init_progress()
     }
 )
-
-// var queue_display_template = {
-//     type:'line',
-//     css:{
-//         border: '0px solid #3c3c3c',
-//     },
-//     rows:[
-//         {
-//             id: 'queue_list_header_row',
-//             height:30,
-//             css:{
-//                 'background-color':'#303030',
-//                 border: '1px solid #3c3c3c'
-//              },
-//              rows: [
-//                  {height:7},
-//                 {
-//                     view: 'label',
-//                     label: '<b>QUEUE</b>',
-//                     height: 20,
-//                     css:{
-//                         'padding-left':'10px',
-//                      }
-//                 },
-//                 {height:5},
-//             ]
-//         },
-//         {
-//             view:"list",
-//             id:'queue_list',
-//             css:{
-//                 border: '1px solid #3c3c3c',
-//              },
-//             select:true,
-//             template: queue_element_template,
-//             type: { 
-//                 height: cover_size
-//             },
-//             scroll:"y"
-//         }
-//     ]
-// }
-
 
 function save_current_session() {
     x = webix.ui({
@@ -137,7 +90,7 @@ function save_current_session() {
                             view: 'button',
                             label: 'SAVE',
                             click: function () {
-                                save_session($$('session_name').getValue(),
+                                DB.save_session($$('session_name').getValue(),
                                              $$('session_location').getValue(),
                                              $$('session_address').getValue());
                                 x.hide();
@@ -160,73 +113,6 @@ function save_current_session() {
     x.show();
 }
 
-// function playback_settings() {
-//     db_connection.query(
-//         'SELECT wait_time FROM settings',
-//         function (e, r) {
-//             if (e) throw e;
-//             wait_time = r[0].wait_time;
-//             x = webix.ui({
-//                 view:"window",
-//                 modal:true,
-//                 position:"center",
-//                 width:600,
-//                 height:400,
-//                 head: "PLAYBACK SETTINGS",
-//                 body:{
-//                     rows:[
-//                         {height:10},
-//                         {
-//                             id:'wait_time',
-//                             view: "text",
-//                             value: `${wait_time}`,
-//                             labelWidth:225,
-//                             label:"Delay between tracks (seconds):"
-//                         },
-//                         {height:30},
-//                         {
-//                             view: "button",
-//                             type: 'icon',
-//                             icon: "headphones",
-//                             label: "Reset audio system",
-//                             click: reset_audio
-
-//                         },
-//                         {height:30},
-//                         {
-//                             cols:[
-//                                 {},
-//                                 {
-//                                     view: 'button',
-//                                     label: 'APPLY',
-//                                     click: function () {
-//                                         db_connection.query(
-//                                             `UPDATE settings SET wait_time=${parseInt($$('wait_time').getValue())}`,
-//                                             function (error, x) {
-//                                                 if (error) throw error;
-//                                                 x.hide();
-//                                             }
-//                                         )
-//                                         x.hide();
-//                                     }
-//                                 },
-//                                 {},
-//                                 {
-//                                     view: 'button',
-//                                     label: 'CANCEL',
-//                                     click: () => {x.hide()}
-//                                 },
-//                                 {}
-//                             ]
-//                         },
-//                         {height:10}
-//                     ]
-//                 }
-//             })
-//             x.show();
-//         }
-//     )
-// }
 var cover_size = 45
 function queue_element_template(element) {
     var cover_source = null;

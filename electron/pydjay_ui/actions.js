@@ -3,7 +3,7 @@ var queue_actions = {
     move_selection_to_top: function () {
         selected_queue_element = $$('queue_list').getSelectedItem();
         selected_queue_element_position = $$('queue_list').getSelectedItem().position;
-        move_queue_element(selected_queue_element_position, 1,
+        DB.move_queue_element(selected_queue_element_position, 1,
             function (new_position) {
                 move_displayed_queue_element(selected_queue_element, selected_queue_element_position, new_position);
                 $$('queue_list').moveTop(selected_queue_element.id)
@@ -14,7 +14,7 @@ var queue_actions = {
     move_selection_up: function () {
         selected_queue_element = $$('queue_list').getSelectedItem();
         selected_queue_element_position = $$('queue_list').getSelectedItem().position;
-        move_queue_element(selected_queue_element_position, selected_queue_element_position-1,
+        DB.move_queue_element(selected_queue_element_position, selected_queue_element_position-1,
             function (new_position) {
                 move_displayed_queue_element(selected_queue_element, selected_queue_element_position, new_position);
                 $$('queue_list').moveUp(selected_queue_element.id, 1)
@@ -25,7 +25,7 @@ var queue_actions = {
     move_selection_down: function () {
         selected_queue_element = $$('queue_list').getSelectedItem();
         selected_queue_element_position = $$('queue_list').getSelectedItem().position;
-        move_queue_element(selected_queue_element_position, selected_queue_element_position+1,
+        DB.move_queue_element(selected_queue_element_position, selected_queue_element_position+1,
             function (new_position) {
                 move_displayed_queue_element(selected_queue_element, selected_queue_element_position, new_position);
                 $$('queue_list').moveDown(selected_queue_element.id, 1)
@@ -36,7 +36,7 @@ var queue_actions = {
     remove_selection: function () {
         selected_queue_element = $$('queue_list').getSelectedItem();
         selected_queue_element_position = $$('queue_list').getSelectedItem().position;
-        delete_queue_element(selected_queue_element_position,
+        DB.delete_queue_element(selected_queue_element_position,
             function () {
                 var next_item = $$('queue_list').getNextId(selected_queue_element.id);
                 if (next_item == undefined) {
@@ -104,15 +104,13 @@ var queue_actions = {
 var main_list_actions = {
     add_selection_to_queue: function () {
         var id = $$(main_track_table.track_list).getSelectedId().id;
-        add_id_to_queue(id,
+        DB.add_id_to_queue(id,
             function () {
                 DB.get_queue_track(id,
                     function (result) {
                         $$('queue_list').add(result[0]);
                         $$(main_track_table.track_list).addRowCss(id, 'unavailable_track');
-                        //$$('suggestion_list').addCss(id, 'unavailable_track');
                         update_queue_labels();
-                        //u pdate_suggestions();                        
                     }
                 )
             }
@@ -128,7 +126,6 @@ var main_list_actions = {
                     insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
                     db_connection.query(insert_sql, function(error, result){
                         if (error) throw error;
-                        console.log('FOO')
                         webix.message({
                             text:"Added track to the short list",
                             type:"info",
@@ -161,7 +158,6 @@ var main_list_actions = {
                         function (error, result) {
                             if (error) throw error;
                             $$(main_track_table.track_list).addRowCss(id, 'unavailable_track');
-                            //$$('suggestion_list').addCss(id, 'unavailable_track');
 
                         }
                     )
@@ -184,8 +180,6 @@ var main_list_actions = {
                             $$(main_track_table.track_list).removeRowCss(id, 'unavailable_track');
                             $$(main_track_table.track_list).getItem(id).$css="";
                             $$(main_track_table.track_list).refresh();
-                            //$$('suggestion_list').removeCss(id, 'unavailable_track');
-
                         }
                     )
                 }
@@ -277,204 +271,3 @@ var playback_actions = {
         preview_seek_relative(-20)
     }
 }
-
-
-// var track_edit_actions = {
-//     close_track_editor: function () {
-//         preview_stop();
-//         track_data_edit_window.hide()
-//     },
-
-//     play_last_30_seconds: function () {
-//         preview_play_track_id(track_edited.id, -30000000000, stream_end_edit);
-//     },
-
-//     play_last_10_seconds: function () {
-//         preview_play_track_id(track_edited.id, -10000000000, stream_end_edit);
-//     },
-
-//     play_track: function () {
-//         preview_play_track_id(track_edited.id, stream_start_edit, stream_end_edit);
-//     },
-
-//     set_start_marker: function () {
-//         set_start_marker_to_current_time();
-//     },
-
-//     set_end_marker: function () {
-//         set_end_marker_to_current_time();
-//     },
-
-//     move_start_marker_forward_short: function () {
-//         set_start_marker(stream_start_edit + 100000000);
-//     },
-
-//     move_start_marker_forward_long: function () {
-//         set_start_marker(stream_start_edit + 1000000000);
-//     },
-
-//     move_end_marker_forward_short: function () {
-//         set_end_marker(stream_end_edit + 100000000);
-//     },
-
-//     move_end_marker_forward_long: function () {
-//         set_end_marker(stream_end_edit + 1000000000);
-//     },
-
-//     move_start_marker_backward_short: function () {
-//         set_start_marker(stream_start_edit - 100000000);
-//     },
-
-//     move_start_marker_backward_long: function () {
-//         set_start_marker(stream_start_edit - 1000000000);
-//     },
-
-//     move_end_marker_backward_short:function () {
-//         set_end_marker(stream_end_edit - 100000000);
-//     },
-
-//     move_end_marker_backward_long:function () {
-//         set_end_marker(stream_end_edit - 1000000000);
-//     },
-
-//     reset_waveform_zoom: function () {
-//         track_edit_waveform.xAxis[0].setExtremes(0, track_length_edit, true, false);
-//         webix.UIManager.setFocus($$('track_edit_window'));
-//     },
-
-//     zoom_waveform_first_10_seconds: function () {
-//         track_edit_waveform.xAxis[0].setExtremes(0, 10000000000, true, false);
-//         webix.UIManager.setFocus($$('track_edit_window'));
-//     },
-
-//     zoom_waveform_first_30_seconds: function () {
-//         track_edit_waveform.xAxis[0].setExtremes(0, 30000000000, true, false);
-//         webix.UIManager.setFocus($$('track_edit_window'));
-//     },
-
-//     zoom_waveform_last_10_seconds: function () {
-//         track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 10000000000, track_length_edit, true, false);
-//         webix.UIManager.setFocus($$('track_edit_window'));
-//     },
-
-//     zoom_waveform_last_30_seconds: function () {
-//         track_edit_waveform.xAxis[0].setExtremes(track_length_edit - 30000000000, track_length_edit, true, false);
-//         webix.UIManager.setFocus($$('track_edit_window'));
-//     }
-// }
-
-
-// var suggestion_list_actions = {
-//     add_selection_to_queue: function () {
-//         var id = $$('suggestion_list').getSelectedItem().id;
-//         add_id_to_queue(id,
-//             function () {
-//                 DB.get_queue_track(id,
-//                     function (result) {
-//                         $$('queue_list').add(result[0]);
-//                         $$(main_track_table.track_list).addRowCss(id, 'unavailable_track');
-//                         $$('suggestion_list').addCss(id, 'unavailable_track');
-//                         update_queue_labels();
-//                         //upda te_suggestions();                        
-//                     }
-//                 )
-//             }
-//         )
-//     },
-
-//     add_selection_to_short_list: function () {
-//         var id = $$('suggestion_list').getSelectedItem().id;
-//         sql = `SELECT 1 FROM short_listed_tracks WHERE track_id=${id} LIMIT 1`;
-//         db_connection.query(sql,
-//             function (err, result){
-//                 if (result.length == 0){
-//                     insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
-//                     db_connection.query(insert_sql, function(error, result){
-//                         if (error) throw error;
-//                         webix.message({
-//                             text:"Added track to the short list",
-//                             type:"info",
-//                             expire: 3000,
-//                             id:"message1"
-//                         });
-
-//                     });
-//                 } else {
-//                     webix.message({
-//                         text:"Track is already in the short list",
-//                         type:"info",
-//                         expire: 3000,
-//                         id:"message1"
-//                     });
-//                 }
-//             }
-//         )
-//     },
-
-//     add_selection_to_unavailable: function () {
-//         var id = $$('suggestion_list').getSelectedItem().id;
-//         db_connection.query(
-//             `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
-//             function (error, result) {
-//                 if (error) throw error;
-//                 if (result.length == 0) {
-//                     db_connection.query(
-//                         `INSERT INTO unavailable_tracks (track_id) VALUES (${id})`,
-//                         function (error, result) {
-//                             if (error) throw error;
-//                             $$(main_track_table.track_list).addRowCss(id, 'unavailable_track');
-//                             $$('suggestion_list').addCss(id, 'unavailable_track');
-//                         }
-//                     )
-//                 }
-//             }
-//         )
-//     },
-
-//     remove_selection_from_unavailable: function () {
-//         var id = $$('suggestion_list').getSelectedItem().id;
-//         console.log(`DELETE FROM unavailable_tracks WHERE track_id=${id}`)
-//         db_connection.query(
-//             `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
-//             function (error, result) {
-//                 if (error) throw error;
-//                 if (result.length > 0) {
-//                     db_connection.query(
-//                         `DELETE FROM unavailable_tracks WHERE track_id=${id}`,
-//                         function (error, result) {
-//                             if (error) throw error;
-//                             $$(main_track_table.track_list).removeRowCss(id, 'unavailable_track');
-//                             $$(main_track_table.track_list).getItem(id).$css="";
-//                             $$(main_track_table.track_list).refresh();
-//                             $$('suggestion_list').removeCss(id, 'unavailable_track');
-//                             $$('suggestion_list').refresh();
-//                         }
-//                     )
-//                 }
-//             }
-//         )
-//     },
-
-//     edit_track_data: function () {
-//         var id = $$('suggestion_list').getSelectedItem().id;
-//         edit_track_data(id);
-//     },
-
-//     preview_selected: function () {
-//         var id = $$('suggestion_list').getSelectedItem().id;
-//         preview_track_id = id;
-//         preview_play_track_id(id);
-//     },
-
-//     preview_last_10_seconds: function () {
-//         var id = $$('suggestion_list').getSelectedItem().id;
-//         preview_track_id = id;
-//         preview_play_track_id(id, -10000000000);
-//     },
-
-//     preview_last_30_seconds: function () {
-//         var id = $$('suggestion_list').getSelectedItem().id;
-//         preview_track_id = id;
-//         preview_play_track_id(id, -30000000000);
-//     }
-// }

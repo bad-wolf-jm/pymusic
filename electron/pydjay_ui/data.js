@@ -278,4 +278,240 @@ function DataProvider() {
         sql += `WHERE id=${id}`
         $QUERY(sql, k)
     }
+
+    self.get_queue_boundary_positions = function (cont){
+        sql = "SELECT min(position) as min, max(position) as max FROM session_queue WHERE status='pending'"
+        $QUERY(sql, function(result){
+            //if (error) throw error;
+            return cont(result[0].min, result[0].max)
+        })
+    }
+    
+    self.move_queue_element= function (from_position, to_position, when_done) {
+        self.get_queue_boundary_positions(
+            function (min, max) {
+                new_position = Math.min(Math.max(to_position, min), max);
+                if (new_position != from_position) {
+                    $QUERY(
+                        `UPDATE session_queue SET position=0 WHERE position=${from_position}`,
+                        function(result) {
+                            //if (err) throw err;
+                            $QUERY(
+                                `UPDATE session_queue SET position=position-1 WHERE position>${from_position}`,
+                                function (result) {
+                                    //if (err) throw err;
+                                    $QUERY(
+                                        `UPDATE session_queue SET position=position+1 WHERE position>=${new_position}`,
+                                        function (result) {
+                                            //if (err) throw err;
+                                            $QUERY(
+                                                `UPDATE session_queue SET position=${new_position} WHERE position=0`,
+                                                function (result) {
+                                                    //if (err) throw err;
+                                                    when_done(new_position);
+                                                }
+                                            )
+                                        }
+                                    )
+                                }
+                            )
+                        }
+                    )
+                }
+            }
+        )
+    }
+    
+    self.delete_queue_element= function (position, when_done) {
+        $QUERY(
+            `UPDATE session_queue SET position=0 WHERE position=${position}`,
+            function(result) {
+                $QUERY(
+                    `UPDATE session_queue SET position=position-1 WHERE position>${position}`,
+                    function (result) {
+                        //if (err) throw err;
+                        $QUERY(
+                            `DELETE FROM session_queue WHERE position=0`,
+                            function (result) {
+                                //if (err) throw err;
+                                when_done()
+                            }
+                        )
+                    }
+                )
+            }
+        )
+    }
+    
+    self.add_id_to_queue = function (track_id, when_done) {
+        $QUERY(`SELECT 1 FROM session_queue WHERE track_id=${track_id} LIMIT 1`,
+            function (result){
+                if (result.length == 0){
+                    $QUERY('SELECT max(id) + 1 as new_id, max(position)+1 as new_position FROM session_queue',
+                        function (result) {
+                            var new_id = result[0].new_id ? result[0].new_id :1;
+                            var new_position = result[0].new_id ? result[0].new_position :1;
+                            $QUERY(`INSERT INTO session_queue (id, track_id, status, position)
+                                    VALUES (${new_id}, ${track_id}, 'pending', ${new_position})`,
+                                function (result) {
+                                    //if (err) throw err;
+                                    when_done();
+                                }
+                            );
+                            //}
+                        }
+                    )
+                }
+            }
+        );
+    }
+    
+    self.save_session = function (name, location, address) {
+        $QUERY(
+            `SELECT track_id, start_time, end_time FROM session_queue WHERE status='played' ORDER BY position`,
+            function (played_tracks) {
+                //if (error) throw error;
+                if (played_tracks.length > 0) {
+                    $QUERY(
+                        `SELECT max(id) + 1 AS new_session_id FROM sessions`,
+                        function (result) {
+                            //if (error) throw error;
+                            new_session_id = result[0].new_session_id;
+                            $QUERY(
+                                `SELECT min(start_time) AS start, max(end_time) AS end FROM session_queue WHERE status='played'`,
+                                function (start_end_time) {
+                                    //if (error) throw error;
+                                    format = webix.Date.dateToStr("%Y-%m-%d %H:%i:%s");
+                                    start_date = format(start_end_time[0].start);
+                                    end_date = format(start_end_time[0].end);
+                                    $QUERY(
+                                        `INSERT INTO sessions (id, event_name, start_date, end_date, location, address)
+                                         VALUES (${new_session_id}, "${name}", '${start_date}', '${end_date}', "${location}", "${address}")`,
+                                         function (x) {
+                                             //if (error) throw error;
+                                             session_data = [];
+                                             relation_data = [];
+    
+                                             for(var i =0; i<played_tracks.length; i++){
+                                                 start_time = format(played_tracks[i].start_time);
+                                                 end_time = format(played_tracks[i].end_time);
+                                                 session_data.push(`(${new_session_id}, ${played_tracks[i].track_id}, '${start_time}', '${end_time}', ${i+1})`)
+                                                 if (i+1 < played_tracks.length) {
+                                                     relation_time = format(played_tracks[i+1].start_time);
+                                                     relation_data.push(`(${played_tracks[i].track_id}, ${played_tracks[i+1].track_id}, 'PLAYED_IN_SET', 1, '${relation_time}')`)
+                                                 }
+                                             }
+                                             $QUERY(
+                                                 `INSERT INTO session_tracks (session_id, track_id, start_time, end_time, position) VALUES ${session_data.join(',')}`,
+                                                 function (r) {
+                                                     ///if (error) throw error;
+                                                     $QUERY(
+                                                         `INSERT INTO track_relations (track_id, related_track_id, reason, count, date) VALUES ${relation_data.join(',')} ON DUPLICATE KEY UPDATE count=count+1`,
+                                                         function (r) {
+                                                             //if (error) throw error;
+                                                             $QUERY(
+                                                                 `DELETE FROM session_queue WHERE status='played'`,
+                                                                 function (r) {
+                                                                     //if (error) throw error;
+                                                                     $QUERY(
+                                                                        `SELECT min(position) as first FROM session_queue`,
+                                                                        function (result) {
+                                                                            //if (error) throw error;
+                                                                            $QUERY(
+                                                                                `UPDATE session_queue SET status='pending', start_time=NULL, end_time=NULL, position=position-(${result[0].first}-1)`,
+                                                                                function (r) {
+                                                                                    //if (error) throw error;
+                                                                                    // console.log('session saved');
+                                                                                }
+                                                                            )
+                                                                        }
+                                                                     )
+                                                                 }
+                                                             )
+                                                         }
+                                                     )
+                                                 }
+                                             )
+                                         }
+                                    )
+                                }
+                            )
+                        }
+                    )
+                }
+            }
+        )
+    }
+    
+    self.add_selection_to_short_list = function (id) {
+        // var id = $$(main_track_table.track_list).getSelectedId().id;
+        sql = `SELECT 1 FROM short_listed_tracks WHERE track_id=${id} LIMIT 1`;
+        $QUERY(sql,
+            function (err, result){
+                if (result.length == 0){
+                    insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
+                    $QUERY(insert_sql, function(error, result){
+                        if (error) throw error;
+                        console.log('FOO')
+                        webix.message({
+                            text:"Added track to the short list",
+                            type:"info",
+                            expire: 3000,
+                            id:"message1"
+                        });
+
+                    });
+                } else {
+                    webix.message({
+                        text:"Track is already in the short list",
+                        type:"info",
+                        expire: 3000,
+                        id:"message1"
+                    });
+                }
+            }
+        )
+    },
+
+    self.add_selection_to_unavailable = function (id) {
+        //        var id = $$(main_track_table.track_list).getSelectedId().id;
+        $QUERY(
+            `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+            function (result) {
+                //if (error) throw error;
+                if (result.length == 0) {
+                    $QUERY(
+                        `INSERT INTO unavailable_tracks (track_id) VALUES (${id})`,
+                        function (result) {
+                            //if (error) throw error;
+                            $$(main_track_table.track_list).addRowCss(id, 'unavailable_track');
+                            //$$('suggestion_list').addCss(id, 'unavailable_track');
+
+                        }
+                    )
+                }
+            }
+        )
+    },
+
+    self.remove_selection_from_unavailable = function (id) {
+        // var id = $$(main_track_table.track_list).getSelectedId().id;
+        // console.log(`DELETE FROM unavailable_tracks WHERE track_id=${id}`)
+        $QUERY(`SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+            function (error, result) {
+                if (error) throw error;
+                if (result.length > 0) {
+                    $QUERY(
+                        `DELETE FROM unavailable_tracks WHERE track_id=${id}`,
+                        function (result) {
+                            //if (error) throw error;
+                            $$(main_track_table.track_list).removeRowCss(id, 'unavailable_track');
+                            $$(main_track_table.track_list).getItem(id).$css="";
+                            $$(main_track_table.track_list).refresh();
+                        }
+                    )
+                }
+            }
+        )
+    }
 }
