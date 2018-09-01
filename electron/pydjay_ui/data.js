@@ -366,7 +366,7 @@ function DataProvider() {
         );
     }
     
-    self.save_session = function (name, location, address) {
+    self.save_session = function (name, location, address, k) {
         $QUERY(
             `SELECT track_id, start_time, end_time FROM session_queue WHERE status='played' ORDER BY position`,
             function (played_tracks) {
@@ -417,13 +417,12 @@ function DataProvider() {
                                                                         `SELECT min(position) as first FROM session_queue`,
                                                                         function (result) {
                                                                             //if (error) throw error;
-                                                                            $QUERY(
-                                                                                `UPDATE session_queue SET status='pending', start_time=NULL, end_time=NULL, position=position-(${result[0].first}-1)`,
-                                                                                function (r) {
-                                                                                    //if (error) throw error;
-                                                                                    // console.log('session saved');
-                                                                                }
-                                                                            )
+                                                                            $QUERY(`UPDATE session_queue SET status='pending', start_time=NULL, end_time=NULL, position=position-(${result[0].first}-1)`, k)
+                                                                                // function (r) {
+                                                                                //     //if (error) throw error;
+                                                                                //     // console.log('session saved');
+                                                                                // }
+                                                                            //)
                                                                         }
                                                                      )
                                                                  }
@@ -443,24 +442,24 @@ function DataProvider() {
         )
     }
     
-    self.add_selection_to_short_list = function (id) {
+    self.add_selection_to_short_list = function (id, k) {
         // var id = $$(main_track_table.track_list).getSelectedId().id;
         sql = `SELECT 1 FROM short_listed_tracks WHERE track_id=${id} LIMIT 1`;
         $QUERY(sql,
             function (err, result){
                 if (result.length == 0){
                     insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
-                    $QUERY(insert_sql, function(error, result){
-                        if (error) throw error;
-                        console.log('FOO')
-                        webix.message({
-                            text:"Added track to the short list",
-                            type:"info",
-                            expire: 3000,
-                            id:"message1"
-                        });
-
-                    });
+                    $QUERY(insert_sql, k)
+                        // function(result){
+                        // if (error) throw error;
+                        // console.log('FOO')
+                        // webix.message({
+                        //     text:"Added track to the short list",
+                        //     type:"info",
+                        //     expire: 3000,
+                        //     id:"message1"
+                        // });
+                    // });
                 } else {
                     webix.message({
                         text:"Track is already in the short list",
@@ -473,43 +472,41 @@ function DataProvider() {
         )
     },
 
-    self.add_selection_to_unavailable = function (id) {
+    self.add_selection_to_unavailable = function (id, k) {
         //        var id = $$(main_track_table.track_list).getSelectedId().id;
         $QUERY(
             `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
             function (result) {
                 //if (error) throw error;
                 if (result.length == 0) {
-                    $QUERY(
-                        `INSERT INTO unavailable_tracks (track_id) VALUES (${id})`,
-                        function (result) {
-                            //if (error) throw error;
-                            $$(main_track_table.track_list).addRowCss(id, 'unavailable_track');
-                            //$$('suggestion_list').addCss(id, 'unavailable_track');
+                    $QUERY(`INSERT INTO unavailable_tracks (track_id) VALUES (${id})`, k)
+                    //     function (result) {
+                    //         //if (error) throw error;
+                    //         $$(main_track_table.track_list).addRowCss(id, 'unavailable_track');
+                    //         //$$('suggestion_list').addCss(id, 'unavailable_track');
 
-                        }
-                    )
+                    //     }
+                    // )
                 }
             }
         )
     },
 
-    self.remove_selection_from_unavailable = function (id) {
+    self.remove_selection_from_unavailable = function (id, k) {
         // var id = $$(main_track_table.track_list).getSelectedId().id;
         // console.log(`DELETE FROM unavailable_tracks WHERE track_id=${id}`)
         $QUERY(`SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
             function (error, result) {
                 if (error) throw error;
                 if (result.length > 0) {
-                    $QUERY(
-                        `DELETE FROM unavailable_tracks WHERE track_id=${id}`,
-                        function (result) {
-                            //if (error) throw error;
-                            $$(main_track_table.track_list).removeRowCss(id, 'unavailable_track');
-                            $$(main_track_table.track_list).getItem(id).$css="";
-                            $$(main_track_table.track_list).refresh();
-                        }
-                    )
+                    $QUERY(`DELETE FROM unavailable_tracks WHERE track_id=${id}`, k)
+                    //     function (result) {
+                    //         //if (error) throw error;
+                    //         $$(main_track_table.track_list).removeRowCss(id, 'unavailable_track');
+                    //         $$(main_track_table.track_list).getItem(id).$css="";
+                    //         $$(main_track_table.track_list).refresh();
+                    //     }
+                    // )
                 }
             }
         )
