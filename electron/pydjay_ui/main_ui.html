@@ -57,47 +57,47 @@ webix.ready( () => {
     }
 )
 
-var queue_display_template = {
-    type:'line',
-    css:{
-        border: '0px solid #3c3c3c',
-    },
-    rows:[
-        {
-            id: 'queue_list_header_row',
-            height:30,
-            css:{
-                'background-color':'#303030',
-                border: '1px solid #3c3c3c'
-             },
-             rows: [
-                 {height:7},
-                {
-                    view: 'label',
-                    label: '<b>QUEUE</b>',
-                    height: 20,
-                    css:{
-                        'padding-left':'10px',
-                     }
-                },
-                {height:5},
-            ]
-        },
-        {
-            view:"list",
-            id:'queue_list',
-            css:{
-                border: '1px solid #3c3c3c',
-             },
-            select:true,
-            template: queue_element_template,
-            type: { 
-                height: cover_size
-            },
-            scroll:"y"
-        }
-    ]
-}
+// var queue_display_template = {
+//     type:'line',
+//     css:{
+//         border: '0px solid #3c3c3c',
+//     },
+//     rows:[
+//         {
+//             id: 'queue_list_header_row',
+//             height:30,
+//             css:{
+//                 'background-color':'#303030',
+//                 border: '1px solid #3c3c3c'
+//              },
+//              rows: [
+//                  {height:7},
+//                 {
+//                     view: 'label',
+//                     label: '<b>QUEUE</b>',
+//                     height: 20,
+//                     css:{
+//                         'padding-left':'10px',
+//                      }
+//                 },
+//                 {height:5},
+//             ]
+//         },
+//         {
+//             view:"list",
+//             id:'queue_list',
+//             css:{
+//                 border: '1px solid #3c3c3c',
+//              },
+//             select:true,
+//             template: queue_element_template,
+//             type: { 
+//                 height: cover_size
+//             },
+//             scroll:"y"
+//         }
+//     ]
+// }
 
 
 function save_current_session() {
