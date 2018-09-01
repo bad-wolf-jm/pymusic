@@ -1,84 +1,84 @@
-class SpectrumAnalyzer {
-    constructor(canvas, analyzer) {
-        this.analyzer = analyzer
-        this.canvas_id = canvas
-        this.animationId = null;
-        this.status = 0; //flag for sound is playing 1 or stopped 0
-        this.allCapsReachBottom = false;    
-        this.capYPositionArray = [];   
+// class SpectrumAnalyzer {
+//     constructor(canvas, analyzer) {
+//         this.analyzer = analyzer
+//         this.canvas_id = canvas
+//         this.animationId = null;
+//         this.status = 0; //flag for sound is playing 1 or stopped 0
+//         this.allCapsReachBottom = false;    
+//         this.capYPositionArray = [];   
 
-    }
+//     }
 
-    drawMeter() {
-        let cwidth = this.canvas.width
-        let cheight = this.canvas.height - 2
-        let meterWidth = 4 //width of the meters in the spectrum
-        let gap = 0 //gap between meters
-        let capHeight = 2
-        let capStyle = '#fff'
-        let meterNum = cwidth / (meterWidth + gap) //count of the meters
-        // capYPositionArray = []; ////store the vertical position of hte caps for the preivous frame
+//     drawMeter() {
+//         let cwidth = this.canvas.width
+//         let cheight = this.canvas.height - 2
+//         let meterWidth = 4 //width of the meters in the spectrum
+//         let gap = 0 //gap between meters
+//         let capHeight = 2
+//         let capStyle = '#fff'
+//         let meterNum = cwidth / (meterWidth + gap) //count of the meters
+//         // capYPositionArray = []; ////store the vertical position of hte caps for the preivous frame
 
-        let array = new Uint8Array(this.analyzer.frequencyBinCount);
-        this.analyzer.getByteFrequencyData(array);
-        //console.log(this.status, array)
-        if (this.status === 0) {
-            //fix when some sounds end the value still not back to zero
-            for (var i = array.length - 1; i >= 0; i--) {
-                array[i] = 0;
-            };
-            this.allCapsReachBottom = true;
-            for (var i = this.capYPositionArray.length - 1; i >= 0; i--) {
-                this.allCapsReachBottom = this.allCapsReachBottom && (this.capYPositionArray[i] === 0);
-            };
-            if (this.allCapsReachBottom) {
-                cancelAnimationFrame(this.animationId); //since the sound is stoped and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
-                return;
-            };
-        };
-        var step = Math.round(array.length / meterNum); //sample limited data from the total array
-        this.ctx.clearRect(0, 0, cwidth, cheight);
-        for (var i = 0; i < meterNum; i++) {
-            var value = (array[i * step] / 255) * cheight;
-            if (this.capYPositionArray.length < Math.round(meterNum)) {
-                this.capYPositionArray.push(value);
-            };
-            this.ctx.fillStyle = capStyle;
-            //draw the cap, with transition effect
-            if (value < this.capYPositionArray[i]) {
-                this.ctx.fillRect(i * (meterWidth + gap), cheight - (--this.capYPositionArray[i]), meterWidth, capHeight);
-            } else {
-                this.ctx.fillRect(i * (meterWidth + gap), cheight - value, meterWidth, capHeight);
-                this.capYPositionArray[i] = value;
-            };
-            this.ctx.fillStyle = this.gradient; //set the filllStyle to gradient for a better look
-            this.ctx.fillRect(i * (meterWidth + gap) /*meterWidth+gap*/ , cheight - value + capHeight, meterWidth, cheight); //the meter
-        }
-        this.animationId = requestAnimationFrame(() => this.drawMeter());
-    }
+//         let array = new Uint8Array(this.analyzer.frequencyBinCount);
+//         this.analyzer.getByteFrequencyData(array);
+//         //console.log(this.status, array)
+//         if (this.status === 0) {
+//             //fix when some sounds end the value still not back to zero
+//             for (var i = array.length - 1; i >= 0; i--) {
+//                 array[i] = 0;
+//             };
+//             this.allCapsReachBottom = true;
+//             for (var i = this.capYPositionArray.length - 1; i >= 0; i--) {
+//                 this.allCapsReachBottom = this.allCapsReachBottom && (this.capYPositionArray[i] === 0);
+//             };
+//             if (this.allCapsReachBottom) {
+//                 cancelAnimationFrame(this.animationId); //since the sound is stoped and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
+//                 return;
+//             };
+//         };
+//         var step = Math.round(array.length / meterNum); //sample limited data from the total array
+//         this.ctx.clearRect(0, 0, cwidth, cheight);
+//         for (var i = 0; i < meterNum; i++) {
+//             var value = (array[i * step] / 255) * cheight;
+//             if (this.capYPositionArray.length < Math.round(meterNum)) {
+//                 this.capYPositionArray.push(value);
+//             };
+//             this.ctx.fillStyle = capStyle;
+//             //draw the cap, with transition effect
+//             if (value < this.capYPositionArray[i]) {
+//                 this.ctx.fillRect(i * (meterWidth + gap), cheight - (--this.capYPositionArray[i]), meterWidth, capHeight);
+//             } else {
+//                 this.ctx.fillRect(i * (meterWidth + gap), cheight - value, meterWidth, capHeight);
+//                 this.capYPositionArray[i] = value;
+//             };
+//             this.ctx.fillStyle = this.gradient; //set the filllStyle to gradient for a better look
+//             this.ctx.fillRect(i * (meterWidth + gap) /*meterWidth+gap*/ , cheight - value + capHeight, meterWidth, cheight); //the meter
+//         }
+//         this.animationId = requestAnimationFrame(() => this.drawMeter());
+//     }
 
-    _drawSpectrum() {
-        // let canvas = this.canvas,
-        this.canvas = document.getElementById(this.canvas_id)
-        this.ctx = this.canvas.getContext('2d')
-        this.gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
-        this.gradient.addColorStop(1, '#222');
-        this.gradient.addColorStop(0.5, '#999');
-        this.gradient.addColorStop(0.10, '#ccc');
-        this.gradient.addColorStop(0, '#f00');
-        this.animationId = requestAnimationFrame(() => this.drawMeter());
-    }
+//     _drawSpectrum() {
+//         // let canvas = this.canvas,
+//         this.canvas = document.getElementById(this.canvas_id)
+//         this.ctx = this.canvas.getContext('2d')
+//         this.gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+//         this.gradient.addColorStop(1, '#222');
+//         this.gradient.addColorStop(0.5, '#999');
+//         this.gradient.addColorStop(0.10, '#ccc');
+//         this.gradient.addColorStop(0, '#f00');
+//         this.animationId = requestAnimationFrame(() => this.drawMeter());
+//     }
 
-    start() {
-        this.status = 1;
-        this._drawSpectrum()
-    }
+//     start() {
+//         this.status = 1;
+//         this._drawSpectrum()
+//     }
 
-    stop() {
-        this.status = 0;
-    }
+//     stop() {
+//         this.status = 0;
+//     }
 
-}
+// }
 
 
 class MainPlayer extends PydjayAudioFilePlayer {
@@ -112,10 +112,10 @@ class MainPlayer extends PydjayAudioFilePlayer {
         let stream_length = (track.stream_end-track.stream_start);
         $$(this.title_id ).define('label', track.title)
         $$(this.title_id ).refresh()
-        $$(this.artist_id ).define('label', `${track.artist}`)
+        $$(this.artist_id ).define('label', `${track.artist} - ${track.album}`)
         $$(this.artist_id ).refresh()
-        $$(this.album_id ).define('label', `${track.album}`)
-        $$(this.album_id ).refresh()
+        // $$(this.album_id ).define('label', `${track.album}`)
+        // $$(this.album_id ).refresh()
         $$(this.duration_id ).define('label', `${format_nanoseconds(stream_length)}`)
         $$(this.duration_id ).refresh()
         $$(this.bpm_id ).define('label', `${track.bpm}`)
@@ -128,7 +128,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
         } else {
             cover_source = `file://${track.image_root}/${track.cover}`;
         }
-        let cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='170' width='170'></img>`
+        let cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='145' width='145'></img>`
         $$(this.cover_id).define('template', cover_image);
         $$(this.cover_id).refresh();
         this._track = track
@@ -153,12 +153,12 @@ class MainPlayer extends PydjayAudioFilePlayer {
     init() {
         this._waveform = WaveSurfer.create({
             container: `#${this.waveform_id }`,
-            pixelRatio: 2,
-            scrollParent: true,
-            hideScrollbar: false,
+            //pixelRatio: 2,
+            //scrollParent: true,
+            //hideScrollbar: false,
             waveColor: 'violet',
             progressColor: 'purple',
-            height:30,
+            height:40,
             barHeight:1,
             plugins: [
                 WaveSurferRegions.create({
@@ -180,25 +180,27 @@ class MainPlayer extends PydjayAudioFilePlayer {
             "ready", () => {
                 this._waveform.zoom(0)
                 let file_name = path.join(this._track.music_root, this._track.file_name);
-                super.play(file_name,  this._track.stream_start / 1000000, this._track.stream_end / 1000000) //start_time / 1000000, end_time / 1000000)
-                this.spectrum_analyzer.start()
+                super.play(file_name,  this._track.stream_start / 1000000, this._track.stream_end / 1000000) 
+                //start_time / 1000000, end_time / 1000000)
+                //this.spectrum_analyzer.start()
             }
         )
 
-        this.spectrum_analyzer = new SpectrumAnalyzer(
-            this.spectrum_analyzer_id,
-            this.audio_context.analyzer
-        )
+        // this.spectrum_analyzer = new SpectrumAnalyzer(
+        //     this.spectrum_analyzer_id,
+        //     this.audio_context.analyzer
+        // )
     }
 
 
     create_layout() {
         return {
-            height: 170,
+            height: 145,
             css: {
                 'border-bottom': '1px solid white',
                 'margin-bottom': "1px",
-                "background-color": "#1E1E1E"
+                "background-color": "#1E1E1E",
+                "background-image": "linear-gradient(to top, #1E1E1E, #3C3C3C)"
             },
 
             rows: [
@@ -208,8 +210,8 @@ class MainPlayer extends PydjayAudioFilePlayer {
                         {
                             id: this.cover_id,
                             view: 'template',
-                            width:170,
-                            height:170,
+                            width:145,
+                            height:145,
                             template: "",
                             css: {
                                 "background-color": "#1E1E1E"
@@ -229,7 +231,7 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                     id: this.title_id,
                                                     view:'label',
                                                     label:'TITLE',
-                                                    height:50,
+                                                    height:37,
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
@@ -241,30 +243,30 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                     id: this.artist_id,
                                                     view:'label',
                                                     label:'ARTIST',
-                                                    height:20,
+                                                    height:25,
                                                     css: {
                                                         'text-align':'left',
                                                         'text-transform':'uppercase',
                                                         'font-weight':'bold',
-                                                        'font-size':"10pt",
+                                                        'font-size':"12pt",
                                                         color:"#909090"
                                                     },
                 
                                                 },
-                                                {
-                                                    id: this.album_id,
-                                                    view:'label',
-                                                    label:'ALBUM',
-                                                    height:20,
-                                                    css: {
-                                                        'text-align':'left',
-                                                        'text-transform':'uppercase',
-                                                        'font-weight':'bold',
-                                                        'font-size':"10pt",
-                                                        color:"#909090"
-                                                    },
-                                                },    
-                                                {height:7}    
+                                                // {
+                                                //     id: this.album_id,
+                                                //     view:'label',
+                                                //     label:'ALBUM',
+                                                //     height:20,
+                                                //     css: {
+                                                //         'text-align':'left',
+                                                //         'text-transform':'uppercase',
+                                                //         'font-weight':'bold',
+                                                //         'font-size':"10pt",
+                                                //         color:"#909090"
+                                                //     },
+                                                // },    
+                                                {height:5}    
                                             ]
                                         },
                                         {
@@ -285,56 +287,31 @@ class MainPlayer extends PydjayAudioFilePlayer {
                 
                                                 },
                                                 {height:15},
-                                                {
-                                                    cols: [
-                                                        {
-                                                            gravity:.5,
-                                                            id:'start-stop-button',
-                                                            view:'button',
-                                                            type:'icon',
-                                                            icon:'play',
-                                                            label:'START',
-                                                            click: start_queue,
-                                                            //maxHeight:35,
-                                                            width:100
-                                                        },
-                                                        {
-                                                            gravity:.5,
-                                                            view:'button',
-                                                            type:'icon',
-                                                            icon:'step-forward',
-                                                            label:'SKIP/STOP',
-                                                            popup: "skip_stop_dialog",
-                                                            //maxHeight:35,
-                                                            width:100
-                                                        },        
-                                                    ]
-                                                }
     
                                             ]
                                         },
-                                        {width:10},
-                                        {
-                                            view: 'template',
-                                            width:500,
-                                            height:90,
-                                            template: `<canvas id='${this.spectrum_analyzer_id}' style="border: \'1px solid black\'; width:100%; height:100%">`,
-                                            // template: `<canvas id='${this.spectrum_analyzer_id}' style="border: \'1px solid black\'; width:600; height:100">`,
-                                            css: {
-                                                // 'border-bottom': '1px solid white',
-                                                // 'margin-bottom': "1px",
-                                                "background-color": "#1E1E1E"
-                                            },
-                                        }
+                                        {width:10}
+                                        // {
+                                        //     view: 'template',
+                                        //     width:500,
+                                        //     height:90,
+                                        //     template: `<canvas id='${this.spectrum_analyzer_id}' style="border: \'1px solid black\'; width:100%; height:100%">`,
+                                        //     // template: `<canvas id='${this.spectrum_analyzer_id}' style="border: \'1px solid black\'; width:600; height:100">`,
+                                        //     css: {
+                                        //         // 'border-bottom': '1px solid white',
+                                        //         // 'margin-bottom': "1px",
+                                        //         "background-color": "#1E1E1E"
+                                        //     },
+                                        // }
                                     ]
                                 },
                                 {
                                     view:'template',
                                     css: {
-                                        "background-color": "#1E1E1E"
+                                        "background-color": "transparent"
                                     },
                                     template:`<div id="${this.waveform_id}" style="border: \'1px solid black\'; width:100%; height:100%; position:relative; top:0%;"></div>`,
-                                    height:30
+                                    height:40
                                 },
                 
                                 // {height:3},
@@ -422,7 +399,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                         color:"#AFAFAF"
                                                     },
                                                 },
-                                                //{}
                                             ]
                                         },
                                         {
@@ -432,7 +408,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                             },
 
                                             rows: [
-                                                //{},
                                                 {
                                                     id: this.rating_id,
                                                     view:'label',
@@ -446,7 +421,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                         color:"#AFAFAF"
                                                     },
                                                 },
-                                                //{}
                                             ]
                                         },
                                         {
@@ -490,11 +464,44 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                     </span>`,
                                             maxHeight:35
                                         },
+                                        // {},
                                         {
+                                            // width: 15,
                                             css: {
                                                 'border-right': '1px solid white !important',
                                             },
                                         },
+                                        {width:20},        
+                                        {
+                                            rows: [
+                                                {
+                                                    //gravity:.5,
+                                                    id:'start-stop-button',
+                                                    view:'button',
+                                                    type:'icon',
+                                                    icon:'play',
+                                                    label:'START',
+                                                    click: start_queue,
+                                                    //maxHeight:35,
+                                                    width:120
+                                                },
+                                            ]
+                                        },
+                                        {
+                                            rows: [
+                                            {
+                                                    //gravity:.5,
+                                                    view:'button',
+                                                    type:'icon',
+                                                    icon:'step-forward',
+                                                    label:'SKIP/STOP',
+                                                    popup: "skip_stop_dialog",
+                                                    //maxHeight:35,
+                                                    width:120
+                                                },        
+                                            ]
+                                        },
+
                                         {
                                             width:10
                                         },
@@ -507,13 +514,13 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                     icon:'list',
                                                     label:'SESSION',
                                                     //height:15,
-                                                    width:100,
+                                                    width:120,
                                                     popup:'session_popup'
                                                 },        
                                                 //{}        
                                             ]
                                         },
-                                        {width:50},        
+                                        {width:20},        
                                         // {
                                         //     gravity:.5,
                                         //     view:'button',
