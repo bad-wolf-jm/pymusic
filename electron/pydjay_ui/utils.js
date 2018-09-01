@@ -87,7 +87,6 @@ function format_seconds_short(seconds)
 
 function humanFileSize(bytes) {
     var thresh = 1024;
-    console.log("FOOBARBAR");
 
     if(Math.abs(bytes) < thresh) {
         return `<span style="font-size:16px">${bytes}</span><span style="font-size:11px"></span>`;

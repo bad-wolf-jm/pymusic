@@ -311,13 +311,11 @@ class MusicDatabase extends EventDispatcher {
 
     add_id_to_unavailable (id) {
         // var id = $$('display_list').getSelectedId().id;
-        this.$QUERY(
-            `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+        this.$QUERY(`SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
             function (result) {
                 //if (error) throw error;
                 if (result.length == 0) {
-                    this.$QUERY(
-                        `INSERT INTO unavailable_tracks (track_id) VALUES (${id})`,
+                    this.$QUERY(`INSERT INTO unavailable_tracks (track_id) VALUES (${id})`,
                         () => {
                             this.dispatch("track-id-unavailable", id)
                         }
@@ -336,13 +334,11 @@ class MusicDatabase extends EventDispatcher {
     remove_id_from_unavailable (id) {
         // var id = $$('display_list').getSelectedId().id;
         // console.log(`DELETE FROM unavailable_tracks WHERE track_id=${id}`)
-        this.$QUERY(
-            `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+        this.$QUERY(`SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
             function (result) {
                 // if (error) throw error;
                 if (result.length > 0) {
-                    this.$QUERY(
-                        `DELETE FROM unavailable_tracks WHERE track_id=${id}`,
+                    this.$QUERY(`DELETE FROM unavailable_tracks WHERE track_id=${id}`,
                         () => {
                             this.dispatch("track-id-available", id)
                         }
@@ -463,18 +459,15 @@ class MusicDatabase extends EventDispatcher {
 
 
     save_session (name, location, address) {
-        this.$QUERY(
-            `SELECT track_id, start_time, end_time FROM session_queue WHERE status='played' ORDER BY position`,
+        this.$QUERY(`SELECT track_id, start_time, end_time FROM session_queue WHERE status='played' ORDER BY position`,
             function (played_tracks) {
                 //if (error) throw error;
                 if (played_tracks.length > 0) {
-                    this.$QUERY(
-                        `SELECT max(id) + 1 AS new_session_id FROM sessions`,
+                    this.$QUERY(`SELECT max(id) + 1 AS new_session_id FROM sessions`,
                         function (result) {
                             //if (error) throw error;
                             new_session_id = result[0].new_session_id;
-                            this.$QUERY(
-                                `SELECT min(start_time) AS start, max(end_time) AS end FROM session_queue WHERE status='played'`,
+                            this.$QUERY(`SELECT min(start_time) AS start, max(end_time) AS end FROM session_queue WHERE status='played'`,
                                 function (start_end_time) {
                                     //if (error) throw error;
                                     format = webix.Date.dateToStr("%Y-%m-%d %H:%i:%s");

@@ -9,6 +9,7 @@
 <script src="../web-audio/audio_player_base.js"></script>
 <script src="../web-audio/audio_player_buffer.js"></script>
 <script src="../web-audio/audio_player_file.js"></script>
+<script src="../web-audio/mp3_fileinfo.js"></script>
 
 
 <script src="./utils.js"></script>
@@ -17,7 +18,7 @@
 <script src="./data_class.js"></script>
 <script src="./components/lists/track_table.js"></script>
 <script src="./components/lists/track_list.js"></script>
-<script src="./components/lists/main_list_display.js"></script>
+<!-- <script src="./components/lists/main_list_display.js"></script> -->
 <script src="./components/lists/queue_display.js"></script>
 <script src="./components/playlist/playlist_editor.js"></script>
 <script src="./components/playlist/create.js"></script>
@@ -25,6 +26,8 @@
 <script src="./components/playlist/duplicate.js"></script>
 <script src="./components/playlist/short_list.js"></script>
 <script src="./components/playback/precue_player.js"></script>
+<script src="./components/playback/main_player.js"></script>
+<script src="./menu.js"></script>
 <script src="./sidebar.js"></script>
 <script src="./playback.js"></script>
 <!-- <script src="./track_edit.js"></script> -->
@@ -33,8 +36,8 @@
 <script src="./queue.js"></script>
 <script src="./actions.js"></script>
 <link rel="stylesheet" href="../node_modules/webix/webix.css">
-<link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">
-<link rel="stylesheet" href="../node_modules/webix/skins/contrast.css">
+<!-- <link rel="stylesheet" href="../node_modules/webix/skins/terrace.css">-->
+<link rel="stylesheet" href="../node_modules/webix/skins/contrast.css"> 
 <link rel="stylesheet" href="./pymusic_style.css">
 
 
@@ -44,165 +47,57 @@
 </body>
 <script type="text/javascript">
 $ = require('jquery')
-// Highcharts = require('highcharts')
 WaveSurfer = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path = require('path');
 var dialog = require('electron').remote.dialog;
 
-var player_window = {
-    height:58,
-    gravity:1,
-    css:{
-        'background-color':'#3c3c3c',
-        'padding':'0px',
-        border: '1px solid #5c5c5c',
-     },
-    cols:[
-        {
-            id:'main-cover-image',
-            view: 'template',
-            width:58,
-            height:58,
-            template: ""
-        },
-        {width:5},
-        {
-            rows:[
-                {height:7},
-                {
-                    cols: [
-                        {
-                            rows: [
-                                {
-                                    id:'main-title',
-                                    view: 'label',
-                                    css: {
-                                        'text-align':'left',
-                                        'text-transform':'uppercase',
-                                        'font-weight':'bold'
-                                    },
-                                    label: 'Title Of Song',
-                                    height:20
-                                },
-                                {
-                                    id:'main-artist',
-                                    view: 'label',
-                                    css: {
-                                        'text-align':'left',
-                                        'white-space':'nowrap',
-                                        'overflow': 'hidden',
-                                        'text-overflow': 'ellipsis'
-                                    },
-                                    label: 'Artist - Album',
-                                    height:20
-                                }
-                            ]
-                        },
-                        {
-                            id:'main_track_time',
-                            view: 'label',
-                            css: {
-                                'text-align':'right',
-                                'font-size':'20px',
-                                'font-weight':800
-                            },
-                            label: '-00:00',
-                            height:15,
-                            width:75
-                        },
-                        {width:5}
-                    ]
-                },
-                {height:2},
-                {cols:[
-                    {width:2},
-                    {
-                        height:5,
-                        css:{margin:0, padding:0, border: '0px solid #3c3c3c'},
-                        template:'<div id="main-player-progress" style="border: \'0px solid black\'; width:100%; height:100%; position:relative; top:0%; transform: translateY(-150%)"></div>'
-                    },
-                    {width:7}
-                ]}
-            ]
-        }
-    ]
-}
-
-var main_player_progress =undefined;
-$(document).ready( () => {
-    main_player_progress = new ProgressBar.Line('#main-player-progress',
-    {
-     strokeWidth: 1,
-     easing: 'easeInOut',
-     duration: 5,
-     color: '#5a5a5a',
-     trailColor: '#eee',
-     trailWidth: 1,
-     svgStyle: {width: '100%', height: '100%'}});
-    main_player_progress.animate(0);
-});
-
-
-var preview_seek = undefined;
 webix.ready( () => {
-    preview_seek = new ProgressBar.Line('#preview-progress',
-    {
-        strokeWidth: 1,
-        duration: 5,
-        color: '#5a5a5a',
-        trailColor: '#eee',
-        trailWidth: 1,
-        svgStyle: {width: '100%', height: '100%'}
+        pl.init_progress()
     }
- );
-    preview_seek.animate(0);
-});
+)
 
-var track_add_progress_dialog =  webix.ui({
-    view:"window",
-    modal:true,
-    position:"center",
-    width:600,
-    height:400,
-    head: false,
-    body:{
-        rows:[
-            {height:10},
-            {
-                id:'track_add_progress',
-                view: "label",
-                label:"Processing track ### of ###",
-                css: {
-                    'text-align': 'center',
-                    'font-size':  '20px',
-                }
-            },
-            {height:10},
-            {
-                id:'track_add_title',
-                view: "label",
-                label:"Title Of Song",
-                css: {
-                    'text-align': 'center',
-                    'font-size': '20px',
-                }
-
-            },
-            {
-                id:'track_add_artist',
-                view: "label",
-                label:"Artist - Album",
-                css: {
-                    'text-align': 'center',
-                    'font-size':  '15px',
-                }
-
-            }
-        ]
-    }
-})
-track_add_progress_dialog.hide();
+// var queue_display_template = {
+//     type:'line',
+//     css:{
+//         border: '0px solid #3c3c3c',
+//     },
+//     rows:[
+//         {
+//             id: 'queue_list_header_row',
+//             height:30,
+//             css:{
+//                 'background-color':'#303030',
+//                 border: '1px solid #3c3c3c'
+//              },
+//              rows: [
+//                  {height:7},
+//                 {
+//                     view: 'label',
+//                     label: '<b>QUEUE</b>',
+//                     height: 20,
+//                     css:{
+//                         'padding-left':'10px',
+//                      }
+//                 },
+//                 {height:5},
+//             ]
+//         },
+//         {
+//             view:"list",
+//             id:'queue_list',
+//             css:{
+//                 border: '1px solid #3c3c3c',
+//              },
+//             select:true,
+//             template: queue_element_template,
+//             type: { 
+//                 height: cover_size
+//             },
+//             scroll:"y"
+//         }
+//     ]
+// }
 
 
 function save_current_session() {
@@ -265,72 +160,90 @@ function save_current_session() {
     x.show();
 }
 
-function playback_settings() {
-    db_connection.query(
-        'SELECT wait_time FROM settings',
-        function (e, r) {
-            if (e) throw e;
-            wait_time = r[0].wait_time;
-            x = webix.ui({
-                view:"window",
-                modal:true,
-                position:"center",
-                width:600,
-                height:400,
-                head: "PLAYBACK SETTINGS",
-                body:{
-                    rows:[
-                        {height:10},
-                        {
-                            id:'wait_time',
-                            view: "text",
-                            value: `${wait_time}`,
-                            labelWidth:225,
-                            label:"Delay between tracks (seconds):"
-                        },
-                        {height:30},
-                        {
-                            view: "button",
-                            type: 'icon',
-                            icon: "headphones",
-                            label: "Reset audio system",
-                            click: reset_audio
+// function playback_settings() {
+//     db_connection.query(
+//         'SELECT wait_time FROM settings',
+//         function (e, r) {
+//             if (e) throw e;
+//             wait_time = r[0].wait_time;
+//             x = webix.ui({
+//                 view:"window",
+//                 modal:true,
+//                 position:"center",
+//                 width:600,
+//                 height:400,
+//                 head: "PLAYBACK SETTINGS",
+//                 body:{
+//                     rows:[
+//                         {height:10},
+//                         {
+//                             id:'wait_time',
+//                             view: "text",
+//                             value: `${wait_time}`,
+//                             labelWidth:225,
+//                             label:"Delay between tracks (seconds):"
+//                         },
+//                         {height:30},
+//                         {
+//                             view: "button",
+//                             type: 'icon',
+//                             icon: "headphones",
+//                             label: "Reset audio system",
+//                             click: reset_audio
 
-                        },
-                        {height:30},
-                        {
-                            cols:[
-                                {},
-                                {
-                                    view: 'button',
-                                    label: 'APPLY',
-                                    click: function () {
-                                        db_connection.query(
-                                            `UPDATE settings SET wait_time=${parseInt($$('wait_time').getValue())}`,
-                                            function (error, x) {
-                                                if (error) throw error;
-                                                x.hide();
-                                            }
-                                        )
-                                        x.hide();
-                                    }
-                                },
-                                {},
-                                {
-                                    view: 'button',
-                                    label: 'CANCEL',
-                                    click: () => {x.hide()}
-                                },
-                                {}
-                            ]
-                        },
-                        {height:10}
-                    ]
-                }
-            })
-            x.show();
-        }
-    )
+//                         },
+//                         {height:30},
+//                         {
+//                             cols:[
+//                                 {},
+//                                 {
+//                                     view: 'button',
+//                                     label: 'APPLY',
+//                                     click: function () {
+//                                         db_connection.query(
+//                                             `UPDATE settings SET wait_time=${parseInt($$('wait_time').getValue())}`,
+//                                             function (error, x) {
+//                                                 if (error) throw error;
+//                                                 x.hide();
+//                                             }
+//                                         )
+//                                         x.hide();
+//                                     }
+//                                 },
+//                                 {},
+//                                 {
+//                                     view: 'button',
+//                                     label: 'CANCEL',
+//                                     click: () => {x.hide()}
+//                                 },
+//                                 {}
+//                             ]
+//                         },
+//                         {height:10}
+//                     ]
+//                 }
+//             })
+//             x.show();
+//         }
+//     )
+// }
+var cover_size = 45
+function queue_element_template(element) {
+    var cover_source = null;
+    if (element.cover == null) {
+        cover_source = "../resources/images/default_album_cover.png"
+    } else {
+        cover_source = `file://${element.image_root}/${element.cover}`
+    }
+    return `<img style="float:left; padding-right:7px; padding-left:-3px" src="${cover_source}" height='${cover_size}' width='${cover_size}'></img>
+            <div style="margin:0px; padding:0px; float:left; width:275px">
+                <div class="queue_element_title"><b>${element.title}</b></div>
+                <div class="queue_element_artist"><i>${element.artist}</i></div>
+            </div>
+            <div class="queue_element_bpm">${element.bpm} BPM</div>
+            <div class="queue_element_duration">
+                <b>${format_nanoseconds(element.stream_length)}</b>
+            </div>`
 }
 
 var session_popup = webix.ui(
@@ -399,48 +312,6 @@ session_popup.attachEvent('onShow', function () {
     });
 })
 
-
-var track_info_popup = webix.ui(
-    {
-        view:"popup",
-        id:"info_popup",
-        height:300,
-        width:350,
-        body:{
-            // { 
-            view:"property", 
-            id:"info_popup_property_sheet", 
-            //width:100,
-            disable:true,
-            height:285, 
-            labelWidth:100,
-            elements:[
-                { label:"Metadata", type:"label"},
-                { label:"<b>Title:</b>", id:"title"},
-                { label:"<b>Artist:</b>", id:"artist"},
-                { label:"<b>Album:</b>", id:"album"},
-                { label:"<b>Year:</b>", id:"year"},
-                { label:"<b>Genre:</b>", id:"genre"},
-                { label:"<b>Color:</b>", id:"color"},
-                { label:"<b>Rating:</b>", id:"rating"},
-                { label:"<b>Loved:</b>", id:"favorite"},
-            ]
-        },
-    }
-)
-track_info_popup.hide();
-track_info_popup.attachEvent('onShow', function () {
-    if (preview_track_id != undefined) {
-        DB.get_track_by_id(preview_track_id,
-            function (track_info) {
-                $$("info_popup_property_sheet").setValues(track_info[0])
-            }
-        )
-    }
-})
-
-
-
 var popup = webix.ui({
     view:"popup",
     id:"skip_stop_dialog",
@@ -478,273 +349,80 @@ var popup = webix.ui({
 popup.hide();
 
 
-var preview_popup = webix.ui({
-    view:"popup",
-    id:"preview_popup_menu",
-    height:650,
-    width:200,
-    body:{
-        rows: [
-            {
-                view:'button',
-                type:'icon',
-                // icon:'stop',
-                label:'Play full track',
-                maxHeight:35,
-                click: () => {
-                    url = preview_track_id
-                    if (url != undefined) {
-                        preview_play_track_id(url)
-                    }
-                    $$("preview_popup_menu").hide()
-                }
-            },
-            {
-                view:'button',
-                type:'icon',
-                label:'Play last 30 seconds',
-                maxHeight:35,
-                click: () => {
-                    url = preview_track_id
-                    if (url != undefined) {
-                        preview_play_track_id(url, -30000000000)
-                    }
-                    $$("preview_popup_menu").hide()
-                }
-            },
-            {
-                view:'button',
-                type:'icon',
-                // icon:'stop',
-                label:'Play last 10 seconds',
-                maxHeight:35,
-                click: () => {
-                    url = preview_track_id
-                    if (url != undefined) {
-                        preview_play_track_id(url, -10000000000)
-                    }
-                    $$("preview_popup_menu").hide()
-                }
-                //click: stop_queue_now
-            }
-        ]
-    }
-})
-popup.hide();
-
-
-
-main_menu_popup  = webix.ui({
-    view: 'popup',
-    id: "main_menu_popup",
-    width: 400,
-    autoheight: true,
-    relative: 'bottom',
-    body: sidebar_template
-})
-main_menu_popup.hide()
-
 main_track_table = new TrackTable()
-
+main_menu = new TopMenu()
+var main_player_interface = mpl
+webix.ready(
+    () => {
+        main_player_interface.setRating(3)
+        mpl.init()
+    }
+)
 var datatable = webix.ui({
     css:{
-                'background-color':'#515151',
-                'padding':'0px',
-                'border-bottom': "1px solid #CCCCCC",
-            },
+            'background-color':'#515151',
+            'padding':'0px',
+        },
     rows:[
-        {
-            css:{
-                'background-color':'#515151',
-                'padding':'0px',
-                'border-bottom': "1px solid #CCCCCC",
-            },
-            cols:[
-                {
-                    cols:[
-                        {},
-                        {
-                            view:'button',
-                            type:'icon',
-                            icon:'list',
-                            label:'SESSION',
-                            height:25,
-                            width:100,
-                            popup:'session_popup'
-                        }
-                    ]
-                },
-                player_window,
-                {
-                    cols:[
-                        // {
-                        //     css: {
-                        //         //'background-color':'#515151',
-                        //         //'padding':'0px',
-                        //         //'border-bottom': "1px solid #CCCCCC",
-                        //         //'height': "100% !important"
-                        //     },
-                        //     width:1
-                        // },
-                        {
-                            width:250,
-                            cols:[
-                                {width:7},
-                                {
-                                    gravity:.5,
-                                    view:'template',
-                                    id: 'queue_stop_message',
-                                    css: {
-                                        'text-align':'center',
-                                        'vertical-align': 'middle',
-                                        color: '#fbbbbbb',
-                                        'background-color': '#870053'
-                                    },
-                                    template:`<span style="vertical-align:bottom">
-                                                <b>Queue will stop after this song</b>
-                                              </span>`,
-                                    maxHeight:35
-                                },
-                                {width:15}
-                            ]
-                        },
-                        {
-                            gravity:.5,
-                            id:'start-stop-button',
-                            view:'button',
-                            type:'icon',
-                            icon:'play',
-                            label:'START',
-                            click: start_queue,
-                            maxHeight:35
-                        },
-                        {
-                            gravity:.5,
-                            view:'button',
-                            type:'icon',
-                            icon:'step-forward',
-                            label:'SKIP/STOP',
-                            popup: "skip_stop_dialog",
-                            maxHeight:35
-                        },
-                        {
-                            gravity:.5,
-                            view:'button',
-                            type:'icon',
-                            icon:'cog',
-                            label:'SETTINGS',
-                            click: playback_settings,
-                            maxHeight:35
-                        },
-                        // {
-                        //     gravity:.5,
-                        //     view:'button',
-                        //     type:'icon',
-                        //     icon:'plus',
-                        //     label:'ADD',
-                        //     autowidth:true,
-                        //     click: add_track,
-                        //     maxHeight:35
-                        // }
-                    ]
-                }
-            ]
-        },
-        {
-            cols:[
-                sidebar_template,
-                //main_list_display_template,
-                main_track_table.create_layout(),
-                {
-                    width:494,
-                    rows: [
-                        queue_display_template,
-                        // {
-                        //     height:5,
-                        //     css: {
-                        //         'background-color': '#3c3c3c',
-                        //         'border-color':"0px solid #3c3c3c"
-                        //     }
-                        // },
-
-
-                        // { view:"property", id:"metadata", width:100,disable:true,height:285, labelWidth:100,
-                        //     elements:[
-                        //     { label:"Metadata", type:"label"},
-                        //     { label:"<b>Title:</b>", type:"text", id:"title"},
-                        //     { label:"<b>Artist:</b>", type:"text", id:"artist"},
-                        //     { label:"<b>Album:</b>", type:"text", id:"album"},
-                        //     { label:"<b>Year:</b>", type:"text", id:"year"},
-                        //     { label:"<b>Genre:</b>", type:"text", id:"genre"},
-                        //     { label:"<b>Color:</b>", type:"color", id:"color"},
-                        //     { label:"Info", type:"label"},
-                        //     { label:"<b>BPM:</b>", type:"text", id:"bpm"},
-                        //     { label:"<b>Duration:</b>", type:"text", id:"track_length"},
-                        //     ]
-                        // },
-                        pl.create_layout() //preview_player_window,
-                        //suggestions_display_template
-                    ]
-                }
-            ]
-        },
-        {
+    {
             height:40,
             css: {
-                'background-color': '#202020',
-                'border-top':"1px solid #3f3f3f",
+                'background-color': '#2a2a2a',
+                'padding':'0px',
+                'border-bottom':"2px solid #a2a2a2 !important",
             },
             cols:[
                 {
                     width:15
                 },
-                {
-                    view: 'label',
-                    id: 'calendar',
-                    label: '<span style="color:rgb(200,200,200)">2018-01-09</span> | 0:45',
-                    height: 20
-                },
+                main_menu.create_layout(),
                 {
                     view: 'label',
                     id: 'queue_duration',
                     label: '<b>QUEUE DURATION:</b> 0:00',
-                    height: 20
+                    height: 20,
+                    css: {
+                        "text-align": 'center'//,
+                    }
                 },
                 {
                     view: 'label',
                     id:'queue_ends_at',
                     label: '<b>ENDS:</b> 0:00',
-                    height: 20
+                    height: 20,
+                    css: {
+                        "text-align": 'center'//,
+                    }
                 },
                 {
-                    id:'main-player-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'volume-up',
-                    label:'100%',
-                    width:75
-                },
-                {
-                    id:'monitor-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'volume-control-phone',
-                    label:'100%',
-                    width:75
-                },
-                {
-                    id:'precue-player-volume',
-                    view:'button',
-                    type:'icon',
-                    icon:'headphones',
-                    label:'100%',
-                    width:75
+                    view: 'label',
+                    id: 'calendar',
+                    label: '<span style="color:rgb(200,200,200)">2018-01-09</span> | 0:45',
+                    height: 20,
+                    css: {
+                        "text-align": 'right'//,
+                    }
                 },
                 {
                     width:15
                 }
             ]
-        }
+        },
+
+        main_player_interface.create_layout(),
+        {
+            cols:[
+                sidebar_template,
+                main_track_table.create_layout(),
+                {
+                    width:494,
+                    rows: [
+                        queue_display_template,
+                        pl.create_layout(),
+                    ]
+                }
+            ]
+        },
     ]
 });
 $$('queue_stop_message').hide();
@@ -842,23 +520,8 @@ webix.UIManager.addHotKey("alt+f",
     }
 );
 
-// webix.UIManager.addHotKey("escape", function () {
-//     webix.UIManager.setFocus($$(main_track_table.track_list));
-// }, $$('track_filter'));
-
-// webix.UIManager.addHotKey("enter", function () {
-//     webix.UIManager.setFocus($$(main_track_table.track_list));
-// }, $$('track_filter'));
-
 var filtering = false;
 
-// $$(main_track_table.track_list_filter).attachEvent('onFocus', function (x) {
-//     filtering=true;
-// });
-// $$(main_track_table.track_list_filter).attachEvent('onBlur', function (x) {
-//     filtering=false;
-// });
-
 webix.UIManager.addHotKey("right", function () {
     webix.UIManager.setFocus('queue_list');
 }, $$(main_track_table.track_list));
@@ -876,29 +539,6 @@ webix.UIManager.addHotKey("left", function () {
 webix.UIManager.addHotKey("right", function () {
     webix.UIManager.setFocus($$(main_track_table.track_list));
 }, $$('queue_list'));
-
-
-// webix.UIManager.addHotKey("left", function () {
-//     webix.UIManager.setFocus($$('queue_list'));
-// }, $$('suggestion_list'));
-
-// webix.UIManager.addHotKey("right", function () {
-//     webix.UIManager.setFocus($$(main_track_table.track_list));
-// }, $$('suggestion_list'));
-
-
-
-// $$('suggestion_list').attachEvent('onFocus',
-//     function (x) {
-//         s = $$('queue_list').getSelectedId();
-//         if (s == '') {
-//             $$('queue_list').select($$('queue_list').getFirstId());
-//         }
-//         webix.html.addCss( $$('suggestion_list_header_row').getNode(), "focus_header");
-//         webix.html.removeCss( $$('main_list_header_row').getNode(), "focus_header");
-//         webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
-//     }
-//  );
 
 
 $$('queue_list').attachEvent('onFocus',
@@ -909,21 +549,9 @@ $$('queue_list').attachEvent('onFocus',
         }
         webix.html.addCss( $$('queue_list_header_row').getNode(), "focus_header");
         webix.html.removeCss( $$(main_track_table.header).getNode(), "focus_header");
-        //webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
     }
  );
 
-// $$(main_track_table.track_list).attachEvent('onFocus',
-//   function (x) {
-//       s = $$(main_track_table.track_list).getSelectedId();
-//       if (s == '') {
-//           $$(main_track_table.track_list).select($$(main_track_table.track_list).getFirstId());
-//       }
-//       webix.html.addCss($$(main_track_table.header).getNode(), "focus_header");
-//       webix.html.removeCss( $$('queue_list_header_row').getNode(), "focus_header");
-//       //webix.html.removeCss( $$('suggestion_list_header_row').getNode(), "focus_header");
-//   }
-// );
 
 main_track_table.on('focus-in-list',
   (x) => {
@@ -936,8 +564,6 @@ main_track_table.on('focus-in-list',
   }
 );
 
-
-// $$(main_track_table.track_list).attachEvent('onAfterLoad', () => {update_list_labels()})
 webix.UIManager.setFocus($$(main_track_table.track_list));
 
 function checkTime(i) {
@@ -984,8 +610,7 @@ function load_playlists() {
             $$(list_id).define('data', result_list);
             $$(list_id).refresh() 
         }
-    )
- 
+    ) 
 }
 
 load_sessions()

@@ -4,6 +4,7 @@ class PydjayAudioContext extends EventDispatcher{
         this.audio_ctx =  new AudioContext()
         this.audio_ctx.destination.channelCount = this.audio_ctx.destination.maxChannelCount
         this.audio_ctx.destination.channelInterpretation = "discrete"
+        this.createAnalyzer()
         this.createSplitter()
         this.createMerger()
         this.createGainControls()
@@ -13,8 +14,13 @@ class PydjayAudioContext extends EventDispatcher{
             this.dispatch("timestamp", this.audio_ctx.currentTime)
         }
         this.merger.connect(this.time_monitor).connect(this.audio_ctx.destination)
-        this.merger.connect(this.audio_ctx.destination)
+        this.merger.connect(this.analyzer).connect(this.audio_ctx.destination)
         this.source = null;
+    }
+
+    createAnalyzer() {
+        this.analyzer = this.audio_ctx.createAnalyser()
+        //this.analyzer.fftSize = 2048;
     }
 
     createSplitter() {

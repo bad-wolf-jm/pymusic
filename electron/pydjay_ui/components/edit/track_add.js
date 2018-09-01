@@ -6,342 +6,500 @@ var path = require('path');
 const {spawn} = require ('child_process');
 var async = require('async');
 var Jimp = require("jimp");
-// var AV = require('av');
-require('mp3.js');
 
-var files_to_add = null;
-var items_to_hide = null;
-var conv_test_folder = '/Users/jihemme/Python/DJ/conv_test'
-var conv_test_folder_img = '/Users/jihemme/Python/DJ/conv_test/images'
-var audio_info = null;
+class TrackAddProgressDialog {
+    constructor(settings, id_start, track_list) {
+        this.track_list = track_list
+        this.id_start = id_start
+        this.settings = settings
+        this.num = this.track_list.length
 
+        this.track_add_progress_id = this.ID()
+        this.track_add_title_id = this.ID()
+        this.track_add_artist_id = this.ID()
 
-
-function getFileExtension(f_name) {
-    return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
-}
-
-function add_selected_files_to_database (settings, id, total) {
-    if (items_to_add.length > 0) {
-        let data = items_to_add.pop();
-        let mp3_file = `track_${id}.${getFileExtension(data.filename)}`
-        let mp3_path = `${settings.music_root}/${mp3_file}`
-        // console.log(data.filename, mp3_path)
-        var original_image_file = null;
-        var large_image_file = null;
-        var medium_image_file = null;
-        var small_image_file = null;
-        // var wave_path = null;
-
-        $$('track_add_progress').define('label', `ADDING TRACK ${total - items_to_add.length} OF ${total}`)
-        $$('track_add_progress').refresh()
-        $$('track_add_title').define('label', `<b>${data.title}</b>`)
-        $$('track_add_title').refresh()
-        $$('track_add_artist').define('label', `${data.artist} - ${data.album}`)
-        $$('track_add_artist').refresh()
-
-        fs.copy(data.filename, mp3_path).then(function () {
-                if (data.picture != undefined) {
-                    image_type = data.picture.format;
-                    extensions = {
-                        'image/jpeg': 'jpg',
-                        'image/png': 'png'
-                    }
-                    if (image_type in extensions) {
-                        ext = extensions[image_type];
-                        original_image_file = `cover_original_${id}.${ext}`
-                        large_image_file = `cover_large_${id}.${ext}`
-                        medium_image_file = `cover_medium_${id}.${ext}`
-                        small_image_file = `cover_small_${id}.${ext}`
-                        Jimp.read(
-                            new Buffer(data.picture.data),
-                            function (err, image) {
-                                if (err) throw err;
-                                image.write(`${settings.image_root}/${original_image_file}`);
-                                image.resize(320,320).write(`${settings.image_root}/${large_image_file}`)
-                                image.resize(160,160).write(`${settings.image_root}/${medium_image_file}`)
-                                image.resize(100,100).write(`${settings.image_root}/${small_image_file}`)
-                            }
-                        )
-                    }
-                }
-                var foo = new Audio()
-                filesize = fs.statSync(mp3_path).size
-                foo.onloadedmetadata = function (e) {
-                        length = foo.duration * 1000000000
-                        NOW = new Date()
-                        track_info = {
-                            'id': id,
-                            'title': STRING(addslashes(data.title)),
-                            'artist': STRING(addslashes(data.artist)),
-                            'album': STRING(addslashes(data.album)),
-                            'year': STRING(none_to_null(data.year)),
-                            'genre': STRING(addslashes(data.genre)),
-                            'bpm': STRING(none_to_null(data.bpm)),
-                            'rating': 0,
-                            'disabled': 0,
-                            'favorite': 0,
-                            'comments': STRING(addslashes(null)),
-                            'waveform': STRING(""), //STRING(addslashes(wave_file)),
-                            'cover_medium': STRING(addslashes(medium_image_file)),
-                            'cover_small': STRING(addslashes(small_image_file)),
-                            'cover_large': STRING(addslashes(large_image_file)),
-                            'cover_original': STRING(addslashes(original_image_file)),
-                            'track_length': length,
-                            'stream_start': 0,
-                            'stream_end': length,
-                            'stream_length': length,
-                            'color': "'#FFFFFF'",
-                            'date_added': DATE(NOW),
-                            'date_modified': DATE(NOW),
-                            'bitrate': 0, //bit_output.bitrate,
-                            'samplerate': 0, //bit_output.samplerate,
-                            'file_name': STRING(addslashes(mp3_file)),
-                            'original_file_name': STRING(addslashes(data.filename)),
-                            'file_size': filesize, //0, //bit_output.file_size,
-                            'hash': 'NULL',
-                            'grouping': STRING(none_to_null(addslashes(data.grouping))),
-                            'category': STRING(none_to_null(addslashes(data.category))),
-                            'description': STRING(none_to_null(addslashes(data.description)))
+        this._win = webix.ui({
+            view:"window",
+            modal:true,
+            position:"center",
+            width:600,
+            height:400,
+            head: false,
+            body:{
+                rows:[
+                    {height:10},
+                    {
+                        id:this.track_add_progress_id,
+                        view: "label",
+                        label:"Processing track ### of ###",
+                        css: {
+                            'text-align': 'center',
+                            'font-size':  '20px',
                         }
-                        // console.log(track_info);
-                        // console.log(ADD_TRACK(track_info))
-                        DB.add_track(track_info, () => {add_selected_files_to_database (settings, id+1, total)})
-                        // db_connection.query(
-                        //     ADD_TRACK(track_info),
-                        //     function (error, _) {
-                        //         if (error) throw error;
-                        //         add_selected_files_to_database (settings, id+1, total)
-                        //     }
-                        // )
-
-                    }
-                    foo.src = mp3_path
-
-                //)
-                //     }
-                // )
-        //    }
-        //)
-
-        }).catch(console.log)
-    } else {
-        track_add_progress_dialog.hide();
-    }
-}
-
-// function ADD_TRACK(track_info) {
-//     return `
-//     INSERT INTO tracks (
-//     id, title, artist, album, year, genre, bpm, rating, favorite, comments, waveform, cover_medium,
-//     cover_small, cover_large, cover_original, track_length, stream_start, stream_end, stream_length,
-//     date_added, date_modified, bitrate, samplerate, file_name, file_size, hash, category, description,
-//     disabled, original_file_name, grouping)
-//     VALUES
-//     (${track_info.id},${track_info.title}, ${track_info.artist}, ${track_info.album}, ${track_info.year},
-//     ${track_info.genre}, ${track_info.bpm}, ${track_info.rating}, ${track_info.favorite}, ${track_info.comments},
-//     ${track_info.waveform}, ${track_info.cover_medium}, ${track_info.cover_small}, ${track_info.cover_large},
-//     ${track_info.cover_original}, ${track_info.track_length}, ${track_info.stream_start}, ${track_info.stream_end},
-//     ${track_info.stream_length}, ${track_info.date_added}, ${track_info.date_modified}, ${track_info.bitrate},
-//     ${track_info.samplerate}, ${track_info.file_name}, ${track_info.file_size}, ${track_info.hash}, ${track_info.category},
-//     ${track_info.description}, ${track_info.disabled}, ${track_info.original_file_name}, ${track_info.grouping})`
-// }
-
-
-function perform_add_to_database() {
-    db_connection.query(
-        "SELECT db_image_cache as image_root, db_music_cache as music_root, db_waveform_cache as waveform_root FROM settings",
-        function (error, settings) {
-            settings=settings[0]
-            if (error) throw error;
-            db_connection.query(
-                "SELECT max(id) + 1 AS first_available_id FROM tracks",
-                function (error, id_result) {
-                    if (error) throw error;
-                    var first_available_id = null;
-                    if (id_result[0].first_available_id != null) {
-                        first_available_id = id_result[0].first_available_id;
-                    } else {
-                        first_available_id = 1;
-                    }
-                    items_to_add = []
-                    $$('add_file_list').eachRow(
-                        function (row) {
-                            items_to_add.push($$('add_file_list').getItem(row))
+                    },
+                    {height:10},
+                    {
+                        id:this.track_add_title_id,
+                        view: "label",
+                        label:"Title Of Song",
+                        css: {
+                            'text-align': 'center',
+                            'font-size': '20px',
                         }
-                    )
-                    $$('track_add_progress').define('label', ``)
-                    $$('track_add_progress').refresh()
-                    $$('track_add_title').define('label', ``)
-                    $$('track_add_title').refresh()
-                    $$('track_add_artist').define('label', ``)
-                    $$('track_add_artist').refresh()
-                    track_add_progress_dialog.show();
-                    add_selected_files_to_database(settings, first_available_id, items_to_add.length)
-                }
-            )
-        }
-    )
-}
-
-function parse_tag(filename, tag) {
-    var type = tag.type;
-    var p_tag = {
-        filename: filename,
-        title: tag.tags.title,
-        artist: tag.tags.artist,
-        album: tag.tags.album,
-        genre: tag.tags.genre,
-        year: tag.tags.year,
-        comment: tag.tags.comment,
-        picture: tag.tags.picture,
-    }
-    if (tag.type == 'MP4') {
-        p_tag.bpm = (tag.tags.tmpo != undefined) ? tag.tags.tmpo.data : null;
-        p_tag.grouping = (tag.tags['\xa9grp'] != undefined) ? tag.tags['\xa9grp'].data : null;
-        p_tag.category = (tag.tags['catg'] != undefined) ? tag.tags['catg'].data : null;
-        p_tag.description = (tag.tags['desc'] != undefined) ? tag.tags['desc'].data : null;
-    } else if (tag.type == 'ID3') {
-        p_tag.bpm = (tag.tags.TBPM != undefined) ? tag.tags.TBPM.data : null;
-        p_tag.grouping = '11';
-        p_tag.category = null;
-        p_tag.description = null;
-    }
-
-    return p_tag;
-}
-
-function select_tracks_to_add() {
-    dialog.showOpenDialog(
-        { properties: [ 'openFile', 'multiSelections']},
-        function (filenames) {
-            let num = filenames.length;
-            let new_array = []
-            for (let i=0; i<filenames.length; i++) {
-                jsmediatags.read(filenames[i], {
-                      onSuccess: function(tag) {
-                          num --;
-                        //   console.log(i, tag);
-                        //   console.log(parse_tag(filenames[i], tag))
-                          new_array.push(parse_tag(filenames[i], tag));
-                          if (num == 0) {
-                              $$('add_file_list').clearAll();
-                              $$('add_file_list').define('data', new_array);
-                              $$('add_file_list').refresh();
-                              files_to_add = new_array;
-                          }
-                      },
-                      onError: function(error) {
-                          num --;
-                          if (num == 0) {
-                              $$('add_file_list').clearAll();
-                              $$('add_file_list').define('data', new_array);
-                              $$('add_file_list').refresh();
-                              files_to_add = new_array;
-                          }
-                      }
+        
+                    },
+                    {
+                        id:this.track_add_artist_id,
+                        view: "label",
+                        label:"Artist - Album",
+                        css: {
+                            'text-align': 'center',
+                            'font-size':  '15px',
+                        }
+        
                     }
-                );
+                ]
             }
-        }
-    )
-}
-
-function cover_art_b64(object) {
-    if (object != undefined) {
-        var u8 = new Uint8Array(object.data);
-        var decoder = new TextDecoder('utf8');
-        var b64encoded = btoa(decoder.decode(u8));
-        image_format = object.format;
-        console.log(b64encoded);
-        return `<img src="data:${image_format};base64,${b64encoded}" />`
+        })
+        this._add_tracks({}, this.id_start, this.track_list.length)
+        this._win.show()
     }
-    else {
-        cover_size = 50;
-        cover_source = "../resources/images/default_album_cover.png"
-        return `<img style="padding-right:0px; padding-left:-10px; margin-left:-10px" src="${cover_source}" height='${cover_size}' width='${cover_size}'></img>`
-    }
-}
 
-function add_track() {
-    x = webix.ui({
-        view:"window",
-        modal:true,
-        position:"center",
-        width:1600,
-        height:950,
-        head: "ADD TRACKS",
-        body:{
-            rows:[
-                {height:10},
-                {
-                    cols: [
-                        {
-                            id:'wait_time',
-                            view: "text",
-                            value: `$HOME`,
-                            labelWidth:100,
-                            label:"Search folder:"
-                        },
-                        {
-                            view: 'button',
-                            type: 'icon',
-                            icon: 'folder',
-                            autowidth: true,
-                            label: 'Browse',
-                            click: select_tracks_to_add
+    ID () {
+        return '_' + Math.random().toString(36).substr(2, 9);
+      };
+
+    getFileExtension(f_name) {
+        return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
+    }
+    
+    _add_tracks (settings, id, total) {
+        if (this.track_list.length > 0) {
+            let data = this.track_list.pop();
+            let mp3_file = `track_${id}.${this.getFileExtension(data.filename)}`
+            let mp3_path = `${this.settings.music_root}/${mp3_file}`
+            var original_image_file = null;
+            var large_image_file = null;
+            var medium_image_file = null;
+            var small_image_file = null;
+    
+            $$(this.track_add_progress_id).define('label', `ADDING TRACK ${total - this.track_list.length} OF ${total}`)
+            $$(this.track_add_progress_id).refresh()
+            $$(this.track_add_title_id).define('label', `<b>${data.title}</b>`)
+            $$(this.track_add_title_id).refresh()
+            $$(this.track_add_artist_id).define('label', `${data.artist} - ${data.album}`)
+            $$(this.track_add_artist_id).refresh()
+    
+            fs.copy(data.filename, mp3_path).then( () => {
+                    if (data.picture != undefined) {
+                        let image_type = data.picture.format;
+                        let extensions = {
+                            'image/jpeg': 'jpg',
+                            'image/png': 'png'
                         }
-                    ]
-                },
-                {height:30},
-                {
-                    view:"datatable",
-                    id:"add_file_list",
-                    select:"row",
-                    editaction:'dblclick',
-                    editable: true,
-                    resizeColumn:{headerOnly:true},
-                    css:{
-                        'background-color':'#303030',
-                        border: '0px solid #5c5c5c'
-                     },
-                    columns:[
-                        { id:"id",            header:"",  width:30, hidden:true},
-                        { id:"title",         header:"<b>Title</b>",  fillspace:true, sort:'string', editor: 'text'},
-                        { id:"artist",        header:"<b>Artist</b>", fillspace:true, sort:'string', editor: 'text'},
-                        { id:"album",         header:"<b>Album</b>",  fillspace:true, sort:'string', editor: 'text'},
-                        { id:"year",          header:"<b>Year</b>",   width:50, sort:'string', editor: 'text'},
-                        { id:"genre",         header:"<b>Genre</b>",  width:110, sort:'string', editor: 'text'},
-                        { id:"bpm",           header:{text:"<b>BPM</b>", css:{"text-align":'center'}},    width:50, css:{"text-align":'right'}, sort:'int', editor: 'text'},
-                        { id:"grouping",      header:"<b>Grouping</b>", fillspace:true, sort:'string', editor: 'text'},
-                        { id:"category",      header:"<b>Category</b>",  fillspace:true, sort:'string', editor: 'text'},
-                        { id:"description",   header:"<b>Description</b>", fillspace:true, sort:'string', editor: 'text'},
-                    ],
-            },
-                {height:30},
-                {
-                    cols:[
-                        {},
-                        {
-                            view: 'button',
-                            label: 'ADD',
-                            click: function () {
-                                x.hide();
-                                perform_add_to_database();
+                        if (image_type in extensions) {
+                            let ext = extensions[image_type];
+                            let image_root = `${this.settings.image_root}`
+                            original_image_file = `cover_original_${id}.${ext}`
+                            large_image_file = `cover_large_${id}.${ext}`
+                            medium_image_file = `cover_medium_${id}.${ext}`
+                            small_image_file = `cover_small_${id}.${ext}`
+                            Jimp.read(
+                                new Buffer(data.picture.data),
+                                (err, image) => {
+                                    if (err) throw err;
+                                    image.write(`${image_root}/${original_image_file}`);
+                                    image.resize(320,320).write(`${image_root}/${large_image_file}`)
+                                    image.resize(160,160).write(`${image_root}/${medium_image_file}`)
+                                    image.resize(100,100).write(`${image_root}/${small_image_file}`)
+                                }
+                            )
+                        }
+                    }
+                    let NOW = new Date()
+                    let track_info = {
+                        'id': id,
+                        'title': STRING(addslashes(data.title)),
+                        'artist': STRING(addslashes(data.artist)),
+                        'album': STRING(addslashes(data.album)),
+                        'year': STRING(none_to_null(data.year)),
+                        'genre': STRING(addslashes(data.genre)),
+                        'bpm': STRING(none_to_null(data.bpm)),
+                        'rating': data.rating,
+                        'disabled': 0,
+                        'favorite': data.favorite,
+                        'comments': STRING(addslashes(null)),
+                        'waveform': "NULL", 
+                        'cover_medium': STRING(addslashes(medium_image_file)),
+                        'cover_small': STRING(addslashes(small_image_file)),
+                        'cover_large': STRING(addslashes(large_image_file)),
+                        'cover_original': STRING(addslashes(original_image_file)),
+                        'track_length': data.duration,
+                        'stream_start': 0,
+                        'stream_end': data.duration,
+                        'stream_length': data.duration,
+                        'color': (data.color == undefined || data.color == "") ? "NULL" : STRING(data.color),
+                        'date_added': DATE(NOW),
+                        'date_modified': DATE(NOW),
+                        'bitrate': data.bit_rate,    
+                        'samplerate': data.samplerate, 
+                        'file_name': STRING(addslashes(mp3_file)),
+                        'original_file_name': STRING(addslashes(data.filename)),
+                        'file_size': data.file_size, 
+                        'hash': 'NULL',
+                        'grouping': STRING(none_to_null(addslashes(data.grouping))),
+                        'category': 'NULL', 
+                        'description': 'NULL', 
+                    }
+                    DB.add_track(track_info, () => {this._add_tracks (settings, id+1, total)})
+             }).catch(console.log)
+        } else {
+            this._win.hide();
+        }
+    }
+    
+}
+
+
+
+
+
+class TrackAdder extends EventDispatcher {
+    constructor(filenames) {
+        super()
+        this.filenames = filenames
+        this._num = this.filenames.length
+        this.track_info_array = []
+        this.track_info_editor = undefined
+
+        this.add_file_list_id = this.ID()
+
+        this.display_track_info()
+    }
+
+    ID () {
+        return '_' + Math.random().toString(36).substr(2, 9);
+      };
+
+
+    parse_tag(filename, tag) {
+        var p_tag = {
+            filename: filename,
+            title: tag.tags.title,
+            artist: tag.tags.artist,
+            album: tag.tags.album,
+            genre: tag.tags.genre,
+            year: tag.tags.year,
+            comment: tag.tags.comment,
+            picture: tag.tags.picture,
+            favorite:0,
+            rating:0
+        }
+        if (tag.type == 'ID3') {
+            p_tag.bpm = (tag.tags.TBPM != undefined) ? tag.tags.TBPM.data : null;
+            p_tag.grouping = null;
+        }
+        let bit_info = mp3Duration(filename)
+        p_tag.duration = bit_info.duration
+        p_tag.file_size = bit_info.file_size
+        p_tag.bit_rate = bit_info.bit_rate
+        p_tag.samplerate = bit_info.samplerate
+        return p_tag;
+    }
+
+    display_track_info () {
+        for (let i=0; i<this.filenames.length; i++) {
+            jsmediatags.read(this.filenames[i], {
+                    onSuccess: (tag) => {
+                        this._num --;
+                        this.track_info_array.push(this.parse_tag(this.filenames[i], tag));
+                            if (this._num == 0) {
+                                this.show_track_info_editor()
+                            }
+                    },
+                    onError: function(error) {
+                        num --;
+                        if (num == 0) {
+                            this.show_track_info_editor()
+                        }
+                    }
+                }
+            );
+        }
+    }
+
+    color(e) {
+        console.log(e.color)
+        if ((e.color != undefined) && (e.color != "")) {
+            return `<span style='background-color:${e.color}; border-radius:4px; padding-right:10px;'>&nbsp&nbsp&nbsp</span> ${e.color}`
+        } else {
+            return `<span style='background-color:#ffffff; border-radius:4px; padding-right:10px;'>&nbsp&nbsp&nbsp</span> Default`
+        }
+    }
+
+    rating(obj, common, value) {
+        var html = "";
+        for (var i=1; i<6; i++) {
+            html+="<div rating='"+i+"' class='rating_star fa " + ( i <= obj.rating ? "fa-star" : "fa-star-o") +"' style='font-size: 14px'></div>";
+        }
+        return html
+    }
+
+    custom_checkbox(obj, common, value){
+        return `<label class="favorite">
+                    <input type="checkbox" ${obj.favorite == 0 ? "unckecked" : "checked"}>
+                    <i class="fa fa-heart-o unchecked"></i>
+                    <i class="fa fa-heart checked"></i>
+                </label>`;
+    }
+
+    show_track_info_editor() {
+        this.editor_window = webix.ui({
+            view:"window",
+            modal:true,
+            position:"center",
+            width:1600,
+            height:950,
+            head: "ADD TRACKS",
+            body:{
+                rows:[
+                    {height:10},
+                    {
+                        view:"datatable",
+                        id:this.add_file_list_id,
+                        select:"row",
+                        editaction:'dblclick',
+                        editable: true,
+                        resizeColumn:{headerOnly:true},
+                        css:{
+                            'background-color':'#303030',
+                            border: '0px solid #5c5c5c'
+                         },
+                        data: this.track_info_array,
+                        columns:[
+                            { 
+                                id:"id",            
+                                header:"",  
+                                width:30, 
+                                hidden:true
+                            },
+                            { 
+                                id:"color",      
+                                header:"<b>Color</b>",  
+                                width:100, 
+                                sort:'string', 
+                                template: this.color , 
+                                editor: 'color'
+                            },
+                            { 
+                                id:"title",         
+                                header:"<b>Title</b>",  
+                                fillspace:true, 
+                                sort:'string', 
+                                editor: 'text'
+                            },
+                            { 
+                                id:"artist",        
+                                header:"<b>Artist</b>", 
+                                fillspace:true, 
+                                sort:'string', 
+                                editor: 'text'
+                            },
+                            { 
+                                id:"album",         
+                                header:"<b>Album</b>",  
+                                fillspace:true, 
+                                sort:'string', 
+                                editor: 'text'
+                            },
+                            { 
+                                id:"year",          
+                                header: {
+                                    text:"<b>Year</b>", 
+                                    css:{"text-align":'right'}
+                                }, 
+                                width:55, 
+                                sort:'string', 
+                                editor: 'text',
+                                css: { 
+                                    "text-align":'right'
+                                }, 
+                            },
+                            { 
+                                id:"genre",         
+                                header:"<b>Genre</b>",  
+                                width:110, 
+                                sort:'string', 
+                                editor: 'text'
+                            },
+                            { 
+                                id:"grouping",      
+                                header:"<b>Grouping</b>", 
+                                width:135, 
+                                sort:'string', 
+                                editor: 'text'
+                            },
+                            { 
+                                id:"bit_rate",      
+                                header: {
+                                    text: "<b>Kb/s</b>", 
+                                    css:{"text-align":'right'},
+                                    height:25
+                                },  
+                                width:55,
+                                sort:'int', 
+                                css: { 
+                                    "text-align":'right'
+                                }, 
+                            },
+                            { 
+                                id:"samplerate",      
+                                header: {
+                                    text: "<b>Freq.</b>", 
+                                    css:{"text-align":'right'},
+                                    height:25
+                                },  
+                                width:75,
+                                sort:'int',                                 
+                                css: { 
+                                    "text-align":'right'
+                                }, 
+
+                            },
+                            { 
+                                id:"file_size",      
+                                header: {
+                                    text: "<b>Size</b>", 
+                                    css:{"text-align":'right'},
+                                    height:25
+                                },  
+                                width:75,
+                                template: (o) => {
+                                    return humanFileSize(o.file_size)
+                                },
+                                css: { 
+                                    "text-align":'right'
+                                }, 
+                                sort:'int', 
+                            },
+                            { 
+                                id:"bpm", 
+                                header: {
+                                    text:"<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>", 
+                                    css:{"text-align":'right'}
+                                }, 
+                                width:50, 
+                                css: { 
+                                    "text-align":'right'
+                                }, 
+                                sort:'int', 
+                            },
+                            { 
+                                id:"rating",        
+                                header: {
+                                    text:"<b>Rating</b>", 
+                                    css:{"text-align":'right'}
+                                }, 
+                                width:80, 
+                                sort:'string',                                 
+                                css: { 
+                                    "text-align":'right'
+                                }, 
+
+                                template: (x, y, z) => this.rating(x, y, z),
+                            },
+                            { 
+                                id:"favorite",      
+                                header: {
+                                    text: "<b><span class='fa fa-heart' style='font-size: 12px'/></b>", 
+                                    css:{"text-align":'right'},
+                                    height:25
+                                },  
+                                width:30, 
+                                checkValue:1, 
+                                uncheckValue:0,
+                                template: (x, y, z) => this.custom_checkbox(x, y, z),
+                                sort:'int', 
+                                css: { 
+                                    "text-align":'center'
+                                }, 
+                            },
+                            { 
+                                id:"length",        
+                                header:"<b>Time</b>", 
+                                header: {
+                                    text: "<b>Time</b>", 
+                                    css:{"text-align":'right'},
+                                    height:25
+                                },  
+                                width:65, 
+                                sort:'int',
+                                template: (o) => {
+                                    return `${format_nanoseconds(o.duration)}`
+                                },
+                                css: { 
+                                    "text-align":'right'
+                                }, 
+    
+                            },
+                        ],
+                        onClick:{
+                            favorite: (e, id)=> {
+                                var item = $$(this.add_file_list_id).getItem(id.row);
+                                if (item.favorite == 1) {
+                                    item.favorite = 0
+                                } else {
+                                    item.favorite = 1
+                                }
+                                $$(this.add_file_list_id).updateItem(id.row, item)
+                            },
+                            rating_star: (e, id) => {
+                                var item = $$(this.add_file_list_id).getItem(id.row);
+                                item.rating = e.target.getAttribute('rating')
+                                $$(this.add_file_list_id).updateItem(id.row, item)
                             }
                         },
-                        {},
-                        {
-                            view: 'button',
-                            label: 'CANCEL',
-                            click: () => {x.hide()}
-                        },
-                        {}
-                    ]
-                },
-                {height:10}
-            ]
-        }
-    })
-    x.show();
+                    },
+                    {height:30},
+                    {
+                        cols:[
+                            {},
+                            {
+                                view: 'button',
+                                label: 'ADD',
+                                click: () => {
+                                    this.editor_window.hide();
+                                    this.perform_add_to_database();
+                                }
+                            },
+                            {},
+                            {
+                                view: 'button',
+                                label: 'CANCEL',
+                                click: () => {this.editor_window.hide();}
+                            },
+                            {}
+                        ]
+                    },
+                    {height:10}
+                ]
+            }
+        })
+        this.editor_window.show();
+    }
+
+    perform_add_to_database() {
+        DB.get_settings(
+            (settings) => {
+                let items_to_add = []
+                $$(this.add_file_list_id).eachRow(
+                    (row) => {
+                        items_to_add.push($$(this.add_file_list_id).getItem(row))
+                    }
+                )
+                var x = new TrackAddProgressDialog(settings, settings.next_id, items_to_add)
+            }
+        )
+    }    
 }
+

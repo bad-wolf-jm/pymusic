@@ -19,20 +19,12 @@ function PlaylistEditor(id) {
 
     self.database = new DataProvider()
 
-    self.audio_player = new PydjayAudioFilePlayer()
+    self.audio_player = new PrecuePlayer()
     if (self.audio_player.audio_context.audio_ctx.destination.maxChannelCount == 6) {
         self.audio_player.connectOutputs(pl_channel_config)    
     } else {
         self.audio_player.connectOutputs(pl_channel_config2)    
     }
-    self.audio_player.on("stream-position", function (pos) {
-        $$(self.player_position_label).define('label', `${format_nanoseconds(pos*1000000)}`)
-        $$(self.player_position_label).refresh()
-        $$(self.player_duration_label).define('label', format_nanoseconds(self.audio_player.source.duration*1000000000))
-        $$(self.player_duration_label).refresh();
-        self.preview_seek.animate(pos / (1000*self.audio_player.source.duration));
-        self.preview_track_position = pos;
-    })
     
     self.track_table = new TrackTable()
     self.track_list = new TrackList()
@@ -80,10 +72,10 @@ function PlaylistEditor(id) {
                              },
                             rows: [
                                 this.track_table.create_layout(),          
-                                {height:18}
+                                //{height:18}
                             ]
                         },
-                        {width:12},
+                        {width:1},
                         {
                             width:550,
                             css:{
@@ -91,105 +83,7 @@ function PlaylistEditor(id) {
                             },
                             rows:[
                                 self.track_list.create_layout(),
-                                {
-                                    height:95,
-                                    css:{
-                                        'background-color':'#6c6c6c',
-                                        'padding':'1px',
-                                        border: '1px solid #3c3c3c'
-                                     },
-                                    cols:[
-                                        {
-                                            id:self.player_cover_label,
-                                            view: 'template',
-                                            width:95,
-                                            height:95,
-                                            template: ""
-                                        },
-                                        {width:10},
-                                        {
-                                            cols: [
-                                                {
-                                
-                                                    rows: [
-                                                        {},
-                                                        {
-                                                            cols: [
-                                                                {
-                                                                    rows: [
-                                                                        {
-                                                                            id: self.player_title_label,
-                                                                            view: 'label',
-                                                                            label: "<b>NO TRACK</b>",
-                                                                            height:20
-                                                                        },
-                                                                        {
-                                                                            id: self.player_artist_label,
-                                                                            view: 'label',
-                                                                            label: "NO ARTIST",
-                                                                            height:20
-                                                                        },                
-                                                                    ]
-                                                                },
-                                                                {width:5},
-                                                                {
-                                                                    id:self.player_play_button,
-                                                                    view:'button',
-                                                                    type: 'icon',
-                                                                    icon: 'headphones',
-                                                                    width:30,
-                                                                    popup: "preview_popup_menu"
-                                                                },
-                                
-                                
-                                                            ]
-                                                        },
-                                                        {},
-                                                        {
-                                                            cols: [
-                                                                {
-                                                                    rows: [
-                                                                        {
-                                                                            height:18,
-                                                                            template:`<div id="${self.player_progress}" style="margin:0px; padding:0px; width:100%; height:100%; position:relative; top:0%; left:0%;"></div>`
-                                                                        },
-                                                                        {height: 7},
-                                                                        {cols:[
-                                                                            {
-                                                                                id:self.player_position_label,
-                                                                                view: 'label',
-                                                                                css:{
-                                                                                    'text-align':'left',
-                                                                                    'text-transform':'uppercase'
-                                                                                },
-                                                                                label: '0:00',
-                                                                                height:15
-                                                                            },
-                                                                            {},
-                                                                            {
-                                                                                id:self.player_duration_label,
-                                                                                view: 'label',
-                                                                                css:{'text-align':'right'},
-                                                                                label: '0:00',
-                                                                                height:15
-                                                                            }
-                                                        
-                                                                        ]},                
-                                                                    ]
-                                                                },
-                                                            ]
-                                                        },
-                                                        {}
-                                                    ]
-                                        
-                                                },
-                                                {width:10}
-                                            ]
-                                        }
-                                    ]
-                                }
-                                                            
-                            
+                                self.audio_player.create_layout(),
                             ]
                         }
                     ]
@@ -284,41 +178,9 @@ function PlaylistEditor(id) {
     }
 
     self.preview_play_track_id = function (id, stream_start, stream_end) {
-        db_connection.query(
-            `SELECT title, artist, album, bpm, file_name, cover_small, track_length, genre, stream_start, year, stream_end, settings.db_music_cache as music_root,
-             settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${id} LIMIT 1`,
-            function(error, result) {
-                if (error) throw error;
-                result = result[0];
-                file_name = path.join(result.music_root, result.file_name);
-                cover_file_name = `${result.image_root}/${result.cover_small}`;
-                stream_length = (result.stream_end-result.stream_start) / 1000000000;
-                preview_play_id = result.id
-                $$(self.player_title_label).define('label', result.title)
-                $$(self.player_title_label).refresh()
-                $$(self.player_artist_label).define('label', `${result.artist}`)
-                $$(self.player_artist_label).refresh()
-                if (result.cover_small == null) {
-                    cover_source = "../resources/images/default_album_cover.png"
-                } else {
-                    cover_source = `file://${result.image_root}/${result.cover_small}`;
-                }
-                var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='95' width='95'></img>`
-                $$(self.player_cover_label).define('template', cover_image);
-                $$(self.player_cover_label).refresh();
-    
-                if (stream_start == undefined) {
-                    stream_start = result.stream_start 
-                    stream_end = result.stream_end
-                } else if (stream_end == undefined) {
-                    stream_end = end = result.stream_end
-                    if (stream_start < 0) {
-                        stream_start = stream_end + stream_start;
-                    }
-                }
-                self.audio_player.play(file_name, stream_start / 1000000, stream_end / 1000000)
-            }
-        )    
+        DB.get_track_by_id(id, (result) => {
+            self.audio_player.play(result[0], stream_start, stream_end)
+        })
     }
 
     self.preview_selected = function () {
@@ -359,19 +221,7 @@ function PlaylistEditor(id) {
                 name = r[0].name
                 self._win = webix.ui(self.template)
                 self._win.show()
-
-                self.preview_seek = new ProgressBar.Line(`#${self.player_progress}`,
-                    {
-                        strokeWidth: 1,
-                        duration: 5,
-                        color: '#5a5a5a',
-                        trailColor: '#eee',
-                        trailWidth: 1,
-                        svgStyle: {width: '100%', height: '100%'}
-                    }
-                )
-                self.preview_seek.animate(0)
-
+                self.audio_player.init_progress()
                 self.track_table.init()
                 self.display_all_tracks()
                 self.display_playlist_tracks()
@@ -381,7 +231,6 @@ function PlaylistEditor(id) {
                 webix.UIManager.addHotKey("shift+space", () => self.audio_player.stop(), $$(self.track_table.track_list));        
                 webix.UIManager.addHotKey("space", () => self.audio_player.togglePause(), $$(self.track_list.list_id));        
                 webix.UIManager.addHotKey("shift+space", () => self.audio_player.stop(), $$(self.track_list.list_id));        
-
                 webix.UIManager.addHotKey("shift+a", self.add_to_playlist, $$(self.track_table.track_list));
                 webix.UIManager.addHotKey("ctrl+shift+enter", self.preview_last_30_seconds, $$(self.track_table.track_list));
                 webix.UIManager.addHotKey("shift+enter", self.preview_last_10_seconds, $$(self.track_table.track_list));

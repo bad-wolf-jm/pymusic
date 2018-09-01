@@ -48,24 +48,25 @@ function preview_seek_relative(time_delta){
     pl.skip(time_delta)
 }
 
-pl.on("stream-position", function (pos) {
-    $$('preview_time').define('label', `${format_nanoseconds(pos*1000000)}`)
-    $$('preview_time').refresh()
-    $$('preview_length').define('label', format_nanoseconds(pl.source.duration*1000000000))
-    $$('preview_length').refresh();
-    preview_seek.animate(pos / (1000*pl.source.duration));
-    preview_track_position = pos;
-})
+// pl.on("stream-position", function (pos) {
+//     $$('preview_time').define('label', `${format_nanoseconds(pos*1000000)}`)
+//     $$('preview_time').refresh()
+//     $$('preview_length').define('label', format_nanoseconds(pl.source.duration*1000000000))
+//     $$('preview_length').refresh();
+//     preview_seek.animate(pos / (1000*pl.source.duration));
+//     preview_track_position = pos;
+// })
 
-var mpl = new PydjayAudioFilePlayer()
+var mpl = new MainPlayer()
+//var mpl = new PydjayAudioFilePlayer()
 //mpl.connectOutputs(mpl_channel_config)
-mpl.on("stream-position", function (pos) {
-    remaining = Math.abs(mpl.source.duration*1000 - pos)
-    $$('main_track_time').define('label', `-${format_nanoseconds(remaining*1000000)}`)
-    $$('main_track_time').refresh()
-    main_player_progress.animate(pos / (1000*mpl.source.duration));
+// mpl.on("stream-position", function (pos) {
+//     remaining = Math.abs(mpl.source.duration*1000 - pos)
+//     $$('main_track_time').define('label', `-${format_nanoseconds(remaining*1000000)}`)
+//     $$('main_track_time').refresh()
+//     main_player_progress.animate(pos / (1000*mpl.source.duration));
 
-})
+// })
 mpl.on('end-of-stream', function () {
     if (!stop_request){
         db_connection.query(
@@ -396,15 +397,15 @@ function play_next_track_after_time(time_in_seconds) {
         function () {
             if (delay <= 0) {
                 clearInterval(id);
-                $$('main-artist').define('label', `Next track will start now...`)
+                $$(mpl.title_id).define('label', ``)
                 play_next_track();
             } else {
                 if (delay > 1) {
-                    $$('main-artist').define('label', `Next track will start in ${delay} seconds`)
+                    $$(mpl.title_id).define('label', `Next track will start in ${delay} seconds`)
                 } else {
-                    $$('main-artist').define('label', `Next track will start in 1 second`)
+                    $$(mpl.title_id).define('label', `Next track will start in 1 second`)
                 }
-                $$('main-artist').refresh()
+                $$(mpl.title_id).refresh()
                 delay--;
             }
         }, 1000)
@@ -426,33 +427,44 @@ function play_next_track() {
                         function (error, result) {
                             if (error) throw error;
                             track_id = result[0].track_id;
-                            db_connection.query(
-                                `SELECT title, artist, album, bpm, file_name, cover_small, stream_start, stream_end, settings.db_music_cache as music_root,
-                                 settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${track_id} LIMIT 1`,
-                                function (error, result) {
-                                    if (error) throw error;
-                                    result = result[0];
-                                    file_name = path.join(result.music_root, result.file_name);
-                                    stream_length = (result.stream_end-result.stream_start) / 1000000000;
-                                    $$('main-title').define('label', result.title)
-                                    $$('main-title').refresh()
-                                    $$('main-artist').define('label', `${result.artist} - ${result.album}`)
-                                    $$('main-artist').refresh()
-                                    if (result.cover_small == null) {
-                                        cover_source = "../resources/images/default_album_cover.png"
-                                    } else {
-                                        cover_source = `file://${result.image_root}/${result.cover_small}`;
-                                    }
-                                    var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
-                                    $$('main-cover-image').define('template', cover_image);
-                                    $$('main-cover-image').refresh();
-                                    current_queue_position = position;
+                            DB.get_track_by_id(track_id, 
+                                function (track) {
                                     $$('queue_list').remove($$('queue_list').getFirstId())
+                                    current_queue_position = position;
                                     update_queue_labels();
-                                    main_play(file_name, result.stream_start, result.stream_end)
-
+                                    mpl.play(track[0])
                                 }
                             )
+
+
+
+                            // db_connection.query(
+                            //     `SELECT title, artist, album, bpm, file_name, cover_small, stream_start, stream_end, settings.db_music_cache as music_root,
+                            //      settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${track_id} LIMIT 1`,
+                            //     function (error, result) {
+                            //         if (error) throw error;
+                            //         result = result[0];
+                            //         file_name = path.join(result.music_root, result.file_name);
+                            //         stream_length = (result.stream_end-result.stream_start) / 1000000000;
+                            //         $$('main-title').define('label', result.title)
+                            //         $$('main-title').refresh()
+                            //         $$('main-artist').define('label', `${result.artist} - ${result.album}`)
+                            //         $$('main-artist').refresh()
+                            //         if (result.cover_small == null) {
+                            //             cover_source = "../resources/images/default_album_cover.png"
+                            //         } else {
+                            //             cover_source = `file://${result.image_root}/${result.cover_small}`;
+                            //         }
+                            //         var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='58' width='58'></img>`
+                            //         $$('main-cover-image').define('template', cover_image);
+                            //         $$('main-cover-image').refresh();
+                            //         current_queue_position = position;
+                            //         $$('queue_list').remove($$('queue_list').getFirstId())
+                            //         update_queue_labels();
+                            //         main_play(file_name, result.stream_start, result.stream_end)
+
+                            //     }
+                            // )
                         }
                     )
                 }
@@ -531,55 +543,58 @@ function skip_to_next_track() {
 }
 
 function preview_play_track_id(id, stream_start, stream_end) {
-    db_connection.query(
-        `SELECT title, artist, album, bpm, file_name, cover_small, track_length, genre, stream_start, year, stream_end, settings.db_music_cache as music_root,
-         settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${id} LIMIT 1`,
-        function(error, result) {
-            if (error) throw error;
-            pl.play(result[0], strem_start, stream_end)
-            // result = result[0];
-            // file_name = path.join(result.music_root, result.file_name);
-            // cover_file_name = `${result.image_root}/${result.cover_small}`;
-            // stream_length = (result.stream_end-result.stream_start) / 1000000000;
-            // preview_play_id = result.id
-            // $$('preview_title').define('label', `<b>${result.title}</b>`)
-            // $$('preview_title').refresh()
-            // $$('preview_artist').define('label', `${result.artist}`)
-            // $$('preview_artist').refresh()
-            // if (result.cover_small == null) {
-            //     cover_source = "../resources/images/default_album_cover.png"
-            // } else {
-            //     cover_source = `file://${result.image_root}/${result.cover_small}`;
-            // }
-            // var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='95' width='95'></img>`
-            // $$('preview-cover-image').define('template', cover_image);
-            // $$('preview-cover-image').refresh();
+    DB.get_track_by_id(id, (result) => {
+        pl.play(result[0], stream_start, stream_end)
+    })
+    // db_connection.query(
+    //     `SELECT title, artist, album, bpm, file_name, cover_small, track_length, genre, stream_start, year, stream_end, settings.db_music_cache as music_root,
+    //      settings.db_image_cache as image_root FROM tracks left join settings on 1 WHERE tracks.id=${id} LIMIT 1`,
+    //     function(error, result) {
+    //         if (error) throw error;
+    //         pl.play(result[0], stream_start, stream_end)
+    //         // result = result[0];
+    //         // file_name = path.join(result.music_root, result.file_name);
+    //         // cover_file_name = `${result.image_root}/${result.cover_small}`;
+    //         // stream_length = (result.stream_end-result.stream_start) / 1000000000;
+    //         // preview_play_id = result.id
+    //         // $$('preview_title').define('label', `<b>${result.title}</b>`)
+    //         // $$('preview_title').refresh()
+    //         // $$('preview_artist').define('label', `${result.artist}`)
+    //         // $$('preview_artist').refresh()
+    //         // if (result.cover_small == null) {
+    //         //     cover_source = "../resources/images/default_album_cover.png"
+    //         // } else {
+    //         //     cover_source = `file://${result.image_root}/${result.cover_small}`;
+    //         // }
+    //         // var cover_image = `<img style="margin:0px; padding:0px;" src="${cover_source}" height='95' width='95'></img>`
+    //         // $$('preview-cover-image').define('template', cover_image);
+    //         // $$('preview-cover-image').refresh();
 
-            // if (stream_start == undefined) {
-            //     stream_start = result.stream_start // Math.floor(Math.random() * Math.floor(result.stream_end - result.stream_start));
-            //     stream_end = result.stream_end
-            // } else if (stream_end == undefined) {
-            //     stream_end = end = result.stream_end
-            //     if (stream_start < 0) {
-            //         stream_start = stream_end + stream_start;
-            //     }
-            // }
-            // // $$("metadata").setValues(
-            // //     {
-            // //         title: result.title || "",
-            // //         artist: result.artist || "",
-            // //         album: result.album || "",
-            // //         year: result.year || "",
-            // //         genre: result.genre || "",
-            // //         color: result.color || "#FFFFFF",
-            // //         bpm: result.bpm || "",
-            // //         track_length:`${format_nanoseconds(result.track_length)}`,
-            // //         track_start:`${format_nanoseconds(result.stream_start)}`,
-            // //         track_end: `${format_nanoseconds(result.stream_end)}`,
-            // //         file: file_name
-            // //     }
-            // // )            
-            // preview_play(file_name, stream_start, stream_end)
-        }
-    )
+    //         // if (stream_start == undefined) {
+    //         //     stream_start = result.stream_start // Math.floor(Math.random() * Math.floor(result.stream_end - result.stream_start));
+    //         //     stream_end = result.stream_end
+    //         // } else if (stream_end == undefined) {
+    //         //     stream_end = end = result.stream_end
+    //         //     if (stream_start < 0) {
+    //         //         stream_start = stream_end + stream_start;
+    //         //     }
+    //         // }
+    //         // // $$("metadata").setValues(
+    //         // //     {
+    //         // //         title: result.title || "",
+    //         // //         artist: result.artist || "",
+    //         // //         album: result.album || "",
+    //         // //         year: result.year || "",
+    //         // //         genre: result.genre || "",
+    //         // //         color: result.color || "#FFFFFF",
+    //         // //         bpm: result.bpm || "",
+    //         // //         track_length:`${format_nanoseconds(result.track_length)}`,
+    //         // //         track_start:`${format_nanoseconds(result.stream_start)}`,
+    //         // //         track_end: `${format_nanoseconds(result.stream_end)}`,
+    //         // //         file: file_name
+    //         // //     }
+    //         // // )            
+    //         // preview_play(file_name, stream_start, stream_end)
+    //     }
+    // )
 }
