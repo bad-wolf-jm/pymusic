@@ -1,67 +1,61 @@
-class MusicDatabase extends EventDispatcher {
+class MusicDatabase extends DatabaseInterface {
     constructor () {
         super()
         this.display_list_fields = `
             id, favorite, disabled as enabled, title, artist, album, genre, grouping, rating, bpm, stream_length, 
             color, count(session_tracks.track_id) as play_count,  MAX(session_tracks.start_time) AS last_played
         `;
-        this.db_connection = mysql.createConnection({host: "localhost", user: "root", password: "root", database:'pymusic'});
-    }
-
-    query(sql) {
-        return new Promise(
-            (accept, reject) => {
-                this.db_connection.query(sql, (error, rows) => {
-                    if (error) {
-                        return reject(error)
-                    } else {
-                        return accept(rows)    
-                    }
-                })
-            }
-        )
-    }
-
-    execute(sql) {
-        return new Promise(
-            (accept, reject) => {
-                this.db_connection.query(sql, (error) => {
-                    if (error) {
-                        return reject(error)
-                    } else {
-                        return accept()    
-                    }
-                })
-            }
-        )
-    }
-
-    close() {
-        return new Promise( ( resolve, reject ) => {
-            this.db_connection.end( err => {
-                if ( err )
-                    return reject( err );
-                return resolve();
-            } );
-        } );
-    }
-
-    $QUERY(sql, with_result) {
-        db_connection.query(
-            sql,
-            function (error, result) {
-                if (error) {
-                    console.log(error)
-                    throw error;
-                } else {
-                    with_result(result);
-                }
-            }
-        )
+        // this.db_connection = mysql.createConnection({host: "localhost", user: "root", password: "root", database:'pymusic'});
     }
     
+    track_view_sql () {
+        return `
+        SELECT  availability.track_id IS NULL AS available, 
+                tracks.id                     AS id, 
+                tracks.id                     AS track_id, 
+                tracks.favorite               AS favorite, 
+                tracks.disabled               AS enabled, 
+                tracks.title                  AS title, 
+                tracks.artist                 AS artist, 
+                tracks.file_name               AS file_name, 
+                tracks.stream_start           AS stream_start, 
+                tracks.stream_end             AS stream_end, 
+                tracks.track_length           AS track_length, 
+                tracks.grouping               AS grouping, 
+                tracks.year                   AS year, 
+                tracks.color                  AS color, 
+                tracks.album                  AS album, 
+                tracks.genre                  AS genre, 
+                tracks.rating                 AS rating, 
+                tracks.bpm                    AS bpm, 
+                tracks.stream_end - tracks.stream_start AS stream_length, 
+                foo.play_count                AS play_count, 
+                tracks.cover_small            AS cover, 
+                settings.db_image_cache       AS image_root, 
+                settings.db_music_cache       AS music_root, 
+                max_play_times.time           AS last_played 
+        FROM    tracks 
+                JOIN (SELECT * 
+                    FROM   tracks 
+                            JOIN (SELECT id                             AS id_2, 
+                                         COUNT(session_tracks.track_id) AS play_count 
+                                FROM   tracks 
+                                        LEFT JOIN session_tracks 
+                                                ON tracks.id = session_tracks.track_id 
+                                GROUP  BY id) play_counts 
+                            ON tracks.id = play_counts.id_2) foo 
+                ON tracks.id = foo.id 
+                LEFT JOIN ((SELECT track_id FROM unavailable_tracks) UNION (SELECT track_id FROM session_queue)) availability 
+                    ON availability.track_id = tracks.id 
+                LEFT JOIN (SELECT track_id, 
+                                MAX(start_time) AS time 
+                        FROM   session_tracks 
+                        GROUP  BY track_id) max_play_times 
+                    ON tracks.id = max_play_times.track_id 
+                LEFT JOIN settings ON 1`
+    }
     
-    get_track_by_id (id, k) {
+    get_track_by_id (id) {
          return this.query(`SELECT availability.track_id IS NULL as available, tracks.id as id, tracks.id as track_id, tracks.favorite, tracks.disabled as enabled, tracks.title, tracks.artist, tracks.file_name as file_name,
         tracks.stream_start as stream_start, tracks.stream_end as stream_end, tracks.track_length as track_length, tracks.grouping, tracks.year, tracks.color as color,
         tracks.album, tracks.genre, tracks.rating, tracks.bpm, tracks.stream_length, foo.play_count, tracks.cover_small as cover, settings.db_image_cache as image_root, settings.db_music_cache as music_root,
@@ -72,14 +66,14 @@ class MusicDatabase extends EventDispatcher {
         WHERE tracks.id=${id} ORDER BY title`)
     }
 
-    get_all_tracks (k) {
+    get_all_tracks () {
         var sql =`SELECT availability.track_id IS NULL as available, ${this.display_list_fields} FROM tracks LEFT JOIN session_tracks
         ON tracks.id = session_tracks.track_id LEFT JOIN ((select track_id from unavailable_tracks) UNION
         (select track_id from session_queue)) availability ON availability.track_id=tracks.id GROUP BY id ORDER BY title`;
          return this.query(sql);
     }
 
-    get_playlist_tracks (id, k) {
+    get_playlist_tracks (id) {
         var sql = `SELECT availability.track_id IS NULL as available, playlist_tracks.track_id, playlist_tracks.track_id as id, favorite, disabled as enabled, 
         title, artist, album, genre, rating, bpm, stream_length, foo.play_count, cover_small as cover, color,
         settings.db_image_cache as image_root, max_play_times.time as last_played FROM playlist_tracks JOIN
@@ -311,11 +305,13 @@ class MusicDatabase extends EventDispatcher {
 
     add_id_to_unavailable (id) {
         // var id = $$('display_list').getSelectedId().id;
-        this.$QUERY(`SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+        this.$QUERY(
+            `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
             function (result) {
                 //if (error) throw error;
                 if (result.length == 0) {
-                    this.$QUERY(`INSERT INTO unavailable_tracks (track_id) VALUES (${id})`,
+                    this.$QUERY(
+                        `INSERT INTO unavailable_tracks (track_id) VALUES (${id})`,
                         () => {
                             this.dispatch("track-id-unavailable", id)
                         }
@@ -334,11 +330,13 @@ class MusicDatabase extends EventDispatcher {
     remove_id_from_unavailable (id) {
         // var id = $$('display_list').getSelectedId().id;
         // console.log(`DELETE FROM unavailable_tracks WHERE track_id=${id}`)
-        this.$QUERY(`SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+        this.$QUERY(
+            `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
             function (result) {
                 // if (error) throw error;
                 if (result.length > 0) {
-                    this.$QUERY(`DELETE FROM unavailable_tracks WHERE track_id=${id}`,
+                    this.$QUERY(
+                        `DELETE FROM unavailable_tracks WHERE track_id=${id}`,
                         () => {
                             this.dispatch("track-id-available", id)
                         }
@@ -459,15 +457,18 @@ class MusicDatabase extends EventDispatcher {
 
 
     save_session (name, location, address) {
-        this.$QUERY(`SELECT track_id, start_time, end_time FROM session_queue WHERE status='played' ORDER BY position`,
+        this.$QUERY(
+            `SELECT track_id, start_time, end_time FROM session_queue WHERE status='played' ORDER BY position`,
             function (played_tracks) {
                 //if (error) throw error;
                 if (played_tracks.length > 0) {
-                    this.$QUERY(`SELECT max(id) + 1 AS new_session_id FROM sessions`,
+                    this.$QUERY(
+                        `SELECT max(id) + 1 AS new_session_id FROM sessions`,
                         function (result) {
                             //if (error) throw error;
                             new_session_id = result[0].new_session_id;
-                            this.$QUERY(`SELECT min(start_time) AS start, max(end_time) AS end FROM session_queue WHERE status='played'`,
+                            this.$QUERY(
+                                `SELECT min(start_time) AS start, max(end_time) AS end FROM session_queue WHERE status='played'`,
                                 function (start_end_time) {
                                     //if (error) throw error;
                                     format = webix.Date.dateToStr("%Y-%m-%d %H:%i:%s");

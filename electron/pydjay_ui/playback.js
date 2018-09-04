@@ -28,14 +28,12 @@ function preview_seek_relative(time_delta){
 var mpl = new MainPlayer()
 mpl.on('end-of-stream', function () {
     if (!stop_request){
-        db_connection.query(
-            'SELECT COUNT(id) as queue_count FROM session_queue WHERE status="pending"',
-            function (error, result) {
-                if (error) throw error;
-                if (result[0].queue_count > 0) {
+        DB.count_queue_elements(
+            (count) => {
+                if (count > 0) {
                     mark_as_played(current_queue_position, play_next_track_after_time);
                 } else {
-                    mark_as_played(current_queue_position, false);
+                    mark_as_played(current_queue_position, () => {});
                     queue_playing = false;
                     $$('start-stop-button').define('label', 'START');
                     $$('start-stop-button').define('icon', 'play');
@@ -45,7 +43,7 @@ mpl.on('end-of-stream', function () {
             }
         )
     } else {
-        mark_as_played(current_queue_position, false);
+        mark_as_played(current_queue_position, () => {});
         queue_playing = false;
         $$('start-stop-button').define('label', 'START');
         $$('start-stop-button').define('icon', 'play');
@@ -73,7 +71,7 @@ function reset_audio() {
 }
 
 function init_audio() {
-    console.log(mpl.audio_context.audio_ctx.destination.maxChannelCount)
+    //console.log(mpl.audio_context.audio_ctx.destination.maxChannelCount)
     if (mpl.audio_context.audio_ctx.destination.maxChannelCount == 6) {
         mpl.connectOutputs(mpl_channel_config)
         pl.connectOutputs(pl_channel_config)    
@@ -157,20 +155,11 @@ function restore_monitor() {
 
 function mark_as_played(queue_position, continuation) {
     current_time = webix.Date.dateToStr('%Y-%m-%d %H:%i:%s')(new Date());
-    db_connection.query(
-        `UPDATE session_queue SET status='played', end_time='${current_time}' WHERE position=${queue_position}`,
+    DB.mark_as_played(queue_position,
         function (error, result) {
-            db_connection.query(
-                `SELECT wait_time FROM settings`,
-                function (error, result) {
-                    if (error) {
-                        next_track_delay = 5;
-                    } else {
-                        next_track_delay = result[0].wait_time;
-                    }
-                    if (continuation) {
-                        continuation(next_track_delay);
-                    }
+            DB.get_waiting_time(
+                (t) => {
+                    continuation(t)
                 }
             )
         }
@@ -198,31 +187,14 @@ function play_next_track_after_time(time_in_seconds) {
 }
 
 function play_next_track() {
-    db_connection.query(
-        `SELECT min(position) as next_position FROM session_queue WHERE status='pending' GROUP BY status`,
-        function (error, result) {
-            if (error) throw error;
-            position = result[0].next_position;
-            current_time = webix.Date.dateToStr('%Y-%m-%d %H:%i:%s')(new Date());
-            db_connection.query(
-                `UPDATE session_queue SET status='playing', start_time='${current_time}' WHERE position=${position}`,
-                function (error, result) {
-                    if (error) throw error;
-                    db_connection.query(
-                        `SELECT track_id FROM session_queue WHERE position=${position}`,
-                        function (error, result) {
-                            if (error) throw error;
-                            track_id = result[0].track_id;
-                            DB.get_track_by_id(track_id, 
-                                function (track) {
-                                    $$('queue_list').remove($$('queue_list').getFirstId())
-                                    current_queue_position = position;
-                                    update_queue_labels();
-                                    mpl.play(track[0])
-                                }
-                            )
-                        }
-                    )
+    DB.get_next_track_position(
+        (position) => {
+            DB.start_playing(position, 
+                (track) => {
+                    $$('queue_list').remove($$('queue_list').getFirstId())
+                    current_queue_position = position;
+                    update_queue_labels();
+                    mpl.play(track[0])
                 }
             )
         }
@@ -231,11 +203,9 @@ function play_next_track() {
 
 function start_queue() {
     if (!queue_playing) {
-        db_connection.query(
-            `SELECT count(id) as queue_count FROM session_queue WHERE status='pending'`,
-            function (error, result) {
-                if (error) throw error;
-                if (result[0].queue_count > 0) {
+        DB.count_queue_elements(
+            (count) => {
+                if (count > 0) {
                     play_next_track()
                     queue_playing = true;
                     stop_request = false;
@@ -278,11 +248,9 @@ function stop_queue_now() {
 function skip_to_next_track() {
     if (queue_playing && !stop_request){
         main_stop()
-        db_connection.query(
-            `SELECT count(id) as queue_count FROM session_queue WHERE status='pending'`,
-            function (error, result) {
-                if (error) throw error;
-                if (result[0].queue_count > 0) {
+        DB.count_queue_elements(
+            (count) => {
+                if (count > 0) {
                     mark_as_played(current_queue_position, (t) => {play_next_track()});
                 } else {
                     $$('start-stop-button').define('label', 'START');

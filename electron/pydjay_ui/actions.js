@@ -14,7 +14,9 @@ var queue_actions = {
     move_selection_up: function () {
         selected_queue_element = $$('queue_list').getSelectedItem();
         selected_queue_element_position = $$('queue_list').getSelectedItem().position;
-        DB.move_queue_element(selected_queue_element_position, selected_queue_element_position-1,
+        DB.move_queue_element(
+            selected_queue_element_position, 
+            selected_queue_element_position-1,
             function (new_position) {
                 move_displayed_queue_element(selected_queue_element, selected_queue_element_position, new_position);
                 $$('queue_list').moveUp(selected_queue_element.id, 1)
@@ -119,70 +121,34 @@ var main_list_actions = {
 
     add_selection_to_short_list: function () {
         var id = $$(main_track_table.track_list).getSelectedId().id;
-        sql = `SELECT 1 FROM short_listed_tracks WHERE track_id=${id} LIMIT 1`;
-        db_connection.query(sql,
-            function (err, result){
-                if (result.length == 0){
-                    insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
-                    db_connection.query(insert_sql, function(error, result){
-                        if (error) throw error;
-                        webix.message({
-                            text:"Added track to the short list",
-                            type:"info",
-                            expire: 3000,
-                            id:"message1"
-                        });
-
-                    });
-                } else {
-                    webix.message({
-                        text:"Track is already in the short list",
-                        type:"info",
-                        expire: 3000,
-                        id:"message1"
-                    });
-                }
+        DB.add_id_to_short_list(id,
+            () => {
+                webix.message({
+                    text:"Added track to the short list",
+                    type:"info",
+                    expire: 3000,
+                    id:"message1"
+                });
             }
         )
     },
 
     add_selection_to_unavailable: function () {
         var id = $$(main_track_table.track_list).getSelectedId().id;
-        db_connection.query(
-            `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
-            function (error, result) {
-                if (error) throw error;
-                if (result.length == 0) {
-                    db_connection.query(
-                        `INSERT INTO unavailable_tracks (track_id) VALUES (${id})`,
-                        function (error, result) {
-                            if (error) throw error;
-                            $$(main_track_table.track_list).addRowCss(id, 'unavailable_track');
-
-                        }
-                    )
-                }
+        DB.add_id_to_unavailable(id,
+            () => {
+                $$(main_track_table.track_list).addRowCss(id, 'unavailable_track');
             }
         )
     },
 
     remove_selection_from_unavailable: function () {
         var id = $$(main_track_table.track_list).getSelectedId().id;
-        console.log(`DELETE FROM unavailable_tracks WHERE track_id=${id}`)
-        db_connection.query(`SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
-            function (error, result) {
-                if (error) throw error;
-                if (result.length > 0) {
-                    db_connection.query(
-                        `DELETE FROM unavailable_tracks WHERE track_id=${id}`,
-                        function (error, result) {
-                            if (error) throw error;
-                            $$(main_track_table.track_list).removeRowCss(id, 'unavailable_track');
-                            $$(main_track_table.track_list).getItem(id).$css="";
-                            $$(main_track_table.track_list).refresh();
-                        }
-                    )
-                }
+        DB.remove_id_from_unavailable(id,
+            () => {
+                $$(main_track_table.track_list).removeRowCss(id, 'unavailable_track');
+                $$(main_track_table.track_list).getItem(id).$css="";
+                $$(main_track_table.track_list).refresh();
             }
         )
     },
