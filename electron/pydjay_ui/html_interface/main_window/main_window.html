@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<title>PYMUSIC DJ App</title>
+
+<link rel="stylesheet" href="main_window.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+<body style="margin: 0px; padding:0px; height:100%">
+    <div class="header">
+        <div class="item">
+            <button class="settings-button"><i class="fas fa-ellipsis-v"></i></button>
+        </div>
+        <div class="content">
+            <div  class="item"></div>
+            <div  class="item">
+                <span style="font-size:13px; color:rgb(150,150,150)"><b>DJ</b></span>
+            </div>
+            <div  class="item"></div>            
+        </div>
+    </div>
+    <div class="main_player">
+        <img class="cover" src="test_cover.png" height="150" width="150"></img>
+        <div style="float:left; display:block; width:calc(100% - 150px)">
+            <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
+                <div style="display:inline-block; width:calc(100% - 150px)">
+                    <h1 class="title">Arkansas Blues</h1>
+                    <h2 class="artist"><strong>Norbert Susemihl - Night On Frenchman Street</strong> <em>(Norbert Susemihl, Jason Marsalis, Kerry Lewis)</em> </h2>        
+                </div>
+                <div style="padding-right:10px; position:absolute; right:0px; display:inline-block"><h1 class="time_remaining">-3:34</h1></div>            
+            </div>
+            <div class="track-info"> 
+                <div class="info">
+                    <div class="title">DURATION</div>
+                    <div class="value">3:12</div>
+                </div>
+                <div class="info">
+                    <div class="title">BPM</div>
+                    <div class="value">120</div>
+                </div>
+                <div class="rating">
+                    <div class="value">
+                        <i class="fas fa-star"></i> 
+                        <i class="fas fa-star"></i> 
+                        <i class="fas fa-star"></i> 
+                        <i class="fas fa-star"></i> 
+                        <i class="fas fa-star"></i>         
+                    </div>
+                </div>
+                <div class="rating">
+                    <div class="value">
+                        <i class="fas fa-heart"></i> 
+                    </div>
+                </div>
+            </div>
+            <div class="waveform">THIS IS WHERE THE WAVEFORM WILL GO</div>
+        </div>
+    </div>
+    <div class="main_space">
+        <div class="side_bar">
+            <button class="accordion">Library</button>
+            <div class="panel">
+                <ul class="sidebar-library">
+                    <li class="sidebar-library-item">
+                        <i class="fas fa-database list-icon"></i>
+                        All songs
+                        <i class="fas fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item">
+                        <i class="fas fa-grin list-icon"></i>
+                        Suggestions
+                        <i class="fas fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item">
+                        <i class="fas fa-circle list-icon"></i>
+                        Short list
+                        <i class="fas fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item">
+                        <i class="fas fa-circle list-icon"></i>
+                        Played songs
+                        <i class="fas fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item">
+                        <i class="fas fa-circle list-icon"></i>
+                        Never played
+                        <i class="fas fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item">
+                        <i class="fas fa-circle list-icon"></i>
+                        Unavailable
+                        <i class="fas fa-angle-right arrow-icon"></i> 
+                    </li>
+                </ul>
+            </div>
+            
+            <button class="accordion">
+                Playlists
+                <div class="action-button-group">
+                        <!-- <i class="fas fa-folder action-icon"></i> -->
+                        <i class="fas fa-plus action-icon"></i>        
+                        <i class="fas fa-sync action-icon"></i>
+                    </div>
+
+            </button>
+            <div class="panel">
+                <p>Lorem ipsum...</p>
+            </div>
+            
+            <button class="accordion" style="margin-right:0">
+                <!-- <div style="width:calc(100% - 5px)"> -->
+                    Sessions
+                <!-- </div>   -->
+            </button>
+            <div class="panel">
+                <p>Lorem ipsum...</p>
+            </div>
+            <button class="accordion">Preview Player</button>
+            <div class="panel">
+                <div class="preview-player">
+                    <img class="cover" src="test_cover.png" height="75" width="75"></img>
+                    <div>
+                        PLAYER
+                    </div>
+                    <div style="float:left; display:block; width:calc(100% - 50px)">
+                        <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
+                            <div style="display:inline-block; width:100%">
+                                <h1 class="title">Arkansas Blues</h1>
+                                <h2 class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>     
+                            </div>
+                        </div>
+                    </div>
+                    <table style="width:300px">
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Album:</b></td> 
+                            <td class="tag-value">NORBERT SUSEMIHL - NIGHT ON FRENCHMAN STREET</td> 
+                        </tr> 
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Genre:</b></td> 
+                            <td class="tag-value">Jazz</td> 
+                        </tr> 
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Year:</b></td> 
+                            <td class="tag-value">2012</td> 
+                        </tr> 
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Length:</b></td> 
+                            <td class="tag-value">3:45</td> 
+                        </tr>     
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Last played:</b></td> 
+                            <td class="tag-value">2018-03-04</td> 
+                        </tr> 
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Play count:</b></td> 
+                            <td class="tag-value">12</td> 
+                        </tr> 
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="main_list">
+            <div class="main-list-header">
+                <div class="title">
+                    <div class="name">
+                        ALL SONGS
+                    </div>
+                    <div class="count">
+                        15 tracks - 57 minutes 37 seconds
+                    </div>
+                </div>
+                <div class="search-container">
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                    <input type="text" placeholder="Filter list..." name="search">
+                </div>
+              
+            </div>
+        </div>
+        <div class="queue_list">
+            <div class="main-list-header">
+                <div class="title">
+                    <div class="name">
+                        QUEUE
+                    </div>
+                    <div class="count">
+                        15 tracks - 57 minutes 37 seconds
+                    </div>
+                </div>
+            </div>
+            <div class="queue-list">
+                <div class="scroll-area">
+                    <div class="element">
+                        <img style="float:left; padding-right:7px; padding-left:-3px" src="test_cover.png" height='50' width='50'></img>
+                        <div style="margin:0px; padding:0px; float:left; width:275px">
+                            <div class="queue_element_title"><b>Title</b></div>
+                            <div class="queue_element_artist"><i>Artist Name</i></div>
+                        </div>
+                        <div class="queue_element_bpm">120 BPM</div>
+                        <div class="queue_element_duration">
+                            <b>0:00</b>
+                        </div>
+                    </div>
+                    <div class="element">
+                        <img style="float:left; padding-right:7px; padding-left:-3px" src="test_cover.png" height='50' width='50'></img>
+                        <div style="margin:0px; padding:0px; float:left; width:275px">
+                            <div class="queue_element_title"><b>Title</b></div>
+                            <div class="queue_element_artist"><i>Artist Name</i></div>
+                        </div>
+                        <div class="queue_element_bpm">120 BPM</div>
+                        <div class="queue_element_duration">
+                            <b>0:00</b>
+                        </div>    
+                    </div>
+                </div>
+            </div>        
+        </div>
+    </div>
+    <div class="footer">
+        <div class="content">
+            <div  class="item">
+                <span style="font-size:10pt; color:rgb(150,150,150)"><b>ENDS:</b></span> <span style="font-size:10pt; color:rgb(225,225,225)">3:45:56</span>
+            </div>        
+            <div class="item">
+                <b>Queue will stop after this song</b>
+            </div>
+            <div  class="item">
+                <span style="font-size:10pt; color:rgb(200,200,200)">2018-03-02</span> <span style="font-size:10pt; color:rgb(225,225,225)"></span>| <b>3:45:56</b></span>
+            </div>            
+        </div>
+        
+
+        <!-- <span style="vertical-align:bottom; height:100%">
+            <b>Queue will stop after this song</b>
+        </span> -->
+    </div>
+
+    <script>
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                } 
+            });
+        }
+    </script>
+</body>
