@@ -1,99 +1,16 @@
-// class SpectrumAnalyzer {
-//     constructor(canvas, analyzer) {
-//         this.analyzer = analyzer
-//         this.canvas_id = canvas
-//         this.animationId = null;
-//         this.status = 0; //flag for sound is playing 1 or stopped 0
-//         this.allCapsReachBottom = false;    
-//         this.capYPositionArray = [];   
-
-//     }
-
-//     drawMeter() {
-//         let cwidth = this.canvas.width
-//         let cheight = this.canvas.height - 2
-//         let meterWidth = 4 //width of the meters in the spectrum
-//         let gap = 0 //gap between meters
-//         let capHeight = 2
-//         let capStyle = '#fff'
-//         let meterNum = cwidth / (meterWidth + gap) //count of the meters
-//         // capYPositionArray = []; ////store the vertical position of hte caps for the preivous frame
-
-//         let array = new Uint8Array(this.analyzer.frequencyBinCount);
-//         this.analyzer.getByteFrequencyData(array);
-//         //console.log(this.status, array)
-//         if (this.status === 0) {
-//             //fix when some sounds end the value still not back to zero
-//             for (var i = array.length - 1; i >= 0; i--) {
-//                 array[i] = 0;
-//             };
-//             this.allCapsReachBottom = true;
-//             for (var i = this.capYPositionArray.length - 1; i >= 0; i--) {
-//                 this.allCapsReachBottom = this.allCapsReachBottom && (this.capYPositionArray[i] === 0);
-//             };
-//             if (this.allCapsReachBottom) {
-//                 cancelAnimationFrame(this.animationId); //since the sound is stoped and animation finished, stop the requestAnimation to prevent potential memory leak,THIS IS VERY IMPORTANT!
-//                 return;
-//             };
-//         };
-//         var step = Math.round(array.length / meterNum); //sample limited data from the total array
-//         this.ctx.clearRect(0, 0, cwidth, cheight);
-//         for (var i = 0; i < meterNum; i++) {
-//             var value = (array[i * step] / 255) * cheight;
-//             if (this.capYPositionArray.length < Math.round(meterNum)) {
-//                 this.capYPositionArray.push(value);
-//             };
-//             this.ctx.fillStyle = capStyle;
-//             //draw the cap, with transition effect
-//             if (value < this.capYPositionArray[i]) {
-//                 this.ctx.fillRect(i * (meterWidth + gap), cheight - (--this.capYPositionArray[i]), meterWidth, capHeight);
-//             } else {
-//                 this.ctx.fillRect(i * (meterWidth + gap), cheight - value, meterWidth, capHeight);
-//                 this.capYPositionArray[i] = value;
-//             };
-//             this.ctx.fillStyle = this.gradient; //set the filllStyle to gradient for a better look
-//             this.ctx.fillRect(i * (meterWidth + gap) /*meterWidth+gap*/ , cheight - value + capHeight, meterWidth, cheight); //the meter
-//         }
-//         this.animationId = requestAnimationFrame(() => this.drawMeter());
-//     }
-
-//     _drawSpectrum() {
-//         // let canvas = this.canvas,
-//         this.canvas = document.getElementById(this.canvas_id)
-//         this.ctx = this.canvas.getContext('2d')
-//         this.gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
-//         this.gradient.addColorStop(1, '#222');
-//         this.gradient.addColorStop(0.5, '#999');
-//         this.gradient.addColorStop(0.10, '#ccc');
-//         this.gradient.addColorStop(0, '#f00');
-//         this.animationId = requestAnimationFrame(() => this.drawMeter());
-//     }
-
-//     start() {
-//         this.status = 1;
-//         this._drawSpectrum()
-//     }
-
-//     stop() {
-//         this.status = 0;
-//     }
-
-// }
-
-
 class MainPlayer extends PydjayAudioFilePlayer {
     constructor () {
         super()
-        this.waveform_id = `waveform-${this.ID()}`
-        this.cover_id = `cover-${this.ID()}`
-        this.title_id = `title-${this.ID()}`
-        this.artist_id = `artist-${this.ID()}`
-        this.album_id = `album-${this.ID()}`
-        this.duration_id = `duration-${this.ID()}`
-        this.remaining_id = `remaining-${this.ID()}`
-        this.bpm_id = `bpm-${this.ID()}`
-        this.rating_id = `rating-${this.ID()}`
-        this.favorite_id = `favorite-${this.ID()}`
+        this.waveform_id          = `waveform-${this.ID()}`
+        this.cover_id             = `cover-${this.ID()}`
+        this.title_id             = `title-${this.ID()}`
+        this.artist_id            = `artist-${this.ID()}`
+        this.album_id             = `album-${this.ID()}`
+        this.duration_id          = `duration-${this.ID()}`
+        this.remaining_id         = `remaining-${this.ID()}`
+        this.bpm_id               = `bpm-${this.ID()}`
+        this.rating_id            = `rating-${this.ID()}`
+        this.favorite_id          = `favorite-${this.ID()}`
         this.spectrum_analyzer_id = `spectrum-${this.ID()}`
 
         this.on("stream-position", (pos) => {
@@ -114,8 +31,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
         $$(this.title_id ).refresh()
         $$(this.artist_id ).define('label', `${track.artist} - ${track.album}`)
         $$(this.artist_id ).refresh()
-        // $$(this.album_id ).define('label', `${track.album}`)
-        // $$(this.album_id ).refresh()
         $$(this.duration_id ).define('label', `${format_nanoseconds(stream_length)}`)
         $$(this.duration_id ).refresh()
         $$(this.bpm_id ).define('label', `${track.bpm}`)
@@ -153,9 +68,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
     init() {
         this._waveform = WaveSurfer.create({
             container: `#${this.waveform_id }`,
-            //pixelRatio: 2,
-            //scrollParent: true,
-            //hideScrollbar: false,
             waveColor: 'violet',
             progressColor: 'purple',
             height:40,
@@ -181,15 +93,8 @@ class MainPlayer extends PydjayAudioFilePlayer {
                 this._waveform.zoom(0)
                 let file_name = path.join(this._track.music_root, this._track.file_name);
                 super.play(file_name,  this._track.stream_start / 1000000, this._track.stream_end / 1000000) 
-                //start_time / 1000000, end_time / 1000000)
-                //this.spectrum_analyzer.start()
             }
         )
-
-        // this.spectrum_analyzer = new SpectrumAnalyzer(
-        //     this.spectrum_analyzer_id,
-        //     this.audio_context.analyzer
-        // )
     }
 
 
@@ -253,19 +158,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                                     },
                 
                                                 },
-                                                // {
-                                                //     id: this.album_id,
-                                                //     view:'label',
-                                                //     label:'ALBUM',
-                                                //     height:20,
-                                                //     css: {
-                                                //         'text-align':'left',
-                                                //         'text-transform':'uppercase',
-                                                //         'font-weight':'bold',
-                                                //         'font-size':"10pt",
-                                                //         color:"#909090"
-                                                //     },
-                                                // },    
                                                 {height:5}    
                                             ]
                                         },
@@ -291,18 +183,6 @@ class MainPlayer extends PydjayAudioFilePlayer {
                                             ]
                                         },
                                         {width:10}
-                                        // {
-                                        //     view: 'template',
-                                        //     width:500,
-                                        //     height:90,
-                                        //     template: `<canvas id='${this.spectrum_analyzer_id}' style="border: \'1px solid black\'; width:100%; height:100%">`,
-                                        //     // template: `<canvas id='${this.spectrum_analyzer_id}' style="border: \'1px solid black\'; width:600; height:100">`,
-                                        //     css: {
-                                        //         // 'border-bottom': '1px solid white',
-                                        //         // 'margin-bottom': "1px",
-                                        //         "background-color": "#1E1E1E"
-                                        //     },
-                                        // }
                                     ]
                                 },
                                 {

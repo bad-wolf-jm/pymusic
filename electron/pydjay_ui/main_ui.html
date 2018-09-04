@@ -15,7 +15,7 @@
 <script src="./utils.js"></script>
 <script src="./sql.js"></script>
 <script src="./data.js"></script>
-<script src="./data_class.js"></script>
+<!-- <script src="./data_class.js"></script> -->
 <script src="./components/lists/track_table.js"></script>
 <script src="./components/lists/track_list.js"></script>
 <script src="./components/lists/queue_display.js"></script>
@@ -90,10 +90,13 @@ function save_current_session() {
                             view: 'button',
                             label: 'SAVE',
                             click: function () {
-                                DB.save_session($$('session_name').getValue(),
-                                             $$('session_location').getValue(),
-                                             $$('session_address').getValue());
-                                x.hide();
+                                DB.save_session(
+                                    $$('session_name').getValue(),
+                                    $$('session_location').getValue(),
+                                    $$('session_address').getValue(), 
+                                    (r) => {x.hide()}
+                                );
+                                // x.hide();
                             }
                         },
                         {},
@@ -355,38 +358,38 @@ webix.UIManager.removeHotKey('shift+ctrl+s');
 
 webix.UIManager.addHotKey("alt+r", queue_actions.reload);
 
-webix.UIManager.addHotKey("t", queue_actions.move_selection_to_top, $$('queue_list'));
-webix.UIManager.addHotKey("u", queue_actions.move_selection_up, $$('queue_list'));
-webix.UIManager.addHotKey("d", queue_actions.move_selection_down, $$('queue_list'));
-webix.UIManager.addHotKey("ctrl+e", queue_actions.edit_track_data, $$('queue_list'));
-webix.UIManager.addHotKey("shift+backspace", queue_actions.remove_selection, $$('queue_list'));
+webix.UIManager.addHotKey("t",                queue_actions.move_selection_to_top,   $$('queue_list'));
+webix.UIManager.addHotKey("u",                queue_actions.move_selection_up,       $$('queue_list'));
+webix.UIManager.addHotKey("d",                queue_actions.move_selection_down,     $$('queue_list'));
+webix.UIManager.addHotKey("ctrl+e",           queue_actions.edit_track_data,         $$('queue_list'));
+webix.UIManager.addHotKey("shift+backspace",  queue_actions.remove_selection,        $$('queue_list'));
 webix.UIManager.addHotKey("ctrl+shift+enter", queue_actions.preview_last_30_seconds, $$('queue_list'));
-webix.UIManager.addHotKey("shift+enter", queue_actions.preview_last_10_seconds, $$('queue_list'));
-webix.UIManager.addHotKey("enter", queue_actions.preview_selection, $$('queue_list'));
+webix.UIManager.addHotKey("shift+enter",      queue_actions.preview_last_10_seconds, $$('queue_list'));
+webix.UIManager.addHotKey("enter",            queue_actions.preview_selection,       $$('queue_list'));
 
-webix.UIManager.addHotKey("shift+q", main_list_actions.add_selection_to_queue, $$(main_track_table.track_list));
-webix.UIManager.addHotKey("shift+s", main_list_actions.add_selection_to_short_list, $$(main_track_table.track_list));
-webix.UIManager.addHotKey("shift+ctrl+s", main_list_actions.save_shortlist_as_playlist, $$(main_track_table.track_list));
-webix.UIManager.addHotKey("shift+u", main_list_actions.add_selection_to_unavailable, $$(main_track_table.track_list));
-webix.UIManager.addHotKey("shift+a", main_list_actions.remove_selection_from_unavailable, $$(main_track_table.track_list));
-webix.UIManager.addHotKey("escape", main_list_actions.display_all_songs, $$(main_track_table.track_list));
-webix.UIManager.addHotKey("ctrl+e", main_list_actions.edit_track_data, $$(main_track_table.track_list));
-webix.UIManager.addHotKey("ctrl+shift+enter", main_list_actions.preview_last_30_seconds, $$(main_track_table.track_list));
-webix.UIManager.addHotKey("shift+enter",  main_list_actions.preview_last_10_seconds, $$(main_track_table.track_list));
-webix.UIManager.addHotKey("enter",  main_list_actions.preview_selected, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+q",          main_list_actions.add_selection_to_queue,            $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+s",          main_list_actions.add_selection_to_short_list,       $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+ctrl+s",     main_list_actions.save_shortlist_as_playlist,        $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+u",          main_list_actions.add_selection_to_unavailable,      $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+a",          main_list_actions.remove_selection_from_unavailable, $$(main_track_table.track_list));
+webix.UIManager.addHotKey("escape",           main_list_actions.display_all_songs,                 $$(main_track_table.track_list));
+webix.UIManager.addHotKey("ctrl+e",           main_list_actions.edit_track_data,                   $$(main_track_table.track_list));
+webix.UIManager.addHotKey("ctrl+shift+enter", main_list_actions.preview_last_30_seconds,           $$(main_track_table.track_list));
+webix.UIManager.addHotKey("shift+enter",      main_list_actions.preview_last_10_seconds,           $$(main_track_table.track_list));
+webix.UIManager.addHotKey("enter",            main_list_actions.preview_selected,                  $$(main_track_table.track_list));
 //webix.UIManager.addHotKey("ctrl+f",  main_list_actions.filter_list, $$(main_track_table.track_list));
 
-webix.UIManager.addHotKey("space", playback_actions.preview_pause);
-webix.UIManager.addHotKey("shift+space", playback_actions.preview_stop);
-webix.UIManager.addHotKey("shift+ctrl+q", playback_actions.increase_main_player_volume);
-webix.UIManager.addHotKey("shift+ctrl+a", playback_actions.decrease_main_player_volume);
-webix.UIManager.addHotKey("shift+ctrl+i", playback_actions.increase_precue_player_volume);
-webix.UIManager.addHotKey("shift+ctrl+k", playback_actions.decrease_precue_player_volume);
-webix.UIManager.addHotKey("shift+ctrl+o", playback_actions.increase_monitor_volume);
-webix.UIManager.addHotKey("shift+ctrl+l", playback_actions.decrease_monitor_volume);
-webix.UIManager.addHotKey("shift+left", playback_actions.preview_backward_seek_short);
-webix.UIManager.addHotKey("shift+right", playback_actions.preview_forward_seek_short);
-webix.UIManager.addHotKey("ctrl+shift+left", playback_actions.preview_backward_seek_long);
+webix.UIManager.addHotKey("space",            playback_actions.preview_pause);
+webix.UIManager.addHotKey("shift+space",      playback_actions.preview_stop);
+webix.UIManager.addHotKey("shift+ctrl+q",     playback_actions.increase_main_player_volume);
+webix.UIManager.addHotKey("shift+ctrl+a",     playback_actions.decrease_main_player_volume);
+webix.UIManager.addHotKey("shift+ctrl+i",     playback_actions.increase_precue_player_volume);
+webix.UIManager.addHotKey("shift+ctrl+k",     playback_actions.decrease_precue_player_volume);
+webix.UIManager.addHotKey("shift+ctrl+o",     playback_actions.increase_monitor_volume);
+webix.UIManager.addHotKey("shift+ctrl+l",     playback_actions.decrease_monitor_volume);
+webix.UIManager.addHotKey("shift+left",       playback_actions.preview_backward_seek_short);
+webix.UIManager.addHotKey("shift+right",      playback_actions.preview_forward_seek_short);
+webix.UIManager.addHotKey("ctrl+shift+left",  playback_actions.preview_backward_seek_long);
 webix.UIManager.addHotKey("ctrl+shift+right", playback_actions.preview_forward_seek_long);
 
 main_track_table.on('item-selected', (track) => preview_play_track_id(track.id))
