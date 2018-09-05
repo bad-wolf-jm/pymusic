@@ -2,9 +2,7 @@
 <title>PYMUSIC DJ App</title>
 
 <link rel="stylesheet" href="main_window.css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-
-<!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <script src="../jui/core/lib/jquery-1.8.0.min.js"></script>
 <script src="../jui/core/dist/core.min.js"></script>
@@ -52,16 +50,16 @@
                 </div>
                 <div class="rating">
                     <div class="value">
-                        <i class="fas fa-star"></i> 
-                        <i class="fas fa-star"></i> 
-                        <i class="fas fa-star"></i> 
-                        <i class="fas fa-star"></i> 
-                        <i class="fas fa-star"></i>         
+                        <i class="fa fa-star-o"></i> 
+                        <i class="fa fa-star-o"></i> 
+                        <i class="fa fa-star-o"></i> 
+                        <i class="fa fa-star-o"></i> 
+                        <i class="fa fa-star-o"></i>         
                     </div>
                 </div>
                 <div class="rating">
                     <div class="value">
-                        <i class="fas fa-heart"></i> 
+                        <i class="fa fa-heart"></i> 
                     </div>
                 </div>
             </div>
@@ -74,34 +72,34 @@
             <div class="panel">
                 <ul class="sidebar-library">
                     <li class="sidebar-library-item" onclick="display_all_songs()">
-                        <i class="fas fa-database list-icon"></i>
+                        <i class="fa fa-database list-icon"></i>
                         All songs
-                        <i class="fas fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i> 
                     </li>
                     <li class="sidebar-library-item" onclick="display_suggestions()">
-                        <i class="fas fa-grin list-icon"></i>
+                        <i class="fa fa-smile-o list-icon"></i>
                         Suggestions
-                        <i class="fas fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i> 
                     </li>
                     <li class="sidebar-library-item" onclick="display_short_list()">
-                        <i class="fas fa-circle list-icon"></i>
+                        <i class="fa fa-circle-o list-icon"></i>
                         Short list
-                        <i class="fas fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i> 
                     </li>
                     <li class="sidebar-library-item" onclick="display_played_tracks()">
-                        <i class="fas fa-circle list-icon"></i>
+                        <i class="fa fa-circle-o list-icon"></i>
                         Played songs
-                        <i class="fas fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i> 
                     </li>
                     <li class="sidebar-library-item" onclick="display_never_played_tracks()">
-                        <i class="fas fa-circle list-icon"></i>
+                        <i class="fa fa-circle-o list-icon"></i>
                         Never played
-                        <i class="fas fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i> 
                     </li>
                     <li class="sidebar-library-item" onclick="display_unavailable()">
-                        <i class="fas fa-circle list-icon"></i>
+                        <i class="fa fa-circle-o list-icon"></i>
                         Unavailable
-                        <i class="fas fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i> 
                     </li>
                 </ul>
             </div>
@@ -110,8 +108,8 @@
                 Playlists
                 <div class="action-button-group">
                     <!-- <i class="fas fa-folder action-icon"></i> -->
-                    <i class="fas fa-plus action-icon"></i>        
-                    <i class="fas fa-sync action-icon"></i>
+                    <i class="fa fa-plus action-icon"></i>        
+                    <i class="fa fa-refresh action-icon"></i>
                 </div>
 
             </button>
@@ -123,9 +121,9 @@
                     <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
                         <tr style="height:20px; margin-left:10px">
                             <td style="width:10px"></td>
-                            <td style="width:25px"><i class="fas fa-circle arrow-icon"></i></td>
+                            <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
                             <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
-                            <td style="width:25px"><i class="fas fa-angle-right arrow-icon"></i></td>
+                            <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
                         </tr>
                     </script>
         
@@ -133,7 +131,12 @@
             </div>            
             <button class="accordion" style="margin-right:0">
                 Sessions
-            </button>
+                <div class="action-button-group">
+                    <!-- <i class="fas fa-folder action-icon"></i> -->
+                    <!-- <i class="fa fa-plus action-icon"></i>         -->
+                    <i class="fa fa-refresh action-icon"></i>
+                </div>
+                </button>
             <div class="panel">
                 <div style="overflow-y:auto; max-height:350px">
                     <table id="session-list-elements">
@@ -142,10 +145,10 @@
                     <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
                         <tr style="height:20px; margin-left:10px">
                             <td style="width:10px"></td>
-                            <td style="width:25px"><i class="fas fa-circle arrow-icon"></i></td>
+                            <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
                             <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
                             <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
-                            <td style="width:25px"><i class="fas fa-angle-right arrow-icon"></i></td>
+                            <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
                         </tr>
                     </script>
         
@@ -213,7 +216,7 @@
             </div>
             <div class="main-track-list-area">
                 <table class="main-track-list-table" id="track-list-elements">
-                    <thead>
+                    <thead style="border:0px solid transparent; margin:0; padding:0">
                         <tr class="header-row">
                             <th class="sticky-header"><b><i class='fa fa-heart' style='font-size: 12px'/></b></th>
                             <th class="sticky-header">Title</th>
@@ -223,7 +226,8 @@
                             <th class="sticky-header"><b><span class='fa fa-calendar' style='font-size: 15px'/></b></th>
                             <th class="sticky-header">Rating</th>
                             <th class="sticky-header"><b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b></th>
-                            <th class="sticky-header">Time</th>
+                            <th class="sticky-header" style="text-align:right">Time</th>
+                            <th class="sticky-header"></th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -234,14 +238,15 @@
             <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
                 <tr class="row">
                     <td></td>
-                    <td style="max-width:155px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= title !></td>
+                    <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= title !></td>
                     <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= artist !></td>
                     <td style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= genre !></td>
                     <td style="text-align:right; width:25px; padding-right:3px"><!= play_count !></td>
                     <td style="width:75px"><!= last_played !></td>
                     <td style="width:25px"><!= rating !></td>
                     <td style="width:30px; text-align:right"><!= bpm !></td>
-                    <td style="text-align:right"><!= duration !></td>
+                    <td style="width:45px; text-align:right"><!= duration !></td>
+                    <td style="width:15px"></td>
                 </tr>
             </script>
     </div>
