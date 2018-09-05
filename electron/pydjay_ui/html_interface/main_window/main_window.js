@@ -3,34 +3,142 @@ DB = new DataProvider()
 
 var table_13;
 
-DB.get_queue_elements(
-    (queue) => { 
-        queue_rows = []
-        for (let i=0; i<queue.length; i++) {
-            element = {
-                title:    queue[i].title,
-                artist:   queue[i].artist,
-                bpm:      queue[i].bpm,
-                duration: format_nanoseconds(queue[i].stream_length),
-            }
-            if (queue[i].cover == null) {
-                element.cover = "../../../resources/images/default_album_cover.png"
-            } else {
-                element.cover = `file://${queue[i].image_root}/${queue[i].cover}`
-            }
-            queue_rows.push(element)
+// DB.get_queue_elements(
+//     (queue) => { 
+//         queue_rows = []
+//         queue_rows = [
+//             {
+//                 "title": "title_1",
+//                 "artist": "artist_1",
+//                 "bpm": "bpm_1",
+//                 "duration": "0:01",
+//             },
+//             {
+//                 "title": "title_1",
+//                 "artist": "artist_1",
+//                 "bpm": "bpm_1",
+//                 "duration": "0:01",
+//             },
+//             {
+//                 "title": "title_1",
+//                 "artist": "artist_1",
+//                 "bpm": "bpm_1",
+//                 "duration": "0:01",
+//             },
+//             {
+//                 "title": "title_1",
+//                 "artist": "artist_1",
+//                 "bpm": "bpm_1",
+//                 "duration": "0:01",
+//             }
+//         ]
+//         for (let i=0; i<queue.length; i++) {
+//             element = {
+//                 title:    queue[i].title,
+//                 artist:   queue[i].artist,
+//                 bpm:      queue[i].bpm,
+//                 duration: format_nanoseconds(queue[i].stream_length),
+//             }
+//             if (queue[i].cover == null) {
+//                 element.cover = "../../../resources/images/default_album_cover.png"
+//             } else {
+//                 element.cover = `file://${queue[i].image_root}/${queue[i].cover}`
+//             }
+//             queue_rows.push(element)
             
-        }
-        jui.ready([ "grid.table" ], function(table) {
-                table("#queue-list-elements", {
-                    data:queue_rows,
-                    scroll: false,
-                    resize: false
-                });
-            }
-        )
+//         }
+//         jui.ready([ "grid.table" ], function(table) {
+//                 table("#queue-list-elements", {
+//                     data:queue_rows,
+//                     scroll: false,
+//                     resize: false
+//                 });
+//             }
+//         )
+//     }
+// )
+
+// DB.get_queue_elements(
+//     (queue) => { 
+//         queue_rows = []
+queue_rows = [
+    {
+        "title": "title_1",
+        "artist": "artist_1",
+        "bpm": "bpm_1",
+        "cover":"../../../resources/images/default_album_cover.png",
+        "duration": "0:01",
+    },
+    {
+        "title": "title_2",
+        "artist": "artist_2",
+        "bpm": "bpm_2",
+        "cover":"../../../resources/images/default_album_cover.png",
+        "duration": "0:02",
+    },
+    {
+        "title": "title_3",
+        "artist": "artist_3",
+        "bpm": "bpm_3",
+        "cover":"../../../resources/images/default_album_cover.png",
+        "duration": "0:03",
+    },
+    {
+        "title": "title_4",
+        "artist": "artist_4",
+        "bpm": "bpm_4",
+        "cover":"../../../resources/images/default_album_cover.png",
+        "duration": "0:04",
+    },
+    {
+        "title": "title_5",
+        "artist": "artist_5",
+        "bpm": "bpm_5",
+        "cover":"../../../resources/images/default_album_cover.png",
+        "duration": "0:05",
+    },
+    {
+        "title": "title_6",
+        "artist": "artist_6",
+        "bpm": "bpm_6",
+        "cover":"../../../resources/images/default_album_cover.png",
+        "duration": "0:06",
+    }
+]
+// for (let i=0; i<queue.length; i++) {
+//     element = {
+//         title:    queue[i].title,
+//         artist:   queue[i].artist,
+//         bpm:      queue[i].bpm,
+//         duration: format_nanoseconds(queue[i].stream_length),
+//     }
+//     if (queue[i].cover == null) {
+//         element.cover = "../../../resources/images/default_album_cover.png"
+//     } else {
+//         element.cover = `file://${queue[i].image_root}/${queue[i].cover}`
+//     }
+//     queue_rows.push(element)
+    
+// }
+jui.ready([ "grid.table" ], function(table) {
+        table("#queue-list-elements", {
+            data:queue_rows,
+            scroll: false,
+            resize: false
+        });
     }
 )
+//     }
+// )0
+Sortable = require("../lib/Sortable.js")
+var el = document.getElementById('queue-elements-body');
+//console.log(Sortable)
+var sortable = Sortable.create(el, {
+    group: 'foo',
+    ghostClass:"ghost",
+    animation: 200
+  });
+
 
 function format_main_list(track_list) {
     queue_rows = []

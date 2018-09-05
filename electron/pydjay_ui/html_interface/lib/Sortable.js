@@ -6,15 +6,19 @@
 
 (function sortableModule(factory) {
 	"use strict";
+	console.log(factory)
 
 	if (typeof define === "function" && define.amd) {
+		//console.log("FOOw")
 		define(factory);
 	}
 	else if (typeof module != "undefined" && typeof module.exports != "undefined") {
+		//console.log("FOOr")
 		module.exports = factory();
 	}
 	else {
 		/* jshint sub:true */
+		console.log("FOO")
 		window["Sortable"] = factory();
 	}
 })(function sortableFactory() {

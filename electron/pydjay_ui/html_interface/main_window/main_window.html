@@ -9,6 +9,7 @@
 <script src="../jui/ui/dist/ui.min.js"></script>
 <script src="../jui/grid/dist/grid.min.js"></script>
 <script src="../lib/moment.min.js"></script>
+<script src="../lib/Sortable.js"></script>
 
 <script src="../../utils.js"></script>
 <script src="../../sql.js"></script>
@@ -265,13 +266,13 @@
                 <table id="queue-list-elements" style="width:100%">
                     <thead style="width:100%">
                     <tr style="width:100%"></tr></thead>
-                    <tbody style="width:100%;"></tbody>
+                    <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
                 </table>
                 <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
-                    <tr style="width:100%; margin:0; padding:0; height:50px">
+                    <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px">
                         <td  style="width:100%; margin:0; padding:0">
                             <div class="element">
-                                <img class="cover-image" src="<!= cover !>" height='50' width='50'></img>
+                                <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
                                 <div style="margin:0px; padding:0px; float:left; width:275px">
                                     <div class="queue_element_title"><b><!= title !></b></div>
                                     <div class="queue_element_artist"><i><!= artist !></i></div>

@@ -366,7 +366,7 @@ input[type=text] {
     height:50px;
     border: 1px solid grey;
     background-color: rgb(30,30,30);
-    border-radius:10px;
+    border-radius:6px;
     margin-top:2px;
     margin-bottom:2px;
     margin-left:3px;
@@ -376,7 +376,7 @@ input[type=text] {
     float:left; 
     padding-right:7px; 
     padding-left:-3px;
-    border-radius: 10px 0px 0px 10px
+    border-radius: 6px 0px 0px 6px
 }
 
 
@@ -584,4 +584,9 @@ input[type=text] {
     /* #To not have transparent background.
     #background-color: white; */
     background-color: rgb(50,50,50);
+  }
+
+
+  .ghost {
+    opacity: 0.2;
   }
