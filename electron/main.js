@@ -13,6 +13,6 @@ app.on('ready', function() {
       height: 1152,
     });
     //mainWindow.setMenu(null);
-    mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/main_ui.html');
-    // mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/winjs-test/index.html');
+    // mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/main_ui.html');
+    mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/html_interface/main_window/main_window.html');
 });

@@ -4,7 +4,21 @@
 <link rel="stylesheet" href="main_window.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<body style="margin: 0px; padding:0px; height:100%">
+<!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
+
+<script src="../jui/core/lib/jquery-1.8.0.min.js"></script>
+<script src="../jui/core/dist/core.min.js"></script>
+<script src="../jui/ui/dist/ui.min.js"></script>
+<script src="../jui/grid/dist/grid.min.js"></script>
+<script src="../lib/moment.min.js"></script>
+
+<script src="../../utils.js"></script>
+<script src="../../sql.js"></script>
+<script src="../../data.js"></script>
+
+
+
+<body class="jui" style="margin: 0px; padding:0px; height:100%">
     <div class="header">
         <div class="item">
             <button class="settings-button"><i class="fas fa-ellipsis-v"></i></button>
@@ -59,32 +73,32 @@
             <button class="accordion">Library</button>
             <div class="panel">
                 <ul class="sidebar-library">
-                    <li class="sidebar-library-item">
+                    <li class="sidebar-library-item" onclick="display_all_songs()">
                         <i class="fas fa-database list-icon"></i>
                         All songs
                         <i class="fas fa-angle-right arrow-icon"></i> 
                     </li>
-                    <li class="sidebar-library-item">
+                    <li class="sidebar-library-item" onclick="display_suggestions()">
                         <i class="fas fa-grin list-icon"></i>
                         Suggestions
                         <i class="fas fa-angle-right arrow-icon"></i> 
                     </li>
-                    <li class="sidebar-library-item">
+                    <li class="sidebar-library-item" onclick="display_short_list()">
                         <i class="fas fa-circle list-icon"></i>
                         Short list
                         <i class="fas fa-angle-right arrow-icon"></i> 
                     </li>
-                    <li class="sidebar-library-item">
+                    <li class="sidebar-library-item" onclick="display_played_tracks()">
                         <i class="fas fa-circle list-icon"></i>
                         Played songs
                         <i class="fas fa-angle-right arrow-icon"></i> 
                     </li>
-                    <li class="sidebar-library-item">
+                    <li class="sidebar-library-item" onclick="display_never_played_tracks()">
                         <i class="fas fa-circle list-icon"></i>
                         Never played
                         <i class="fas fa-angle-right arrow-icon"></i> 
                     </li>
-                    <li class="sidebar-library-item">
+                    <li class="sidebar-library-item" onclick="display_unavailable()">
                         <i class="fas fa-circle list-icon"></i>
                         Unavailable
                         <i class="fas fa-angle-right arrow-icon"></i> 
@@ -95,23 +109,47 @@
             <button class="accordion">
                 Playlists
                 <div class="action-button-group">
-                        <!-- <i class="fas fa-folder action-icon"></i> -->
-                        <i class="fas fa-plus action-icon"></i>        
-                        <i class="fas fa-sync action-icon"></i>
-                    </div>
+                    <!-- <i class="fas fa-folder action-icon"></i> -->
+                    <i class="fas fa-plus action-icon"></i>        
+                    <i class="fas fa-sync action-icon"></i>
+                </div>
 
             </button>
             <div class="panel">
-                <p>Lorem ipsum...</p>
-            </div>
-            
+                <div style="overflow-y:auto; max-height:350px">
+                    <table id="playlist-list-elements">
+                        <tbody></tbody>
+                    </table>
+                    <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
+                        <tr style="height:20px; margin-left:10px">
+                            <td style="width:10px"></td>
+                            <td style="width:25px"><i class="fas fa-circle arrow-icon"></i></td>
+                            <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                            <td style="width:25px"><i class="fas fa-angle-right arrow-icon"></i></td>
+                        </tr>
+                    </script>
+        
+                </div>
+            </div>            
             <button class="accordion" style="margin-right:0">
-                <!-- <div style="width:calc(100% - 5px)"> -->
-                    Sessions
-                <!-- </div>   -->
+                Sessions
             </button>
             <div class="panel">
-                <p>Lorem ipsum...</p>
+                <div style="overflow-y:auto; max-height:350px">
+                    <table id="session-list-elements">
+                        <tbody></tbody>
+                    </table>
+                    <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
+                        <tr style="height:20px; margin-left:10px">
+                            <td style="width:10px"></td>
+                            <td style="width:25px"><i class="fas fa-circle arrow-icon"></i></td>
+                            <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                            <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
+                            <td style="width:25px"><i class="fas fa-angle-right arrow-icon"></i></td>
+                        </tr>
+                    </script>
+        
+                </div>
             </div>
             <button class="accordion">Preview Player</button>
             <div class="panel">
@@ -173,7 +211,40 @@
                 </div>
               
             </div>
-        </div>
+            <div class="main-track-list-area">
+                <table class="main-track-list-table" id="track-list-elements">
+                    <thead>
+                        <tr class="header-row">
+                            <th class="sticky-header"><b><i class='fa fa-heart' style='font-size: 12px'/></b></th>
+                            <th class="sticky-header">Title</th>
+                            <th class="sticky-header">Artist</th>
+                            <th class="sticky-header">Genre</th>
+                            <th class="sticky-header"><b><span class='fa fa-play'/></b></th>
+                            <th class="sticky-header"><b><span class='fa fa-calendar' style='font-size: 15px'/></b></th>
+                            <th class="sticky-header">Rating</th>
+                            <th class="sticky-header"><b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b></th>
+                            <th class="sticky-header">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+    
+                </table>
+            
+            </div>
+            <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
+                <tr class="row">
+                    <td></td>
+                    <td style="max-width:155px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= title !></td>
+                    <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= artist !></td>
+                    <td style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= genre !></td>
+                    <td style="text-align:right; width:25px; padding-right:3px"><!= play_count !></td>
+                    <td style="width:75px"><!= last_played !></td>
+                    <td style="width:25px"><!= rating !></td>
+                    <td style="width:30px; text-align:right"><!= bpm !></td>
+                    <td style="text-align:right"><!= duration !></td>
+                </tr>
+            </script>
+    </div>
         <div class="queue_list">
             <div class="main-list-header">
                 <div class="title">
@@ -186,30 +257,28 @@
                 </div>
             </div>
             <div class="queue-list">
-                <div class="scroll-area">
-                    <div class="element">
-                        <img style="float:left; padding-right:7px; padding-left:-3px" src="test_cover.png" height='50' width='50'></img>
-                        <div style="margin:0px; padding:0px; float:left; width:275px">
-                            <div class="queue_element_title"><b>Title</b></div>
-                            <div class="queue_element_artist"><i>Artist Name</i></div>
-                        </div>
-                        <div class="queue_element_bpm">120 BPM</div>
-                        <div class="queue_element_duration">
-                            <b>0:00</b>
-                        </div>
-                    </div>
-                    <div class="element">
-                        <img style="float:left; padding-right:7px; padding-left:-3px" src="test_cover.png" height='50' width='50'></img>
-                        <div style="margin:0px; padding:0px; float:left; width:275px">
-                            <div class="queue_element_title"><b>Title</b></div>
-                            <div class="queue_element_artist"><i>Artist Name</i></div>
-                        </div>
-                        <div class="queue_element_bpm">120 BPM</div>
-                        <div class="queue_element_duration">
-                            <b>0:00</b>
-                        </div>    
-                    </div>
-                </div>
+                <table id="queue-list-elements" style="width:100%">
+                    <thead style="width:100%">
+                    <tr style="width:100%"></tr></thead>
+                    <tbody style="width:100%;"></tbody>
+                </table>
+                <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
+                    <tr style="width:100%; margin:0; padding:0; height:50px">
+                        <td  style="width:100%; margin:0; padding:0">
+                            <div class="element">
+                                <img class="cover-image" src="<!= cover !>" height='50' width='50'></img>
+                                <div style="margin:0px; padding:0px; float:left; width:275px">
+                                    <div class="queue_element_title"><b><!= title !></b></div>
+                                    <div class="queue_element_artist"><i><!= artist !></i></div>
+                                </div>
+                                <div class="queue_element_bpm"><!= bpm !> BPM</div>
+                                <div class="queue_element_duration">
+                                    <b><!= duration !></b>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </script>
             </div>        
         </div>
     </div>
@@ -225,11 +294,6 @@
                 <span style="font-size:10pt; color:rgb(200,200,200)">2018-03-02</span> <span style="font-size:10pt; color:rgb(225,225,225)"></span>| <b>3:45:56</b></span>
             </div>            
         </div>
-        
-
-        <!-- <span style="vertical-align:bottom; height:100%">
-            <b>Queue will stop after this song</b>
-        </span> -->
     </div>
 
     <script>
@@ -247,4 +311,6 @@
             });
         }
     </script>
+
+    <script src="main_window.js"></script>
 </body>
