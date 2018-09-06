@@ -358,7 +358,16 @@ input[type=text] {
     height:calc(100% - 50px);
 }
 
-.queue-list .scroll-area{
+.queue-list .scroll-area {
+
+}
+
+.queue_list .main-list-header .queue-management-button {
+    height:50px; 
+    width:50px; 
+    float:right;
+    border: 0px solid grey;
+    background-color: rgb(25,25,25);
 }
 
 .queue-list .element{

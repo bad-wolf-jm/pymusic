@@ -12,8 +12,10 @@
 <script src="../lib/Sortable.js"></script>
 
 <script src="../../utils.js"></script>
+<script src="../../../web-audio/event_dispatcher.js"></script>
 <script src="../../sql.js"></script>
 <script src="../../data.js"></script>
+<script src="../../queue_controller.js"></script>
 
 
 
@@ -231,13 +233,13 @@
                             <th class="sticky-header"></th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody id="main-elements-body" class="list-group"></tbody>
     
                 </table>
             
             </div>
             <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
-                <tr class="row">
+                <tr class="list-group-item row">
                     <td></td>
                     <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= title !></td>
                     <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= artist !></td>
@@ -261,6 +263,8 @@
                         15 tracks - 57 minutes 37 seconds
                     </div>
                 </div>
+                <button class="queue-management-button"></button>
+                <button class="queue-management-button"></button>
             </div>
             <div class="queue-list">
                 <table id="queue-list-elements" style="width:100%">
