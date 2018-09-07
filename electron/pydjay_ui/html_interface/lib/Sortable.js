@@ -6,7 +6,7 @@
 
 (function sortableModule(factory) {
 	"use strict";
-	console.log(factory)
+	// console.log(factory)
 
 	if (typeof define === "function" && define.amd) {
 		//console.log("FOOw")
@@ -18,7 +18,7 @@
 	}
 	else {
 		/* jshint sub:true */
-		console.log("FOO")
+		// console.log("FOO")
 		window["Sortable"] = factory();
 	}
 })(function sortableFactory() {

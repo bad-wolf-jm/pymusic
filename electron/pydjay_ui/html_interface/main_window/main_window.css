@@ -1,11 +1,13 @@
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Helvetica, sans-serif;
+    /* font-family: 'Roboto', sans-serif; */
     font-size:10pt;
+    font-weight:200;
     color:rgb(200, 200, 200);
 }
 
 button {
-    font-family: Arial, Helvetica, sans-serif;
+    /* font-family: Arial, Helvetica, sans-serif; */
     font-size:10pt;
     color:rgb(200, 200, 200);
 }
@@ -368,7 +370,24 @@ input[type=text] {
     float:right;
     border: 0px solid grey;
     background-color: rgb(25,25,25);
+    outline:none !important;
 }
+
+.queue_list .main-list-header .queue-management-button:hover {
+    height:50px; 
+    width:50px; 
+    float:right;
+    border: 0px solid grey;
+    cursor: pointer;
+    background-color: rgb(100,25,25);
+}
+
+/* .queue_list .main-list-header .queue-management-button:active {
+    border: 0px solid grey !important;
+    border-image:none !important;
+    outline:none !important;
+} */
+
 
 .queue-list .element{
     width:calc(100% - 15px);

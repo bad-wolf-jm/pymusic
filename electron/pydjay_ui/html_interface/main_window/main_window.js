@@ -134,12 +134,12 @@ Sortable = require("../lib/Sortable.js")
 var el = document.getElementById('queue-elements-body');
 //console.log(Sortable)
 var sortable = Sortable.create(el, {
-    group: {
-        name:        'main',
-        put:         true,
-        revertClone: true,
+    // group: {
+    //     name:        'main',
+    //     // put:         true,
+    //     // revertClone: true,
 
-    },
+    // },
 
     ghostClass: "ghost",
     animation: 150,
@@ -218,11 +218,11 @@ var sortable = Sortable.create(el, {
   var mel = document.getElementById('main-elements-body');
   //console.log(Sortable)
   var sortable = Sortable.create(mel, {
-      group: {
-          name:'main',
-          revertClone: true,
-          pull:"clone"
-        },
+    //   group: {
+    //       name:'main',
+    //     //   revertClone: true,
+    //     //   pull:"clone"
+    //     },
         sort:false,
       ghostClass:"ghost",
       animation: 200,
@@ -467,4 +467,4 @@ display_all_songs()
 display_sessions()
 display_playlists()
 
-Q = new QueueController()
+//Q = new QueueController()
