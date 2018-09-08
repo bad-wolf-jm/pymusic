@@ -5,12 +5,6 @@ class TrackListController extends EventDispatcher {
         this.list_table = {}
         this.ready_wait_queue = []
         this.views = []
-        // DB.get_all_tracks((queue) => {
-        //     this._do_set_list("All SONGS", queue)
-        //     for(let i=0; i<this.ready_wait_queue.length; i++) {
-        //         this.ready_wait_queue[i](this.name, this.list)
-        //     }
-        // })
     }
 
     addView(view) {
