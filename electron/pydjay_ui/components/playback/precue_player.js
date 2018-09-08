@@ -1,13 +1,13 @@
 class PrecuePlayer extends PydjayAudioFilePlayer {
     constructor () {
         super()
-        this.title_label_id = `title-${this.ID()}`
+        this.title_label_id  = `title-${this.ID()}`
         this.artist_label_id = `artist-${this.ID()}`
-        this.cover_id = `cover-${this.ID()}`
-        this.time_label_id = `time-${this.ID()}`
+        this.cover_id        = `cover-${this.ID()}`
+        this.time_label_id   = `time-${this.ID()}`
         this.length_label_id = `length-${this.ID()}`
-        this.position_id = `position-${this.ID()}`
-        this.info_id = `info-${this.ID()}`
+        this.position_id     = `position-${this.ID()}`
+        this.info_id         = `info-${this.ID()}`
         this.info_details_id = `info-defails.${this.ID()}`
         this.preview_menu_id = `info-defails.${this.ID()}`
 
