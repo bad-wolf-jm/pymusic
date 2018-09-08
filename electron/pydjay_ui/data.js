@@ -188,6 +188,18 @@ function DataProvider() {
         $QUERY(sql, k)
     }
 
+    self.get_played_queue_elements = function (k) {
+        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
+        var sql = `SELECT session_queue.position AS position, \`tracks_view\`.* 
+                    FROM session_queue 
+                    JOIN ${tracks_sql} 
+                    ON tracks_view.id = session_queue.track_id 
+                    WHERE session_queue.status='played' 
+                    ORDER BY session_queue.position`
+        $QUERY(sql, k)
+    }
+
+
     self.get_queue_track = function(id, k) {
         var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
         var sql = `SELECT session_queue.position AS position, \`tracks_view\`.* 
