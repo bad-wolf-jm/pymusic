@@ -5,6 +5,17 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
 
+
+<script src="../../../web-audio/event_dispatcher.js"></script>
+<script src="../../../web-audio/audio_context.js"></script>
+<script src="../../../web-audio/audio_player.js"></script>
+<script src="../../../web-audio/audio_player_base.js"></script>
+<script src="../../../web-audio/audio_player_buffer.js"></script>
+<script src="../../../web-audio/audio_player_file.js"></script>
+<script src="../../../web-audio/mp3_fileinfo.js"></script>
+
+
+
 <script src="../jui/core/lib/jquery-1.8.0.min.js"></script>
 <script src="../jui/core/dist/core.min.js"></script>
 <script src="../jui/ui/dist/ui.min.js"></script>
@@ -13,11 +24,17 @@
 <script src="../lib/Sortable.js"></script>
 
 <script src="../../utils.js"></script>
-<script src="../../../web-audio/event_dispatcher.js"></script>
+<!-- <script src="../../../web-audio/event_dispatcher.js"></script> -->
 <script src="../../sql.js"></script>
 <script src="../../data.js"></script>
-<!-- <script src="../../queue_controller.js"></script> -->
+<script src="../../queue_controller.js"></script>
+<script src="../../session_controller.js"></script>
+<script src="../../playback_controller.js"></script>
+<script src="../../track_list_controller.js"></script>
 
+<script src="queue_view.js"></script>
+<script src="main_player_view.js"></script>
+<script src="track_list_view.js"></script>
 
 
 <body class="jui" style="margin: 0px; padding:0px; height:100%">
@@ -34,40 +51,36 @@
         </div>
     </div>
     <div class="main_player">
-        <img class="cover" src="test_cover.png" height="150" width="150"></img>
+        <img id="main-player-track-cover" class="cover" src="test_cover.png" height="150" width="150"></img>
         <div style="float:left; display:block; width:calc(100% - 150px)">
             <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
                 <div style="display:inline-block; width:calc(100% - 150px)">
-                    <h1 class="title">Arkansas Blues</h1>
-                    <h2 class="artist"><strong>Norbert Susemihl - Night On Frenchman Street</strong> <em>(Norbert Susemihl, Jason Marsalis, Kerry Lewis)</em> </h2>        
+                    <h1 id="main-player-track-title" class="title">Arkansas Blues</h1>
+                    <h2 class="artist"><strong id="main-player-track-album">Norbert Susemihl - Night On Frenchman Street</strong> 
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
+                        <em id="main-player-track-artist">(Norbert Susemihl, Jason Marsalis, Kerry Lewis)</em> </h2>        
                 </div>
-                <div style="padding-right:10px; position:absolute; right:0px; display:inline-block"><h1 class="time_remaining">-3:34</h1></div>            
+                <div style="padding-right:10px; position:absolute; right:0px; display:inline-block"><h1 id="main-player-time-remaining" class="time_remaining">-3:34</h1></div>            
             </div>
             <div class="track-info"> 
                 <div class="info">
                     <div class="title">DURATION</div>
-                    <div class="value">3:12</div>
+                    <div id="main-player-track-duration" class="value">3:12</div>
                 </div>
                 <div class="info">
                     <div class="title">BPM</div>
-                    <div class="value">120</div>
+                    <div id="main-player-track-bpm" class="value">120</div>
                 </div>
                 <div class="rating">
-                    <div class="value">
-                        <i class="fa fa-star-o"></i> 
-                        <i class="fa fa-star-o"></i> 
-                        <i class="fa fa-star-o"></i> 
-                        <i class="fa fa-star-o"></i> 
-                        <i class="fa fa-star-o"></i>         
-                    </div>
+                    <div id="main-player-rating" class="value"></div>
                 </div>
                 <div class="rating">
-                    <div class="value">
+                    <div id="main-player-loved" class="value">
                         <i class="fa fa-heart"></i> 
                     </div>
                 </div>
             </div>
-            <div class="waveform">THIS IS WHERE THE WAVEFORM WILL GO</div>
+            <div id="main-player-waveform" class="waveform"></div>
         </div>
     </div>
     <div class="main_space">
@@ -111,7 +124,6 @@
             <button class="accordion">
                 Playlists
                 <div class="action-button-group">
-                    <!-- <i class="fas fa-folder action-icon"></i> -->
                     <i class="fa fa-plus action-icon"></i>        
                     <i class="fa fa-refresh action-icon"></i>
                 </div>
@@ -205,11 +217,13 @@
         <div class="main_list">
             <div class="main-list-header">
                 <div class="title">
-                    <div class="name">
+                    <div class="name" id="main-track-list-name">
                         ALL SONGS
                     </div>
-                    <div class="count">
-                        15 tracks - 57 minutes 37 seconds
+                    <div class="count" style="margin-top:4px">
+                        <div class="count" style="margin-top:4px">
+                            <div id="main-track-list-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="main-track-list-duration" style="display:inline-block">57 minutes 37 seconds</div>
+                        </div>
                     </div>
                 </div>
                 <div class="search-container">
@@ -235,20 +249,19 @@
                         </tr>
                     </thead>
                     <tbody id="main-elements-body" class="list-group"></tbody>
-    
                 </table>
             
             </div>
             <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
                 <tr class="list-group-item row">
-                    <td></td>
+                    <td style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt"><!= loved !></td>
                     <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= title !></td>
                     <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= artist !></td>
                     <td style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= genre !></td>
-                    <td style="text-align:right; width:25px; padding-right:3px"><!= play_count !></td>
+                    <td style="text-align:right; width:25px; padding-right:9px"><!= play_count !></td>
                     <td style="width:75px"><!= last_played !></td>
                     <td style="width:25px"><!= rating !></td>
-                    <td style="width:30px; text-align:right"><!= bpm !></td>
+                    <td style="width:30px; text-align:right; padding-right:5px"><!= bpm !></td>
                     <td style="width:45px; text-align:right"><!= duration !></td>
                     <td style="width:15px"></td>
                 </tr>
@@ -260,8 +273,8 @@
                     <div class="name">
                         QUEUE
                     </div>
-                    <div class="count">
-                        15 tracks - 57 minutes 37 seconds
+                    <div class="count" style="margin-top:4px">
+                        <div id="queue-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="queue-duration" style="display:inline-block">57 minutes 37 seconds</div>
                     </div>
                 </div>
                 <button class="queue-management-button"><i class="fa fa-ellipsis-h"></i></button>
@@ -274,7 +287,7 @@
                     <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
                 </table>
                 <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
-                    <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px">
+                    <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
                         <td  style="width:100%; margin:0; padding:0">
                             <div class="element">
                                 <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>

@@ -373,6 +373,21 @@ input[type=text] {
     outline:none !important;
 }
 
+.queue_list .main-list-header .title {
+    height:50px; 
+    width:calc(100% - 110px); 
+    margin:0px;
+}
+
+.queue_list .main-list-header .title .name {
+    margin-top:10px;
+    margin-left:15px;
+}
+
+.queue_list .main-list-header .title .count {
+    margin-left:15px;
+}
+
 .queue_list .main-list-header .queue-management-button:hover {
     height:50px; 
     width:50px; 
@@ -381,13 +396,6 @@ input[type=text] {
     cursor: pointer;
     background-color: rgb(100,25,25);
 }
-
-/* .queue_list .main-list-header .queue-management-button:active {
-    border: 0px solid grey !important;
-    border-image:none !important;
-    outline:none !important;
-} */
-
 
 .queue-list .element{
     width:calc(100% - 15px);
