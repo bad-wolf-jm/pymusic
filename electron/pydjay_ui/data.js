@@ -116,6 +116,8 @@ function DataProvider() {
         $QUERY(sql, k)        
     }
 
+
+
     self.get_session_tracks = function (id, k) {
         var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
         var sql = `SELECT \`tracks_view\`.* 
@@ -165,11 +167,31 @@ function DataProvider() {
          $QUERY(sql, k)
     }
 
+    self.get_session_info = function (id, k) {
+        $QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions 
+        JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts 
+        ON sessions.id=counts.session_id WHERE sessions.id=${id}`, 
+        (list) => {
+            return k(list[0])
+        })
+    }
+
+
     self.get_sessions_list = function (k) {
         $QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions 
         JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts 
         ON sessions.id=counts.session_id ORDER BY date ASC`, k)
     }
+
+    self.get_group_info = function (id, k) {
+        $QUERY(`SELECT playlists.id as id , playlists.name, IFNULL(counts.count, 0) as count FROM
+        playlists LEFT JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
+        ON playlists.id=counts.playlist_id WHERE playlists.id=${id}`, 
+        (list) => {
+            return k(list[0])
+        })
+    }
+
 
     self.get_group_list = function (k) {
         $QUERY(`SELECT playlists.id as id , playlists.name, IFNULL(counts.count, 0) as count FROM

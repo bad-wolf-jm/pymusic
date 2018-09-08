@@ -134,7 +134,7 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
-                        <tr style="height:20px; margin-left:10px">
+                        <tr class="choice" style="height:20px; margin-left:10px" onclick=display_playlist(<!= id !>)>
                             <td style="width:10px"></td>
                             <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
                             <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
@@ -147,8 +147,6 @@
             <button class="accordion" style="margin-right:0">
                 Sessions
                 <div class="action-button-group">
-                    <!-- <i class="fas fa-folder action-icon"></i> -->
-                    <!-- <i class="fa fa-plus action-icon"></i>         -->
                     <i class="fa fa-refresh action-icon"></i>
                 </div>
                 </button>
@@ -158,7 +156,7 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
-                        <tr style="height:20px; margin-left:10px">
+                        <tr class="choice" style="height:20px; margin-left:10px" onclick=display_session(<!= id !>)>
                             <td style="width:10px"></td>
                             <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
                             <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>

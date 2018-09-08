@@ -30,6 +30,10 @@ M = new MainPlayerView()
 M.set_controller(mpc)
 M.init()
 
+function refresh_sessions(x) {
+    console.log("refresh_sessions", x)
+}
+
 function display_all_songs() {
     DB.get_all_tracks(
         (queue) => { 
@@ -78,13 +82,39 @@ function display_never_played_tracks() {
     )    
 }
 
+function display_session(id) {
+    DB.get_session_info(id, 
+        (info) => {
+            DB.get_session_tracks(id, 
+                (queue) => { 
+                    T_controller.set_list(`${info.name} - ${moment(info.date).format("MM-DD-YYYY")}`, queue)
+                }
+            )            
+        }
+    )
+}
+
+function display_playlist(id) {
+    DB.get_group_info(id, 
+        (info) => {
+            DB.get_playlist_tracks(id, 
+                (queue) => { 
+                    T_controller.set_list(`${info.name}`, queue)
+                }
+            )            
+        }
+    )
+}
+
 function display_sessions() {
     DB.get_sessions_list(
         (queue) => { 
             queue_rows = []
             for (let i=0; i<queue.length; i++) {
                 element = {
+                    id: queue[i].id,
                     name: queue[i].name,
+                    data: queue[i],
                     date: moment(queue[i].date).format("MM-DD-YYYY"),
                 }
                 queue_rows.push(element)
@@ -107,7 +137,8 @@ function display_playlists() {
             queue_rows = []
             for (let i=0; i<queue.length; i++) {
                 element = {
-                    name:      queue[i].name,
+                    id:   queue[i].id,
+                    name: queue[i].name,
                 }
                 queue_rows.push(element)
             }
