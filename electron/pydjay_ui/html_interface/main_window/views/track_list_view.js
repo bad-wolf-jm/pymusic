@@ -46,13 +46,28 @@ class TrackListView extends EventDispatcher {
         this.name_dom.innerHTML = `${name}`
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-        jui.ready([ "grid.table" ], function(table) {
+        jui.ready([ "grid.table" ], (table) => {
                 table("#track-list-elements", {
                     data:queue_rows,
                     scroll: false,
                     resize: false
                 });
+                this.connect_drag()
             }
         )
     }
+
+    handle_drag_start(e) {
+        console.log()
+    }
+
+    connect_drag() {
+        let elements = document.querySelectorAll('.track-entry');
+        [].forEach.call(elements, (e) => {
+            //console.log(e)
+            e.addEventListener('dragstart', this.handle_drag_start.bind(this), false);
+        });
+    }
+
+
 }

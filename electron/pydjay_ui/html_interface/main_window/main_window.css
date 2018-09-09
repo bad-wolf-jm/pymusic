@@ -1,44 +1,43 @@
 body {
     font-family: Helvetica, sans-serif;
-    /* font-family: 'Roboto', sans-serif; */
-    font-size:10pt;
-    font-weight:200;
-    color:rgb(200, 200, 200);
+    font-size:   10pt;
+    font-weight: 200;
+    color:     rgb(200, 200, 200);
 }
 
 button {
     /* font-family: Arial, Helvetica, sans-serif; */
-    font-size:10pt;
-    color:rgb(200, 200, 200);
+    font-size: 10pt;
+    color:   rgb(200, 200, 200);
 }
 
 .header {
-    margin: 0px; 
-    padding:0px; 
-    width:100%; 
-    height:30px; 
+    margin:            0px; 
+    padding:           0px; 
+    width:             100%; 
+    height:            30px; 
     background-color:red; 
     background-color:rgb(24, 24, 24); 
-    position:fixed; 
-    display:block  
+    position:          fixed; 
+    display:           block  
 }
 
 .header .settings-button {
-    display: inline-block;
-    background-color: #000000; /* Green */
-    border: none;
-    color: white;
-    height:100%;
-    width:50px;
-    text-align: center;
-    text-decoration: none;
-    font-size: 15pt;
-    float:left;
+    display:           inline-block;
+    background-color:#000000; 
+    border:            none;
+    color:           white;
+    height:            100%;
+    width:             50px;
+    text-align:        center;
+    text-decoration:   none;
+    font-size:         15pt;
+    float:              left;
 }
 
 .header .content {
     display: flex;
-    align-items: stretch; /* Default */
+    align-items: stretch; 
     justify-content: space-between;
     width: calc(100% - 65px);
     height:100%;
@@ -49,7 +48,7 @@ button {
 .header .content .item {
     height:100%; 
     display: block;
-    flex: 0 1 auto; /* Default */
+    flex: 0 1 auto; 
     list-style-type: none;
     margin-top:4px;
     margin-bottom:auto;
@@ -138,6 +137,7 @@ button {
     text-transform:uppercase;
     font-weight:bold;
     font-size:16pt;
+    padding-left:15px;
     height:15px;
 }
 
@@ -150,7 +150,8 @@ button {
     overflow: hidden;
     text-overflow: ellipsis;    
     width:calc(100% - 150px);
-    height:15px
+    height:15px;
+    padding-left:15px;
 }
 
 .main_player .time_remaining {
@@ -324,6 +325,7 @@ button {
     border: none;
     cursor: pointer;
     height:32px;
+    outline:none !important;
   }
   
 .search-container button:hover {

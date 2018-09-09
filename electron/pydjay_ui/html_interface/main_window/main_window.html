@@ -14,8 +14,6 @@
 <script src="../../../web-audio/audio_player_file.js"></script>
 <script src="../../../web-audio/mp3_fileinfo.js"></script>
 
-
-
 <script src="../jui/core/lib/jquery-1.8.0.min.js"></script>
 <script src="../jui/core/dist/core.min.js"></script>
 <script src="../jui/ui/dist/ui.min.js"></script>
@@ -30,10 +28,14 @@
 <script src="../../controllers/session_controller.js"></script>
 <script src="../../controllers/playback_controller.js"></script>
 <script src="../../controllers/track_list_controller.js"></script>
+<script src="../../controllers/playlists_controller.js"></script>
+<script src="../../controllers/sessions_controller.js"></script>
 
 <script src="views/queue_view.js"></script>
 <script src="views/main_player_view.js"></script>
 <script src="views/track_list_view.js"></script>
+<script src="views/playlists_view.js"></script>
+<script src="views/sessions_view.js"></script>
 
 
 <body class="jui" style="margin: 0px; padding:0px; height:100%">
@@ -120,7 +122,7 @@
                 </ul>
             </div>
             
-            <button class="accordion">
+            <button class="accordion open-on-drag-over">
                 Playlists
                 <div class="action-button-group">
                     <i class="fa fa-plus action-icon"></i>        
@@ -134,7 +136,7 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
-                        <tr class="choice" style="height:20px; margin-left:10px" onclick=display_playlist(<!= id !>)>
+                        <tr class="choice track-drop-target" style="height:20px; margin-left:10px" onclick=display_playlist(<!= id !>)>
                             <td style="width:10px"></td>
                             <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
                             <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
@@ -167,7 +169,7 @@
         
                 </div>
             </div>
-            <button class="accordion">Preview Player</button>
+            <button class="accordion open-on-drag-over">Preview Player</button>
             <div class="panel">
                 <div class="preview-player">
                     <img class="cover" src="test_cover.png" height="75" width="75"></img>
@@ -224,7 +226,7 @@
                     </div>
                 </div>
                 <div class="search-container">
-                    <button type="submit"><i class="fa fa-search"></i></button>
+                    <button type="submit" class="search-submit-button"><i class="fa fa-search"></i></button>
                     <input type="text" placeholder="Filter list..." name="search">
                 </div>
               
@@ -250,7 +252,7 @@
             
             </div>
             <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
-                <tr class="list-group-item row">
+                <tr class="list-group-item row track-entry" draggable=true>
                     <td style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt"><!= loved !></td>
                     <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= title !></td>
                     <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= artist !></td>
@@ -275,7 +277,7 @@
                     </div>
                 </div>
                 <button class="queue-management-button"><i class="fa fa-ellipsis-h"></i></button>
-                <button class="queue-management-button"><i class="fa fa-play"></i></button>
+                <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()"><i class="fa fa-play"></i></button>
             </div>
             <div class="queue-list">
                 <table id="queue-list-elements" style="width:100%">
@@ -308,7 +310,7 @@
             <div  class="item">
                 <span style="font-size:10pt; color:rgb(150,150,150)"><b>ENDS:</b></span> <span style="font-size:10pt; color:rgb(225,225,225)">3:45:56</span>
             </div>        
-            <div class="item">
+            <div id="queue-stop-message" class="item" style="visibility:hidden">
                 <b>Queue will stop after this song</b>
             </div>
             <div  class="item">
@@ -333,5 +335,6 @@
         }
     </script>
 
-    <script src="main_window.js"></script>
+<script src="drag_and_drop.js"></script>
+<script src="main_window.js"></script>
 </body>
