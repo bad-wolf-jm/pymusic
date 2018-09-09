@@ -15,12 +15,17 @@ class PlaybackController extends PydjayAudioFilePlayer {
         this.playing            = false
         this.on('end-of-stream', () => {
                 this.session_controller.add(this._current_track)
+                this.dispatch("track-finished")
                 if (this.stop_request) {
                     this.queue_playing = false
                     this.stop_request = false
                     this.dispatch("queue-stopped")
                 } else {
-                    this.dispatch("track-finished")
+                    DB.get_waiting_time(
+                        (wait_time) => {
+                            mpc.play_next_track(wait_time)
+                        }
+                    )
                 }
             }
         )        
@@ -50,14 +55,16 @@ class PlaybackController extends PydjayAudioFilePlayer {
     }
 
     _do_start_playback(track) {
-        console.log(track)
+        //console.log(track)
         let file_name = path.join(track.music_root, track.file_name);
+        this._current_track = track
         this.play(file_name,  track.stream_start / 1000000, track.stream_end / 1000000)    
     }
 
     _do_play_next_track() {
         let track = this.queue_controller.pop()
         if (track != undefined) {
+            this.queue_playing = true
             this.dispatch("track-started", track)
         } else {
             this.dispatch("queue-finished")
@@ -69,8 +76,10 @@ class PlaybackController extends PydjayAudioFilePlayer {
              () => {
                 if (delay <= 0) {
                     clearInterval(id);
+                    this.dispatch('next-track-countdown', 0)
                     this._do_play_next_track();
                 } else {
+                    console.log(delay)
                     this.dispatch('next-track-countdown', delay)
                     delay--;
                 }
@@ -97,6 +106,7 @@ class PlaybackController extends PydjayAudioFilePlayer {
     stop_queue_now() {
         this.queue_playing = false;
         this.stop_request = false;
+        this.stop()
         this.dispatch("queue-stopped")
     }
 

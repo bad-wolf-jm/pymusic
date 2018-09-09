@@ -40,7 +40,7 @@ class QueueController extends EventDispatcher {
     pop() {
         if (this.queue != undefined) {
             if (this.queue.length > 0) {
-                element = this.queue.shift()
+                let element = this.queue.shift()
                 this.dispatch("content-changed", this.queue)
                 return element
             } else {

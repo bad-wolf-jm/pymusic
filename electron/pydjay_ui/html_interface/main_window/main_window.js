@@ -4,11 +4,13 @@ var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.mi
 var path              = require('path');
 
 
-DB           = new DataProvider()
-T_controller = new TrackListController()
-Q_controller = new QueueController()
-S_controller = new SessionController()
-mpc          = new PlaybackController(S_controller, Q_controller)
+DB            = new DataProvider()
+T_controller  = new TrackListController()
+Q_controller  = new QueueController()
+S_controller  = new SessionController()
+PL_controller = new PlaylistsController()
+SE_controller = new SessionsController()
+mpc           = new PlaybackController(S_controller, Q_controller)
 Q = new QueueView({
     list:       'queue-elements-body',
     num_tracks: "queue-number-of-tracks",
@@ -23,12 +25,86 @@ T = new TrackListView({
 })
 T.set_controller(T_controller)
 
+PL = new PlaylistsView({
+    list: 'queue-elements-body'
+})
+PL.set_controller(PL_controller)
+
+SE = new SessionsView({
+    list: 'queue-elements-body'
+})
+SE.set_controller(SE_controller)
 
 
 mpc.init_audio()
 M = new MainPlayerView()
 M.set_controller(mpc)
 M.init()
+
+mpc.on("queue-started", 
+    () => {
+        B = document.getElementById("queue-start-button")
+        B.innerHTML = "<i class=\"fa fa-stop\"></i>"
+        B.style.backgroundColor = "#660000"
+    }
+)
+
+mpc.on("queue-stopped", 
+    () => {
+        M = document.getElementById("queue-stop-message")
+        M.style.visibility="hidden"
+        B = document.getElementById("queue-start-button")
+        B.innerHTML = "<i class=\"fa fa-play\"></i>"
+        B.style.backgroundColor = "rgb(25,25,25)"
+    }
+)
+
+mpc.on("queue-finished", 
+    () => {
+        M = document.getElementById("queue-stop-message")
+        M.style.visibility="hidden"
+        B = document.getElementById("queue-start-button")
+        B.innerHTML = "<i class=\"fa fa-play\"></i>"
+        B.style.backgroundColor = "rgb(25,25,25)"
+    }
+)
+
+mpc.on("track-started", 
+    () => {
+    }
+)
+
+mpc.on("track-finished", 
+    () => {
+    }
+)
+
+mpc.on("queue-stop-requested", 
+    () => {
+        M = document.getElementById("queue-stop-message")
+        M.style.visibility="visible"
+        B = document.getElementById("queue-start-button")
+        B.innerHTML = "<i class=\"fa fa-play-circle\"></i>"
+        B.style.backgroundColor = "#667700"
+    }
+)
+
+mpc.on("queue-stop-request-cancelled", 
+    () => {
+        let M = document.getElementById("queue-stop-message")
+        M.style.visibility="hidden"
+        B = document.getElementById("queue-start-button")
+        B.innerHTML = "<i class=\"fa fa-stop\"></i>"
+        B.style.backgroundColor = "#AA0000"
+    }
+)
+
+mpc.on("next-track-countdown", (time) => {
+    let M = document.getElementById("main-player-time-remaining")
+    console.log(time)
+    M.innerHTML = `${time}`
+})
+
 
 function refresh_sessions(x) {
     console.log("refresh_sessions", x)
@@ -112,7 +188,7 @@ function display_sessions() {
             queue_rows = []
             for (let i=0; i<queue.length; i++) {
                 element = {
-                    id: queue[i].id,
+                    id:   queue[i].id,
                     name: queue[i].name,
                     data: queue[i],
                     date: moment(queue[i].date).format("MM-DD-YYYY"),
@@ -121,7 +197,7 @@ function display_sessions() {
             }
             jui.ready([ "grid.table" ], function(table) {
                     table("#session-list-elements", {
-                        data:queue_rows,
+                        data:   queue_rows,
                         scroll: false,
                         resize: false
                     });
@@ -131,28 +207,28 @@ function display_sessions() {
     )    
 }
 
-function display_playlists() {
-    DB.get_group_list(
-        (queue) => { 
-            queue_rows = []
-            for (let i=0; i<queue.length; i++) {
-                element = {
-                    id:   queue[i].id,
-                    name: queue[i].name,
-                }
-                queue_rows.push(element)
-            }
-            jui.ready([ "grid.table" ], function(table) {
-                    table("#playlist-list-elements", {
-                        data:queue_rows,
-                        scroll: false,
-                        resize: false
-                    });
-                }
-            )
-        }
-    )    
-}
+// function display_playlists() {
+//     DB.get_group_list(
+//         (queue) => { 
+//             queue_rows = []
+//             for (let i=0; i<queue.length; i++) {
+//                 element = {
+//                     id:   queue[i].id,
+//                     name: queue[i].name,
+//                 }
+//                 queue_rows.push(element)
+//             }
+//             jui.ready([ "grid.table" ], function(table) {
+//                     table("#playlist-list-elements", {
+//                         data:   queue_rows,
+//                         scroll: false,
+//                         resize: false
+//                     });
+//                 }
+//             )
+//         }
+//     )    
+// }
 
-display_sessions()
-display_playlists()
+//display_sessions()
+//display_playlists()
