@@ -81,6 +81,10 @@
                         <i class="fa fa-heart"></i> 
                     </div>
                 </div>
+                <div id="queue-stop-message" class="value" style="padding:7px; height:100%; color:red; visibility:hidden">
+                    <b style="margin:7px; line-height:100%">Queue will stop after this song</b>
+                </div>
+        
             </div>
             <div id="main-player-waveform" class="waveform"></div>
         </div>
@@ -133,12 +137,12 @@
             </button>
             <div class="panel">
                 <div style="overflow-y:auto; max-height:350px">
-                    <table id="playlist-list-elements">
+                    <table id="playlist-list-elements" style="border-collapse:collapse">
                         <tbody></tbody>
                     </table>
                     <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
-                        <tr class="choice track-drop-target" style="height:20px; margin-left:10px" onclick=display_playlist(<!= id !>)>
-                            <td style="width:10px"></td>
+                        <tr class="choice track-drop-target" style="height:20px;" onclick=display_playlist(<!= id !>)>
+                            <td style="width:30px"></td>
                             <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
                             <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
                             <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
@@ -160,7 +164,7 @@
                     </table>
                     <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
                         <tr class="choice" style="height:20px; margin-left:10px" onclick=display_session(<!= id !>)>
-                            <td style="width:10px"></td>
+                            <td style="width:30px"></td>
                             <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
                             <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
                             <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
@@ -311,9 +315,6 @@
             <div  class="item">
                 <span style="font-size:10pt; color:rgb(150,150,150)"><b>ENDS:</b></span> <span style="font-size:10pt; color:rgb(225,225,225)">3:45:56</span>
             </div>        
-            <div id="queue-stop-message" class="item" style="visibility:hidden">
-                <b>Queue will stop after this song</b>
-            </div>
             <div  class="item">
                 <span style="font-size:10pt; color:rgb(200,200,200)">2018-03-02</span> <span style="font-size:10pt; color:rgb(225,225,225)"></span>| <b>3:45:56</b></span>
             </div>            

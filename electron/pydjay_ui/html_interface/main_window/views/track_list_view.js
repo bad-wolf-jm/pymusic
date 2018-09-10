@@ -25,7 +25,7 @@ class TrackListView extends EventDispatcher {
 
     set_list(name, queue) {
         this.view_list_order = []
-        let queue_rows = []  
+        let queue_rows       = []  
 
         for(let i=0; i<queue.length; i++) {
             let element = {
@@ -42,13 +42,12 @@ class TrackListView extends EventDispatcher {
             queue_rows.push(element)
             this.view_list_order.push(queue[i].id)
         }
-         //console.log(queue_rows)
-        this.name_dom.innerHTML = `${name}`
+        this.name_dom.innerHTML       = `${name}`
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-        this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
+        this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         jui.ready([ "grid.table" ], (table) => {
                 table("#track-list-elements", {
-                    data:queue_rows,
+                    data:   queue_rows,
                     scroll: false,
                     resize: false
                 });
@@ -58,7 +57,7 @@ class TrackListView extends EventDispatcher {
     }
 
     handle_drag_start(e) {
-        console.log()
+        e.dataTransfer.setData("text/plain", JSON.stringify({foo:"bar"}))
     }
 
     connect_drag() {
