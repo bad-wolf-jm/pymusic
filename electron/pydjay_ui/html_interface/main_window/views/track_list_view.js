@@ -29,6 +29,8 @@ class TrackListView extends EventDispatcher {
 
         for(let i=0; i<queue.length; i++) {
             let element = {
+                id:          queue[i].id,
+                color:       queue[i].color,
                 loved:       "<i title='"+i+"' class='fa " + (queue[i].favorite ? "fa-heart" : "fa-heart-o") +"'></i>",
                 title:       queue[i].title,
                 artist:      queue[i].artist,
@@ -57,14 +59,28 @@ class TrackListView extends EventDispatcher {
     }
 
     handle_drag_start(e) {
-        e.dataTransfer.setData("text/plain", JSON.stringify({foo:"bar"}))
+        //console.log(e.target)
+        let track_id = parseInt(e.target.attributes["data-track-id"].value)
+        let track_element = this.controller.get_id(track_id)
+        e.dataTransfer.setData("text/plain", JSON.stringify(track_element))
     }
+
+    handle_double_click(e) {
+        //console.log(e.target)
+        let track_id = parseInt(e.target.parentElement.attributes["data-track-id"].value)
+        let track_element = this.controller.get_id(track_id)
+        //console.log(track_element)
+        pc.play(track_element)
+        //e.dataTransfer.setData("text/plain", JSON.stringify(track_element))
+    }
+
 
     connect_drag() {
         let elements = document.querySelectorAll('.track-entry');
         [].forEach.call(elements, (e) => {
-            //console.log(e)
             e.addEventListener('dragstart', this.handle_drag_start.bind(this), false);
+            e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
+            //console.log(e)
         });
     }
 

@@ -11,6 +11,7 @@ S_controller  = new SessionController()
 PL_controller = new PlaylistsController()
 SE_controller = new SessionsController()
 mpc           = new PlaybackController(S_controller, Q_controller)
+pc            = new PrecueController(S_controller, Q_controller)
 Q = new QueueView({
     list:       'queue-elements-body',
     num_tracks: "queue-number-of-tracks",
@@ -35,11 +36,17 @@ SE = new SessionsView({
 })
 SE.set_controller(SE_controller)
 
-
 mpc.init_audio()
+pc.init_audio()
 M = new MainPlayerView()
 M.set_controller(mpc)
 M.init()
+
+P = new PrecuePlayerView()
+P.set_controller(pc)
+// M.init()
+
+
 
 mpc.on("queue-started", 
     () => {

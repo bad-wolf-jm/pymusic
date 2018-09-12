@@ -31,13 +31,14 @@
 <script src="../../controllers/track_list_controller.js"></script>
 <script src="../../controllers/playlists_controller.js"></script>
 <script src="../../controllers/sessions_controller.js"></script>
+<script src="../../controllers/precue_controller.js"></script>
 
 <script src="views/queue_view.js"></script>
 <script src="views/main_player_view.js"></script>
 <script src="views/track_list_view.js"></script>
 <script src="views/playlists_view.js"></script>
 <script src="views/sessions_view.js"></script>
-
+<script src="views/precue_player_view.js"></script>
 
 <body class="jui" style="margin: 0px; padding:0px; height:100%">
     <div class="header">
@@ -141,7 +142,7 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
-                        <tr class="choice track-drop-target" style="height:20px;" onclick=display_playlist(<!= id !>)>
+                        <tr class="choice track-drop-target" style="height:20px;" onclick="display_playlist(<!= id !>)" data-playlist-id=<!= id !>>
                             <td style="width:30px"></td>
                             <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
                             <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
@@ -163,7 +164,7 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
-                        <tr class="choice" style="height:20px; margin-left:10px" onclick=display_session(<!= id !>)>
+                        <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session(<!= id !>)">
                             <td style="width:30px"></td>
                             <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
                             <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
@@ -177,42 +178,48 @@
             <button class="accordion open-on-drag-over">Preview Player</button>
             <div class="panel">
                 <div class="preview-player">
-                    <img class="cover" src="test_cover.png" height="75" width="75"></img>
-                    <div>
-                        PLAYER
+                    <img id="precue-player-cover" class="cover" src="test_cover.png" height="75" width="75"></img>
+                    <div style="padding:20px; height:50px; width:calc(100% - 115px); display:inline-block">
+                        <button class="precue-management-button" style="float:left"><i class="fa fa-play"></i></button>
+                        <progress value="10" max="100" class="precue-player-progress"></progress>
+                        <button class="precue-management-button" style="float:right"><i class="fa fa-ellipsis-h"></i></button>
                     </div>
                     <div style="float:left; display:block; width:calc(100% - 50px)">
                         <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
                             <div style="display:inline-block; width:100%">
-                                <h1 class="title">Arkansas Blues</h1>
-                                <h2 class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>     
+                                <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
+                                <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>     
                             </div>
                         </div>
                     </div>
-                    <table style="width:300px">
+                    <table style="padding:3px; width:330px">
                         <tr class="metadata"> 
                             <td class="tag-name"><b>Album:</b></td> 
-                            <td class="tag-value">NORBERT SUSEMIHL - NIGHT ON FRENCHMAN STREET</td> 
+                            <td id="precue-player-album" class="tag-value">NORBERT SUSEMIHL - NIGHT ON FRENCHMAN STREET</td> 
                         </tr> 
                         <tr class="metadata"> 
                             <td class="tag-name"><b>Genre:</b></td> 
-                            <td class="tag-value">Jazz</td> 
+                            <td id="precue-player-genre" class="tag-value">Jazz</td> 
                         </tr> 
                         <tr class="metadata"> 
                             <td class="tag-name"><b>Year:</b></td> 
-                            <td class="tag-value">2012</td> 
+                            <td id="precue-player-year" class="tag-value">2012</td> 
                         </tr> 
                         <tr class="metadata"> 
                             <td class="tag-name"><b>Length:</b></td> 
-                            <td class="tag-value">3:45</td> 
+                            <td id="precue-player-duration" class="tag-value">3:45</td> 
                         </tr>     
                         <tr class="metadata"> 
+                            <td class="tag-name"><b>BPM:</b></td> 
+                            <td id="precue-player-bpm" class="tag-value">100</td> 
+                        </tr> 
+                        <tr class="metadata"> 
                             <td class="tag-name"><b>Last played:</b></td> 
-                            <td class="tag-value">2018-03-04</td> 
+                            <td id="precue-player-last-played" class="tag-value">2018-03-04</td> 
                         </tr> 
                         <tr class="metadata"> 
                             <td class="tag-name"><b>Play count:</b></td> 
-                            <td class="tag-value">12</td> 
+                            <td id="precue-player-play-count" class="tag-value">12</td> 
                         </tr> 
                     </table>
                 </div>
@@ -257,7 +264,7 @@
             
             </div>
             <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
-                <tr class="list-group-item row track-entry" draggable=true>
+                <tr class="list-group-item row track-entry" style="color:<!= color !>" draggable=true data-track-id=<!= id !>>
                     <td style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt"><!= loved !></td>
                     <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= title !></td>
                     <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= artist !></td>
@@ -291,8 +298,8 @@
                     <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
                 </table>
                 <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
-                    <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
-                        <td  style="width:100%; margin:0; padding:0">
+                    <tr class="list-group-item queued-track" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                        <td style="width:100%; margin:0; padding:0">
                             <div class="element">
                                 <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
                                 <div style="margin:0px; padding:0px; float:left; width:275px">

@@ -479,8 +479,8 @@ input[type=text] {
 
 .preview-player {
     /* max-height:300px; */
-    width:100%;
-    padding:5px
+    width:calc(100% - 20px);
+    padding:10px
 }
 
 .preview-player .cover {
@@ -560,15 +560,13 @@ input[type=text] {
     display:inline-block;
 }
 
-
-
 .preview-player .metadata {
     height: 25px;
     width:350px
 }
 
 .preview-player .metadata .tag-name{
-    width:150px !important;
+    width:90px !important;
     white-space: nowrap; 
 }
 
@@ -642,13 +640,40 @@ input[type=text] {
     /* #To not have transparent background.
     #background-color: white; */
     background-color: rgb(50,50,50);
-  }
+}
 
 
-  .ghost {
+.ghost {
     opacity: 0.2;
-  }
+}
 
   .drop-here {
       background-color: rgb(177, 36, 170);
   }
+
+.precue-management-button:hover {
+    height:30px; 
+    width:30px; 
+    border: 0px solid grey;
+    cursor: pointer;
+    background-color: rgb(100,25,25);
+}
+
+.precue-management-button {
+    height:30px; 
+    width:30px; 
+    border: 0px solid grey;
+    cursor: pointer;
+    background-color: rgb(55,55,55);
+}
+
+.precue-player-progress {
+    background-color: #f3f3f3;
+    color: #030303;
+    border: 0;
+    height: 30px;
+    width:calc(100% - 60px);
+    border-radius: 9px;  
+    -webkit-appearance: none;
+	border: none;
+}

@@ -37,6 +37,11 @@ class QueueController extends EventDispatcher {
         }
     }
 
+    get_id(id) {
+        return this.queue_table[id]
+    }
+
+
     pop() {
         if (this.queue != undefined) {
             if (this.queue.length > 0) {

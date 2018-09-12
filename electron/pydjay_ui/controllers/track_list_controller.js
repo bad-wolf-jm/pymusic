@@ -35,6 +35,10 @@ class TrackListController extends EventDispatcher {
         }
     }
 
+    get_id(id) {
+        return this.list_table[id]
+    }
+
     set_list(name, queue) {
         this._do_set_list(name, queue)
         this.dispatch("content-changed", name, queue)

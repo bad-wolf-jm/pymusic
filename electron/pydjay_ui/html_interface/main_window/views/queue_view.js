@@ -58,13 +58,36 @@ class QueueView extends EventDispatcher {
         }
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-        jui.ready([ "grid.table" ], function(table) {
+        jui.ready([ "grid.table" ], (table) => {
                 table("#queue-list-elements", {
                     data:queue_rows,
                     scroll: false,
                     resize: false
                 });
+                this.connect_events()
             }
         )
     }
+
+    handle_double_click(e) {
+        //console.log(e.target)
+
+        let x = e.target.closest(".queued-track")
+        
+        let track_id = parseInt(x.attributes["data-track-id"].value)
+        let track_element = this.controller.get_id(track_id)
+        //console.log(track_element)
+        pc.play(track_element)
+        //e.dataTransfer.setData("text/plain", JSON.stringify(track_element))
+    }
+
+    connect_events() {
+        let elements = document.querySelectorAll('.queued-track');
+        [].forEach.call(elements, (e) => {
+            //e.addEventListener('dragstart', this.handle_drag_start.bind(this), false);
+            e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
+            //console.log(e)
+        });
+    }
+
 }
