@@ -28,7 +28,7 @@ button {
 }
 
 .header .settings-button {
-    display:           inline-block;
+    /* display:           inline-block; */
     background-color:#000000; 
     border:            none;
     color:           white;
@@ -177,7 +177,7 @@ button {
 }
 
 .main_player .info {
-    display: inline-block;
+    /* display: inline-block; */
     float:left;
     height:100%;
     margin:5px !important;   
@@ -216,7 +216,7 @@ button {
 
 .main_player .rating {
     display: inline-block;
-    float:left;
+    /* float:left; */
     /* height:100%; */
     margin:10px !important;   
     padding:0px !important;
@@ -376,9 +376,9 @@ input[type=text] {
     height:calc(100% - 50px);
 }
 
-.queue-list .scroll-area {
+/* .queue-list .scroll-area {
 
-}
+} */
 
 .queue_list .main-list-header .queue-management-button {
     height:50px; 
@@ -557,7 +557,7 @@ input[type=text] {
     float:right;
     /* margin:7px 5px; */
     /* font-size:10pt; */
-    display:inline-block;
+    /* display:inline-block; */
 }
 
 .preview-player .metadata {
