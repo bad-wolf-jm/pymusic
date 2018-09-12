@@ -93,7 +93,7 @@
     <div class="main_space">
         <div class="side_bar">
             <button class="accordion">Library</button>
-            <div class="panel">
+            <div class="panel" data-fixed-height="170">
                 <ul class="sidebar-library">
                     <li class="sidebar-library-item" onclick="display_all_songs()">
                         <i class="fa fa-database list-icon"></i>
@@ -176,7 +176,7 @@
                 </div>
             </div>
             <button class="accordion open-on-drag-over">Preview Player</button>
-            <div class="panel">
+            <div class="panel" data-fixed-height="375">
                 <div class="preview-player">
                     <img id="precue-player-cover" class="cover" src="test_cover.png" height="75" width="75"></img>
                     <div style="padding:20px; height:50px; width:calc(100% - 115px); display:inline-block">
@@ -335,10 +335,18 @@
             acc[i].addEventListener("click", function() {
                 this.classList.toggle("active");
                 var panel = this.nextElementSibling;
+                fixed_height_request = panel.attributes["data-fixed-height"]
+                if (fixed_height_request != undefined) {
+                    height = fixed_height_request.value
+                } else {
+                    height = panel.scrollHeight
+                }
+                //console.log(fixed_height_request.value)
                 if (panel.style.maxHeight) {
                     panel.style.maxHeight = null;
                 } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
+                    panel.style.height = height + "px";
+                    panel.style.maxHeight = height + "px";
                 } 
             });
         }

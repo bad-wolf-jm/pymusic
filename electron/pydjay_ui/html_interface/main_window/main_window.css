@@ -668,12 +668,25 @@ input[type=text] {
 }
 
 .precue-player-progress {
-    background-color: #f3f3f3;
-    color: #030303;
+    /* //background-color: #f3f3f3; */
+    /* color: #030303; */
     border: 0;
     height: 30px;
     width:calc(100% - 60px);
     border-radius: 9px;  
     -webkit-appearance: none;
 	border: none;
+}
+
+.precue-player-progress::-webkit-progress-bar {
+    /* style rules */
+    background-color: #444444;
+    /* color: #030303; */
+
+}
+
+.precue-player-progress::-webkit-progress-value {
+    /* style rules */
+    background-color: #807f7f;
+    /* color: #030303; */
 }

@@ -213,29 +213,3 @@ function display_sessions() {
         }
     )    
 }
-
-// function display_playlists() {
-//     DB.get_group_list(
-//         (queue) => { 
-//             queue_rows = []
-//             for (let i=0; i<queue.length; i++) {
-//                 element = {
-//                     id:   queue[i].id,
-//                     name: queue[i].name,
-//                 }
-//                 queue_rows.push(element)
-//             }
-//             jui.ready([ "grid.table" ], function(table) {
-//                     table("#playlist-list-elements", {
-//                         data:   queue_rows,
-//                         scroll: false,
-//                         resize: false
-//                     });
-//                 }
-//             )
-//         }
-//     )    
-// }
-
-//display_sessions()
-//display_playlists()
