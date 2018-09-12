@@ -192,7 +192,6 @@ function DataProvider() {
         })
     }
 
-
     self.get_group_list = function (k) {
         $QUERY(`SELECT playlists.id as id , playlists.name, IFNULL(counts.count, 0) as count FROM
         playlists LEFT JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
@@ -530,5 +529,15 @@ function DataProvider() {
     self.mark_as_played = function(queue_position, continuation) {
         current_time = webix.Date.dateToStr('%Y-%m-%d %H:%i:%s')(new Date());
         $QUERY(`UPDATE session_queue SET status='played', end_time='${current_time}' WHERE position=${queue_position}`, continuation)
+    }
+
+    self.add_id_to_playlist = function(track_id, playlist_id, k) {
+        $QUERY(`SELECT COUNT(*) as N FROM playlist_tracks WHERE track_id=${track_id} AND playlist_id=${playlist_id}`,
+            (count) => {
+                if (count[0].N == 0) {
+                    $QUERY(`INSERT INTO playlist_tracks (playlist_id, track_id) VALUES (${playlist_id}, ${track_id})`, k)
+                }
+            }
+        )
     }
 }

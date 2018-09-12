@@ -28,4 +28,8 @@ class PlaylistsController extends EventDispatcher {
             this.ready_wait_queue.push(func)
         }
     }
+
+    append_to_playlist(playlist_id, track_id) {
+        DB.add_id_to_playlist(track_id, playlist_id, (x) => {})
+    }
 }

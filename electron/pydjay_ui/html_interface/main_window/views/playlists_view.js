@@ -36,12 +36,15 @@ class PlaylistsView extends EventDispatcher {
     on_drop(evt) {
         if (evt.stopPropagation) {
             evt.stopPropagation();
-          }
-        console.log(evt.target.parentElement)
-        evt.target.parentElement.classList.remove("drop-here")
+        }
+        let playlist = evt.target.parentElement
+        //console.log(evt.target.parentElement)
+        playlist.classList.remove("drop-here")
         let d = evt.dataTransfer.getData("text/plain")
-        console.log(JSON.parse(d))
-  }
+        let track = JSON.parse(d)
+        let playlist_id = parseInt(playlist.attributes["data-playlist-id"].value)
+        this.controller.append_to_playlist(playlist_id, track.id)
+    }
 
 
     set_list(list) {
