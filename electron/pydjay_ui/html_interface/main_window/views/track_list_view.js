@@ -49,7 +49,16 @@ class TrackListView extends EventDispatcher {
         this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         jui.ready([ "grid.table" ], (table) => {
                 table("#track-list-elements", {
-                    data:   queue_rows,
+                    data: queue_rows,
+                    // resize: true,
+                    // //sort: true,
+                    // fields:["title", "artist", "genre"],
+                    // //width: 800,
+                    // //scrollWidth: 600,
+                    // //scrollHeight: 400,
+                    // rowHeight: 26,
+                    // //buffer: "vscroll",
+            
                     scroll: false,
                     resize: false
                 });

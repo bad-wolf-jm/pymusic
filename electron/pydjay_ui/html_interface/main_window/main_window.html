@@ -44,8 +44,20 @@
 <body class="jui" style="margin: 0px; padding:0px; height:100%">
     <div class="header">
         <div class="item">
-            <button class="settings-button"><i class="fas fa-ellipsis-v"></i></button>
+            <div class="dropdown">
+                <button id="settings-button" class="settings-button"><i class="fa fa-ellipsis-h"></i></button>
+                <div id="main-menu-dropdown" class="dropdown-content" style="left:0 !important; top:30px; min-width:180px">
+                    <a id="1"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add tracks</a>
+                    <a id="2"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Reset audio system</a>
+                    <a id="stop-queue-now"><i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now</a>
+                    <a id="skip-current-track"><i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track</a>
+                    <a id="3"><i class="fa fa-save"></i>&nbsp;&nbsp;Save current session</a>
+                    <a id="3"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a>
+                    <a id="3"><i class="fa fa-exit"></i>&nbsp;&nbsp;Quit</a>
+                </div>
+            </div>
         </div>
+
         <div class="content">
             <div  class="item"></div>
             <div  class="item">

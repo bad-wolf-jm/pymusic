@@ -144,6 +144,13 @@ mpc.on("next-track-countdown", (time) => {
     M.innerHTML = `${time}`
 })
 
+
+document.getElementById("settings-button").addEventListener('click', () => {
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+
+
 document.getElementById("queue-options").addEventListener('click', () => {
     document.getElementById("queue-options-dropdown").classList.toggle("show");
 })
