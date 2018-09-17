@@ -208,7 +208,6 @@ class TrackEditWindow extends EventDispatcher {
                     () => {
                         this.stream_start = Math.round(this._region.start * 1000000000)
                         this.stream_end = Math.round(this._region.end * 1000000000)
-                        //this.setValue(this.main_stream_length_id, `${format_nanoseconds(this.stream_end - this.stream_start)}`)
                     }
                 )
             }
@@ -253,14 +252,9 @@ class TrackEditWindow extends EventDispatcher {
             click:{
                 rating_star: function(e, id){
                     var data = this.getItem(id);
-                    //console.log(e.target.getAttribute('rating'))
-                    //if (data.value == 0)
                     data.value = e.target.getAttribute('rating');
-                    //else
-                    //    data.value = 0;         
                     this.editStop();
                     this.refresh(id);
-                    // this.callEvent("onCheck",[id, data.value]);
                 }
             },
             editor:"inline-text"
@@ -285,21 +279,6 @@ class TrackEditWindow extends EventDispatcher {
         let values = $$(this.main_property_edit_id).getValues()
         values.stream_start = this.stream_start
         values.stream_end = this.stream_end
-        //console.log(values)
-        // let values = {
-        //     title: this.getValue(this.main_title_edit_id), 
-        //     artist: this.getValue(this.main_artist_edit_id),
-        //     album: this.getValue(this.main_album_edit_id),
-        //     genre: this.getValue(this.main_genre_edit_id),
-        //     grouping: this.getValue(this.main_grouping_edit_id),
-        //     yeaar: this.getValue(this.main_year_edit_id),
-        //     bpm: this.getValue(this.main_track_bpm_edit_id),
-        //     stream_start: this.stream_start,
-        //     stream_end: this.stream_end,
-        //     loved: this.loved,
-        //     rating: this.rating,
-        //     color: this.getValue(this.main_color_edit_id)
-        // }        
         this.dispatch("accept-changes", values)
         this.audio_player.stop()
         this.audio_player.un("stream-position", this.updateWaveformPosition)
@@ -318,24 +297,24 @@ class TrackEditWindow extends EventDispatcher {
     constructor (audio_context) {
         super()
         this.id = this.ID("track_edit_window")
-        this.main_cover_image_edit_id = this.ID("main-cover-image-edit")
-        this.main_property_edit_id = this.ID("main-property-edit")
-        this.main_title_edit_id = this.ID("main-title-edit")
-        this.main_artist_edit_id = this.ID("main-artist-edit")
-        this.main_album_edit_id = this.ID("main-album-edit")
-        this.main_genre_edit_id = this.ID("main-genre-edit")
-        this.main_year_edit_id = this.ID("main-year-edit")
-        this.main_grouping_edit_id = this.ID("main-grouping-edit")
-        this.main_track_length_id = this.ID("main-track-length")
-        this.main_stream_length_id = this.ID("main-stream-length")
-        this.main_track_bpm_edit_id = this.ID("main-bpm-edit")
+        this.main_cover_image_edit_id   = this.ID("main-cover-image-edit")
+        this.main_property_edit_id      = this.ID("main-property-edit")
+        this.main_title_edit_id         = this.ID("main-title-edit")
+        this.main_artist_edit_id        = this.ID("main-artist-edit")
+        this.main_album_edit_id         = this.ID("main-album-edit")
+        this.main_genre_edit_id         = this.ID("main-genre-edit")
+        this.main_year_edit_id          = this.ID("main-year-edit")
+        this.main_grouping_edit_id      = this.ID("main-grouping-edit")
+        this.main_track_length_id       = this.ID("main-track-length")
+        this.main_stream_length_id      = this.ID("main-stream-length")
+        this.main_track_bpm_edit_id     = this.ID("main-bpm-edit")
         this.main_display_color_edit_id = this.ID("main-display-color-edit")
-        this.main_rating_edit_id = this.ID("main-rating-edit-edit")
-        this.main_loved_edit_id = this.ID("main-loved-edit-edit")
-        this.main_color_edit_id = this.ID("main-loved-edit-edit")
-        this.main_waveform_id = this.ID("track_waveform")
-        this.play_button_id = this.ID("play_button")
-        this.zoom_slider_id = this.ID("zoom_slider")
+        this.main_rating_edit_id        = this.ID("main-rating-edit-edit")
+        this.main_loved_edit_id         = this.ID("main-loved-edit-edit")
+        this.main_color_edit_id         = this.ID("main-loved-edit-edit")
+        this.main_waveform_id           = this.ID("track_waveform")
+        this.play_button_id             = this.ID("play_button")
+        this.zoom_slider_id             = this.ID("zoom_slider")
 
         this.stream_start = 0
         this.stream_end = Infinity
@@ -347,7 +326,6 @@ class TrackEditWindow extends EventDispatcher {
             this.audio_player.connectOutputs(pl_channel_config2)    
         }
     
-        // this.audio_player.connectOutputs(pl_channel_config)
         this.current_stream_position = null
         this.layout = {
             id: this.id,
