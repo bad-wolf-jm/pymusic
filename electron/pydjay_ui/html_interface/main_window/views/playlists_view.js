@@ -43,6 +43,7 @@ class PlaylistsView extends EventDispatcher {
         let d = evt.dataTransfer.getData("text/plain")
         let track = JSON.parse(d)
         let playlist_id = parseInt(playlist.attributes["data-playlist-id"].value)
+        document.getElementById("queue-drop-overlay").style.display="none"
         this.controller.append_to_playlist(playlist_id, track.id)
     }
 
@@ -69,7 +70,6 @@ class PlaylistsView extends EventDispatcher {
         )
         var drop_targets = document.querySelectorAll('.track-drop-target');
         [].forEach.call(drop_targets, (col) => {
-            //console.log(col)
             col.addEventListener('dragenter', this.on_drag_enter.bind(this), false);
             col.addEventListener('dragleave', this.on_drag_leave.bind(this), false);
             col.addEventListener('dragover',  this.on_drag_over.bind(this), false);

@@ -8,6 +8,12 @@ class QueueView extends EventDispatcher {
         this.duration_dom   = document.getElementById(dom_ids.duration);
 
         this.view_list_order = []
+        let queue_list = document.getElementById("queue-list-elements")
+        queue_list.addEventListener('dragenter', this.handle_drag_enter.bind(this), false);          
+        queue_list.addEventListener('dragover',  this.on_drag_over.bind(this), false);
+        queue_list.addEventListener('dragend',   this.handle_drag_end.bind(this), false);
+        queue_list.addEventListener('drop',      this.handle_drop.bind(this), true);
+
         this.sortable = Sortable.create(this.list_dom, 
             {
                 animation: 150,
@@ -16,7 +22,6 @@ class QueueView extends EventDispatcher {
                 onStart: function (evt) {
                     console.log("start");
                 },
-            
                 onEnd: (evt) => {
                     let new_order = []
                     for(i=0; i<this.list_dom.rows.length; i++) {
@@ -70,23 +75,47 @@ class QueueView extends EventDispatcher {
     }
 
     handle_double_click(e) {
-        //console.log(e.target)
-
         let x = e.target.closest(".queued-track")
-        
         let track_id = parseInt(x.attributes["data-track-id"].value)
         let track_element = this.controller.get_id(track_id)
-        //console.log(track_element)
         pc.play(track_element)
-        //e.dataTransfer.setData("text/plain", JSON.stringify(track_element))
+    }
+
+    handle_drag_enter(e) {
+        console.log(e)
+    }
+
+    handle_drag_end(e) {
+        console.log(e)
+    }
+
+    on_drag_over(evt) {
+        if (evt.preventDefault) {
+            evt.preventDefault();
+        }
+        console.log(evt)
+        evt.dataTransfer.dropEffect = 'move';
+    }
+
+    handle_drop(evt) {
+        console.log(evt)
+        if (evt.stopPropagation) {
+            evt.stopPropagation();
+        }
+        let d = evt.dataTransfer.getData("text/plain")
+        try {
+            let track = JSON.parse(d)
+            this.controller.append(track)
+        } catch (error) {
+            //pass            
+        }
+
     }
 
     connect_events() {
         let elements = document.querySelectorAll('.queued-track');
         [].forEach.call(elements, (e) => {
-            //e.addEventListener('dragstart', this.handle_drag_start.bind(this), false);
             e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
-            //console.log(e)
         });
     }
 

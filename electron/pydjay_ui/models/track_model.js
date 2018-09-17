@@ -1,0 +1,3 @@
+class TrackListModel extends EventDispatcher {
+    
+}

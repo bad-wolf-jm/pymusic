@@ -59,7 +59,6 @@ class TrackListView extends EventDispatcher {
     }
 
     handle_drag_start(e) {
-        //console.log(e.target)
         let track_id = parseInt(e.target.attributes["data-track-id"].value)
         let track_element = this.controller.get_id(track_id)
         e.dataTransfer.setData("text/plain", JSON.stringify(track_element))

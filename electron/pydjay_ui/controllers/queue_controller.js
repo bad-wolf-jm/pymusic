@@ -41,7 +41,6 @@ class QueueController extends EventDispatcher {
         return this.queue_table[id]
     }
 
-
     pop() {
         if (this.queue != undefined) {
             if (this.queue.length > 0) {
@@ -58,6 +57,14 @@ class QueueController extends EventDispatcher {
     insert(element, index) {
         if (this.queue != undefined) {
             this.queue.splice(index, 0, element)
+            this.dispatch("content-changed", this.queue)
+        }
+    }
+
+    append(element, index) {
+        if (this.queue != undefined) {
+            this.queue.push(element)
+            this.queue_table[element.id] = element
             this.dispatch("content-changed", this.queue)
         }
     }

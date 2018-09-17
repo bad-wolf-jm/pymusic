@@ -12,6 +12,8 @@ PL_controller = new PlaylistsController()
 SE_controller = new SessionsController()
 mpc           = new PlaybackController(S_controller, Q_controller)
 pc            = new PrecueController(S_controller, Q_controller)
+vc            = new VolumeController(mpc, pc)
+
 Q = new QueueView({
     list:       'queue-elements-body',
     num_tracks: "queue-number-of-tracks",
@@ -44,7 +46,7 @@ M.init()
 
 P = new PrecuePlayerView()
 P.set_controller(pc)
-// M.init()
+
 
 
 
@@ -53,6 +55,7 @@ mpc.on("queue-started",
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-stop\"></i>"
         B.style.backgroundColor = "#660000"
+        document.getElementById("main-player-overlay").style.display="none"
     }
 )
 
@@ -63,6 +66,7 @@ mpc.on("queue-stopped",
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
         B.style.backgroundColor = "rgb(25,25,25)"
+        document.getElementById("main-player-overlay").style.display="block"
     }
 )
 
@@ -73,6 +77,7 @@ mpc.on("queue-finished",
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
         B.style.backgroundColor = "rgb(25,25,25)"
+        document.getElementById("main-player-overlay").style.display="block"
     }
 )
 
@@ -86,12 +91,39 @@ mpc.on("track-finished",
     }
 )
 
+// pc.on("playback-started", 
+//     () => {
+//         vc.mute_monitor()
+//     }
+// )
+
+// pc.on("track-finished", 
+//     () => {
+//         vc.restore_monitor()
+//     }
+// )
+
+pc.on('playback-stopped',  () => {
+        vc.restore_monitor()
+    }
+)
+pc.on('playback-paused', () => {
+        vc.restore_monitor()
+    }
+)
+pc.on('playback-started', () => {
+        vc.mute_monitor()
+    }
+)
+
+
+
 mpc.on("queue-stop-requested", 
     () => {
         M = document.getElementById("queue-stop-message")
-        M.style.visibility="visible"
+        M.style.display="inline-block"
         B = document.getElementById("queue-start-button")
-        B.innerHTML = "<i class=\"fa fa-play-circle\"></i>"
+        B.innerHTML = "<i class=\"fa fa-close\"></i>"
         B.style.backgroundColor = "#667700"
     }
 )
@@ -99,7 +131,7 @@ mpc.on("queue-stop-requested",
 mpc.on("queue-stop-request-cancelled", 
     () => {
         let M = document.getElementById("queue-stop-message")
-        M.style.visibility="hidden"
+        M.style.display="none"
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-stop\"></i>"
         B.style.backgroundColor = "#AA0000"
@@ -110,6 +142,22 @@ mpc.on("next-track-countdown", (time) => {
     let M = document.getElementById("main-player-time-remaining")
     console.log(time)
     M.innerHTML = `${time}`
+})
+
+document.getElementById("queue-options").addEventListener('click', () => {
+    document.getElementById("queue-options-dropdown").classList.toggle("show");
+})
+
+document.getElementById("stop-queue-now").addEventListener('click', () => {
+    mpc.stop_queue_now()
+    document.getElementById("queue-options-dropdown").classList.remove("show")
+})
+document.getElementById("skip-current-track").addEventListener('click', () => {
+    mpc.skip_to_next_track()
+    document.getElementById("queue-options-dropdown").classList.remove("show")
+})
+document.getElementById("save-session").addEventListener('click', () => {
+    document.getElementById("queue-options-dropdown").classList.remove("show")
 })
 
 
@@ -213,3 +261,5 @@ function display_sessions() {
         }
     )    
 }
+
+display_all_songs()
