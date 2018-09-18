@@ -50,19 +50,18 @@ class TrackListView extends EventDispatcher {
         jui.ready([ "grid.table" ], (table) => {
                 table("#track-list-elements", {
                     data: queue_rows,
-                    // resize: true,
-                    // //sort: true,
-                    // fields:["title", "artist", "genre"],
-                    // //width: 800,
-                    // //scrollWidth: 600,
-                    // //scrollHeight: 400,
-                    // rowHeight: 26,
-                    // //buffer: "vscroll",
-            
                     scroll: false,
                     resize: false
                 });
                 this.connect_drag()
+                this.table_rows = {}
+                let elements = document.querySelectorAll('.track-entry');
+                [].forEach.call(document.querySelectorAll('.track-entry'),
+                    (x) => {
+                        let track_id = parseInt(x.attributes["data-track-id"].value)
+                        this.table_rows[track_id] = x
+                    } 
+                )
             }
         )
     }
@@ -74,12 +73,15 @@ class TrackListView extends EventDispatcher {
     }
 
     handle_double_click(e) {
-        //console.log(e.target)
         let track_id = parseInt(e.target.parentElement.attributes["data-track-id"].value)
         let track_element = this.controller.get_id(track_id)
-        //console.log(track_element)
         pc.play(track_element)
-        //e.dataTransfer.setData("text/plain", JSON.stringify(track_element))
+    }
+
+    select_row(e) {
+        let x = e.target.closest("tr")
+        x.classList.add("selected")
+        //console.log(x)
     }
 
 
@@ -88,6 +90,7 @@ class TrackListView extends EventDispatcher {
         [].forEach.call(elements, (e) => {
             e.addEventListener('dragstart', this.handle_drag_start.bind(this), false);
             e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
+            e.addEventListener("click", this.select_row.bind(this))
             //console.log(e)
         });
     }

@@ -40,6 +40,7 @@
 <script src="views/playlists_view.js"></script>
 <script src="views/sessions_view.js"></script>
 <script src="views/precue_player_view.js"></script>
+<script src="views/accordion_view.js"></script>
 
 <body class="jui" style="margin: 0px; padding:0px; height:100%">
     <div class="header">
@@ -47,13 +48,17 @@
             <div class="dropdown">
                 <button id="settings-button" class="settings-button"><i class="fa fa-ellipsis-h"></i></button>
                 <div id="main-menu-dropdown" class="dropdown-content" style="left:0 !important; top:30px; min-width:180px">
-                    <a id="1"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add tracks</a>
-                    <a id="2"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Reset audio system</a>
-                    <a id="stop-queue-now"><i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now</a>
-                    <a id="skip-current-track"><i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track</a>
-                    <a id="3"><i class="fa fa-save"></i>&nbsp;&nbsp;Save current session</a>
-                    <a id="3"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a>
-                    <a id="3"><i class="fa fa-exit"></i>&nbsp;&nbsp;Quit</a>
+                    <a id="main-menu-add-track"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add tracks</a>
+                    <p></p>
+                    <a id="main-menu-stop-queue-now"><i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now</a>
+                    <a id="main-menu-skip-current-track"><i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track</a>
+                    <p></p>
+                    <a id="main-menu-save-session"><i class="fa fa-save"></i>&nbsp;&nbsp;Save current session</a>
+                    <p></p>
+                    <a id="main-menu-reset-audio"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Reset audio system</a>
+                    <a id="main-menu-settings"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a>
+                    <p></p>
+                    <a id="main-menu-quit"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Quit</a>
                 </div>
             </div>
         </div>
@@ -107,7 +112,7 @@
         </div>
     </div>
     <div class="main_space">
-        <div class="side_bar">
+        <div id="sidebar" class="side_bar">
             <button class="accordion">Library</button>
             <div class="panel" data-fixed-height="170">
                 <ul class="sidebar-library">
@@ -153,8 +158,8 @@
 
             </button>
             <div class="panel">
-                <div style="overflow-y:auto; max-height:350px">
-                    <table id="playlist-list-elements" style="border-collapse:collapse">
+                <div style="overflow-y:auto; max-height:100%">
+                    <table id="playlist-list-elements" style="border-collapse:collapse; height:100%">
                         <tbody></tbody>
                     </table>
                     <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
@@ -175,8 +180,8 @@
                 </div>
                 </button>
             <div class="panel">
-                <div style="overflow-y:auto; max-height:350px">
-                    <table id="session-list-elements">
+                <div style="overflow-y:auto; max-height:100%">
+                    <table id="session-list-elements" style="border-collapse:collapse">
                         <tbody></tbody>
                     </table>
                     <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
@@ -293,7 +298,6 @@
                     </thead>
                     <tbody id="main-elements-body" class="list-group"></tbody>
                 </table>
-            
             </div>
             <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
                 <tr class="list-group-item row track-entry" style="color:<!= color !>" draggable=true data-track-id=<!= id !>>
@@ -321,15 +325,15 @@
                     </div>
                 </div>
                 <!-- <button class="queue-management-button"><i class="fa fa-ellipsis-h"></i></button> -->
-                <div class="dropdown">
+                <!-- <div class="dropdown">
                     <button id="queue-options" class="queue-management-button"><i class="fa fa-ellipsis-h"></i></button>
                     <div id="queue-options-dropdown" class="dropdown-content" style="top:50px">
                         <a id="stop-queue-now"><i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now</a>
                         <a id="skip-current-track"><i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track</a>
                         <a id="save-session"><i class="fa fa-save"></i>&nbsp;&nbsp;Save current session</a>
-                        <!-- <a id="precue-play-stop">Stop</a> -->
+                        <a id="precue-play-stop">Stop</a>
                     </div>
-                </div>
+                </div> -->
 
                 <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()"><i class="fa fa-play"></i></button>
             </div>
@@ -343,10 +347,14 @@
                     <tr style="width:100%"></tr></thead>
                     <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
                 </table>
+                <menu type="context" id="mymenu">
+                    <menuitem label="Refresh"></menuitem>
+                    <menuitem label="Twitter"></menuitem>
+                </menu>
                 <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
                     <tr class="list-group-item queued-track" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
                         <td style="width:100%; margin:0; padding:0">
-                            <div class="element">
+                            <div class="element" contextmenu="mymenu">
                                 <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
                                 <div style="margin:0px; padding:0px; float:left; width:275px">
                                     <div class="queue_element_title"><b><!= title !></b></div>
@@ -375,27 +383,28 @@
     </div>
 
     <script>
-        var acc = document.getElementsByClassName("accordion");
-        var i;
-        for (i = 0; i < acc.length; i++) {
-            acc[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                fixed_height_request = panel.attributes["data-fixed-height"]
-                if (fixed_height_request != undefined) {
-                    height = fixed_height_request.value
-                } else {
-                    height = panel.scrollHeight
-                }
-                //console.log(fixed_height_request.value)
-                if (panel.style.maxHeight) {
-                    panel.style.maxHeight = null;
-                } else {
-                    panel.style.height = height + "px";
-                    panel.style.maxHeight = height + "px";
-                } 
-            });
-        }
+        
+        // var acc = document.getElementsByClassName("accordion");
+        // var i;
+        // for (i = 0; i < acc.length; i++) {
+        //     acc[i].addEventListener("click", function() {
+        //         this.classList.toggle("active");
+        //         var panel = this.nextElementSibling;
+        //         fixed_height_request = panel.attributes["data-fixed-height"]
+        //         if (fixed_height_request != undefined) {
+        //             height = fixed_height_request.value
+        //         } else {
+        //             height = panel.scrollHeight
+        //         }
+        //         //console.log(fixed_height_request.value)
+        //         if (panel.style.maxHeight) {
+        //             panel.style.maxHeight = null;
+        //         } else {
+        //             panel.style.height = height + "px";
+        //             panel.style.maxHeight = height + "px";
+        //         } 
+        //     });
+        // }
     </script>
 
 <script src="drag_and_drop.js"></script>

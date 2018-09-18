@@ -14,7 +14,6 @@ class PydjayAudioFilePlayer extends PydjayAudioBasePlayer {
         x.connect(this.audio_context.splitter)
         this.source.currentTime = this.stream_start / 1000
         this.source.play()
-        this.dispatch("playback-started")
     }
 
     seek(timestamp) {

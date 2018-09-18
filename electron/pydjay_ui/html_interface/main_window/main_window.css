@@ -428,6 +428,18 @@ input[type=text] {
     margin-left:3px;
 }
 
+.queue-list .element:hover{
+    /* width:calc(100% - 15px);
+    height:50px;
+    border: 1px solid grey; */
+    background-color: rgb(45,45,45);
+    /* border-radius:6px;
+    margin-top:2px;
+    margin-bottom:2px;
+    margin-left:3px; */
+}
+
+
 .queue-list .element .cover-image {
     float:left; 
     padding-right:7px; 
@@ -631,8 +643,32 @@ input[type=text] {
 }
 
 .main-track-list-area .main-track-list-table tr:nth-child(odd) {
-    background: rgb(32, 32, 32)
+    background: rgb(35, 35, 35)
 }
+
+.selected {
+    background-color: rgb(76, 35, 122) !important;
+}
+
+.unavailable {
+    background-color: rgb(105, 2, 7) !important;
+    opacity: 0.05
+}
+
+
+/* .main-track-list-area .main-track-list-table .row:hover .selected {
+    background-color: rgb(83, 39, 153);
+}
+
+.main-track-list-area .main-track-list-table tr:nth-child(even) .selected {
+    background-color: rgb(70, 32, 114);
+}
+
+.main-track-list-area .main-track-list-table tr:nth-child(odd) .selected {
+    background-color: rgb(70, 32, 114);
+} */
+
+
 
 .main-track-list-area .main-track-list-table .header-row .sticky-header {
     position: sticky;
@@ -740,6 +776,7 @@ input[type=text] {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
+    cursor: pointer;
 }
 
 /* Change color of dropdown links on hover */
