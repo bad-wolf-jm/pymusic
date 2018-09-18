@@ -87,7 +87,7 @@ class PrecuePlayerView extends EventDispatcher {
 
     setRating (num) {
         var html = "";
-        for (var i=1; i<6; i++) {
+        for (let i=1; i<6; i++) {
             html+="<i class='fa " + ( i <= num ? "fa-star" : "fa-star-o") +"' style='margin-left:3px'></i>";
         }
         document.getElementById("precue-player-rating").innerHTML = html
@@ -96,7 +96,7 @@ class PrecuePlayerView extends EventDispatcher {
     setLoved (value){
         var html = "";
         this.loved = value
-        html+="<i title='"+i+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
+        html+="<i title='"+value+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
         document.getElementById("precue-player-loved").innerHTML = html
     }
 }

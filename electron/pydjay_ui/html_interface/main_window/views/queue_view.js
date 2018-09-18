@@ -24,7 +24,7 @@ class QueueView extends EventDispatcher {
                 },
                 onEnd: (evt) => {
                     let new_order = []
-                    for(i=0; i<this.list_dom.rows.length; i++) {
+                    for(let i=0; i<this.list_dom.rows.length; i++) {
                         new_order.push(parseInt(this.list_dom.rows[i].attributes["data-track-id"].value))
                     }
                     this.view_list_order = new_order
@@ -45,7 +45,7 @@ class QueueView extends EventDispatcher {
         this.view_list_order = []
         let queue_rows = []  
 
-        for(i=0; i<queue.length; i++) {
+        for(let i=0; i<queue.length; i++) {
             let element = {
                 id:       queue[i].id,
                 title:    queue[i].title,
@@ -112,10 +112,17 @@ class QueueView extends EventDispatcher {
 
     }
 
+    select_row(e) {
+        let x = e.target.closest(".element")
+        x.classList.add("selected")
+    }
+
+
     connect_events() {
         let elements = document.querySelectorAll('.queued-track');
         [].forEach.call(elements, (e) => {
             e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
+            e.addEventListener("click", this.select_row.bind(this))
         });
     }
 

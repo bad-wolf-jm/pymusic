@@ -3,6 +3,8 @@ WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
 
+SV = new AccordionView("sidebar")
+
 
 DB            = new DataProvider()
 T_controller  = new TrackListController()
@@ -113,6 +115,8 @@ pc.on('playback-paused', () => {
 )
 pc.on('playback-started', () => {
         vc.mute_monitor()
+        SV.open_panel(3)
+        //console.log("ST")
     }
 )
 
@@ -139,9 +143,16 @@ mpc.on("queue-stop-request-cancelled",
 )
 
 mpc.on("next-track-countdown", (time) => {
-    let M = document.getElementById("main-player-time-remaining")
+    let M = document.getElementById("main-player-track-title")
     console.log(time)
-    M.innerHTML = `${time}`
+    if (time > 1) {
+        M.innerHTML = `Next track will start in ${time} seconds`
+    } else if (time == 1) {
+        M.innerHTML = `Next track will start in 1 second`
+    } else {
+        M.innerHTML = `Next track will start now`
+
+    }
 })
 
 
@@ -149,23 +160,54 @@ document.getElementById("settings-button").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-
-
-document.getElementById("queue-options").addEventListener('click', () => {
-    document.getElementById("queue-options-dropdown").classList.toggle("show");
+document.getElementById("main-menu-add-track").addEventListener('click', () => {
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("stop-queue-now").addEventListener('click', () => {
+document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
+    vc.reset_audio()
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+document.getElementById("main-menu-stop-queue-now").addEventListener('click', () => {
     mpc.stop_queue_now()
-    document.getElementById("queue-options-dropdown").classList.remove("show")
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-document.getElementById("skip-current-track").addEventListener('click', () => {
+
+document.getElementById("main-menu-skip-current-track").addEventListener('click', () => {
     mpc.skip_to_next_track()
-    document.getElementById("queue-options-dropdown").classList.remove("show")
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-document.getElementById("save-session").addEventListener('click', () => {
-    document.getElementById("queue-options-dropdown").classList.remove("show")
+
+document.getElementById("main-menu-save-session").addEventListener('click', () => {
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
+
+document.getElementById("main-menu-settings").addEventListener('click', () => {
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+document.getElementById("main-menu-quit").addEventListener('click', () => {
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+///////////////////////////////////////////////
+
+// document.getElementById("queue-options").addEventListener('click', () => {
+//     document.getElementById("queue-options-dropdown").classList.toggle("show");
+// })
+
+// document.getElementById("stop-queue-now").addEventListener('click', () => {
+//     mpc.stop_queue_now()
+//     document.getElementById("queue-options-dropdown").classList.remove("show")
+// })
+// document.getElementById("skip-current-track").addEventListener('click', () => {
+//     mpc.skip_to_next_track()
+//     document.getElementById("queue-options-dropdown").classList.remove("show")
+// })
+// document.getElementById("save-session").addEventListener('click', () => {
+//     document.getElementById("queue-options-dropdown").classList.remove("show")
+// })
 
 
 function refresh_sessions(x) {

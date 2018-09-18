@@ -36,7 +36,7 @@ class PlaybackController extends PydjayAudioFilePlayer {
     }
 
     reset_audio() {
-        let url = undefined
+        let url = undefined, time=undefined, end_time=undefined
         if (this.source != undefined) {
             time     = this.source.currentTime * 1000
             end_time = this.stream_end

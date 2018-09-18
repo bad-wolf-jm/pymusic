@@ -20,8 +20,8 @@ class PrecueController extends PydjayAudioFilePlayer {
     }
 
     reset_audio() {
-        let url = undefined
-        if (mpl.source != undefined) {
+        let url = undefined, time=undefined, end_time=undefined
+        if (this.source != undefined) {
             time     = this.source.currentTime * 1000
             end_time = this.stream_end
             url      = this.url
@@ -30,7 +30,7 @@ class PrecueController extends PydjayAudioFilePlayer {
         this.reset_audio_context()
         this.init_audio()
         if (url != undefined) {
-            this.play(url, time, end_time)
+            super.play(url, time, end_time)
         }
     }
     
