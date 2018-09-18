@@ -43,7 +43,7 @@ class PlaylistsView extends EventDispatcher {
         let d = evt.dataTransfer.getData("text/plain")
         let track = JSON.parse(d)
         let playlist_id = parseInt(playlist.attributes["data-playlist-id"].value)
-        document.getElementById("queue-drop-overlay").style.display="none"
+        //document.getElementById("queue-drop-overlay").style.display="none"
         this.controller.append_to_playlist(playlist_id, track.id)
     }
 
@@ -52,7 +52,7 @@ class PlaylistsView extends EventDispatcher {
         this.view_list_order = []
         let list_rows = []  
 
-        for(i=0; i<list.length; i++) {
+        for(let i=0; i<list.length; i++) {
             let element = {
                 id:   list[i].id,
                 name: list[i].name,
