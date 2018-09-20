@@ -215,6 +215,31 @@ function DataProvider() {
         $QUERY(sql, k)
     }
 
+    self.get_queue_elements_ids = function (k) {
+        // var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
+        // var sql = `SELECT session_queue.position AS position, \`tracks_view\`.* 
+        //             FROM session_queue 
+        //             JOIN ${tracks_sql} 
+        //             ON tracks_view.id = session_queue.track_id 
+        //             WHERE session_queue.status='pending' 
+        //             ORDER BY session_queue.position`
+        var sql = `SELECT track_id FROM current_queue ORDER BY position`
+        $QUERY(sql, k)
+    }
+
+    self.get_current_session_elements_ids = function (k) {
+        // var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
+        // var sql = `SELECT session_queue.position AS position, \`tracks_view\`.* 
+        //             FROM session_queue 
+        //             JOIN ${tracks_sql} 
+        //             ON tracks_view.id = session_queue.track_id 
+        //             WHERE session_queue.status='pending' 
+        //             ORDER BY session_queue.position`
+        var sql = `SELECT track_id FROM current_played_tracks ORDER BY start_time`
+        $QUERY(sql, k)
+    }
+
+
     self.get_played_queue_elements = function (k) {
         var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
         var sql = `SELECT session_queue.position AS position, \`tracks_view\`.* 
