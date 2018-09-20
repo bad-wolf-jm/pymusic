@@ -7,14 +7,23 @@ SV = new AccordionView("sidebar")
 
 
 DB            = new DataProvider()
-T_controller  = new TrackListController()
-Q_controller  = new QueueController()
-S_controller  = new SessionController()
-PL_controller = new PlaylistsController()
-SE_controller = new SessionsController()
-mpc           = new PlaybackController(S_controller, Q_controller)
-pc            = new PrecueController(S_controller, Q_controller)
-vc            = new VolumeController(mpc, pc)
+
+tracks_model              = new TrackListModel()
+unavailable_model         = new UnavailableModel(tracks_model)
+shortlist_model           = new ShortlistModel(tracks_model)
+suggested_model           = new SuggestedModel(tracks_model)
+played_tracks_model       = new PlayedTracksModel(tracks_model)
+never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
+
+T_controller              = new TrackListController()
+Q_controller              = new QueueController()
+S_controller              = new SessionController()
+PL_controller             = new PlaylistsController()
+SE_controller             = new SessionsController()
+
+mpc                       = new PlaybackController(S_controller, Q_controller)
+pc                        = new PrecueController(S_controller, Q_controller)
+vc                        = new VolumeController(mpc, pc)
 
 Q = new QueueView({
     list:       'queue-elements-body',
@@ -215,61 +224,34 @@ function refresh_sessions(x) {
 }
 
 function display_all_songs() {
-    DB.get_all_tracks(
-        (queue) => { 
-            T_controller.set_list("All Songs", queue)
-        }
-    )
+    T_controller.set_model("All Songs", tracks_model)
 }
 
 function display_suggestions() {
-    DB.get_suggested_tracks(
-        (queue) => { 
-            T_controller.set_list("Suggested Songs", queue)
-        }
-    )    
+    T_controller.set_model("Unavailable tracks", suggested_model)
 }
 
 function display_short_list() {
-    DB.get_shortlisted_tracks(
-        (queue) => { 
-            T_controller.set_list("Short listed Songs", queue)
-        }
-    )    
+    T_controller.set_model("All Songs", shortlist_model)
 }
 
 function display_unavailable() {
-    DB.get_unavailable_tracks(
-        (queue) => { 
-            T_controller.set_list("Unavailable Songs", queue)
-        }
-    )    
+    T_controller.set_model("Unavailable tracks", unavailable_model)
 }
 
 function display_played_tracks() {
-    DB.get_played_tracks(
-        (queue) => { 
-            T_controller.set_list("Played Songs", queue)
-        }
-    )    
+    T_controller.set_model("Played songs", played_tracks_model)
 }
 
 function display_never_played_tracks() {
-    DB.get_never_played_tracks(
-        (queue) => { 
-            T_controller.set_list("never played Songs", queue)
-        }
-    )    
+    T_controller.set_model("Never Played songs", never_played_tracks_model)
 }
 
 function display_session(id) {
     DB.get_session_info(id, 
         (info) => {
-            DB.get_session_tracks(id, 
-                (queue) => { 
-                    T_controller.set_list(`${info.name} - ${moment(info.date).format("MM-DD-YYYY")}`, queue)
-                }
-            )            
+            let L = new SessionModel(info, tracks_model)
+            T_controller.set_model(info.name, L)
         }
     )
 }
@@ -277,38 +259,10 @@ function display_session(id) {
 function display_playlist(id) {
     DB.get_group_info(id, 
         (info) => {
-            DB.get_playlist_tracks(id, 
-                (queue) => { 
-                    T_controller.set_list(`${info.name}`, queue)
-                }
-            )            
+            let L = new PlaylistModel(info, tracks_model)
+            T_controller.set_model(info.name, L)
         }
     )
-}
-
-function display_sessions() {
-    DB.get_sessions_list(
-        (queue) => { 
-            queue_rows = []
-            for (let i=0; i<queue.length; i++) {
-                element = {
-                    id:   queue[i].id,
-                    name: queue[i].name,
-                    data: queue[i],
-                    date: moment(queue[i].date).format("MM-DD-YYYY"),
-                }
-                queue_rows.push(element)
-            }
-            jui.ready([ "grid.table" ], function(table) {
-                    table("#session-list-elements", {
-                        data:   queue_rows,
-                        scroll: false,
-                        resize: false
-                    });
-                }
-            )
-        }
-    )    
 }
 
 display_all_songs()

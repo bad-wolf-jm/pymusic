@@ -107,70 +107,64 @@ function DataProvider() {
     }
 
     self.get_playlist_tracks = function (id, k) {
-        // var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        // var sql = `SELECT \`tracks_view\`.* 
-        //             FROM playlist_tracks 
-        //             JOIN ${tracks_sql} 
-        //             ON playlist_tracks.track_id=tracks_view.id 
-        //             WHERE playlist_tracks.playlist_id=${id} ORDER BY title`
-        let sql = `SELECT track_id as id, position FROM playlist_tracks WHERE playlist_id = ${id} ORDER BY position`
+        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM playlist_tracks 
+                    JOIN ${tracks_sql} 
+                    ON playlist_tracks.track_id=tracks_view.id 
+                    WHERE playlist_tracks.playlist_id=${id} ORDER BY title`
         $QUERY(sql, k)        
     }
 
 
 
     self.get_session_tracks = function (id, k) {
-        // var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        // var sql = `SELECT \`tracks_view\`.* 
-        //             FROM session_tracks 
-        //             JOIN ${tracks_sql} 
-        //             ON session_tracks.track_id=tracks_view.id 
-        //             WHERE session_tracks.session_id=${id} 
-        //             ORDER BY session_tracks.position`
-        let sql = `SELECT track_id as id, position FROM session_tracks WHERE session_id = ${id} ORDER BY position`
+        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM session_tracks 
+                    JOIN ${tracks_sql} 
+                    ON session_tracks.track_id=tracks_view.id 
+                    WHERE session_tracks.session_id=${id} 
+                    ORDER BY session_tracks.position`
         $QUERY(sql, k)
     }
 
     self.get_never_played_tracks = function(k) {
-        // var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        // var sql = `SELECT \`tracks_view\`.* 
-        //             FROM ${tracks_sql} 
-        //             WHERE tracks_view.play_count = 0 
-        //             ORDER BY tracks_view.title`
-        let sql = `SELECT id FROM tracks WHERE id NOT IN (SELECT DISTINCT track_id as id FROM session_tracks)`
+        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM ${tracks_sql} 
+                    WHERE tracks_view.play_count = 0 
+                    ORDER BY tracks_view.title`
         $QUERY(sql, k)
     }
 
     self.get_played_tracks = function(k) {
-        // var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        // var sql = `SELECT \`tracks_view\`.* 
-        //             FROM ${tracks_sql} 
-        //             WHERE tracks_view.play_count != 0 
-        //             ORDER BY tracks_view.title`
-        let sql = `SELECT DISTINCT track_id as id FROM session_tracks`
+        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM ${tracks_sql} 
+                    WHERE tracks_view.play_count != 0 
+                    ORDER BY tracks_view.title`
         $QUERY(sql, k)
     }
 
     self.get_shortlisted_tracks = function (k) {
-        // var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        // var sql = `SELECT \`tracks_view\`.* 
-        //             FROM short_listed_tracks 
-        //             JOIN ${tracks_sql} 
-        //             ON tracks_view.id=short_listed_tracks.track_id 
-        //             ORDER BY tracks_view.title`
-        let sql = `SELECT track_id as id FROM short_listed_tracks`
+        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM short_listed_tracks 
+                    JOIN ${tracks_sql} 
+                    ON tracks_view.id=short_listed_tracks.track_id 
+                    ORDER BY tracks_view.title`
         $QUERY(sql, k)
     }
 
     self.get_unavailable_tracks = function (k) {
-        // var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        // var sql = `SELECT \`tracks_view\`.* 
-        //             FROM unavailable_tracks 
-        //             JOIN ${tracks_sql} 
-        //             ON tracks_view.id = unavailable_tracks.track_id 
-        //             ORDER BY tracks_view.title`
-        let sql = `SELECT track_id as id FROM unavailable_tracks`
-        $QUERY(sql, k)
+        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM unavailable_tracks 
+                    JOIN ${tracks_sql} 
+                    ON tracks_view.id = unavailable_tracks.track_id 
+                    ORDER BY tracks_view.title`
+         $QUERY(sql, k)
     }
 
     self.get_session_info = function (id, k) {
@@ -239,18 +233,14 @@ function DataProvider() {
     }
 
     self.get_suggested_tracks = function (k) {
-        // var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        // var sql = `SELECT \`tracks_view\`.* 
-        //             FROM ${tracks_sql} 
-        //             WHERE tracks_view.id IN 
-        //                 (SELECT DISTINCT related_track_id 
-        //                     FROM track_relations 
-        //                     WHERE track_relations.track_id IN 
-        //                         (SELECT track_id FROM session_queue WHERE status='pending'))`
-        let sql = `SELECT DISTINCT related_track_id as id
-                        FROM track_relations 
-                        WHERE track_relations.track_id IN 
-                            (SELECT track_id FROM session_queue WHERE status='pending')`
+        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
+        var sql = `SELECT \`tracks_view\`.* 
+                    FROM ${tracks_sql} 
+                    WHERE tracks_view.id IN 
+                        (SELECT DISTINCT related_track_id 
+                            FROM track_relations 
+                            WHERE track_relations.track_id IN 
+                                (SELECT track_id FROM session_queue WHERE status='pending'))`
         $QUERY(sql, k)
     }
 

@@ -12,7 +12,9 @@ class TrackListView extends EventDispatcher {
         this.controller = controller
         this.controller.addView(this)
         this.controller.on("content-changed", this.set_list.bind(this))
-        this.controller.ready(this.set_list.bind(this))
+        this.controller.on("selection-changed", this.update_selection.bind(this))
+        this.controller.on("element-updated", this.update_element.bind(this))
+        //this.controller.ready(this.set_list.bind(this))
     }
 
     _get_rating(track_object) {
@@ -30,6 +32,7 @@ class TrackListView extends EventDispatcher {
         for(let i=0; i<queue.length; i++) {
             let element = {
                 id:          queue[i].id,
+                available:   queue[i].available,
                 color:       queue[i].color,
                 loved:       "<i title='"+i+"' class='fa " + (queue[i].favorite ? "fa-heart" : "fa-heart-o") +"'></i>",
                 title:       queue[i].title,
@@ -44,12 +47,13 @@ class TrackListView extends EventDispatcher {
             queue_rows.push(element)
             this.view_list_order.push(queue[i].id)
         }
+        //console.log(queue_rows)
         this.name_dom.innerHTML       = `${name}`
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         jui.ready([ "grid.table" ], (table) => {
                 table("#track-list-elements", {
-                    data: queue_rows,
+                    data:   queue_rows,
                     scroll: false,
                     resize: false
                 });
@@ -62,6 +66,7 @@ class TrackListView extends EventDispatcher {
                         this.table_rows[track_id] = x
                     } 
                 )
+                this._selected_row = undefined
             }
         )
     }
@@ -80,8 +85,28 @@ class TrackListView extends EventDispatcher {
 
     select_row(e) {
         let x = e.target.closest("tr")
-        x.classList.add("selected")
-        //console.log(x)
+        let id = parseInt(x.attributes["data-track-id"].value)
+        this.controller.select_element(id)
+    }
+
+    update_element(x) {
+        let row = this.table_rows[x.id]
+        if (row != undefined) {
+            if (x.available) {
+                row.classList.remove("unavailable")
+            } else {
+                row.classList.add("unavailable")
+            }
+        }
+    }
+
+    update_selection(selection) {
+        if (this._selected_row != undefined) {
+            this._selected_row.forEach((x) => {this.table_rows[x.id].classList.remove("selected")})
+        }
+        this._selected_row = selection
+        this._selected_row.forEach((x) => {this.table_rows[x.id].classList.add("selected")})
+
     }
 
 

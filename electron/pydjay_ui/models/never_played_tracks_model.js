@@ -1,13 +1,16 @@
-class TrackListModel extends BaseListModel {
-    constructor() {
+class NeverPlayedTracksModel extends BaseListModel {
+    constructor(tracks_model) {
         super()
-        DB.get_all_tracks((tracks) => {
+        this.tracks_model = tracks_model
+        DB.get_never_played_tracks( (tracks) => { 
             this.track_list = {}
-            tracks.forEach((t) => {this.track_list[t.id] = t})
+            tracks.forEach((t) => {
+                this.track_list[t.id] = this.tracks_model.get_track_by_id(t.id)
+            })
             for(let i=0; i<this.ready_wait_queue.length; i++) {
                 this.ready_wait_queue[i]()
             }                                                            
-        })
+        })            
     }
 
     compare_tracks(a, b) {

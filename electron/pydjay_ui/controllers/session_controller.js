@@ -1,10 +1,10 @@
 class SessionController extends EventDispatcher {
     constructor() {
         super()
-        this.queue = undefined
-        this.queue_table = undefined
+        this.queue            = undefined
+        this.queue_table      = undefined
         this.ready_wait_queue = []
-        this.views = []
+        this.views            = []
         DB.get_played_queue_elements((queue) => {
             this.queue = queue
             this.queue_table = {}
