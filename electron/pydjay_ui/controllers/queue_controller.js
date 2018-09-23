@@ -5,28 +5,34 @@ class QueueController extends EventDispatcher {
         this.queue_table = undefined
         this.ready_wait_queue = []
         this.views = []
-        DB.get_queue_elements((queue) => {
-            this.queue = queue
-            this.queue_table = {}
-            for (let i=0; i<queue.length; i++) {
-                this.queue_table[queue[i].id] = queue[i]
-            }
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i](this.queue)
-            }
+        this.forward_content_changed = (q) => {
+            this.dispatch("content-changed", q)
+        }
+    }
+
+    set_model(model) {
+        if (this.model != undefined) {
+            this.model.un("content-changed", this.forward_content_changed) 
+        }
+        this.model = model
+        this.model.addController(this)
+        this.model.on("content-changed", this.forward_content_changed) 
+        this.model.ready(() => {
+            this.set_list(this.model.get_all_tracks())
         })
+    }
+
+    set_list(list) {
+        this.dispatch("content-changed", list)
     }
 
     addView(view) {
         this.views.push(view)
         view.on("reorder", this.reorder_queue.bind(this))
-
     }
 
     reorder_queue(new_order) {
-        for (let i=0; i<new_order.length; i++) {
-            this.queue[i] = this.queue_table[new_order[i]]
-        }
+        this.model.reorder_queue(new_order)
     }
 
     ready(func) {
@@ -38,66 +44,31 @@ class QueueController extends EventDispatcher {
     }
 
     get_id(id) {
-        return this.queue_table[id]
+        return this.model.get_track_by_id(id)
     }
 
     pop() {
-        if (this.queue != undefined) {
-            if (this.queue.length > 0) {
-                let element = this.queue.shift()
-                this.dispatch("content-changed", this.queue)
-                return element
-            } else {
-                return undefined
-            }
-        }
-        return undefined
+       return this.model.pop() 
     }
 
     insert(element, index) {
-        if (this.queue != undefined) {
-            this.queue.splice(index, 0, element)
-            this.dispatch("content-changed", this.queue)
-        }
+        this.model.insert(element, index)
     }
 
-    append(element, index) {
-        if (this.queue != undefined) {
-            this.queue.push(element)
-            this.queue_table[element.id] = element
-            this.dispatch("content-changed", this.queue)
-        }
+    append(element) {
+        this.model.append(element)
     }
 
     remove(index) {
-        if (this.queue != undefined) {
-            this.queue.splice(index, 1)
-            this.dispatch("content-changed", this.queue)
-        }
+        this.model.remove(index)
     }
 
     q_length() {
-        if (this.queue != undefined) {
-            return this.queue.length
-        }
-        return undefined
+        return this.model.length()
     }
+
 
     duration () {
-        if (this.queue != undefined) {
-            let d = 0
-            for (let i=0; i<this.queue.length; i++) {
-                d += this.queue[i].stream_length
-            }
-            return d
-        }
-        return undefined
-    }
-
-    reorder () {
-        if (this.queue != undefined) {
-            this.dispatch("content-changed")
-            return this.queue.length
-        }
+        return this.model.duration()
     }
 }

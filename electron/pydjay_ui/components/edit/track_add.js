@@ -101,9 +101,9 @@ class TrackAddProgressDialog {
                             let ext = extensions[image_type];
                             let image_root = `${this.settings.image_root}`
                             original_image_file = `cover_original_${id}.${ext}`
-                            large_image_file = `cover_large_${id}.${ext}`
-                            medium_image_file = `cover_medium_${id}.${ext}`
-                            small_image_file = `cover_small_${id}.${ext}`
+                            large_image_file    = `cover_large_${id}.${ext}`
+                            medium_image_file   = `cover_medium_${id}.${ext}`
+                            small_image_file    = `cover_small_${id}.${ext}`
                             Jimp.read(
                                 new Buffer(data.picture.data),
                                 (err, image) => {
@@ -118,7 +118,7 @@ class TrackAddProgressDialog {
                     }
                     let NOW = new Date()
                     let track_info = {
-                        'id': id,
+                        'id':                id,
                         'title':             STRING(addslashes(data.title)),
                         'artist':            STRING(addslashes(data.artist)),
                         'album':             STRING(addslashes(data.album)),

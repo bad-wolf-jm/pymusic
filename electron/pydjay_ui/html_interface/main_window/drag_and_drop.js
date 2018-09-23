@@ -2,7 +2,6 @@ var accordion_open_promise = undefined
 
 function open_accordion(evt) {
     let panel = evt.target.nextElementSibling;
-    //console.log(evt)
     accordion_open_promise = setTimeout(() => {
         evt.target.classList.toggle("active");
         panel.style.maxHeight = panel.scrollHeight + "px";

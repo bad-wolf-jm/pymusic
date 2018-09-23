@@ -2,6 +2,9 @@ class UnavailableModel extends BaseListModel {
     constructor(tracks_model) {
         super()
         this.tracks_model = tracks_model
+        this.models    = []
+        this.track_ids = []
+
         DB.get_unavailable_tracks( (tracks) => { 
             this.track_list = {}
             tracks.forEach((t) => {

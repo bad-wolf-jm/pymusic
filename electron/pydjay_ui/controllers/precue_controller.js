@@ -58,14 +58,20 @@ class PrecueController extends PydjayAudioFilePlayer {
         super.play(file_name, stream_start / 1000000, stream_end / 1000000)
     }
 
-    play_last_10_seconds() {
-        if (this.track != undefined) {
+    play_last_10_seconds(track) {
+        if (track != undefined) {
+            this.play(track, -10000000000)
+        } else if (this.track != undefined) {
             this.play(this.track, -10000000000)
+        } else {
+
         }
     }
 
-    play_last_30_seconds() {
-        if (this.track != undefined) {
+    play_last_30_seconds(track) {
+        if (track != undefined) {
+            this.play(track, -30000000000)
+        } else if (this.track != undefined) {
             this.play(this.track, -30000000000)
         }
     }

@@ -1,12 +1,19 @@
 class TrackListController extends EventDispatcher {
-    constructor() {
+    constructor(unavailable_model) {
         super()
         this.list             = []
+        this.unavailable      = unavailable_model
         //this.list_table       = {}
         // this.ready_wait_queue = []
         this.views            = []
         this.selection        = undefined
         this.model            = undefined
+        this.unavailable.on("track-unavailable", (t) => {
+            this.dispatch("track-unavailable", t)
+        }) 
+        this.unavailable.on("track-available", (t) => {
+            this.dispatch("track-available", t)
+        }) 
     }
 
     set_model(name, model) {
@@ -16,28 +23,16 @@ class TrackListController extends EventDispatcher {
         this.model = model
         this.model.addController(this)
         this.model.ready(() => {
-            this.set_list(name, this.model.get_all_tracks())
+            let track_list = this.model.get_all_tracks()
+            this.set_list(name, track_list)
+            let U = this.unavailable.get_all_track_ids()
+            Object.keys(U).forEach((id) => {this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
         })
     }
 
     addView(view) {
         this.views.push(view)
     }
-
-    // reorder_queue(new_order) {
-    //     for (let i=0; i<new_order.length; i++) {
-    //         this.queue[i] = this.queue_table[new_order[i]]
-    //     }
-    // }
-
-
-    // ready(func) {
-    //     if (this.queue != undefined) {
-    //         func(this.queue)
-    //     } else {
-    //         this.ready_wait_queue.push(func)
-    //     }
-    // }
 
     _do_set_list(name, queue) {
         this.name = name
@@ -55,14 +50,9 @@ class TrackListController extends EventDispatcher {
 
     q_length() {
         return this.model.length()
-            // if (this.list != undefined) {
-            //     return this.list.length
-            // }
-            // return undefined
     }
 
     select_element(id) {
-        // console.log(id)
         this.selection = [this.model.get_track_by_id(id)]
         this.dispatch("selection-changed", this.selection)
     }
@@ -74,20 +64,17 @@ class TrackListController extends EventDispatcher {
 
     duration () {
         return this.model.duration()
-        // if (this.list != undefined) {
-        //     let d = 0
-        //     for (let i=0; i<this.list.length; i++) {
-        //         d += this.list[i].stream_length
-        //     }
-        //     return d
-        // }
-        // return undefined
     }
 
-    // reorder () {
-    //     if (this.list != undefined) {
-    //         this.dispatch("content-changed")
-    //         return this.list.length
-    //     }
-    // }
+    filter_ids (func) {
+        let mapping = {}
+        let x = this.model.get_all_tracks().forEach((t) => {
+            //let o = {}
+            mapping[t.id] = func(t)
+            //return o
+        })
+        // console.log("tracks=", this.model.get_all_tracks())
+        // console.log("x=", mapping)
+        return mapping
+    }
 }

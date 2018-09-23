@@ -3,9 +3,36 @@ class TrackListView extends EventDispatcher {
         super()
         this.dom_id         = dom_ids.list
         this.controller     = undefined
+        this.table          = undefined
         this.name_dom       = document.getElementById(dom_ids.name); 
         this.num_tracks_dom = document.getElementById(dom_ids.num_tracks); 
         this.duration_dom   = document.getElementById(dom_ids.duration);
+        this.filter_dom      = document.getElementById(dom_ids.filter); 
+
+        this.menu = new Menu()
+        this.menu.append(new MenuItem({label: 'Track info', click() { console.log("GET INFO", this.context_menu_element) }}))
+        this.menu.append(new MenuItem({type: 'separator'}))
+        this.menu.append(new MenuItem({label: 'Shortlist', click() { console.log("GET INFO", this.context_menu_element) }}))
+        this.menu.append(new MenuItem({label: 'Marked as played', click() { console.log("GET INFO", this.context_menu_element) }}))
+        this.menu.append(new MenuItem({label: 'Add to queue', click() { console.log("GET INFO", this.context_menu_element) }}))
+        this.menu.append(new MenuItem({type:  'separator'}))
+        this.menu.append(new MenuItem({label: 'Preview', 
+            submenu: [
+                {label: 'Full track', click: () => {pc.play(this.context_menu_element) }},
+                {label: 'Last 30 seconds', click: () => {pc.play_last_30_seconds(this.context_menu_element)  }},
+                {label: 'Last 10 seconds', click: () =>{pc.play_last_10_seconds(this.context_menu_element)  }}
+            ]}))
+                
+        this.menu.append(new MenuItem({type: 'separator'}))
+        
+        this.menu.on("menu-will-show", (e) => {})
+        this.menu.on("menu-will-close", (e) => {})
+
+        this.filter_dom.oninput = (e) => {
+            // console.log(this.filter_dom.value)
+            this.filter_list(this.filter_dom.value)
+        }
+
     }
 
     set_controller(controller) {
@@ -14,7 +41,20 @@ class TrackListView extends EventDispatcher {
         this.controller.on("content-changed", this.set_list.bind(this))
         this.controller.on("selection-changed", this.update_selection.bind(this))
         this.controller.on("element-updated", this.update_element.bind(this))
-        //this.controller.ready(this.set_list.bind(this))
+        this.controller.on("track-unavailable", (tr) => {
+            if (tr != undefined) {
+                if (this.table_rows[tr.id] != undefined) {
+                    this.table_rows[tr.id].classList.add("unavailable")
+                }
+            }
+        })
+        this.controller.on("track-available", (tr) => {
+            if (tr != undefined) {
+                if (this.table_rows[tr.id] != undefined) {
+                    this.table_rows[tr.id].classList.remove("unavailable")
+                }
+            }
+        })
     }
 
     _get_rating(track_object) {
@@ -47,28 +87,29 @@ class TrackListView extends EventDispatcher {
             queue_rows.push(element)
             this.view_list_order.push(queue[i].id)
         }
-        //console.log(queue_rows)
         this.name_dom.innerHTML       = `${name}`
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         jui.ready([ "grid.table" ], (table) => {
-                table("#track-list-elements", {
-                    data:   queue_rows,
-                    scroll: false,
-                    resize: false
-                });
-                this.connect_drag()
-                this.table_rows = {}
-                let elements = document.querySelectorAll('.track-entry');
-                [].forEach.call(document.querySelectorAll('.track-entry'),
-                    (x) => {
-                        let track_id = parseInt(x.attributes["data-track-id"].value)
-                        this.table_rows[track_id] = x
-                    } 
-                )
-                this._selected_row = undefined
+            if (this.table != undefined) {
+                this.table.reset()
             }
-        )
+            this.table = table("#track-list-elements", {
+                data:   queue_rows,
+                scroll: false,
+                resize: false
+            });
+            this.connect_drag()
+            this.table_rows = {}
+            let elements = document.querySelectorAll('.track-entry');
+            [].forEach.call(document.querySelectorAll('.track-entry'),
+                (x) => {
+                    let track_id = parseInt(x.attributes["data-track-id"].value)
+                    this.table_rows[track_id] = x
+                } 
+            )
+            this._selected_row = undefined
+        })
     }
 
     handle_drag_start(e) {
@@ -106,7 +147,6 @@ class TrackListView extends EventDispatcher {
         }
         this._selected_row = selection
         this._selected_row.forEach((x) => {this.table_rows[x.id].classList.add("selected")})
-
     }
 
 
@@ -116,9 +156,93 @@ class TrackListView extends EventDispatcher {
             e.addEventListener('dragstart', this.handle_drag_start.bind(this), false);
             e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
             e.addEventListener("click", this.select_row.bind(this))
-            //console.log(e)
+            e.addEventListener('contextmenu', (e) => {
+                e.preventDefault()
+                this.select_row(e)
+                let x = e.target.closest(".track-entry")
+                let track_id = parseInt(x.attributes["data-track-id"].value)
+                let track_element = this.controller.get_id(track_id)
+                this.context_menu_element = track_element
+                this.menu.popup({window: remote.getCurrentWindow()})
+              }, false)
+
         });
     }
+
+    filter_list (text) {
+        let i = 0;
+        let search_tokens = text.split(' ')
+        let search_f = [];
+        for (i=0; i<search_tokens.length; i++) {
+            let token = search_tokens[i];
+            if (token.length > 0) {
+                if (search_tokens[i].startsWith('@bpm<')) {
+                    let x = parseInt(search_tokens[i].split('<')[1]);
+                    if (!isNaN(x)) {
+                        search_f.push(
+                            function (obj) {
+                                return obj.bpm <= x;
+                            }
+                        )
+                    } else {
+                        search_f.push( (x) => {return true} )
+                    }
+                } else if (search_tokens[i].startsWith('@bpm>')) {
+                    let x = parseInt(search_tokens[i].split('>')[1]);
+                    if (!isNaN(x)) {
+                        search_f.push(
+                            function (obj) {
+                                return (obj.bpm >= x);
+                            }
+                        )
+                    } else {
+                        search_f.push( (x) => {return true} )
+                    }
+                } else if (search_tokens[i].startsWith('@bpm~')) {
+                    let x = parseInt(search_tokens[i].split('~')[1]);
+                    if (!isNaN(x)) {
+                        search_f.push(
+                            function (obj) {
+                                return (obj.bpm < x*1.2) && (obj.bpm > x*0.9) ;
+                            }
+                        )
+                    } else {
+                        search_f.push( (x) => {return true} )
+                    }
+                } else {
+                    search_f.push(
+                        function (x) {
+                            let fields = [x.title, x.artist, x.genre, `@rat=${x.rating}`, '@bpm']
+                            if (x.favorite) {
+                                fields.push('@loved')
+                            }
+                            for (let j=0; j<fields.length; j++) {
+                                if (fields[j] != null) {
+                                    if ((fields[j].toLowerCase().search(token) != -1)) {
+                                        return true;
+                                    }
+                                }
+                            }
+                            return false;
+                        }
+                    )
+                }
+            }
+        }
+        let filter = this.controller.filter_ids((obj) => {
+            for(i=0; i<search_f.length; i++) {
+                let x = search_f[i](obj);
+                if (!x) {
+                    return false;
+                }
+            }
+            return true;
+        })
+        Object.keys(this.table_rows).forEach((k) => {
+            filter[k] ? this.table_rows[k].classList.remove("filtered") : this.table_rows[k].classList.add("filtered")
+        })
+    };
+
 
 
 }

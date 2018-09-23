@@ -38,13 +38,18 @@ class PlaylistsView extends EventDispatcher {
             evt.stopPropagation();
         }
         let playlist = evt.target.parentElement
-        //console.log(evt.target.parentElement)
         playlist.classList.remove("drop-here")
+        let playlist_id = parseInt(playlist.attributes["data-playlist-id"].value)
+
         let d = evt.dataTransfer.getData("text/plain")
         let track = JSON.parse(d)
-        let playlist_id = parseInt(playlist.attributes["data-playlist-id"].value)
-        //document.getElementById("queue-drop-overlay").style.display="none"
-        this.controller.append_to_playlist(playlist_id, track.id)
+        let confirm = new Menu()
+        confirm.append(new MenuItem({label: `Add '${track.title}' to '${playlist_id}'?`, click: () => { 
+            this.controller.append_to_playlist(playlist_id, track.id)
+        }}))
+        confirm.append(new MenuItem({type:  'separator'}))
+        confirm.append(new MenuItem({label: `Cancel`, click: () => {}}))
+        confirm.popup({})
     }
 
 

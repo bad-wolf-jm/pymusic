@@ -15,7 +15,7 @@ class PlaybackController extends PydjayAudioFilePlayer {
         this.playing            = false
         this._current_track     = undefined
         this.on('end-of-stream', () => {
-                this._current_track.end = new Date()
+                this._current_track.end_time = new Date()
                 this._current_track.status = "ended"
                 this.session_controller.add(this._current_track)
                 this._current_track = undefined
@@ -59,13 +59,12 @@ class PlaybackController extends PydjayAudioFilePlayer {
     }
 
     _do_start_playback(track) {
-        //console.log(track)
         let file_name = path.join(track.music_root, track.file_name);
         this._current_track = {
-            start: new Date(),
-            end: undefined,
+            start_time: new Date(),
+            end_time: undefined,
             status: undefined,
-            meta: track
+            track_id: track.id
         }
         this.play(file_name,  track.stream_start / 1000000, track.stream_end / 1000000)    
     }
@@ -88,7 +87,7 @@ class PlaybackController extends PydjayAudioFilePlayer {
                     this.dispatch('next-track-countdown', 0)
                     this._do_play_next_track();
                 } else {
-                    console.log(delay)
+                    // console.log(delay)
                     this.dispatch('next-track-countdown', delay)
                     delay--;
                 }
@@ -117,7 +116,7 @@ class PlaybackController extends PydjayAudioFilePlayer {
         this.stop_request = false;
         this.stop()
         if (this._current_track != undefined) {
-            this._current_track.end = new Date()
+            this._current_track.end_time = new Date()
             this._current_track.status = "stopped"
             this.session_controller.add(this._current_track)
             this._current_track = undefined    
@@ -129,7 +128,7 @@ class PlaybackController extends PydjayAudioFilePlayer {
         if (this.queue_playing && !(this.stop_request)){
             this.stop()
             if (this._current_track != undefined) {
-                this._current_track.end = new Date()
+                this._current_track.end_time = new Date()
                 this._current_track.status = "skipped"
                 this.session_controller.add(this._current_track)
                 this._current_track = undefined    

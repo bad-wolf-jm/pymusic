@@ -682,6 +682,10 @@ input[type=text] {
     background-color: rgb(50,50,50);
 }
 
+.filtered {
+   display: none;
+}
+
 
 .ghost {
     opacity: 0.2;
@@ -689,6 +693,7 @@ input[type=text] {
 
   .drop-here {
       background-color: rgb(177, 36, 170);
+      cursor:copy;
   }
 
 .precue-management-button:hover {

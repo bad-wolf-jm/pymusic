@@ -3,7 +3,6 @@
 
 <link rel="stylesheet" href="main_window.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<!-- <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet"> -->
 
 
 <script src="../../../web-audio/event_dispatcher.js"></script>
@@ -14,13 +13,13 @@
 <script src="../../../web-audio/audio_player_file.js"></script>
 <script src="../../../web-audio/mp3_fileinfo.js"></script>
 
-<script src="../jui/core/lib/jquery-1.8.0.min.js"></script>
-<script src="../jui/core/dist/core.min.js"></script>
-<script src="../jui/ui/dist/ui.min.js"></script>
-<script src="../jui/grid/dist/grid.min.js"></script>
+<script src="../../../lib/jui/core/lib/jquery-1.8.0.min.js"></script>
+<script src="../../../lib/jui/core/dist/core.min.js"></script>
+<script src="../../../lib/jui/ui/dist/ui.min.js"></script>
+<script src="../../../lib/jui/grid/dist/grid.min.js"></script>
 
-<script src="../lib/moment.min.js"></script>
-<script src="../lib/Sortable.js"></script>
+<script src="../../../lib/moment.min.js"></script>
+<script src="../../../lib/Sortable.js"></script>
 
 <script src="../../utils.js"></script>
 <script src="../../sql.js"></script>
@@ -36,6 +35,9 @@
 <script src="../../models/suggested_model.js"></script>
 <script src="../../models/played_tracks_model.js"></script>
 <script src="../../models/never_played_tracks_model.js"></script>
+<script src="../../models/queue_model.js"></script>
+<script src="../../models/current_session_model.js"></script>
+<script src="../../models/union_model.js"></script>
 
 <script src="../../controllers/queue_controller.js"></script>
 <script src="../../controllers/session_controller.js"></script>
@@ -85,7 +87,7 @@
     </div>
     <div class="main_player" style="position:fixed">
         <div class="overlay" id="main-player-overlay">
-            NOTHING TO SEE HERE
+            
         </div>
         <img id="main-player-track-cover" class="cover" src="test_cover.png" height="150" width="150"></img>
         <div style="float:left; display:block; width:calc(100% - 150px)">
@@ -126,11 +128,16 @@
     <div class="main_space">
         <div id="sidebar" class="side_bar">
             <button class="accordion">Library</button>
-            <div class="panel" data-fixed-height="170">
+            <div class="panel" data-fixed-height="180">
                 <ul class="sidebar-library">
                     <li class="sidebar-library-item" onclick="display_all_songs()">
                         <i class="fa fa-database list-icon"></i>
                         All songs
+                        <i class="fa fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item" onclick="display_current_session()">
+                        <i class="fa fa-calendar list-icon"></i>
+                        Current Session
                         <i class="fa fa-angle-right arrow-icon"></i> 
                     </li>
                     <li class="sidebar-library-item" onclick="display_suggestions()">
@@ -288,7 +295,7 @@
                 </div>
                 <div class="search-container">
                     <button type="submit" class="search-submit-button"><i class="fa fa-search"></i></button>
-                    <input type="text" placeholder="Filter list..." name="search">
+                    <input id="filter-track-list" type="text" placeholder="Filter list..." name="search">
                 </div>
               
             </div>
@@ -312,7 +319,7 @@
                 </table>
             </div>
             <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
-                <tr class="list-group-item row track-entry <! if (available == 1) { !>  <!} else { !>unavailable<!}!>" style="color:<!= color !>" draggable=true data-track-id=<!= id !>>
+                <tr class="list-group-item row track-entry" style="color:<!= color !>" draggable=true data-track-id=<!= id !>>
                     <td style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt"><!= loved !></td>
                     <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= title !></td>
                     <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= artist !></td>
@@ -336,33 +343,14 @@
                         <div id="queue-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="queue-duration" style="display:inline-block">57 minutes 37 seconds</div>
                     </div>
                 </div>
-                <!-- <button class="queue-management-button"><i class="fa fa-ellipsis-h"></i></button> -->
-                <!-- <div class="dropdown">
-                    <button id="queue-options" class="queue-management-button"><i class="fa fa-ellipsis-h"></i></button>
-                    <div id="queue-options-dropdown" class="dropdown-content" style="top:50px">
-                        <a id="stop-queue-now"><i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now</a>
-                        <a id="skip-current-track"><i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track</a>
-                        <a id="save-session"><i class="fa fa-save"></i>&nbsp;&nbsp;Save current session</a>
-                        <a id="precue-play-stop">Stop</a>
-                    </div>
-                </div> -->
-
                 <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()"><i class="fa fa-play"></i></button>
             </div>
-            <div class="queue-list" id="queue-list-elements-div">
-                <!-- <div class="overlay" id="queue-drop-overlay" style="opacity:0.75; background-color:#555555">
-                    QUEUE DROP OVERLAY
-                </div> -->
-                
+            <div id="queue-list-area" class="queue-list" id="queue-list-elements-div">
                 <table id="queue-list-elements" style="width:100%">
                     <thead style="width:100%">
                     <tr style="width:100%"></tr></thead>
                     <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
                 </table>
-                <menu type="context" id="mymenu">
-                    <menuitem label="Refresh"></menuitem>
-                    <menuitem label="Twitter"></menuitem>
-                </menu>
                 <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
                     <tr class="list-group-item queued-track" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
                         <td style="width:100%; margin:0; padding:0">
@@ -393,32 +381,6 @@
             </div>            
         </div>
     </div>
-
-    <script>
-        
-        // var acc = document.getElementsByClassName("accordion");
-        // var i;
-        // for (i = 0; i < acc.length; i++) {
-        //     acc[i].addEventListener("click", function() {
-        //         this.classList.toggle("active");
-        //         var panel = this.nextElementSibling;
-        //         fixed_height_request = panel.attributes["data-fixed-height"]
-        //         if (fixed_height_request != undefined) {
-        //             height = fixed_height_request.value
-        //         } else {
-        //             height = panel.scrollHeight
-        //         }
-        //         //console.log(fixed_height_request.value)
-        //         if (panel.style.maxHeight) {
-        //             panel.style.maxHeight = null;
-        //         } else {
-        //             panel.style.height = height + "px";
-        //             panel.style.maxHeight = height + "px";
-        //         } 
-        //     });
-        // }
-    </script>
-
 <script src="drag_and_drop.js"></script>
 <script src="main_window.js"></script>
 </body>

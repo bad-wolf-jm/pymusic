@@ -1,18 +1,43 @@
+const {remote} = require('electron')
+const {Menu, MenuItem} = remote
+
+
+
 class QueueView extends EventDispatcher {
     constructor(dom_ids) {
         super()
         this.dom_id         = dom_ids.list
         this.controller     = undefined
+        this.context_menu_element = undefined
         this.list_dom       = document.getElementById(dom_ids.list); 
         this.num_tracks_dom = document.getElementById(dom_ids.num_tracks); 
         this.duration_dom   = document.getElementById(dom_ids.duration);
 
         this.view_list_order = []
-        let queue_list = document.getElementById("queue-list-elements")
+        let queue_list = document.getElementById("queue-list-area")
         queue_list.addEventListener('dragenter', this.handle_drag_enter.bind(this), false);          
         queue_list.addEventListener('dragover',  this.on_drag_over.bind(this), false);
         queue_list.addEventListener('dragend',   this.handle_drag_end.bind(this), false);
         queue_list.addEventListener('drop',      this.handle_drop.bind(this), true);
+
+        this.queue_content = undefined
+
+        this.menu = new Menu()
+        this.menu.append(new MenuItem({label: 'Track info', click() { console.log("GET INFO", this.context_menu_element) }}))
+        this.menu.append(new MenuItem({type: 'separator'}))
+        this.menu.append(new MenuItem({label: 'Preview', 
+            submenu: [
+                {label: 'Full track', click: () => {pc.play(this.context_menu_element) }},
+                {label: 'Last 30 seconds', click: () => {pc.play_last_30_seconds(this.context_menu_element)  }},
+                {label: 'Last 10 seconds', click: () =>{pc.play_last_10_seconds(this.context_menu_element)  }}
+            ]}))
+                
+        this.menu.append(new MenuItem({type: 'separator'}))
+        this.menu.append(new MenuItem({label: 'Remove', click: () =>{ this.controller.remove(this.context_menu_element) }}))
+        
+        this.menu.on("menu-will-show", (e) => {})
+        this.menu.on("menu-will-close", (e) => {})
+        
 
         this.sortable = Sortable.create(this.list_dom, 
             {
@@ -64,7 +89,10 @@ class QueueView extends EventDispatcher {
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         jui.ready([ "grid.table" ], (table) => {
-                table("#queue-list-elements", {
+                if (this.queue_content != undefined) {
+                    this.queue_content.reset()
+                }
+                this.queue_content = table("#queue-list-elements", {
                     data:queue_rows,
                     scroll: false,
                     resize: false
@@ -82,18 +110,18 @@ class QueueView extends EventDispatcher {
     }
 
     handle_drag_enter(e) {
-        console.log(e)
+        //console.log(e)
     }
 
     handle_drag_end(e) {
-        console.log(e)
+        //console.log(e)
     }
 
     on_drag_over(evt) {
         if (evt.preventDefault) {
             evt.preventDefault();
         }
-        console.log(evt)
+        //console.log(evt)
         evt.dataTransfer.dropEffect = 'move';
     }
 
@@ -107,7 +135,7 @@ class QueueView extends EventDispatcher {
             let track = JSON.parse(d)
             this.controller.append(track)
         } catch (error) {
-            //pass            
+            console.log(error)        
         }
 
     }
@@ -123,6 +151,15 @@ class QueueView extends EventDispatcher {
         [].forEach.call(elements, (e) => {
             e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
             e.addEventListener("click", this.select_row.bind(this))
+            e.addEventListener('contextmenu', (e) => {
+                e.preventDefault()
+                let x = e.target.closest(".queued-track")
+                let track_id = parseInt(x.attributes["data-track-id"].value)
+                let track_element = this.controller.get_id(track_id)
+                this.context_menu_element = track_element
+                this.menu.popup({window: remote.getCurrentWindow()})
+              }, false)
+      
         });
     }
 

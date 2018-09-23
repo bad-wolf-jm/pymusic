@@ -86,7 +86,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
     setLoved (value){
         var html = "";
         this.loved = value
-        html+="<i title='"+i+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
+        html+="<i title='"+value+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
         document.getElementById("main-player-loved").innerHTML = html
     }
 }

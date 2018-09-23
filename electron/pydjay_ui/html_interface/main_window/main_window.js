@@ -1,12 +1,11 @@
-Sortable              = require("../lib/Sortable.js")
+Sortable              = require("../../../lib/Sortable.js")
 WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
 
 SV = new AccordionView("sidebar")
 
-
-DB            = new DataProvider()
+DB = new DataProvider()
 
 tracks_model              = new TrackListModel()
 unavailable_model         = new UnavailableModel(tracks_model)
@@ -14,8 +13,16 @@ shortlist_model           = new ShortlistModel(tracks_model)
 suggested_model           = new SuggestedModel(tracks_model)
 played_tracks_model       = new PlayedTracksModel(tracks_model)
 never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
+queue_model               = new QueueModel(tracks_model)
+current_session_model     = new CurrentSessionModel(tracks_model)
 
-T_controller              = new TrackListController()
+
+un_model = new UnionModel()
+un_model.addModel("queue", queue_model)
+un_model.addModel("current_session", current_session_model)
+un_model.addModel("unavailable", unavailable_model)
+
+T_controller              = new TrackListController(un_model)
 Q_controller              = new QueueController()
 S_controller              = new SessionController()
 PL_controller             = new PlaylistsController()
@@ -24,6 +31,9 @@ SE_controller             = new SessionsController()
 mpc                       = new PlaybackController(S_controller, Q_controller)
 pc                        = new PrecueController(S_controller, Q_controller)
 vc                        = new VolumeController(mpc, pc)
+
+Q_controller.set_model(queue_model)
+S_controller.set_model(current_session_model)
 
 Q = new QueueView({
     list:       'queue-elements-body',
@@ -35,7 +45,8 @@ Q.set_controller(Q_controller)
 T = new TrackListView({
     name:       "main-track-list-name",
     num_tracks: "main-track-list-number-of-tracks",
-    duration:   "main-track-list-duration"
+    duration:   "main-track-list-duration",
+    filter:      "filter-track-list"
 })
 T.set_controller(T_controller)
 
@@ -57,9 +68,6 @@ M.init()
 
 P = new PrecuePlayerView()
 P.set_controller(pc)
-
-
-
 
 mpc.on("queue-started", 
     () => {
@@ -101,18 +109,6 @@ mpc.on("track-finished",
     () => {
     }
 )
-
-// pc.on("playback-started", 
-//     () => {
-//         vc.mute_monitor()
-//     }
-// )
-
-// pc.on("track-finished", 
-//     () => {
-//         vc.restore_monitor()
-//     }
-// )
 
 pc.on('playback-stopped',  () => {
         vc.restore_monitor()
@@ -202,23 +198,6 @@ document.getElementById("main-menu-quit").addEventListener('click', () => {
 
 ///////////////////////////////////////////////
 
-// document.getElementById("queue-options").addEventListener('click', () => {
-//     document.getElementById("queue-options-dropdown").classList.toggle("show");
-// })
-
-// document.getElementById("stop-queue-now").addEventListener('click', () => {
-//     mpc.stop_queue_now()
-//     document.getElementById("queue-options-dropdown").classList.remove("show")
-// })
-// document.getElementById("skip-current-track").addEventListener('click', () => {
-//     mpc.skip_to_next_track()
-//     document.getElementById("queue-options-dropdown").classList.remove("show")
-// })
-// document.getElementById("save-session").addEventListener('click', () => {
-//     document.getElementById("queue-options-dropdown").classList.remove("show")
-// })
-
-
 function refresh_sessions(x) {
     console.log("refresh_sessions", x)
 }
@@ -227,8 +206,13 @@ function display_all_songs() {
     T_controller.set_model("All Songs", tracks_model)
 }
 
+function display_current_session() {
+    // console.log(current_session_model)
+    T_controller.set_model("Current Session", current_session_model)
+}
+
 function display_suggestions() {
-    T_controller.set_model("Unavailable tracks", suggested_model)
+    T_controller.set_model("Suggested tracks", suggested_model)
 }
 
 function display_short_list() {
