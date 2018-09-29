@@ -1,12 +1,13 @@
 class AccordionView extends EventDispatcher {
     constructor(div_name) {
         super()
-        this.div = document.getElementById(div_name)
+        this.div           = document.getElementById(div_name)
         let children       = this.div.children
         this.panels        = []
         this.headers       = []
         this.panel_heights = []
         this.panel_open    = []
+        //console.log(children)
         for (let i=0; i<children.length; i = i+2) {
             this.headers.push(children[i])
             this.panels.push(children[i+1])

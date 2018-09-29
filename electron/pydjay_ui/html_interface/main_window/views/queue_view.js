@@ -1,6 +1,6 @@
 const {remote} = require('electron')
 const {Menu, MenuItem} = remote
-
+const {BrowserWindow} = remote
 
 
 class QueueView extends EventDispatcher {
@@ -23,7 +23,15 @@ class QueueView extends EventDispatcher {
         this.queue_content = undefined
 
         this.menu = new Menu()
-        this.menu.append(new MenuItem({label: 'Track info', click() { console.log("GET INFO", this.context_menu_element) }}))
+        this.menu.append(new MenuItem({label: 'Track info', click: () => { 
+            let window = new BrowserWindow({width: 1250, height: 750})
+            window.on('closed', () => {
+                window = null
+            })
+            window.webContents.once("did-finish-load", () => {window.webContents.send("track-id", this.context_menu_element)})
+            window.loadURL('file://' + __dirname + '/../track_edit/layout.html')
+
+        }}))
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Preview', 
             submenu: [
@@ -37,7 +45,6 @@ class QueueView extends EventDispatcher {
         
         this.menu.on("menu-will-show", (e) => {})
         this.menu.on("menu-will-close", (e) => {})
-        
 
         this.sortable = Sortable.create(this.list_dom, 
             {
@@ -50,7 +57,11 @@ class QueueView extends EventDispatcher {
                 onEnd: (evt) => {
                     let new_order = []
                     for(let i=0; i<this.list_dom.rows.length; i++) {
-                        new_order.push(parseInt(this.list_dom.rows[i].attributes["data-track-id"].value))
+                        if (this.list_dom.rows[i].attributes["data-track-id"].value == 'null') {
+                            new_order.push(null)
+                        } else {
+                            new_order.push(parseInt(this.list_dom.rows[i].attributes["data-track-id"].value))
+                        }
                     }
                     this.view_list_order = new_order
                     this.dispatch("reorder", this.view_list_order)
@@ -71,20 +82,23 @@ class QueueView extends EventDispatcher {
         let queue_rows = []  
 
         for(let i=0; i<queue.length; i++) {
-            let element = {
+            //if queue[i] == null
+            let element = (queue[i] == null) ? {id: null, stream_length:0} : {
                 id:       queue[i].id,
                 title:    queue[i].title,
                 artist:   queue[i].artist,
                 bpm:      queue[i].bpm,
                 duration: format_nanoseconds(queue[i].stream_length),
             }
-            if (queue[i].cover == null) {
-                element.cover = "../../../resources/images/default_album_cover.png"
-            } else {
-                element.cover = `file://${queue[i].image_root}/${queue[i].cover}`
+            if (element.id != null) {
+                if (queue[i].cover == null) {
+                    element.cover = "../../../resources/images/default_album_cover.png"
+                } else {
+                    element.cover = `file://${queue[i].image_root}/${queue[i].cover}`
+                }    
             }
             queue_rows.push(element)
-            this.view_list_order.push(queue[i].id)
+            this.view_list_order.push(element.id)
         }
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`

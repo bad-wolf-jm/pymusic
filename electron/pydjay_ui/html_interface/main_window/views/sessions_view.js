@@ -16,7 +16,7 @@ class SessionsView extends EventDispatcher {
 
     set_list(list) {
         this.view_list_order = []
-        let list_rows = []  
+        let list_rows = []
 
         for(let i=0; i<list.length; i++) {
             let element = {

@@ -5,33 +5,43 @@ class QueueModel extends BaseListModel {
         this.tracks_order = []
         DB.get_queue_elements_ids( (tracks) => { 
             this.tracks_order = []
-            tracks.forEach((t) => {
-                this.tracks_order.push(t.id)
-            })
+            if (tracks.length == 0) {
+                this.tracks_order.push(null)
+                this.save()
+            } else {
+                tracks.forEach((t) => {
+                    this.tracks_order.push(t.id)
+                })
+            }
             for(let i=0; i<this.ready_wait_queue.length; i++) {
                 this.ready_wait_queue[i]()
-            } 
+            }     
         })            
     }
 
     get_all_tracks() {
         let Q = []
-        this.tracks_order.forEach((x) => {Q.push(this.tracks_model.get_track_by_id(x))})
+        this.tracks_order.forEach((x) => {Q.push((x != null) ? this.tracks_model.get_track_by_id(x) : null)})
         return Q
     }
 
     get_track_by_id(id) {
-        return this.tracks_model.get_track_by_id(id) //track_list[id]
+        return this.tracks_model.get_track_by_id(id) 
     }
 
     reorder_queue(new_order) {
         this.tracks_order = new_order
+        console.log(this.tracks_order)
         this.save()
     }
 
     pop() {
         if (this.tracks_order != undefined) {
             if (this.tracks_order.length > 0) {
+                console.log(this.tracks_order)
+                if (this.tracks_order[0] == null) {
+                    return undefined
+                }
                 let element = this.tracks_order.shift()
                 this.save() 
                 this.dispatch("content-changed", this.get_all_tracks())
@@ -106,7 +116,7 @@ class QueueModel extends BaseListModel {
             let d = 0
             this.tracks_order.forEach((i) => {
                 let x = this.tracks_model.get_track_by_id(i)
-                d += x.stream_length
+                d += (x != undefined) ? x.stream_length : 0
             })
             return d
         }

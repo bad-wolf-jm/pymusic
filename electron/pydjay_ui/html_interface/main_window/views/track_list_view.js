@@ -10,7 +10,15 @@ class TrackListView extends EventDispatcher {
         this.filter_dom      = document.getElementById(dom_ids.filter); 
 
         this.menu = new Menu()
-        this.menu.append(new MenuItem({label: 'Track info', click() { console.log("GET INFO", this.context_menu_element) }}))
+        this.menu.append(new MenuItem({label: 'Track info', click: () => { 
+            let window = new BrowserWindow({width: 1250, height: 750})
+            window.on('closed', () => {
+                window = null
+            })
+            window.webContents.once("did-finish-load", () => {window.webContents.send("track-id", this.context_menu_element)})
+            
+            window.loadURL('file://' + __dirname + '/../track_edit/layout.html')
+        }}))
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Shortlist', click() { console.log("GET INFO", this.context_menu_element) }}))
         this.menu.append(new MenuItem({label: 'Marked as played', click() { console.log("GET INFO", this.context_menu_element) }}))

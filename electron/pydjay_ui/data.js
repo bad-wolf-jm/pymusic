@@ -106,12 +106,24 @@ function DataProvider() {
         $QUERY(sql, k);
     }
 
+    self.get_related_tracks = function (id, k) {
+        let sql = `(${self.base_track_view_sql()}) tracks_view`
+        sql = `SELECT tracks_view.* FROM track_relations JOIN ${sql} ON 
+                track_relations.related_track_id = tracks_view.id WHERE track_relations.track_id = ${id}`
+        $QUERY(sql, k)
+    }
+
     self.get_playlist_tracks = function (id, k) {
         let sql = `SELECT track_id as id, position FROM playlist_tracks WHERE playlist_id = ${id} ORDER BY position`
         $QUERY(sql, k)        
     }
 
-
+    self.get_playback_history = function(id, k) {
+        sql = `SELECT sessions.event_name, session_tracks.start_time, 
+        session_tracks.end_time, session_tracks.position from session_tracks JOIN sessions 
+        ON sessions.id=session_tracks.session_id WHERE track_id=${id} ORDER BY start_time DESC`
+        $QUERY(sql, k)
+    }
 
     self.get_session_tracks = function (id, k) {
         let sql = `SELECT track_id as id, position FROM session_tracks WHERE session_id = ${id} ORDER BY position`

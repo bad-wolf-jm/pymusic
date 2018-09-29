@@ -171,10 +171,9 @@
             <button class="accordion open-on-drag-over">
                 Playlists
                 <div class="action-button-group">
-                    <i class="fa fa-plus action-icon"></i>        
-                    <i class="fa fa-refresh action-icon"></i>
+                    <i id="add-playlist" class="fa fa-plus action-icon" onclick="console.log('sss')"></i>
+                    <i id="refresh-playlists" class="fa fa-refresh action-icon"></i>
                 </div>
-
             </button>
             <div class="panel">
                 <div style="overflow-y:auto; max-height:100%">
@@ -182,12 +181,20 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
-                        <tr class="choice track-drop-target" style="height:20px;" onclick="display_playlist(<!= id !>)" data-playlist-id=<!= id !>>
-                            <td style="width:30px"></td>
-                            <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
-                            <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
-                            <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
-                        </tr>
+                        <! if(id == null) { !>
+                            <tr class="choice" style="height:20px; margin-left:10px; display:none">
+                                <td style="width:30px"></td>
+                                <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
+                                <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input type="text" class="new-playlist"></input></td>
+                            </tr>
+                        <! } else { !>
+                            <tr class="choice track-drop-target" style="height:20px;" onclick="display_playlist(<!= id !>)" data-playlist-id=<!= id !>>
+                                <td style="width:30px"></td>
+                                <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
+                                <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                                <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
+                            </tr>
+                        <! } !>
                     </script>
         
                 </div>
@@ -204,13 +211,14 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
-                        <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session(<!= id !>)">
-                            <td style="width:30px"></td>
-                            <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
-                            <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
-                            <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
-                            <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
-                        </tr>
+                            <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session(<!= id !>)">
+                                <td style="width:30px"></td>
+                                <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
+                                <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                                <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
+                                <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
+                            </tr>
+
                     </script>
         
                 </div>
@@ -352,21 +360,31 @@
                     <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
                 </table>
                 <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
-                    <tr class="list-group-item queued-track" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
-                        <td style="width:100%; margin:0; padding:0">
-                            <div class="element" contextmenu="mymenu">
-                                <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
-                                <div style="margin:0px; padding:0px; float:left; width:275px">
-                                    <div class="queue_element_title"><b><!= title !></b></div>
-                                    <div class="queue_element_artist"><i><!= artist !></i></div>
+                    <! if (id != null ) { !>
+                        <tr class="list-group-item queued-track" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                            <td style="width:100%; margin:0; padding:0">
+                                <div class="element" contextmenu="mymenu">
+                                    <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
+                                    <div style="margin:0px; padding:0px; float:left; width:275px">
+                                        <div class="queue_element_title"><b><!= title !></b></div>
+                                        <div class="queue_element_artist"><i><!= artist !></i></div>
+                                    </div>
+                                    <div class="queue_element_bpm"><!= bpm !> BPM</div>
+                                    <div class="queue_element_duration">
+                                        <b><!= duration !></b>
+                                    </div>
                                 </div>
-                                <div class="queue_element_bpm"><!= bpm !> BPM</div>
-                                <div class="queue_element_duration">
-                                    <b><!= duration !></b>
+                            </td>
+                        </tr>
+                    <! } else { !>
+                        <tr class="list-group-item queued-track" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                            <td style="width:100%; margin:0; padding:0">
+                                <div class="element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center">
+                                    <b>END OF QUEUE</b>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    <! } !>
                 </script>
             </div>        
         </div>
