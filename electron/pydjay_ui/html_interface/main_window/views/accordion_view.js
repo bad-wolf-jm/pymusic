@@ -7,7 +7,6 @@ class AccordionView extends EventDispatcher {
         this.headers       = []
         this.panel_heights = []
         this.panel_open    = []
-        //console.log(children)
         for (let i=0; i<children.length; i = i+2) {
             this.headers.push(children[i])
             this.panels.push(children[i+1])
@@ -18,12 +17,22 @@ class AccordionView extends EventDispatcher {
             } else {
                 this.panel_heights.push(undefined)
             }
-            children[i].addEventListener("click", () => {
-                    if (this.panel_open[i / 2]) {
-                        this.close_panel(i / 2)
+            children[i].addEventListener("click", (event) => {
+                    console.log(event.target.classList)
+                    if (event.target.classList.contains("action-icon")) {
+                        if (!(this.panel_open[i / 2])) {
+                            this.open_panel(i / 2)
+                        }
+                        //if (event.target.attributes["action"].value)    
+                        this.dispatch(event.target.attributes["action"].value)
                     } else {
-                        this.open_panel(i / 2)
+                        if (this.panel_open[i / 2]) {
+                            this.close_panel(i / 2)
+                        } else {
+                            this.open_panel(i / 2)
+                        }    
                     }
+                    //console.log(event)
                 }
             )
         }

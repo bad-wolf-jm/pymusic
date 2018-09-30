@@ -24,7 +24,7 @@ class SessionsView extends EventDispatcher {
                 name: list[i].name,
                 data: list[i],
                 date: moment(list[i].date).format("MM-DD-YYYY"),
-        }
+            }
             list_rows.push(element)
         }
         jui.ready([ "grid.table" ], function(table) {

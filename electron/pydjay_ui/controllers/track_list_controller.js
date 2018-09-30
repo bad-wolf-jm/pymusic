@@ -22,6 +22,9 @@ class TrackListController extends EventDispatcher {
         }
         this.model = model
         this.model.addController(this)
+        this.model.on("content-changed", (q) => {
+            this.set_list(this.name, q)
+        })
         this.model.ready(() => {
             let track_list = this.model.get_all_tracks()
             this.set_list(name, track_list)

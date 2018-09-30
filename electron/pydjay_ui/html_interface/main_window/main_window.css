@@ -340,7 +340,7 @@ button {
     background: rgb(80, 80, 80);
 }
 
-input[type=text] {
+input.main-track-search[type=text] {
 
     /* padding: 6px; */
     /* margin-top: 8px; */
@@ -400,14 +400,32 @@ input.new-playlist[type=text] {
 
 } */
 
-.queue_list .main-list-header .queue-management-button {
-    height:50px; 
-    width:50px; 
-    float:right;
-    border: 0px solid grey;
-    background-color: rgb(25,25,25);
+/* .queue_list .main-list-header  */
+.queue-management-button {
+    height:75px; 
+    width:250px; 
+    /* float:right; */
+    border: 2px solid grey;
+    border-radius: 25px;
+    background-color: rgb(87, 13, 129);
     outline:none !important;
+    font-size:20pt;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%)
+
 }
+
+.queue-management-button:hover {
+    /* height:75px;  */
+    /* width:250px;  */
+    /* float:right; */
+    /* border: 2px solid grey; */
+    /* border-radius: 25px; */
+    background-color: rgb(37, 93, 29);
+}
+
 
 .queue_list .main-list-header .title {
     height:50px; 

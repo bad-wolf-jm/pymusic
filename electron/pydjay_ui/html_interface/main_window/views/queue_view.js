@@ -140,7 +140,7 @@ class QueueView extends EventDispatcher {
     }
 
     handle_drop(evt) {
-        console.log(evt)
+        //console.log(evt)
         if (evt.stopPropagation) {
             evt.stopPropagation();
         }

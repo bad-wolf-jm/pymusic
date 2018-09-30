@@ -5,6 +5,21 @@ var path              = require('path');
 
 SV = new AccordionView("sidebar")
 
+SV.on("refresh-sessions", () => {
+    console.log("refresh-sessions")
+})
+
+
+SV.on("refresh-playlists", () => {
+    PL_controller.refresh(() => {})
+})
+
+SV.on("add-playlist", () => {
+    PL.begin_add()
+
+})
+
+
 DB = new DataProvider()
 
 tracks_model              = new TrackListModel()
@@ -149,7 +164,7 @@ mpc.on("queue-stop-request-cancelled",
 
 mpc.on("next-track-countdown", (time) => {
     let M = document.getElementById("main-player-track-title")
-    console.log(time)
+    //console.log(time)
     if (time > 1) {
         M.innerHTML = `Next track will start in ${time} seconds`
     } else if (time == 1) {
@@ -159,7 +174,6 @@ mpc.on("next-track-countdown", (time) => {
 
     }
 })
-
 
 document.getElementById("settings-button").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
@@ -185,8 +199,33 @@ document.getElementById("main-menu-skip-current-track").addEventListener('click'
 })
 
 document.getElementById("main-menu-save-session").addEventListener('click', () => {
+    document.getElementById("save-session-dialog").showModal();
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
+
+document.getElementById("session-save").addEventListener('click', () => {
+    let name = document.getElementById("session-name").value
+    let location = document.getElementById("session-location").value
+    let address = document.getElementById("session-address").value
+
+    if (name != "") {
+        //save
+        current_session_model.store_session(name, location, address, () => {
+            SE_controller.refresh(() => {})
+        })
+        
+        //console.log(name)
+    }
+
+    document.getElementById("save-session-dialog").close();
+})
+
+
+document.getElementById("session-save-cancel").addEventListener('click', () => {
+    document.getElementById("save-session-dialog").close();
+})
+
+
 
 document.getElementById("main-menu-settings").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");

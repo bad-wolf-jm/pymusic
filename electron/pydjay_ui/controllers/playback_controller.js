@@ -99,8 +99,10 @@ class PlaybackController extends PydjayAudioFilePlayer {
 
     start_queue() {
         if (!this.queue_playing) {
-            this._do_play_next_track()
-            this.dispatch("queue-started")
+            if (!(this.queue_controller.is_empty())) {
+                this._do_play_next_track()
+                this.dispatch("queue-started")    
+            }
         } else {
             if (!this.stop_request){
                 this.stop_request = true;
