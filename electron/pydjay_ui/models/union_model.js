@@ -9,11 +9,17 @@ class UnionModel extends EventDispatcher {
         if (this.models[name] == undefined) {
             this.models[name] = model
             model.ready((q) => {
-                this.model_tracks[name] = model.get_all_tracks().map((x) => {return (x != null) ? x.id : null})
+                if (q != undefined) {
+                    this.model_tracks[name] = model.get_all_tracks().map((x) => {return (x != null) ? x.id : null})
+                }
             })
             this.model_tracks[name] = [] 
             this.models[name].on("content-changed", (q) => {
-                Q = q.map((x) => {return (x != null) ? x.id : null})
+                if (q != undefined) {
+                    Q = q.map((x) => {return (x != null) ? x.id : null})
+                } else {
+                    Q = []
+                }
                 let tracks_to_add    = this.difference(Q, this.model_tracks[name]) 
                 let tracks_to_remove = this.difference(this.model_tracks[name], Q) 
                 let current_tracks   = this.get_all_track_ids()
