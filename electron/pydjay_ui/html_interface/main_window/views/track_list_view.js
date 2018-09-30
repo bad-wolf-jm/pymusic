@@ -76,7 +76,9 @@ class TrackListView extends EventDispatcher {
     set_list(name, queue) {
         this.view_list_order = []
         let queue_rows       = []  
-
+        if (queue == undefined) {
+            queue = []
+        }
         for(let i=0; i<queue.length; i++) {
             let element = {
                 id:          queue[i].id,
