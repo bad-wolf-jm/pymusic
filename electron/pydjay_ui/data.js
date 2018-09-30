@@ -372,4 +372,15 @@ function DataProvider() {
     self.add_to_current_session = function (track_data, k) {
         k()
     }
+
+    self.create_playlist = function (name, done) {
+        $QUERY(`SELECT id FROM playlists WHERE name='${name}'`, (x) => {
+            if (x.length == 0) {
+                current_time = DATE(new Date());
+                $QUERY(`INSERT INTO playlists (name, created) VALUES ('${name}', ${current_time})`, done)
+            } else {
+                done()    
+            }
+        })
+    }
 }

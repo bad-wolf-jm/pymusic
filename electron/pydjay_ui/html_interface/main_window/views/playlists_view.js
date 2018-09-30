@@ -3,9 +3,17 @@ class PlaylistsView extends EventDispatcher {
         super()
         this.dom_id          = dom_ids.list
         this.controller      = undefined
-        this.list_dom        = document.getElementById(dom_ids.list); 
+        this.add_row         = 
         this.view_list_order = []
     }
+
+    begin_add() {
+        document.getElementById("new-playlist").style.display = null
+    }
+
+    //refresh() {
+    //    this.controller.refresh(() => {})
+    // }
 
     set_controller(controller) {
         this.controller = controller
@@ -73,6 +81,17 @@ class PlaylistsView extends EventDispatcher {
                 });
             }
         )
+
+        let X = document.getElementById("new-playlist-name")
+        X.addEventListener("keyup", (e) => {
+            if (e.key == "Escape") {
+                document.getElementById("new-playlist").style.display="none"
+            } else if (e.key == "Enter") {
+                let new_name = X.value
+                this.controller.create_playlist(new_name)
+            }
+        })
+
         var drop_targets = document.querySelectorAll('.track-drop-target');
         [].forEach.call(drop_targets, (col) => {
             col.addEventListener('dragenter', this.on_drag_enter.bind(this), false);

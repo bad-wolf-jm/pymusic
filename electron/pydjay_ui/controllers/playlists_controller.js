@@ -5,15 +5,22 @@ class PlaylistsController extends EventDispatcher {
         this.queue_table = undefined
         this.ready_wait_queue = []
         this.views = []
+        this.refresh(() => {
+            for(let i=0; i<this.ready_wait_queue.length; i++) {
+                this.ready_wait_queue[i](this.queue)
+            }    
+        })
+    }
+
+    refresh(k) {
         DB.get_group_list((queue) => {
             this.queue = queue
             this.queue_table = {}
             for (let i=0; i<queue.length; i++) {
                 this.queue_table[queue[i].id] = queue[i]
             }
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i](this.queue)
-            }
+            k()
+            this.dispatch("content-changed", this.queue)
         })
     }
 
@@ -31,5 +38,13 @@ class PlaylistsController extends EventDispatcher {
 
     append_to_playlist(playlist_id, track_id) {
         DB.add_id_to_playlist(track_id, playlist_id, (x) => {})
+    }
+
+    create_playlist(name) {
+        DB.create_playlist(name, () => {
+            this.refresh(() => {
+                this.dispatch("content-changed", this.queue)
+            })
+        })
     }
 }
