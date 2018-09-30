@@ -57,6 +57,21 @@
 <script src="views/accordion_view.js"></script>
 
 <body class="jui" style="margin: 0px; padding:0px; height:100%">
+    <dialog id="save-session-dialog" style="z-index:1000; padding:0; background-color:rgb(100,100,100)">
+        <h1 style="background-color:rgb(30,30,30); text-align:center; font-size:11pt; margin:0px; color:rgb(200,200,200); height:30px; line-height:30px">Save current session</h1>
+        <div style="margin:10px">
+            <input id="session-name" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Name...">
+            <input id="session-location" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Location...">
+            <input id="session-address" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Address...">        
+        </div>
+        <menu>
+            <button id="session-save">SAVE</button>
+            <button id="session-save-cancel">CANCEL</button>
+        </menu>
+    </dialog>
+
+
+
     <div class="header">
         <div class="item">
             <div class="dropdown">
@@ -87,7 +102,7 @@
     </div>
     <div class="main_player" style="position:fixed">
         <div class="overlay" id="main-player-overlay">
-            
+            <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()">START</button>
         </div>
         <img id="main-player-track-cover" class="cover" src="test_cover.png" height="150" width="150"></img>
         <div style="float:left; display:block; width:calc(100% - 150px)">
@@ -126,6 +141,7 @@
         </div>
     </div>
     <div class="main_space">
+        
         <div id="sidebar" class="side_bar">
             <button class="accordion">Library</button>
             <div class="panel" data-fixed-height="180">
@@ -171,8 +187,8 @@
             <button class="accordion open-on-drag-over">
                 Playlists
                 <div class="action-button-group">
-                    <i id="add-playlist" class="fa fa-plus action-icon" onclick="console.log('sss')"></i>
-                    <i id="refresh-playlists" class="fa fa-refresh action-icon"></i>
+                    <i id="add-playlist" class="fa fa-plus action-icon" action="add-playlist"></i>
+                    <i id="refresh-playlists" class="fa fa-refresh action-icon" action="refresh-playlists"></i>
                 </div>
             </button>
             <div class="panel">
@@ -182,10 +198,10 @@
                     </table>
                     <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
                         <! if(id == null) { !>
-                            <tr class="choice" style="height:20px; margin-left:10px; display:none">
+                            <tr id="new-playlist" class="choice" style="height:20px; margin-left:10px; display:none">
                                 <td style="width:30px"></td>
                                 <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
-                                <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input type="text" class="new-playlist"></input></td>
+                                <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input id="new-playlist-name" type="text" class="new-playlist"></td>
                             </tr>
                         <! } else { !>
                             <tr class="choice track-drop-target" style="height:20px;" onclick="display_playlist(<!= id !>)" data-playlist-id=<!= id !>>
@@ -202,7 +218,7 @@
             <button class="accordion" style="margin-right:0">
                 Sessions
                 <div class="action-button-group">
-                    <i class="fa fa-refresh action-icon"></i>
+                    <i class="fa fa-refresh action-icon" action="refresh-sessions"></i>
                 </div>
                 </button>
             <div class="panel">
@@ -303,7 +319,7 @@
                 </div>
                 <div class="search-container">
                     <button type="submit" class="search-submit-button"><i class="fa fa-search"></i></button>
-                    <input id="filter-track-list" type="text" placeholder="Filter list..." name="search">
+                    <input id="filter-track-list" type="text" placeholder="Filter list..." name="search" class="main-track-search">
                 </div>
               
             </div>
@@ -351,7 +367,6 @@
                         <div id="queue-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="queue-duration" style="display:inline-block">57 minutes 37 seconds</div>
                     </div>
                 </div>
-                <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()"><i class="fa fa-play"></i></button>
             </div>
             <div id="queue-list-area" class="queue-list" id="queue-list-elements-div">
                 <table id="queue-list-elements" style="width:100%">

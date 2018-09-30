@@ -2,14 +2,21 @@ class CurrentSessionModel extends BaseListModel {
     constructor(tracks_model) {
         super()
         this.tracks_model = tracks_model
+        this.refresh(() => {
+            for(let i=0; i<this.ready_wait_queue.length; i++) {
+                this.ready_wait_queue[i]()
+            }                                                            
+        })
+    }
+
+    refresh(k) {
         DB.get_current_session_elements( (tracks) => { 
             this.tracks_order = []
             tracks.forEach((t) => {
                 this.tracks_order.push(t)
             })
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i]()
-            }                                                            
+            k()
+            this.dispatch("content-changed", this.queue)
         })            
     }
 
@@ -20,7 +27,6 @@ class CurrentSessionModel extends BaseListModel {
             this.ready_wait_queue.push(func)
         }
     }
-
 
     get_all_tracks() {
         let Q = []
@@ -99,7 +105,12 @@ class CurrentSessionModel extends BaseListModel {
                     $QUERY(`INSERT INTO track_relations (track_id, related_track_id, reason, count, date) 
                             VALUES ${relation_data.join(',')} ON DUPLICATE KEY UPDATE count=count+1`, () => {
                         $QUERY(`INSERT INTO session_tracks (session_id, track_id, start_time, end_time, position, status) VALUES ${queue_tuples.join(",")}`, () => {
-                            $QUERY(`TRUNCATE current_played_tracks`, k)
+                            $QUERY(`TRUNCATE current_played_tracks`, () => {
+                                this.refresh(() => {
+                                    this.dispatch('content-changed', this.get_all_tracks())
+                                    k()
+                                })
+                            })
                         })
                     })
                 })

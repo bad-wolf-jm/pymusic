@@ -77,3 +77,4 @@ class SessionController extends EventDispatcher {
     //     return undefined
     // }
 }
+
