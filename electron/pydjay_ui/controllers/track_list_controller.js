@@ -14,17 +14,25 @@ class TrackListController extends EventDispatcher {
         this.unavailable.on("track-available", (t) => {
             this.dispatch("track-available", t)
         }) 
+
+        this.on_content_changed = (q) => {
+            this.set_list(this.name, q)
+            let U = this.unavailable.get_all_track_ids()
+            Object.keys(U).forEach((id) => {this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
+        }
     }
 
     set_model(name, model) {
         if (this.model != undefined) {
             this.model.removeController(this)
+            this.model.un('content-changed', this.on_content_changed)
         }
         this.model = model
         this.model.addController(this)
-        this.model.on("content-changed", (q) => {
-            this.set_list(this.name, q)
-        })
+        this.model.on("content-changed", this.on_content_changed)
+        // (q) => {
+        //     this.set_list(this.name, q)
+        // })
         this.model.ready(() => {
             let track_list = this.model.get_all_tracks()
             this.set_list(name, track_list)

@@ -15,8 +15,9 @@ class TrackListView extends EventDispatcher {
             window.on('closed', () => {
                 window = null
             })
-            window.webContents.once("did-finish-load", () => {window.webContents.send("track-id", this.context_menu_element)})
-            
+            window.webContents.once("did-finish-load", () => {
+                window.webContents.send("track-id", this.context_menu_element)
+            })
             window.loadURL('file://' + __dirname + '/../track_edit/layout.html')
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))

@@ -52,7 +52,7 @@ class QueueView extends EventDispatcher {
                 ghostClass: "ghost",
 
                 onStart: function (evt) {
-                    console.log("start");
+                    //console.log("start");
                 },
                 onEnd: (evt) => {
                     let new_order = []
@@ -65,6 +65,8 @@ class QueueView extends EventDispatcher {
                     }
                     this.view_list_order = new_order
                     this.dispatch("reorder", this.view_list_order)
+                    this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
+                    this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`            
                 },
             }
         )
@@ -82,7 +84,6 @@ class QueueView extends EventDispatcher {
         let queue_rows = []  
 
         for(let i=0; i<queue.length; i++) {
-            //if queue[i] == null
             let element = (queue[i] == null) ? {id: null, stream_length:0} : {
                 id:       queue[i].id,
                 title:    queue[i].title,

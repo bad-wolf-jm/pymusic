@@ -95,8 +95,8 @@ mpc.on("queue-started",
 
 mpc.on("queue-stopped", 
     () => {
-        M = document.getElementById("queue-stop-message")
-        M.style.visibility="hidden"
+        //M = document.getElementById("queue-stop-message")
+        //M.style.visibility="hidden"
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
         B.style.backgroundColor = "rgb(25,25,25)"
@@ -106,8 +106,8 @@ mpc.on("queue-stopped",
 
 mpc.on("queue-finished", 
     () => {
-        M = document.getElementById("queue-stop-message")
-        M.style.visibility="hidden"
+        //M = document.getElementById("queue-stop-message")
+        //M.style.visibility="hidden"
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
         B.style.backgroundColor = "rgb(25,25,25)"
@@ -144,8 +144,8 @@ pc.on('playback-started', () => {
 
 mpc.on("queue-stop-requested", 
     () => {
-        M = document.getElementById("queue-stop-message")
-        M.style.display="inline-block"
+        //M = document.getElementById("queue-stop-message")
+        //M.style.display="inline-block"
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-close\"></i>"
         B.style.backgroundColor = "#667700"
