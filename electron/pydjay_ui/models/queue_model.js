@@ -113,7 +113,8 @@ class QueueModel extends BaseListModel {
 
     length() {
         if (this.tracks_order != undefined) {
-            return this.tracks_order.length
+            let i = this.tracks_order.indexOf(null)
+            return (i == -1) ? this.tracks_order.length : i 
         }
         return undefined
     }
@@ -121,10 +122,14 @@ class QueueModel extends BaseListModel {
     duration() {
         if (this.tracks_order != undefined) {
             let d = 0
-            this.tracks_order.forEach((i) => {
-                let x = this.tracks_model.get_track_by_id(i)
-                d += (x != undefined) ? x.stream_length : 0
-            })
+            for (let i=0; i<this.tracks_order.length; i++) {
+                if (this.tracks_order[i] == null) {
+                    return d
+                } else {
+                    let x = this.tracks_model.get_track_by_id(i)
+                    d += (x != undefined) ? x.stream_length : 0                        
+                }
+            }
             return d
         }
         return undefined
