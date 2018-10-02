@@ -21,6 +21,8 @@ class TrackListController extends EventDispatcher {
             Object.keys(U).forEach((id) => {this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
         }
     }
+    
+    
 
     set_model(name, model) {
         if (this.model != undefined) {

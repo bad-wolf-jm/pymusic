@@ -159,7 +159,6 @@ function DataProvider() {
         })
     }
 
-
     self.get_sessions_list = function (k) {
         $QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions 
         JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts 

@@ -14,7 +14,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.controller.on("track-finished",                this.set_queue.bind(this))
         this.controller.on("track-started",                this.set_track.bind(this))
         this.controller.on("queue-finished",                this.set_queue.bind(this))
-        this.controller.on("queue-fstopped",               this.set_queue.bind(this))
+        this.controller.on("queue-stopped",                this.set_queue.bind(this))
         this.controller.on("queue-stop-requested",         this.set_queue.bind(this))
         this.controller.on("queue-stop-request-cancelled", this.set_queue.bind(this))
         this.controller.on("next-track-countdown",         this.set_queue.bind(this))
