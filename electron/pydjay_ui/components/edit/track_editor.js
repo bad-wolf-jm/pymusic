@@ -85,78 +85,78 @@ class TrackEditWindow extends EventDispatcher {
         }
     }
 
-    pause_playback() {
-        this.audio_player.togglePause()
-    }
+    // pause_playback() {
+    //     this.audio_player.togglePause()
+    // }
 
-    preview_forward_seek_short() {
-        this.audio_player.skip(5)
-    }
+    // preview_forward_seek_short() {
+    //     this.audio_player.skip(5)
+    // }
 
-    preview_forward_seek_long() {
-        this.audio_player.skip(20)
-    }
+    // preview_forward_seek_long() {
+    //     this.audio_player.skip(20)
+    // }
 
-    preview_backward_seek_short() {
-        this.audio_player.skip(-5)
-    }
+    // preview_backward_seek_short() {
+    //     this.audio_player.skip(-5)
+    // }
 
-    preview_backward_seek_long() {
-        this.audio_player.skip(-20)
-    }
+    // preview_backward_seek_long() {
+    //     this.audio_player.skip(-20)
+    // }
 
-    set_start_marker() {
-        let sec_pos = this.audio_player.stream_position / 1000
-        let region_start = this._region.start
-        this._region.onResize(sec_pos - region_start, "start")
-    }
+    // set_start_marker() {
+    //     let sec_pos = this.audio_player.stream_position / 1000
+    //     let region_start = this._region.start
+    //     this._region.onResize(sec_pos - region_start, "start")
+    // }
 
-    set_end_marker() {
-        let sec_pos = this.audio_player.stream_position / 1000
-        let region_end = this._region.end
-        this._region.onResize(sec_pos - region_end)
-    }
+    // set_end_marker() {
+    //     let sec_pos = this.audio_player.stream_position / 1000
+    //     let region_end = this._region.end
+    //     this._region.onResize(sec_pos - region_end)
+    // }
 
-    move_start_marker_forward_short() {
-        this._region.onResize(0.1, 'start')
-    }
+    // move_start_marker_forward_short() {
+    //     this._region.onResize(0.1, 'start')
+    // }
 
-    move_start_marker_forward_long() {
-        this._region.onResize(1, 'start')
-    }
+    // move_start_marker_forward_long() {
+    //     this._region.onResize(1, 'start')
+    // }
 
-    move_end_marker_forward_short() {
-        this._region.onResize(0.1)
-    }
+    // move_end_marker_forward_short() {
+    //     this._region.onResize(0.1)
+    // }
 
-    move_end_marker_forward_long() {
-        this._region.onResize(1)
-    }
+    // move_end_marker_forward_long() {
+    //     this._region.onResize(1)
+    // }
 
-    move_start_marker_backward_short() {
-        this._region.onResize(-0.1, 'start')
-    }
+    // move_start_marker_backward_short() {
+    //     this._region.onResize(-0.1, 'start')
+    // }
 
-    move_start_marker_backward_long() {
-        this._region.onResize(-1, 'start')
-    }
+    // move_start_marker_backward_long() {
+    //     this._region.onResize(-1, 'start')
+    // }
 
-    move_end_marker_backward_short() {
-        this._region.onResize(-0.1)
-    }
+    // move_end_marker_backward_short() {
+    //     this._region.onResize(-0.1)
+    // }
 
-    move_end_marker_backward_long() {
-        this._region.onResize(-1)
-    }
+    // move_end_marker_backward_long() {
+    //     this._region.onResize(-1)
+    // }
 
-    setValue(id, value) {
-        $$(id).define('value', value)
-        $$(id).refresh()
-    }
+    // setValue(id, value) {
+    //     $$(id).define('value', value)
+    //     $$(id).refresh()
+    // }
 
-    getValue(id) {
-        return $$(id).getValue()
-    }
+    // getValue(id) {
+    //     return $$(id).getValue()
+    // }
 
     setRating (num){
         var html = "";

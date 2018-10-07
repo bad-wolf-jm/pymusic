@@ -153,8 +153,8 @@ button {
     text-transform:uppercase;
     font-weight:bold;
     font-size:16pt;
-    padding-left:15px;
-    height:15px;
+    /* padding-left:15px; */
+    height:35px;
 }
 
 .main_player .artist {
@@ -165,9 +165,9 @@ button {
     white-space: nowrap; 
     overflow: hidden;
     text-overflow: ellipsis;    
-    width:calc(100% - 150px);
-    height:15px;
-    padding-left:15px;
+    width:calc(100% - 55px);
+    height:25px;
+    /* padding-left:15px; */
 }
 
 .main_player .time_remaining {
@@ -230,9 +230,38 @@ button {
     font-size:10pt;
     margin:0px !important;
     padding:0px !important ;
+    width:100%;
+    background-color:inherit;
+    /* rgb(27, 27, 27) */
     /* display:inline-block;
     width:200px; */
 }
+
+.main_player .info  .input {
+    text-align:center;
+    text-transform:uppercase;
+    font-weight:medium;
+    font-size:10pt;
+    margin:0px !important;
+    padding:0px !important ;
+    width:100%;
+    color:rgb(182, 182, 182);
+    background-color:rgb(27, 27, 27);
+    border: 0px solid transparent;
+    outline: none;
+    /* text-align:center;
+    text-transform:uppercase;
+    font-weight:medium;
+    font-size:10pt;
+    margin:0px !important;
+    padding:0px !important ;
+    width:100%;
+    background-color:inherit; */
+    /* rgb(27, 27, 27) */
+    /* display:inline-block;
+    width:200px; */
+}
+
 
 .main_player .rating {
     display: inline-block;

@@ -33,9 +33,9 @@
             <img id="main-player-track-cover" class="cover" src="test_cover.png" height="200" width="200"></img>
         <div style="float:left; display:block; width:calc(100% - 200px)">
             <div style="display:inline-block; width:100%;">
-                <h1 id="main-player-track-title" class="title">Arkansas Blues</h1>
-                <h2 class="artist"><strong id="main-player-track-album">Norbert Susemihl - Night On Frenchman Street</strong></h2> 
-                <h2 class="artist"><em id="main-player-track-artist">(Norbert Susemihl, Jason Marsalis, Kerry Lewis)</em></h2>        
+                <input type="text" class="title" id="main-player-track-title" /> 
+                <input type="text" class="artist" id="main-player-track-album" />
+                <input type="text" class="artist" id="main-player-track-artist">
             </div>
             <div class="rating">
                     <div id="main-player-rating" class="value"></div>
@@ -46,49 +46,36 @@
 
             <div class="track-info"> 
                 <div class="info">
-                    <div class="title">start</div>
-                    <div id="main-player-track-start" class="value">3:12.345</div>
+                    <div class="title">start</div> <div id="main-player-track-start" class="value">3:12.345</div>
                 </div>
-                
                 <div class="info" style="width:75px !important">
                     <div class="title">end</div>
                     <div id="main-player-track-end" class="value">3:12.345</div>
                 </div>
                 <div class="info" style="width:100px !important">
                     <div class="title">GENRE</div>
-                    <div  id="main-player-track-genre" class="value">Acoustic DElta Blues</div>
+                    <input id="main-player-track-genre" class="input"/>
                 </div>
 
                 <div class="info" style="width:75px !important">
                     <div class="title">YEAR</div>
-                    <div  id="main-player-track-year" class="value">2017</div>
+                    <input  id="main-player-track-year" class="input"/> 
                 </div>
 
                 <div class="info" style="width:50px !important">
                     <div class="title">BPM</div>
-                    <div id="main-player-track-bpm" class="value">120</div>
+                    <input id="main-player-track-bpm" class="input"/>
                 </div>
-    
-
                 <div class="info" style="width:75px !important">
                     <div class="title">DURATION</div>
                     <div id="main-player-track-duration" class="value">3:12</div>
                 </div>
-    
-                <!-- <div class="info" style="width:200px !important">
-                    <div class="title">LAST PLAYED</div>
-                    <div id="main-player-track-last-played" class="value">Sun Sep 23 2018 18:59:09</div>
-                </div>
-                <div class="info" style="width:200px !important">
-                    <div class="title">LAST PLAYED EVENT</div>
-                    <div id="main-player-track-last-played-at" class="value">Les Lundis Let's Blues</div>
-                </div> -->
             </div>
         </div>
     </div>
     <div id="main-player-waveform" class="waveform" style="width:calc(100%) !important;"></div>
     <div style="height:50px; width:100%; display:inline-block; position:relative">
-        <button style="float:left; width:50px; height:50px; border-radius:25px; border:1px solid gray; background-color:rgb(35,35,35)"><i class="fa fa-play" style="text-align:center; font-size:12pt"></i></button>
+        <button id="play-button" style="float:left; width:50px; height:50px; border-radius:25px; border:1px solid gray; background-color:rgb(35,35,35)"><i class="fa fa-play" style="text-align:center; font-size:12pt"></i></button>
         <div style="float:left; width:50px"><i class="fa fa-search-minus" style="width:50px; text-align:center; line-height:50px; vertical-align:middle; font-size:12pt"></i></div>
         <div style="float:left; width: calc(100% - 150px); height:50px"><input id="slider" type="range" min="1" max="200" value="1"  style="position:absolute; top:50%; transform: translateY(-50%); width: calc(100% - 150px);" /></div>
         <div style="float:left; width:50px"><i class="fa fa-search-plus" style="width:50px; text-align:center; line-height:50px; vertical-align:middle; font-size:12pt"></i></div>
@@ -149,7 +136,7 @@
     </div>
     <div style="width:100%">
         <button class="form-button" style="float:right; border-radius:10px; background-color:rgb(170,35,35)" onclick="closeme()">Cancel</button>
-        <button class="form-button" style="float:right; border-radius:10px">Save</button>
+        <button class="form-button" style="float:right; border-radius:10px" onclick="saveme()">Save</button>
     </div>
     <script src="script.js"></script>
 </body>

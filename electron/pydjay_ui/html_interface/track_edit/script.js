@@ -4,6 +4,9 @@ var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.mi
 var path              = require('path');
 const { ipcRenderer } = require('electron');
 const remote = require('electron').remote;
+
+var track_id = null
+
 DB = new DataProvider()
 
 view = new MainPlayerView()
@@ -17,14 +20,12 @@ function _get_rating(track_object) {
     return html
 }
 
-ipcRenderer.on('track-id', (event, arg) => {
-    // Update the second interface or whatever you need to do
-    // for example show an alert ...
-    //alert("Hello, you did something in the first window !", arg);
-    DB.get_track_by_id(arg.id, (track) => {
+function setTrack(id) {
+    track_id = id
+    DB.get_track_by_id(id, (track) => {
         view.set_track(track[0])
-        DB.get_related_tracks(arg.id, (queue) => {
-            DB.get_playback_history(arg.id, (history) => {
+        DB.get_related_tracks(id, (queue) => {
+            DB.get_playback_history(id, (history) => {
                 let queue_rows = []  
                 for(let i=0; i<queue.length; i++) {
                     let element = {
@@ -60,10 +61,18 @@ ipcRenderer.on('track-id', (event, arg) => {
     })    
     // arg contains the data sent from the first view
     //console.log(arg);
-});
+}
+
+// setTrack(251)
+ipcRenderer.on('track-id', (event, arg) => {setTrack(arg.id)});
 
 function closeme() {
     var window = remote.getCurrentWindow();
-    console.log(window)
+    window.close();
+}
+
+function saveme() {
+    var window = remote.getCurrentWindow();
+    DB.update_track_data(track_id, view.getValues(), () => {console.log("OK")})
     window.close();
 }
