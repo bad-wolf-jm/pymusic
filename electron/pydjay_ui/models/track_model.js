@@ -29,6 +29,17 @@ class TrackListModel extends BaseListModel {
         return this.track_list[id]
     }
 
+
+    update(id) {
+        // console.log(id)
+        DB.get_track_by_id(id, (result) => {
+            let track = result[0]
+            this.track_list[id] = track
+            // console.log(track)
+            this.dispatch("metadata-changed", this.track_list[id])
+        })
+    }
+
     set_metadata(track, metadata) {
         X = this.track_list[track.id]
         metadata_keys = Object.keys(metadata)

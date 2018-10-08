@@ -2,11 +2,13 @@ Sortable              = require("../../../lib/Sortable.js")
 WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
+//const { ipcRenderer } = require('electron');
 
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
-    console.log("refresh-sessions")
+    SE_controller.refresh(() => {})
+    // console.log("refresh-sessions")
 })
 
 
@@ -49,6 +51,12 @@ vc                        = new VolumeController(mpc, pc)
 
 Q_controller.set_model(queue_model)
 S_controller.set_model(current_session_model)
+
+ipcRenderer.on("track-modified", (e, id) => {
+    //console.log(e, id)
+    tracks_model.update(id)
+})
+
 
 Q = new QueueView({
     list:       'queue-elements-body',

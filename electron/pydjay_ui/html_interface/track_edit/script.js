@@ -59,11 +59,8 @@ function setTrack(id) {
             })
         })
     })    
-    // arg contains the data sent from the first view
-    //console.log(arg);
 }
 
-// setTrack(251)
 ipcRenderer.on('track-id', (event, arg) => {setTrack(arg.id)});
 
 function closeme() {
@@ -73,6 +70,8 @@ function closeme() {
 
 function saveme() {
     var window = remote.getCurrentWindow();
-    DB.update_track_data(track_id, view.getValues(), () => {console.log("OK")})
-    window.close();
+    DB.update_track_data(track_id, view.getValues(), () => {
+        ipcRenderer.send("track-modified", track_id)
+        window.close();
+    })
 }

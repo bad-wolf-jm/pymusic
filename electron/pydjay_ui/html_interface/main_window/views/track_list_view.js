@@ -1,3 +1,5 @@
+const { ipcRenderer } = require('electron');
+
 class TrackListView extends EventDispatcher {
     constructor(dom_ids) {
         super()
@@ -38,7 +40,6 @@ class TrackListView extends EventDispatcher {
         this.menu.on("menu-will-close", (e) => {})
 
         this.filter_dom.oninput = (e) => {
-            // console.log(this.filter_dom.value)
             this.filter_list(this.filter_dom.value)
         }
 
