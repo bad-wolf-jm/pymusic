@@ -31,11 +31,9 @@ class TrackListModel extends BaseListModel {
 
 
     update(id) {
-        // console.log(id)
         DB.get_track_by_id(id, (result) => {
             let track = result[0]
             this.track_list[id] = track
-            // console.log(track)
             this.dispatch("metadata-changed", this.track_list[id])
         })
     }

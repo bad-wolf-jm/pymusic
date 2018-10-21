@@ -3,8 +3,6 @@ class TrackListController extends EventDispatcher {
         super()
         this.list             = []
         this.unavailable      = unavailable_model
-        //this.list_table       = {}
-        // this.ready_wait_queue = []
         this.views            = []
         this.selection        = undefined
         this.model            = undefined
@@ -22,10 +20,6 @@ class TrackListController extends EventDispatcher {
         }
         this.on_metadata_changed = (q) => {
             this.list[q.id] = q            
-            // this.set_list(this.name, q)
-            //let U = this.unavailable.get_all_track_ids()
-            console.log(q)
-            //Object.keys(U).forEach((id) => {this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
         }
     }
     
@@ -41,9 +35,6 @@ class TrackListController extends EventDispatcher {
         this.model.addController(this)
         this.model.on("content-changed", this.on_content_changed)
         this.model.on("metadata-changed", this.on_metadata_changed)
-        // (q) => {
-        //     this.set_list(this.name, q)
-        // })
         this.model.ready(() => {
             let track_list = this.model.get_all_tracks()
             this.set_list(name, track_list)

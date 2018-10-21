@@ -1,3 +1,28 @@
+var mysql = require('mysql');
+
+var db_connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "root",
+  database:'pymusic'
+});
+
+function $QUERY(sql, with_result) {
+    db_connection.query(
+        sql,
+        function (error, result) {
+            console.log(error, result)
+            if (error) {
+                console.log(error)
+                throw error;
+            } else {
+                console.log(result)
+                with_result(result);
+            }
+        }
+    )
+}
+
 
 function addslashes(s) {
     if (s == null) return null;
@@ -201,30 +226,6 @@ function DataProvider() {
         $QUERY(sql, k)
     }
 
-
-    // self.get_played_queue_elements = function (k) {
-    //     var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-    //     var sql = `SELECT session_queue.position AS position, \`tracks_view\`.* 
-    //                 FROM session_queue 
-    //                 JOIN ${tracks_sql} 
-    //                 ON tracks_view.id = session_queue.track_id 
-    //                 WHERE session_queue.status='played' 
-    //                 ORDER BY session_queue.position`
-    //     $QUERY(sql, k)
-    // }
-
-
-    // self.get_queue_track = function(id, k) {
-    //     var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-    //     var sql = `SELECT session_queue.position AS position, \`tracks_view\`.* 
-    //                FROM session_queue 
-    //                JOIN ${tracks_sql} 
-    //                ON tracks_view.id = session_queue.track_id 
-    //                WHERE session_queue.status='pending' AND session_queue.track_id=${id} 
-    //                ORDER BY session_queue.position`
-    //     $QUERY(sql, k)
-    // }
-
     self.get_suggested_tracks = function (k) {
         let sql = `SELECT DISTINCT related_track_id as id
                         FROM track_relations 
@@ -232,13 +233,6 @@ function DataProvider() {
                             (SELECT track_id FROM session_queue WHERE status='pending')`
         $QUERY(sql, k)
     }
-
-    // self.get_queue_duration = function (k) {
-    //     $QUERY(`SELECT SUM(duration) as duration, COUNT(id) as count, AVG(wait_time) as wait_time FROM
-    //     (SELECT 1 as id, tracks.stream_length as duration, session_queue.id as count, settings.wait_time as wait_time
-    //     FROM tracks JOIN session_queue ON tracks.id=session_queue.track_id LEFT JOIN settings on 1
-    //     WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`, k)
-    // }
 
     self.get_settings = function (k) {
        $QUERY("SELECT db_image_cache as image_root, db_music_cache as music_root, db_waveform_cache as waveform_root FROM settings",

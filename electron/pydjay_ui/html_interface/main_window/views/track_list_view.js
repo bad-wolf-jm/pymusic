@@ -23,15 +23,32 @@ class TrackListView extends EventDispatcher {
             window.loadURL('file://' + __dirname + '/../track_edit/layout.html')
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
-        this.menu.append(new MenuItem({label: 'Shortlist', click() { console.log("GET INFO", this.context_menu_element) }}))
-        this.menu.append(new MenuItem({label: 'Marked as played', click() { console.log("GET INFO", this.context_menu_element) }}))
-        this.menu.append(new MenuItem({label: 'Add to queue', click() { console.log("GET INFO", this.context_menu_element) }}))
+        this.menu.append(new MenuItem({label: 'Shortlist', click: () => {
+            let T = this.context_menu_element
+
+        }}))
+        
+        //click() { console.log("GET INFO", this.context_menu_element) }}))
+        this.menu.append(new MenuItem({label: 'Marked as played', click: () => {
+            let T = this.context_menu_element
+            
+        }}))
+        this.menu.append(new MenuItem({label: 'Add to queue', click: () => {
+            let T = this.context_menu_element
+            
+        }}))
         this.menu.append(new MenuItem({type:  'separator'}))
         this.menu.append(new MenuItem({label: 'Preview', 
             submenu: [
-                {label: 'Full track', click: () => {pc.play(this.context_menu_element) }},
-                {label: 'Last 30 seconds', click: () => {pc.play_last_30_seconds(this.context_menu_element)  }},
-                {label: 'Last 10 seconds', click: () =>{pc.play_last_10_seconds(this.context_menu_element)  }}
+                {label: 'Full track', click: () => {
+                    pc.play(this.context_menu_element)
+                }},
+                {label: 'Last 30 seconds', click: () => {
+                    pc.play_last_30_seconds(this.context_menu_element)
+                }},
+                {label: 'Last 10 seconds', click: () =>{
+                    pc.play_last_10_seconds(this.context_menu_element)
+                }}
             ]}))
                 
         this.menu.append(new MenuItem({type: 'separator'}))

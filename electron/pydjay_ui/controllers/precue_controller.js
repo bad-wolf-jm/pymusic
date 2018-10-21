@@ -9,10 +9,6 @@ class PrecueController extends PydjayAudioFilePlayer {
     constructor() {
         super()
         this.views              = []
-        // this.session_controller = session_controller
-        // this.queue_controller   = queue_controller
-        // this.stop_request       = false
-        // this.playing            = false
         this.on('end-of-stream', () => {
                 this.dispatch("track-finished")
             }

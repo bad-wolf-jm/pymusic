@@ -31,14 +31,10 @@ class QueueModel extends BaseListModel {
 
     reorder_queue(new_order) {
         this.tracks_order = new_order
-        //console.log(this.tracks_order)
         this.save()
     }
 
     is_empty() {
-        //console.log(this.tracks_order)
-        //console.log(this.tracks_order.length)
-
         return (this.tracks_order == undefined) || (this.tracks_order.length == 0) || (this.tracks_order[0] == null)
     }
 
