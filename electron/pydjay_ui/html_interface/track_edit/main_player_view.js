@@ -41,8 +41,6 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             if (this.audio_player.state == "PLAYING") {
                 this.audio_player.stop()
                 this.current_stream_position = null
-                //$$(this.play_button_id).define("icon", "play")
-                //$$(this.play_button_id).refresh()
             } else {
                 let start;
                 if (this.current_stream_position != null) {
@@ -51,15 +49,11 @@ class MainPlayerView extends PydjayAudioFilePlayer {
                     start = this.stream_start / 1000000
                 }
                 this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end / 1000000)
-                //$$(this.play_button_id).define("icon", "stop")
-                //$$(this.play_button_id).refresh()
-            }
-            })
+            }})
 
         document.getElementById("main-player-loved").addEventListener("click", () => {
             this.setLoved(!(this.loved))
         })
-
 
         var slider = document.querySelector('#slider');
         slider.oninput =  () => {
@@ -108,7 +102,6 @@ class MainPlayerView extends PydjayAudioFilePlayer {
                     end:   this._track.stream_end / 1000000000,
                     color: "rgba(25,100,0,0.5)"
                 })
-                //console.log(this._region)
                 this._region.on("update", 
                     () => {
                         this.stream_start = Math.round(this._region.start * 1000000000)
@@ -173,7 +166,3 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         return v
     }
 }
-
-// document.getElementById("main-player-track-start").innerHTML,
-// document.getElementById("main-player-track-end").innerHTML,
-// document.getElementById("main-player-track-duration").innerHTML,

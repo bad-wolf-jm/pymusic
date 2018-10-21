@@ -1,4 +1,3 @@
-//Sortable              = require("../../../lib/Sortable.js")
 WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
