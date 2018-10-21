@@ -160,7 +160,6 @@ class QueueView extends EventDispatcher {
         x.classList.add("selected")
     }
 
-
     connect_events() {
         let elements = document.querySelectorAll('.queued-track');
         [].forEach.call(elements, (e) => {

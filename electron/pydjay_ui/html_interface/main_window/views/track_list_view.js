@@ -1,7 +1,7 @@
 const { ipcRenderer } = require('electron');
 
 class TrackListView extends EventDispatcher {
-    constructor(dom_ids) {
+    constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
         super()
         this.dom_id         = dom_ids.list
         this.controller     = undefined
@@ -10,6 +10,10 @@ class TrackListView extends EventDispatcher {
         this.num_tracks_dom = document.getElementById(dom_ids.num_tracks); 
         this.duration_dom   = document.getElementById(dom_ids.duration);
         this.filter_dom      = document.getElementById(dom_ids.filter); 
+
+        this.shortlist_controller = shortlist_controller        
+        this.queue_controller = queue_controller
+        this.unavailable_controller = unavailable_controller
 
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Track info', click: () => { 
@@ -25,17 +29,17 @@ class TrackListView extends EventDispatcher {
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Shortlist', click: () => {
             let T = this.context_menu_element
+            this.shortlist_controller.add(T)            
 
         }}))
         
-        //click() { console.log("GET INFO", this.context_menu_element) }}))
         this.menu.append(new MenuItem({label: 'Marked as played', click: () => {
             let T = this.context_menu_element
-            
+            this.unavailable_controller.add(T)            
         }}))
         this.menu.append(new MenuItem({label: 'Add to queue', click: () => {
             let T = this.context_menu_element
-            
+            this.queue_controller.append(T)
         }}))
         this.menu.append(new MenuItem({type:  'separator'}))
         this.menu.append(new MenuItem({label: 'Preview', 

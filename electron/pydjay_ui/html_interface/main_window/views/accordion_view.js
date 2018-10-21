@@ -18,12 +18,10 @@ class AccordionView extends EventDispatcher {
                 this.panel_heights.push(undefined)
             }
             children[i].addEventListener("click", (event) => {
-                    console.log(event.target.classList)
                     if (event.target.classList.contains("action-icon")) {
                         if (!(this.panel_open[i / 2])) {
                             this.open_panel(i / 2)
                         }
-                        //if (event.target.attributes["action"].value)    
                         this.dispatch(event.target.attributes["action"].value)
                     } else {
                         if (this.panel_open[i / 2]) {
@@ -32,7 +30,6 @@ class AccordionView extends EventDispatcher {
                             this.open_panel(i / 2)
                         }    
                     }
-                    //console.log(event)
                 }
             )
         }

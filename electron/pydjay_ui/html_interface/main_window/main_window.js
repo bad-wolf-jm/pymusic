@@ -70,7 +70,7 @@ T = new TrackListView({
     num_tracks: "main-track-list-number-of-tracks",
     duration:   "main-track-list-duration",
     filter:      "filter-track-list"
-})
+}, Q_controller, shortlist_model, unavailable_model)
 T.set_controller(T_controller)
 
 PL = new PlaylistsView({
@@ -103,8 +103,6 @@ mpc.on("queue-started",
 
 mpc.on("queue-stopped", 
     () => {
-        //M = document.getElementById("queue-stop-message")
-        //M.style.visibility="hidden"
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
         B.style.backgroundColor = "rgb(25,25,25)"
@@ -114,8 +112,6 @@ mpc.on("queue-stopped",
 
 mpc.on("queue-finished", 
     () => {
-        //M = document.getElementById("queue-stop-message")
-        //M.style.visibility="hidden"
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
         B.style.backgroundColor = "rgb(25,25,25)"
@@ -144,7 +140,6 @@ pc.on('playback-paused', () => {
 pc.on('playback-started', () => {
         vc.mute_monitor()
         SV.open_panel(3)
-        //console.log("ST")
     }
 )
 
@@ -152,8 +147,6 @@ pc.on('playback-started', () => {
 
 mpc.on("queue-stop-requested", 
     () => {
-        //M = document.getElementById("queue-stop-message")
-        //M.style.display="inline-block"
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-close\"></i>"
         B.style.backgroundColor = "#667700"
@@ -172,7 +165,6 @@ mpc.on("queue-stop-request-cancelled",
 
 mpc.on("next-track-countdown", (time) => {
     let M = document.getElementById("main-player-track-title")
-    //console.log(time)
     if (time > 1) {
         M.innerHTML = `Next track will start in ${time} seconds`
     } else if (time == 1) {
