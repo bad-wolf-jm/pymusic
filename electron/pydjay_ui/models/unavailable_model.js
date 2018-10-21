@@ -1,21 +1,4 @@
 class UnavailableModel extends BaseListModel {
-    // constructor(tracks_model) {
-    //     super()
-    //     this.tracks_model = tracks_model
-    //     this.models    = []
-    //     this.track_ids = []
-
-    //     DB.get_unavailable_tracks( (tracks) => { 
-    //         this.track_list = {}
-    //         tracks.forEach((t) => {
-    //             this.track_list[t.id] = this.tracks_model.get_track_by_id(t.id)
-    //         })
-    //         for(let i=0; i<this.ready_wait_queue.length; i++) {
-    //             this.ready_wait_queue[i]()
-    //         }                                                            
-    //     })            
-    // }
-
     constructor(tracks_model) {
         super()
         this.tracks_model = tracks_model
@@ -57,7 +40,6 @@ class UnavailableModel extends BaseListModel {
     get_all_tracks() {
         Q = []
         this.tracks_order.forEach((x) => {
-            console.log(x) 
             Q.push(this.tracks_model.get_track_by_id(x.id))})
         Q.sort(this.compare_tracks)
         return Q

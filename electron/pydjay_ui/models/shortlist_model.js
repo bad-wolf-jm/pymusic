@@ -39,7 +39,6 @@ class ShortlistModel extends BaseListModel {
     get_all_tracks() {
         Q = []
         this.tracks_order.forEach((x) => {
-            console.log(x) 
             Q.push(this.tracks_model.get_track_by_id(x.id))})
         Q.sort(this.compare_tracks)
         return Q

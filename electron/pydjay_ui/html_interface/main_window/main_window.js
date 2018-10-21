@@ -246,7 +246,6 @@ function display_all_songs() {
 }
 
 function display_current_session() {
-    // console.log(current_session_model)
     T_controller.set_model("Current Session", current_session_model)
 }
 
