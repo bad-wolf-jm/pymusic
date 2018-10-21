@@ -22,19 +22,31 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             this.audio_player.connectOutputs(pl_channel_config2)    
         }
 
+        this.audio_player.on("playback-started", () => {
+            ipcRenderer.send("playback-started")
+        })
+
+        this.audio_player.on("playback-paused", () => {
+            ipcRenderer.send("playback-stopped")
+        })
+        
+        this.audio_player.on("playback-stopped", () => {
+            ipcRenderer.send("playback-stopped")
+        })
+
     }
 
     set_track(track) {
         let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
-        document.getElementById("main-player-track-title").value  = track.title
-        document.getElementById("main-player-track-album").value  = track.album
+        document.getElementById("main-player-track-title").value = track.title
+        document.getElementById("main-player-track-album").value = track.album
         document.getElementById("main-player-track-artist").value = track.artist
-        document.getElementById("main-player-track-bpm").value    = track.bpm
-        document.getElementById("main-player-track-genre").value  = track.genre
-        document.getElementById("main-player-track-year").value   = track.year
+        document.getElementById("main-player-track-bpm").value = track.bpm
+        document.getElementById("main-player-track-genre").value = track.genre
+        document.getElementById("main-player-track-year").value = track.year
         document.getElementById("main-player-track-start").innerHTML = `${format_nanoseconds(track.stream_start)}`
-        document.getElementById("main-player-track-end").innerHTML   = `${format_nanoseconds(track.stream_end)}`
+        document.getElementById("main-player-track-end").innerHTML = `${format_nanoseconds(track.stream_end)}`
         document.getElementById("main-player-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
 
         document.getElementById("play-button").addEventListener("click", () => {
@@ -108,8 +120,8 @@ class MainPlayerView extends PydjayAudioFilePlayer {
                         this.stream_end = Math.round(this._region.end * 1000000000)
                         this.stream_length = this.stream_end - this.stream_start
                         document.getElementById("main-player-track-start").innerHTML = `${format_nanoseconds(this.stream_start)}`
-                        document.getElementById("main-player-track-end").innerHTML   = `${format_nanoseconds(this.stream_end)}`
-                        document.getElementById("main-player-track-duration").innerHTML   = `${format_nanoseconds(this.stream_length)}`
+                        document.getElementById("main-player-track-end").innerHTML = `${format_nanoseconds(this.stream_end)}`
+                        document.getElementById("main-player-track-duration").innerHTML = `${format_nanoseconds(this.stream_length)}`
                     }
                 )
             }

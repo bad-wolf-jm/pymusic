@@ -11,10 +11,6 @@ class PlaylistsView extends EventDispatcher {
         document.getElementById("new-playlist").style.display = null
     }
 
-    //refresh() {
-    //    this.controller.refresh(() => {})
-    // }
-
     set_controller(controller) {
         this.controller = controller
         this.controller.addView(this)

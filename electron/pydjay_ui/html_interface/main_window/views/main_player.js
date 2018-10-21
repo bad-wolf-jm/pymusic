@@ -36,7 +36,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.setLoved(track.favorite)
         let cover_source = undefined
         if (track.cover == null) {
-            cover_source = "../../../resources/images/default_album_cover.png"
+            cover_source = "../../resources/images/default_album_cover.png"
         } else {
             cover_source = `file://${track.image_root}/${track.cover}`;
         }

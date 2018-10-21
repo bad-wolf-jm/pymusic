@@ -93,7 +93,7 @@ class QueueView extends EventDispatcher {
             }
             if (element.id != null) {
                 if (queue[i].cover == null) {
-                    element.cover = "../../../resources/images/default_album_cover.png"
+                    element.cover = "../../resources/images/default_album_cover.png"
                 } else {
                     element.cover = `file://${queue[i].image_root}/${queue[i].cover}`
                 }    

@@ -133,10 +133,12 @@ pc.on('playback-stopped',  () => {
         vc.restore_monitor()
     }
 )
+
 pc.on('playback-paused', () => {
         vc.restore_monitor()
     }
 )
+
 pc.on('playback-started', () => {
         vc.mute_monitor()
         SV.open_panel(3)
@@ -286,5 +288,11 @@ function display_playlist(id) {
         }
     )
 }
+
+ipcRenderer.on('playback-started', (event, arg) => {        
+    vc.mute_monitor()});
+
+ipcRenderer.on('playback-stopped', (event, arg) => {
+    vc.restore_monitor()});
 
 display_all_songs()

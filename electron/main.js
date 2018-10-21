@@ -18,6 +18,13 @@ app.on('ready', function() {
 });
 
 ipcMain.on('track-modified', (event, message) => {
-  //console.log(message); // logs out "Hello second window!"
   mainWindow.webContents.send("track-modified", message)
+})
+
+ipcMain.on('playback-start', (event, message) => {
+  mainWindow.webContents.send("playback-start", message)
+})
+
+ipcMain.on('playback-stop', (event, message) => {
+  mainWindow.webContents.send("playback-stop", message)
 })
