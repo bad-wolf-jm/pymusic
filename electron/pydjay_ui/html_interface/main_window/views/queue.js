@@ -51,8 +51,8 @@ class QueueView extends EventDispatcher {
                 animation: 150,
                 ghostClass: "ghost",
 
-                onStart: function (evt) {
-                    //console.log("start");
+                onStart: (evt) => {
+
                 },
                 onEnd: (evt) => {
                     let new_order = []
@@ -136,12 +136,10 @@ class QueueView extends EventDispatcher {
         if (evt.preventDefault) {
             evt.preventDefault();
         }
-        //console.log(evt)
         evt.dataTransfer.dropEffect = 'move';
     }
 
     handle_drop(evt) {
-        //console.log(evt)
         if (evt.stopPropagation) {
             evt.stopPropagation();
         }
