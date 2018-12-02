@@ -26,7 +26,7 @@ class TopMenu {
             'SELECT wait_time FROM settings',
             function (e, r) {
                 if (e) throw e;
-                wait_time = r[0].wait_time;
+                let wait_time = r[0].wait_time;
                 let x = webix.ui({
                     view:"window",
                     modal:true,
