@@ -11,7 +11,6 @@
 <script src="../../../web-audio/audio_player_base.js"></script>
 <script src="../../../web-audio/audio_player_buffer.js"></script>
 <script src="../../../web-audio/audio_player_file.js"></script>
-<script src="../../../web-audio/mp3_fileinfo.js"></script>
 
 <script src="../../../lib/jui/core/lib/jquery-1.8.0.min.js"></script>
 <script src="../../../lib/jui/core/dist/core.min.js"></script>
@@ -103,7 +102,7 @@
         <div class="overlay" id="main-player-overlay">
             <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()">START</button>
         </div>
-        <img id="main-player-track-cover" class="cover" src="test_cover.png" height="150" width="150"></img>
+        <img id="main-player-track-cover" class="cover" src="" height="150" width="150"></img>
         <div style="float:left; display:block; width:calc(100% - 150px)">
             <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
                 <div style="display:inline-block; width:calc(100% - 150px)">
@@ -244,7 +243,7 @@
                     <div id="no-preview-track" class="overlay">
                         No track to preview
                     </div>
-                    <img id="precue-player-cover" class="cover" src="test_cover.png" height="75" width="75"></img>
+                    <img id="precue-player-cover" class="cover" src="" height="75" width="75"></img>
                     <div style="padding:20px; height:50px; width:calc(100% - 115px); display:inline-block">
                         <button id="precue-player-play-button" class="precue-management-button" style="float:left"><i class="fa fa-play"></i></button>
                         <progress id="precue-player-track-progress" value="10" max="100" class="precue-player-progress"></progress>
