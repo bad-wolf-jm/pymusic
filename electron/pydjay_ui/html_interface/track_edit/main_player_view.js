@@ -33,7 +33,6 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.audio_player.on("playback-stopped", () => {
             ipcRenderer.send("playback-stopped")
         })
-
     }
 
     set_track(track) {

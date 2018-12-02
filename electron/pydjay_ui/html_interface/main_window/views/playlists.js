@@ -5,6 +5,22 @@ class PlaylistsView extends EventDispatcher {
         this.controller      = undefined
         this.add_row         = 
         this.view_list_order = []
+
+        this.menu = new Menu()
+        this.menu.append(new MenuItem({label: 'Edit...', click: () => {
+            let T = this.context_menu_element
+        }}))
+        this.menu.append(new MenuItem({type: 'separator'}))
+        this.menu.append(new MenuItem({label: 'Rename', click: () => {
+            let T = this.context_menu_element
+        }}))
+        this.menu.append(new MenuItem({label: 'Duplicate', click: () => {
+            let T = this.context_menu_element
+        }}))
+        this.menu.append(new MenuItem({type: 'separator'}))
+        this.menu.append(new MenuItem({label: 'Delete', click: () => {
+            let T = this.context_menu_element
+        }}))
     }
 
     begin_add() {
@@ -95,6 +111,16 @@ class PlaylistsView extends EventDispatcher {
             col.addEventListener('dragover',  this.on_drag_over.bind(this), false);
             col.addEventListener('dragend',   this.on_drag_end.bind(this), false);
             col.addEventListener('drop',      this.on_drop.bind(this), false);
+            col.addEventListener('contextmenu', (e) => {
+                e.preventDefault()
+                //this.select_row(e)
+                //let x = e.target.closest(".track-entry")
+                //let track_id = parseInt(x.attributes["data-track-id"].value)
+                //let track_element = this.controller.get_id(track_id)
+                //this.context_menu_element = track_element
+                this.menu.popup({window: remote.getCurrentWindow()})
+              }, false)
+
         });
 
     }
