@@ -64,11 +64,15 @@ ipcRenderer.on('track-id', (event, arg) => {setTrack(arg.id)});
 
 function closeme() {
     var window = remote.getCurrentWindow();
+    view.audio_player.stop()
     window.close();
 }
 
 function saveme() {
     var window = remote.getCurrentWindow();
+    view.audio_player.stop()
+    
+
     DB.update_track_data(track_id, view.getValues(), () => {
         ipcRenderer.send("track-modified", track_id)
         window.close();
