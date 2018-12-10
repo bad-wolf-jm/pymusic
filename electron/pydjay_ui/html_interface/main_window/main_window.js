@@ -231,7 +231,8 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
 })
 
 document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
-    vc.reset_audio()
+    //vc.reset_audio()
+    ipcRenderer.send("audio-reset", {})
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 

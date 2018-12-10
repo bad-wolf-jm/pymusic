@@ -36,6 +36,11 @@ ipcMain.on('playback-stop', (event, message) => {
 })
 
 
+ipcMain.on("audio-reset", (event, message) => {
+  mixerWindow.webContents.send("audio-reset", message)
+})
+
+
 // message = {
 //   track:"path",
 //   stream_start: 0,

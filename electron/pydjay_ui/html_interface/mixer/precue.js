@@ -46,6 +46,8 @@ class PrecueController extends PydjayAudioFilePlayer {
     }
     
     init_audio() {
+        console.log(this.audio_context.audio_ctx.destination.maxChannelCount)
+
         if (this.audio_context.audio_ctx.destination.maxChannelCount == 6) {
             this.connectOutputs(pl_channel_config)
         } else {

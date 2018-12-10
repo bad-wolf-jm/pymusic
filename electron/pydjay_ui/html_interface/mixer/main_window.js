@@ -52,6 +52,11 @@ ipcRenderer.on('stop', (event, arg) => {
 });
 
 
+ipcRenderer.on('audio-reset', (event, arg) => {
+    vc.reset_audio()        
+});
+
+
 ipcRenderer.on('toggle-play-pause', (event, arg) => {        
     let channel = arg.channel
 });
