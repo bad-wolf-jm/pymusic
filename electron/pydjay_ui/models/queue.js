@@ -41,7 +41,7 @@ class QueueModel extends BaseListModel {
     pop() {
         if (this.tracks_order != undefined) {
             if (this.tracks_order.length > 0) {
-                console.log(this.tracks_order)
+                // console.log(this.tracks_order)
                 if (this.tracks_order[0] == null) {
                     return undefined
                 }

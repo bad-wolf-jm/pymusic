@@ -8,11 +8,26 @@ mpl_channel_config2 = {master:{left:0, right:1}}
 class PrecueController extends PydjayAudioFilePlayer {
     constructor() {
         super()
-        this.views              = []
+        this.views = []
         this.on('end-of-stream', () => {
-                this.dispatch("track-finished")
-            }
-        )        
+            ipcRenderer.send("headphone-end-of-stream", {})
+        })
+
+        this.on('playback-stopped',  () => {
+            ipcRenderer.send("headphone-playback-stopped", {})
+        })
+    
+        this.on('playback-paused', () => {
+            ipcRenderer.send("headphone-playback-paused", {})
+        })
+        
+        this.on('playback-started', () => {
+            ipcRenderer.send("headphone-playback-started", {})
+        })
+
+        this.on('stream-position', (pos) => {
+            ipcRenderer.send("headphone-stream-position", {position: pos, duration:this.source.duration})
+        })
     }
 
     reset_audio() {
@@ -50,7 +65,6 @@ class PrecueController extends PydjayAudioFilePlayer {
                 stream_start = stream_end + stream_start;
             }
         }
-        this.dispatch("track-started", track)
         super.play(file_name, stream_start / 1000000, stream_end / 1000000)
     }
 

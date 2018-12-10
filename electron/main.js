@@ -37,7 +37,7 @@ ipcMain.on('playback-stop', (event, message) => {
 
 
 // message = {
-//   file:"path",
+//   track:"path",
 //   stream_start: 0,
 //   stream_end: 100,
 //   channel:"master"
@@ -52,6 +52,15 @@ ipcMain.on("mixer-play", (event, message) => {
 ipcMain.on("mixer-pause", (event, message) => {
   mixerWindow.webContents.send("pause", message)
 })
+
+// message = {
+//   channel:"master"
+// }
+ipcMain.on("mixer-resume", (event, message) => {
+  mixerWindow.webContents.send("resume", message)
+})
+
+
 
 // message = {
 //   channel:"master"
@@ -77,3 +86,45 @@ ipcMain.on("mixer-stop", (event, message) => {
 ipcMain.on("mixer-event", (event, message) => {
   mixerWindow.webContents.send("stop", message)
 })
+
+ipcMain.on('headphone-end-of-stream', (event, message) => {
+  mainWindow.webContents.send("headphone-end-of-stream", {})
+})
+
+ipcMain.on('headphone-playback-stopped',  (event, message) => {
+  mainWindow.webContents.send("headphone-playback-stopped", {})
+})
+
+ipcMain.on('headphone-playback-paused', (event, message) => {
+  mainWindow.webContents.send("headphone-playback-paused", {})
+})
+
+ipcMain.on('headphone-playback-started', (event, message) => {
+  mainWindow.webContents.send("headphone-playback-started", {})
+})
+
+ipcMain.on('headphone-stream-position', (event, pos) => {
+  mainWindow.webContents.send("headphone-stream-position", pos)
+})
+
+
+ipcMain.on('master-end-of-stream', (event, message) => {
+  mainWindow.webContents.send("master-end-of-stream", {})
+})
+
+ipcMain.on('master-playback-stopped',  (event, message) => {
+  mainWindow.webContents.send("master-playback-stopped", {})
+})
+
+ipcMain.on('master-playback-paused', (event, message) => {
+  mainWindow.webContents.send("master-playback-paused", {})
+})
+
+ipcMain.on('master-playback-started', (event, message) => {
+  mainWindow.webContents.send("master-playback-started", {})
+})
+
+ipcMain.on('master-stream-position', (event, pos) => {
+  mainWindow.webContents.send("master-stream-position", pos)
+})
+

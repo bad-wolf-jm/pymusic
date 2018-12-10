@@ -129,18 +129,63 @@ mpc.on("track-finished",
     }
 )
 
-pc.on('playback-stopped',  () => {
-        vc.restore_monitor()
-    }
-)
 
-pc.on('playback-paused', () => {
-        vc.restore_monitor()
-    }
-)
+ipcRenderer.on("headphone-playback-stopped", () => {
+    pc.dispatch("playback-stopped")
+})
+
+
+ipcRenderer.on("headphone-playback-paused", () => {
+    pc.dispatch("playback-paused")
+})
+
+ipcRenderer.on("headphone-playback-started", () => {
+    pc.dispatch("playback-started")
+})
+
+
+ipcRenderer.on("headphone-stream-position", (event, pos) => {
+    pc.dispatch("stream-position", pos)
+})
+
+
+ipcRenderer.on("master-end-of-stream", () => {
+    mpc.dispatch("end-of-stream")
+})
+
+
+ipcRenderer.on("master-playback-stopped", () => {
+    mpc.dispatch("playback-stopped")
+})
+
+ipcRenderer.on("master-playback-paused", () => {
+    mpc.dispatch("playback-paused")
+})
+
+ipcRenderer.on("master-playback-started", () => {
+    mpc.dispatch("playback-started")
+})
+
+
+ipcRenderer.on("master-stream-position", (event, pos) => {
+    mpc.dispatch("stream-position", pos)
+})
+
+
+
+
+// pc.on('playback-stopped',  () => {
+//         vc.restore_monitor()
+//     }
+// )
+
+// pc.on('playback-paused', () => {
+//         vc.restore_monitor()
+//     }
+// )
 
 pc.on('playback-started', () => {
-        vc.mute_monitor()
+        //vc.mute_monitor()
         SV.open_panel(3)
     }
 )
