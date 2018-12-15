@@ -42,6 +42,19 @@ ipcRenderer.on('resume', (event, arg) => {
 });
 
 
+ipcRenderer.on('reset-audio-system', (event, arg) => {        
+    vc.reset_audio()
+    // let channel = arg.channel
+    // if (channel == "headphones") {
+    //     pc.resume()
+    // } else if (channel == "master") {
+    //     mpc.resume() 
+    // }
+});
+
+
+
+
 ipcRenderer.on('stop', (event, arg) => {        
     let channel = arg.channel
     if (channel == "headphones") {

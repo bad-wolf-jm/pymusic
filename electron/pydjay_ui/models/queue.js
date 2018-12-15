@@ -119,13 +119,15 @@ class QueueModel extends BaseListModel {
         if (this.tracks_order != undefined) {
             let d = 0
             for (let i=0; i<this.tracks_order.length; i++) {
+                
                 if (this.tracks_order[i] == null) {
                     return d
                 } else {
-                    let x = this.tracks_model.get_track_by_id(i)
+                    let x = this.tracks_model.get_track_by_id(this.tracks_order[i])
                     d += (x != undefined) ? x.stream_length : 0                        
                 }
             }
+            
             return d
         }
         return undefined
