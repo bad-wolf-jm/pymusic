@@ -60,10 +60,10 @@ class TopMenu {
                                     {
                                         view: 'button',
                                         label: 'APPLY',
-                                        click: function () {
+                                        click: () => {
                                             db_connection.query(
                                                 `UPDATE settings SET wait_time=${parseInt($$('wait_time').getValue())}`,
-                                                function (error, x) {
+                                                (error, _) => {
                                                     if (error) throw error;
                                                     x.hide();
                                                 }

@@ -13,7 +13,7 @@
 
 
 pl_channel_config = {headphones:{left:4, right:5}}
-mpl_channel_config = {master:{left:0, right:1}, headphones:{left:4, right:5}}
+mpl_channel_config = {master:{left:2, right:3}, headphones:{left:4, right:5}}
 
 pl_channel_config2 = {headphones:{left:0, right:1}}
 mpl_channel_config2 = {master:{left:0, right:1}}
@@ -125,7 +125,7 @@ function reset_audio() {
 
 function init_audio() {
     console.log(mpl.audio_context.audio_ctx.destination.maxChannelCount)
-    if (mpl.audio_context.audio_ctx.destination.maxChannelCount == 6) {
+    if (mpl.audio_context.audio_ctx.destination.maxChannelCount >= 6) {
         mpl.connectOutputs(mpl_channel_config)
         pl.connectOutputs(pl_channel_config)    
     } else {
