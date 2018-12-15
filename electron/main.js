@@ -16,7 +16,7 @@ app.on('ready', function() {
     mixerWindow = new BrowserWindow({
       width: 600,
       height: 400,
-      show:false,
+      // show:false,
     });
     //mainWindow.setMenu(null);
     //mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/main_ui.html');

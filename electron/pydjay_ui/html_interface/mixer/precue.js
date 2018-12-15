@@ -1,5 +1,5 @@
 pl_channel_config = {headphones:{left:4, right:5}}
-mpl_channel_config = {master:{left:0, right:1}, headphones:{left:4, right:5}}
+mpl_channel_config = {master:{left:2, right:3}, headphones:{left:4, right:5}}
 
 pl_channel_config2 = {headphones:{left:0, right:1}}
 mpl_channel_config2 = {master:{left:0, right:1}}
@@ -48,7 +48,7 @@ class PrecueController extends PydjayAudioFilePlayer {
     init_audio() {
         console.log(this.audio_context.audio_ctx.destination.maxChannelCount)
 
-        if (this.audio_context.audio_ctx.destination.maxChannelCount == 6) {
+        if (this.audio_context.audio_ctx.destination.maxChannelCount >= 6) {
             this.connectOutputs(pl_channel_config)
         } else {
             this.connectOutputs(pl_channel_config2)
