@@ -16,6 +16,7 @@ app.on('ready', function() {
     mixerWindow = new BrowserWindow({
       width: 600,
       height: 400,
+      show:false,
     });
     //mainWindow.setMenu(null);
     //mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/main_ui.html');
@@ -36,8 +37,8 @@ ipcMain.on('playback-stop', (event, message) => {
 })
 
 
-ipcMain.on("audio-reset", (event, message) => {
-  mixerWindow.webContents.send("audio-reset", message)
+ipcMain.on("reset-audio-system", (event, message) => {
+  mixerWindow.webContents.send("reset-audio-system", message)
 })
 
 
