@@ -2,13 +2,11 @@ Sortable              = require("../../../lib/Sortable.js")
 WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
-//const { ipcRenderer } = require('electron');
 
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
     SE_controller.refresh(() => {})
-    // console.log("refresh-sessions")
 })
 
 
@@ -261,8 +259,6 @@ document.getElementById("session-save").addEventListener('click', () => {
         current_session_model.store_session(name, location, address, () => {
             SE_controller.refresh(() => {})
         })
-        
-        //console.log(name)
     }
 
     document.getElementById("save-session-dialog").close();
@@ -278,6 +274,14 @@ document.getElementById("session-save-cancel").addEventListener('click', () => {
 document.getElementById("main-menu-settings").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
+
+
+document.getElementById("main-menu-mixer").addEventListener('click', () => {
+    ipcRenderer.send("show-mixer-window")
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+
 
 document.getElementById("main-menu-quit").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");

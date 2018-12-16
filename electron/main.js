@@ -16,12 +16,20 @@ app.on('ready', function() {
     mixerWindow = new BrowserWindow({
       width: 600,
       height: 400,
-      // show:false,
+      show:false,
     });
     //mainWindow.setMenu(null);
     //mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/main_ui.html');
     mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/html_interface/main_window/main_window.html');
     mixerWindow.loadURL('file://' + __dirname + '/pydjay_ui/html_interface/mixer/main_window.html');
+
+    mixerWindow.on('close', (e) => {
+      // if(!force_quit){
+        e.preventDefault();
+        mixerWindow.hide();
+      //     mainWindow.hide();
+      // }
+  });
 });
 
 ipcMain.on('track-modified', (event, message) => {
@@ -41,6 +49,10 @@ ipcMain.on("reset-audio-system", (event, message) => {
   mixerWindow.webContents.send("reset-audio-system", message)
 })
 
+
+ipcMain.on("show-mixer-window", (event, message) => {
+  mixerWindow.show()
+})
 
 // message = {
 //   track:"path",
