@@ -222,6 +222,14 @@ mpc.on("next-track-countdown", (time) => {
     }
 })
 
+window.addEventListener("resize", (event) => {
+    let h = document.getElementById("track-list-elements-header")
+    let ta = document.getElementById("main-track-list-scroller")
+    let tl = document.getElementById("main-track-list")
+    list_height = (tl.clientHeight - h.clientHeight) - 5
+    ta.style.maxHeight = list_height + "px";
+})
+
 document.getElementById("settings-button").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
@@ -231,7 +239,6 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
 })
 
 document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
-    //vc.reset_audio()
     ipcRenderer.send("reset-audio-system", {})
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
@@ -261,10 +268,7 @@ document.getElementById("session-save").addEventListener('click', () => {
         current_session_model.store_session(name, location, address, () => {
             SE_controller.refresh(() => {})
         })
-        
-        //console.log(name)
     }
-
     document.getElementById("save-session-dialog").close();
 })
 

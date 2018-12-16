@@ -180,7 +180,7 @@ class TrackListView extends EventDispatcher {
 
     set_list(name, queue) {
         this.view_list_order = []
-        this.queue_rows       = []  
+        this.queue_rows = []  
         this.table_rows = {}
         if (queue == undefined) {
             queue = []
@@ -200,10 +200,9 @@ class TrackListView extends EventDispatcher {
                 bpm:         queue[i].bpm,
                 duration:    format_nanoseconds(queue[i].stream_length),
             }
-            let e = this.render_row(element)
+            //this.object_rows.push(element)
             this.queue_rows.push(this.render_row(element))
-            // this.table_rows[queue[i].id] = e
-            this.view_list_order.push(queue[i].id)
+            this.view_list_order.push(element) //queue[i].id)
         }
         this.name_dom.innerHTML       = `${name}`
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
@@ -284,7 +283,7 @@ class TrackListView extends EventDispatcher {
         let search_tokens = text.split(' ')
         let search_f = [];
         for (i=0; i<search_tokens.length; i++) {
-            let token = search_tokens[i];
+            let token = search_tokens[i].toLowerCase();
             if (token.length > 0) {
                 if (search_tokens[i].startsWith('@bpm<')) {
                     let x = parseInt(search_tokens[i].split('<')[1]);
@@ -349,11 +348,19 @@ class TrackListView extends EventDispatcher {
             return true;
         })
         let queue_rows = []
-        Object.keys(this.table_rows).forEach((k) => {
-            if (filter[k]) {
-                queue_rows.push(this.table_rows[k])
+        this.view_list_order.forEach((k) => {
+            if (filter[k.id]) {
+                queue_rows.push(this.render_row(k))
             }        
         })
+        console.log(queue_rows.length)
+
+        // Object.keys(this.table_rows).forEach((k) => {
+        //     if (filter[k]) {
+        //         queue_rows.push(this.queue_rows[k])
+        //     }        
+        // })
+        //this.list_cluster.clear()
         this.list_cluster.update(queue_rows)
     };
 }
