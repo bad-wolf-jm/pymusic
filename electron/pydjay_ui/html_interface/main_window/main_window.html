@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <title>PYMUSIC DJ App</title>
 
+<link rel="stylesheet" href="../../../lib/clusterize.css">
 <link rel="stylesheet" href="main_window.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -19,6 +20,7 @@
 
 <script src="../../../lib/moment.min.js"></script>
 <script src="../../../lib/Sortable.js"></script>
+<script src="../../../lib/clusterize.js"></script>
 
 <script src="../../utils.js"></script>
 <script src="../../data.js"></script>
@@ -321,7 +323,36 @@
                 </div>
               
             </div>
-            <div class="main-track-list-area">
+
+            <div class="clusterize main-track-list-area">
+                <table class="main-track-list-table" id="track-list-elements">
+                    <thead style="border:0px solid transparent; margin:0; padding:0">
+                        <tr class="header-row">
+                            <th class="sticky-header"><b><i class='fa fa-heart' style='font-size: 12px'/></b></th>
+                            <th class="sticky-header">Title</th>
+                            <th class="sticky-header">Artist</th>
+                            <th class="sticky-header">Genre</th>
+                            <th class="sticky-header"><b><span class='fa fa-play'/></b></th>
+                            <th class="sticky-header"><b><span class='fa fa-calendar' style='font-size: 15px'/></b></th>
+                            <th class="sticky-header">Rating</th>
+                            <th class="sticky-header"><b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b></th>
+                            <th class="sticky-header" style="text-align:right">Time</th>
+                            <th class="sticky-header"></th>
+                        </tr>
+                    </thead>
+                </table>
+                <div id="main-track-list-scroller" class="clusterize-scroll">
+                  <table class="main-track-list-table" id="track-list-elements">
+                    <tbody id="main-track-list-body" class="clusterize-content list-group" style="border:0px solid transparent; margin:0; padding:0">
+                      <tr class="clusterize-no-data">
+                        <td>Loading data…</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            <!-- <div class="main-track-list-area">
                 <table class="main-track-list-table" id="track-list-elements">
                     <thead style="border:0px solid transparent; margin:0; padding:0">
                         <tr class="header-row">
@@ -353,7 +384,7 @@
                     <td style="width:45px; text-align:right"><!= duration !></td>
                     <td style="width:15px"></td>
                 </tr>
-            </script>
+            </script> -->
     </div>
         <div class="queue_list">
             <div class="main-list-header">

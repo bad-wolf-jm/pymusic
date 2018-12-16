@@ -1,11 +1,18 @@
 const { ipcRenderer } = require('electron');
-
+const Clusterize = require("clusterize.js")
 class TrackListView extends EventDispatcher {
     constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
         super()
         this.dom_id         = dom_ids.list
         this.controller     = undefined
         this.table          = undefined
+
+        this.list_cluster = new Clusterize({
+            rows: [],
+            scrollId: 'main-track-list-scroller',
+            contentId: 'main-track-list-body'
+          });
+
         this.name_dom       = document.getElementById(dom_ids.name); 
         this.num_tracks_dom = document.getElementById(dom_ids.num_tracks); 
         this.duration_dom   = document.getElementById(dom_ids.duration);
@@ -66,6 +73,22 @@ class TrackListView extends EventDispatcher {
 
     }
 
+    render_row(track) {
+        return `<tr class="list-group-item row track-entry" style="color:${track.color}" draggable=true data-track-id=${track.id}>
+            <td style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</td>
+            <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</td>
+            <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</td>
+            <td style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</td>
+            <td style="text-align:right; width:25px; padding-right:9px"><!= play_count !></td>
+            <td style="width:75px">${track.last_played}</td>
+            <td style="width:25px">${track.rating}</td>
+            <td style="width:30px; text-align:right; padding-right:5px">${track.bpm}</td>
+            <td style="width:45px; text-align:right">${track.duration}</td>
+            <td style="width:15px"></td>
+        </tr>`
+
+    }
+
     set_controller(controller) {
         this.controller = controller
         this.controller.addView(this)
@@ -117,32 +140,35 @@ class TrackListView extends EventDispatcher {
                 bpm:         queue[i].bpm,
                 duration:    format_nanoseconds(queue[i].stream_length),
             }
-            queue_rows.push(element)
+            queue_rows.push(this.render_row(element))
             this.view_list_order.push(queue[i].id)
         }
         this.name_dom.innerHTML       = `${name}`
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-        jui.ready([ "grid.table" ], (table) => {
-            if (this.table != undefined) {
-                this.table.reset()
-            }
-            this.table = table("#track-list-elements", {
-                data:   queue_rows,
-                scroll: false,
-                resize: false
-            });
-            this.connect_drag()
-            this.table_rows = {}
-            let elements = document.querySelectorAll('.track-entry');
-            [].forEach.call(document.querySelectorAll('.track-entry'),
-                (x) => {
-                    let track_id = parseInt(x.attributes["data-track-id"].value)
-                    this.table_rows[track_id] = x
-                } 
-            )
-            this._selected_row = undefined
-        })
+        this.list_cluster.update(queue_rows)
+        this.connect_drag()
+        this._selected_row = undefined
+        // jui.ready([ "grid.table" ], (table) => {
+        //     if (this.table != undefined) {
+        //         this.table.reset()
+        //     }
+        //     this.table = table("#track-list-elements", {
+        //         data:   queue_rows,
+        //         scroll: false,
+        //         resize: false
+        //     });
+        //     this.connect_drag()
+        //     this.table_rows = {}
+        //     let elements = document.querySelectorAll('.track-entry');
+        //     [].forEach.call(document.querySelectorAll('.track-entry'),
+        //         (x) => {
+        //             let track_id = parseInt(x.attributes["data-track-id"].value)
+        //             this.table_rows[track_id] = x
+        //         } 
+        //     )
+        //     this._selected_row = undefined
+        // })
     }
 
     handle_drag_start(e) {
