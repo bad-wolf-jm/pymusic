@@ -6,12 +6,50 @@ class TrackListView extends EventDispatcher {
         this.dom_id         = dom_ids.list
         this.controller     = undefined
         this.table          = undefined
+        this.queue_rows     = undefined
 
         this.list_cluster = new Clusterize({
             rows: [],
             scrollId: 'main-track-list-scroller',
-            contentId: 'main-track-list-body'
+            contentId: 'main-track-list-body',
+            callbacks: {
+                clusterWillChange: () => {
+                    this.table_rows = []
+                },
+                clusterChanged: () => {
+                    let elements = document.querySelectorAll('.track-entry');
+                    [].forEach.call(elements, (e) => {
+                        let track_id = parseInt(e.attributes["data-track-id"].value)
+                        this.table_rows[track_id] = e
+                    });
+                },
+                scrollingProgress: (progress) => {}
+            }
           });
+
+        $('#main-track-list-body').on('click', (e) => {
+            this.select_row(e)
+        });
+
+        $('#main-track-list-body').on('dblclick', (e) => {
+            this.handle_double_click(e)
+        });
+
+        document.getElementById('main-track-list-body').addEventListener('dragstart', (e) => {
+            console.log(e)
+            this.handle_drag_start(e)
+        }, false);
+
+        $('#main-track-list-body').on('contextmenu', (e) => {
+            e.preventDefault()
+            this.select_row(e)
+            let x = e.target.closest(".track-entry")
+            let track_id = parseInt(x.attributes["data-track-id"].value)
+            let track_element = this.controller.get_id(track_id)
+            this.context_menu_element = track_element
+            this.menu.popup({window: remote.getCurrentWindow()})
+        });
+
 
         this.name_dom       = document.getElementById(dom_ids.name); 
         this.num_tracks_dom = document.getElementById(dom_ids.num_tracks); 
@@ -79,7 +117,7 @@ class TrackListView extends EventDispatcher {
             <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</td>
             <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</td>
             <td style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</td>
-            <td style="text-align:right; width:25px; padding-right:9px"><!= play_count !></td>
+            <td style="text-align:right; width:25px; padding-right:9px">${track.play_count}</td>
             <td style="width:75px">${track.last_played}</td>
             <td style="width:25px">${track.rating}</td>
             <td style="width:30px; text-align:right; padding-right:5px">${track.bpm}</td>
@@ -121,7 +159,8 @@ class TrackListView extends EventDispatcher {
 
     set_list(name, queue) {
         this.view_list_order = []
-        let queue_rows       = []  
+        this.queue_rows       = []  
+        this.table_rows = {}
         if (queue == undefined) {
             queue = []
         }
@@ -140,45 +179,29 @@ class TrackListView extends EventDispatcher {
                 bpm:         queue[i].bpm,
                 duration:    format_nanoseconds(queue[i].stream_length),
             }
-            queue_rows.push(this.render_row(element))
+            let e = this.render_row(element)
+            this.queue_rows.push(this.render_row(element))
+            // this.table_rows[queue[i].id] = e
             this.view_list_order.push(queue[i].id)
         }
         this.name_dom.innerHTML       = `${name}`
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-        this.list_cluster.update(queue_rows)
-        this.connect_drag()
-        this._selected_row = undefined
-        // jui.ready([ "grid.table" ], (table) => {
-        //     if (this.table != undefined) {
-        //         this.table.reset()
-        //     }
-        //     this.table = table("#track-list-elements", {
-        //         data:   queue_rows,
-        //         scroll: false,
-        //         resize: false
-        //     });
-        //     this.connect_drag()
-        //     this.table_rows = {}
-        //     let elements = document.querySelectorAll('.track-entry');
-        //     [].forEach.call(document.querySelectorAll('.track-entry'),
-        //         (x) => {
-        //             let track_id = parseInt(x.attributes["data-track-id"].value)
-        //             this.table_rows[track_id] = x
-        //         } 
-        //     )
-        //     this._selected_row = undefined
-        // })
+        this.list_cluster.update(this.queue_rows)
+
+        //this.connect_drag()
     }
 
     handle_drag_start(e) {
-        let track_id = parseInt(e.target.attributes["data-track-id"].value)
+        let x = e.target.closest("tr")
+        let track_id = parseInt(x.attributes["data-track-id"].value)
         let track_element = this.controller.get_id(track_id)
         e.dataTransfer.setData("text/plain", JSON.stringify(track_element))
     }
 
     handle_double_click(e) {
-        let track_id = parseInt(e.target.parentElement.attributes["data-track-id"].value)
+        let x = e.target.closest("tr")
+        let track_id = parseInt(x.attributes["data-track-id"].value)
         let track_element = this.controller.get_id(track_id)
         pc.play(track_element)
     }
@@ -202,31 +225,38 @@ class TrackListView extends EventDispatcher {
 
     update_selection(selection) {
         if (this._selected_row != undefined) {
-            this._selected_row.forEach((x) => {this.table_rows[x.id].classList.remove("selected")})
+            this._selected_row.forEach((x) => {
+                if (this.table_rows[x.id]) {
+                    this.table_rows[x.id].classList.remove("selected")}
+                })
         }
         this._selected_row = selection
-        this._selected_row.forEach((x) => {this.table_rows[x.id].classList.add("selected")})
+        this._selected_row.forEach((x) => {
+            if (this.table_rows[x.id] != undefined) {
+                this.table_rows[x.id].classList.add("selected")
+            }
+        })
     }
 
 
-    connect_drag() {
-        let elements = document.querySelectorAll('.track-entry');
-        [].forEach.call(elements, (e) => {
-            e.addEventListener('dragstart', this.handle_drag_start.bind(this), false);
-            e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
-            e.addEventListener("click", this.select_row.bind(this))
-            e.addEventListener('contextmenu', (e) => {
-                e.preventDefault()
-                this.select_row(e)
-                let x = e.target.closest(".track-entry")
-                let track_id = parseInt(x.attributes["data-track-id"].value)
-                let track_element = this.controller.get_id(track_id)
-                this.context_menu_element = track_element
-                this.menu.popup({window: remote.getCurrentWindow()})
-              }, false)
+    // connect_drag() {
+    //     let elements = document.querySelectorAll('.track-entry');
+    //     [].forEach.call(elements, (e) => {
+    //         e.addEventListener('dragstart', this.handle_drag_start.bind(this), false);
+    //         e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
+    //         e.addEventListener("click", this.select_row.bind(this))
+    //         e.addEventListener('contextmenu', (e) => {
+    //             e.preventDefault()
+    //             this.select_row(e)
+    //             let x = e.target.closest(".track-entry")
+    //             let track_id = parseInt(x.attributes["data-track-id"].value)
+    //             let track_element = this.controller.get_id(track_id)
+    //             this.context_menu_element = track_element
+    //             this.menu.popup({window: remote.getCurrentWindow()})
+    //           }, false)
 
-        });
-    }
+    //     });
+    // }
 
     filter_list (text) {
         let i = 0;
@@ -297,11 +327,12 @@ class TrackListView extends EventDispatcher {
             }
             return true;
         })
+        let queue_rows = []
         Object.keys(this.table_rows).forEach((k) => {
-            filter[k] ? this.table_rows[k].classList.remove("filtered") : this.table_rows[k].classList.add("filtered")
+            if (filter[k]) {
+                queue_rows.push(this.table_rows[k])
+            }        
         })
+        this.list_cluster.update(queue_rows)
     };
-
-
-
 }
