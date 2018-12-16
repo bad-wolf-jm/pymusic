@@ -50,6 +50,19 @@ class TrackListView extends EventDispatcher {
             this.menu.popup({window: remote.getCurrentWindow()})
         });
 
+        document.getElementById("track-list-header").innerHTML = this.render_header({
+            id:          "NONE",
+            loved:       "<b><i class='fa fa-heart' style='font-size: 12px'/></b>",
+            title:       "Title",
+            artist:      "Artist",
+            genre:       "Genre",
+            last_played: "<b><span class='fa fa-calendar' style='font-size: 15px'/></b>",
+            play_count:  "<b><span class='fa fa-play'/></b>",
+            rating:      "Rating", 
+            bpm:         "<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>",
+            duration:    "Time",
+
+        });
 
         this.name_dom       = document.getElementById(dom_ids.name); 
         this.num_tracks_dom = document.getElementById(dom_ids.num_tracks); 
@@ -111,20 +124,28 @@ class TrackListView extends EventDispatcher {
 
     }
 
-    render_row(track) {
+    render_row_internal(track, element) {
         return `<tr class="list-group-item row track-entry" style="color:${track.color}" draggable=true data-track-id=${track.id}>
-            <td style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</td>
-            <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</td>
-            <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</td>
-            <td style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</td>
-            <td style="text-align:right; width:25px; padding-right:9px">${track.play_count}</td>
-            <td style="width:75px">${track.last_played}</td>
-            <td style="width:25px">${track.rating}</td>
-            <td style="width:30px; text-align:right; padding-right:5px">${track.bpm}</td>
-            <td style="width:45px; text-align:right">${track.duration}</td>
-            <td style="width:15px"></td>
+            <${element} style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
+            <${element} style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
+            <${element} style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
+            <${element} style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
+            <${element} style="text-align:right; width:25px; padding-right:9px">${track.play_count}</${element}>
+            <${element} style="width:75px">${track.last_played}</${element}>
+            <${element} style="width:25px">${track.rating}</${element}>
+            <${element} style="width:30px; text-align:right; padding-right:5px">${track.bpm}</${element}>
+            <${element} style="width:45px; text-align:right">${track.duration}</${element}>
+            <${element} style="width:15px"></${element}>
         </tr>`
 
+    }
+
+    render_row(track) {
+        return this.render_row_internal(track, "td")
+    }
+
+    render_header(track) {
+        return this.render_row_internal(track, "th")
     }
 
     set_controller(controller) {
