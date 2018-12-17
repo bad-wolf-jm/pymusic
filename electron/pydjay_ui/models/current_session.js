@@ -34,6 +34,17 @@ class CurrentSessionModel extends BaseListModel {
         return Q
     }
 
+    check_membership(element) {
+        if (this.tracks_order != undefined) {
+            for (let i=0; i < this.tracks_order.length; i++) {
+                if (element.id == this.tracks_order[i].track_id) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     add(element) {
         this.tracks_order.push(element)
         this.save()

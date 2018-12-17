@@ -28,8 +28,8 @@ shortlist_model           = new ShortlistModel(tracks_model)
 suggested_model           = new SuggestedModel(tracks_model)
 played_tracks_model       = new PlayedTracksModel(tracks_model)
 never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
-queue_model               = new QueueModel(tracks_model)
 current_session_model     = new CurrentSessionModel(tracks_model)
+queue_model               = new QueueModel(tracks_model, current_session_model)
 
 
 un_model = new UnionModel()
