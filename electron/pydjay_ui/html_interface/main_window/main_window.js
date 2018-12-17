@@ -170,24 +170,11 @@ ipcRenderer.on("master-stream-position", (event, pos) => {
 })
 
 
-
-
-// pc.on('playback-stopped',  () => {
-//         vc.restore_monitor()
-//     }
-// )
-
-// pc.on('playback-paused', () => {
-//         vc.restore_monitor()
-//     }
-// )
-
 pc.on('playback-started', () => {
         //vc.mute_monitor()
         SV.open_panel(3)
     }
 )
-
 
 
 mpc.on("queue-stop-requested",
