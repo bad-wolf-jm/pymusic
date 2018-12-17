@@ -90,7 +90,7 @@ M.init()
 P = new PrecuePlayerView()
 P.set_controller(pc)
 
-mpc.on("queue-started", 
+mpc.on("queue-started",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-stop\"></i>"
@@ -99,7 +99,7 @@ mpc.on("queue-started",
     }
 )
 
-mpc.on("queue-stopped", 
+mpc.on("queue-stopped",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
@@ -108,7 +108,7 @@ mpc.on("queue-stopped",
     }
 )
 
-mpc.on("queue-finished", 
+mpc.on("queue-finished",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
@@ -117,12 +117,12 @@ mpc.on("queue-finished",
     }
 )
 
-mpc.on("track-started", 
+mpc.on("track-started",
     () => {
     }
 )
 
-mpc.on("track-finished", 
+mpc.on("track-finished",
     () => {
     }
 )
@@ -190,7 +190,7 @@ pc.on('playback-started', () => {
 
 
 
-mpc.on("queue-stop-requested", 
+mpc.on("queue-stop-requested",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-close\"></i>"
@@ -198,7 +198,7 @@ mpc.on("queue-stop-requested",
     }
 )
 
-mpc.on("queue-stop-request-cancelled", 
+mpc.on("queue-stop-request-cancelled",
     () => {
         let M = document.getElementById("queue-stop-message")
         M.style.display="none"
@@ -291,6 +291,7 @@ document.getElementById("main-menu-mixer").addEventListener('click', () => {
 
 document.getElementById("main-menu-quit").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
+    ipcRenderer.send("quit-pymusic")
 })
 
 ///////////////////////////////////////////////
@@ -328,7 +329,7 @@ function display_never_played_tracks() {
 }
 
 function display_session(id) {
-    DB.get_session_info(id, 
+    DB.get_session_info(id,
         (info) => {
             let L = new SessionModel(info, tracks_model)
             T_controller.set_model(info.name, L)
@@ -337,7 +338,7 @@ function display_session(id) {
 }
 
 function display_playlist(id) {
-    DB.get_group_info(id, 
+    DB.get_group_info(id,
         (info) => {
             let L = new PlaylistModel(info, tracks_model)
             T_controller.set_model(info.name, L)
@@ -345,7 +346,7 @@ function display_playlist(id) {
     )
 }
 
-ipcRenderer.on('playback-started', (event, arg) => {        
+ipcRenderer.on('playback-started', (event, arg) => {
     vc.mute_monitor()});
 
 ipcRenderer.on('playback-stopped', (event, arg) => {

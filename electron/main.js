@@ -29,8 +29,30 @@ app.on('ready', function() {
         mixerWindow.hide();
       //     mainWindow.hide();
       // }
-  });
+    });
+
+    mainWindow.on('close', function(e) {
+      var choice = electron.dialog.showMessageBox(this,
+          {
+            type: 'question',
+            buttons: ['Yes', 'No'],
+            title: 'Confirm quit',
+            message: 'Are you sure you want to quit?'
+         });
+         if(choice == 1){
+           e.preventDefault();
+         }
+         else {
+           mixerWindow.destroy()
+         }
+      });
 });
+
+ipcMain.on('quit-pymusic', (event, message) => {
+  mainWindow.close()
+})
+
+
 
 ipcMain.on('track-modified', (event, message) => {
   mainWindow.webContents.send("track-modified", message)
@@ -145,4 +167,3 @@ ipcMain.on('master-playback-started', (event, message) => {
 ipcMain.on('master-stream-position', (event, pos) => {
   mainWindow.webContents.send("master-stream-position", pos)
 })
-
