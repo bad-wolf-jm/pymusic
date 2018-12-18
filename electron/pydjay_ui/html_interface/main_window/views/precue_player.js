@@ -19,7 +19,6 @@ class PrecuePlayerView extends EventDispatcher {
         })
         document.getElementById("track-color-value").onchange = (c) => {
             let new_value = document.getElementById("track-color-value").value
-            //
         }
     }
 
@@ -73,7 +72,6 @@ class PrecuePlayerView extends EventDispatcher {
     set_track(track) {
         let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
-        // document.getElementById("main-player-track-title").innerHTML    = track.title
         document.getElementById("precue-player-title").innerHTML       = track.title
         document.getElementById("precue-player-album").innerHTML       = track.album
         document.getElementById("precue-player-artist").innerHTML      = track.artist
@@ -94,9 +92,6 @@ class PrecuePlayerView extends EventDispatcher {
         this._track = track
         document.getElementById("no-preview-track").style.display = "none"
         document.getElementById("precue-dropdown").classList.remove("show")
-        //this._waveform.load(file_name)
-
-
     }
 
     setRating (num) {
