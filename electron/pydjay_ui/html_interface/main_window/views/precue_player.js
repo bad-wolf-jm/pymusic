@@ -17,6 +17,11 @@ class PrecuePlayerView extends EventDispatcher {
             this.controller.stop()
             document.getElementById("precue-dropdown").classList.remove("show")
         })
+        document.getElementById("precue-player-track-progress").addEventListener("click", (e) => {
+            //console.log(e.offsetX)
+            console.log(e.clientX)
+            console.log(e.clientY)
+        })
     }
 
     show_options() {
