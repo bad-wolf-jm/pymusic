@@ -7,7 +7,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
     set_controller(controller) {
         this.controller = controller
         this.controller.on("stream-position", (pos) => {
-            let remaining = Math.abs(this.controller.source.duration*1000 - pos)
+            let remaining = Math.abs(pos.duration*1000 - pos.position)
             document.getElementById("main-player-time-remaining").innerHTML = `-${format_nanoseconds(remaining*1000000)}`
         })
         this.controller.on("queue-stopped",                this.set_queue.bind(this))
@@ -61,7 +61,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         });       
         this._position_tracker = this.controller.on("stream-position", 
             (pos) => {
-                let p = pos*1000000 / this._track.track_length
+                let p = pos.position*1000000 / this._track.track_length
                 p = Math.max(p,0.0)
                 p = Math.min(p,1.0)
                 this._waveform.seekAndCenter(p)

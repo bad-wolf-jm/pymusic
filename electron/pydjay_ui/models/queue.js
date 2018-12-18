@@ -1,6 +1,7 @@
 class QueueModel extends BaseListModel {
-    constructor(tracks_model) {
+    constructor(tracks_model, current_session_model) {
         super()
+        this.current_session_model = current_session_model
         this.tracks_model = tracks_model
         this.tracks_order = []
         DB.get_queue_elements_ids( (tracks) => { 
@@ -41,7 +42,6 @@ class QueueModel extends BaseListModel {
     pop() {
         if (this.tracks_order != undefined) {
             if (this.tracks_order.length > 0) {
-                console.log(this.tracks_order)
                 if (this.tracks_order[0] == null) {
                     return undefined
                 }
@@ -68,19 +68,32 @@ class QueueModel extends BaseListModel {
         })
     }
 
+    _check_availability(element, do_insert) {
+        console.log(this.tracks_order.indexOf(element.id) )
+        console.log(this.current_session_model.tracks_order.indexOf(element.id) )
+        if ((this.tracks_order.indexOf(element.id) == -1) && 
+                !(this.current_session_model.check_membership(element))) {
+            do_insert(element)
+        }
+    }
+
     insert(element, index) {
         if (this.tracks_order != undefined) {
-            this.tracks_order.splice(index, 0, element.id)
-            this.save()
-            this.dispatch("content-changed", this.get_all_tracks())
+            this._check_availability(element, (e) => {
+                this.tracks_order.splice(index, 0, e.id)
+                this.save()
+                this.dispatch("content-changed", this.get_all_tracks())    
+            })
         }
     }
 
     append(element) {
         if (this.tracks_order != undefined) {
-            this.tracks_order.push(element.id)
-            this.save()
-            this.dispatch("content-changed", this.get_all_tracks())
+            this._check_availability(element, (e) => {
+                this.tracks_order.push(e.id)
+                this.save()
+                this.dispatch("content-changed", this.get_all_tracks())    
+            })
         }
     }
 
@@ -119,13 +132,15 @@ class QueueModel extends BaseListModel {
         if (this.tracks_order != undefined) {
             let d = 0
             for (let i=0; i<this.tracks_order.length; i++) {
+                
                 if (this.tracks_order[i] == null) {
                     return d
                 } else {
-                    let x = this.tracks_model.get_track_by_id(i)
+                    let x = this.tracks_model.get_track_by_id(this.tracks_order[i])
                     d += (x != undefined) ? x.stream_length : 0                        
                 }
             }
+            
             return d
         }
         return undefined

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <title>PYMUSIC DJ App</title>
 
+<link rel="stylesheet" href="../../../lib/clusterize.css">
 <link rel="stylesheet" href="main_window.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -19,6 +20,7 @@
 
 <script src="../../../lib/moment.min.js"></script>
 <script src="../../../lib/Sortable.js"></script>
+<script src="../../../lib/clusterize.js"></script>
 
 <script src="../../utils.js"></script>
 <script src="../../data.js"></script>
@@ -84,6 +86,7 @@
                     <p></p>
                     <a id="main-menu-reset-audio"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Reset audio system</a>
                     <a id="main-menu-settings"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a>
+                    <a id="main-menu-mixer"><i class="fa fa-cog"></i>&nbsp;&nbsp;Show mixer</a>
                     <p></p>
                     <a id="main-menu-quit"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Quit</a>
                 </div>
@@ -321,10 +324,23 @@
                 </div>
               
             </div>
-            <div class="main-track-list-area">
-                <table class="main-track-list-table" id="track-list-elements">
-                    <thead style="border:0px solid transparent; margin:0; padding:0">
-                        <tr class="header-row">
+
+            <div class="clusterize main-track-list-area" id="main-track-list">
+                <table class="main-track-list-table" id="track-list-elements-header">
+                    <thead id="track-list-header" style="border:0px solid transparent; margin:0; padding:0">
+                            <!-- <tr class="list-group-item row track-entry" style="color:${track.color}" draggable=true data-track-id=${track.id}>
+                                    <th style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</th>
+                                    <th style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</th>
+                                    <th style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</th>
+                                    <th style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</th>
+                                    <th style="text-align:right; width:25px; padding-right:9px">${track.play_count}</th>
+                                    <th style="width:75px">${track.last_played}</th>
+                                    <th style="width:25px">${track.rating}</th>
+                                    <th style="width:30px; text-align:right; padding-right:5px">${track.bpm}</td>
+                                    <th style="width:45px; text-align:right">${track.duration}</td>
+                                    <th style="width:15px"></td>
+                                </tr> -->
+                        <!-- <tr class="header-row">
                             <th class="sticky-header"><b><i class='fa fa-heart' style='font-size: 12px'/></b></th>
                             <th class="sticky-header">Title</th>
                             <th class="sticky-header">Artist</th>
@@ -335,26 +351,20 @@
                             <th class="sticky-header"><b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b></th>
                             <th class="sticky-header" style="text-align:right">Time</th>
                             <th class="sticky-header"></th>
-                        </tr>
+                        </tr> -->
                     </thead>
-                    <tbody id="main-elements-body" class="list-group"></tbody>
                 </table>
-            </div>
-            <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
-                <tr class="list-group-item row track-entry" style="color:<!= color !>" draggable=true data-track-id=<!= id !>>
-                    <td style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt"><!= loved !></td>
-                    <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= title !></td>
-                    <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= artist !></td>
-                    <td style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= genre !></td>
-                    <td style="text-align:right; width:25px; padding-right:9px"><!= play_count !></td>
-                    <td style="width:75px"><!= last_played !></td>
-                    <td style="width:25px"><!= rating !></td>
-                    <td style="width:30px; text-align:right; padding-right:5px"><!= bpm !></td>
-                    <td style="width:45px; text-align:right"><!= duration !></td>
-                    <td style="width:15px"></td>
-                </tr>
-            </script>
-    </div>
+                <div id="main-track-list-scroller" class="clusterize-scroll">
+                  <table class="main-track-list-table">
+                    <tbody id="main-track-list-body" class="clusterize-content list-group" style="border:0px solid transparent; margin:0; padding:0">
+                      <tr class="clusterize-no-data">
+                        <td>Loading data…</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+        </div>
         <div class="queue_list">
             <div class="main-list-header">
                 <div class="title">

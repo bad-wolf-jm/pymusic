@@ -5,7 +5,7 @@ pl_channel_config2 = {headphones:{left:0, right:1}}
 mpl_channel_config2 = {master:{left:0, right:1}}
 
 
-class PlaybackController extends PydjayAudioFilePlayer {
+class PlaybackController extends EventDispatcher {
     constructor(session_controller, queue_controller) {
         super()
         this.views              = []
@@ -27,7 +27,7 @@ class PlaybackController extends PydjayAudioFilePlayer {
                 } else {
                     DB.get_waiting_time(
                         (wait_time) => {
-                            mpc.play_next_track(wait_time)
+                            this.play_next_track(wait_time)
                         }
                     )
                 }
@@ -36,38 +36,83 @@ class PlaybackController extends PydjayAudioFilePlayer {
     }
 
     reset_audio() {
-        let url = undefined, time=undefined, end_time=undefined
-        if (this.source != undefined) {
-            time     = this.source.currentTime * 1000
-            end_time = this.stream_end
-            url      = this.url
-            this.stop()
-        }
-        this.reset_audio_context()
-        this.init_audio()
-        if (url != undefined) {
-            this.play(url, time, end_time)
-        }
+        // let url = undefined, time=undefined, end_time=undefined
+        // if (this.source != undefined) {
+        //     time     = this.source.currentTime * 1000
+        //     end_time = this.stream_end
+        //     url      = this.url
+        //     this.stop()
+        // }
+        // this.reset_audio_context()
+        // this.init_audio()
+        // if (url != undefined) {
+        //     this.play(url, time, end_time)
+        // }
     }
     
     init_audio() {
-        console.log(this.audio_context.audio_ctx.destination.maxChannelCount)
-        if (this.audio_context.audio_ctx.destination.maxChannelCount == 6) {
-            this.connectOutputs(mpl_channel_config)
-        } else {
-            this.connectOutputs(mpl_channel_config2)
-        }
+        // //console.log(this.audio_context.audio_ctx.destination.maxChannelCount)
+        // if (this.audio_context.audio_ctx.destination.maxChannelCount == 6) {
+        //     this.connectOutputs(mpl_channel_config)
+        // } else {
+        //     this.connectOutputs(mpl_channel_config2)
+        // }
     }
 
+    play(track, stream_start, stream_end) {
+        this.track = track
+        ipcRenderer.send("mixer-play", {
+            track: this.track,
+            stream_start: stream_start,
+            stream_end: stream_end,
+            channel: "master"
+        })
+        //console.log(track)
+        //this.state = "PLAYING"
+        //this.dispatch("track-started", track)
+        // let file_name = path.join(this.track.music_root, this.track.file_name);
+        // if (stream_start == undefined) {
+        //     stream_start = this.track.stream_start
+        //     stream_end = this.track.stream_end
+        // } else if (stream_end == undefined) {  
+        //     stream_end = this.track.stream_end
+        //     if (stream_start < 0) {
+        //         stream_start = stream_end + stream_start;
+        //     }
+        // }
+        // super.play(file_name, stream_start / 1000000, stream_end / 1000000)
+    }
+
+    stop() {
+        ipcRenderer.send("mixer-stop", {
+            channel: "master"
+        })
+        //console.log(track)
+        //this.state = "PLAYING"
+        //this.dispatch("track-started", track)
+        // let file_name = path.join(this.track.music_root, this.track.file_name);
+        // if (stream_start == undefined) {
+        //     stream_start = this.track.stream_start
+        //     stream_end = this.track.stream_end
+        // } else if (stream_end == undefined) {  
+        //     stream_end = this.track.stream_end
+        //     if (stream_start < 0) {
+        //         stream_start = stream_end + stream_start;
+        //     }
+        // }
+        // super.play(file_name, stream_start / 1000000, stream_end / 1000000)
+    }
+
+
+
     _do_start_playback(track) {
-        let file_name = path.join(track.music_root, track.file_name);
         this._current_track = {
             start_time: new Date(),
             end_time: undefined,
             status: undefined,
             track_id: track.id
         }
-        this.play(file_name,  track.stream_start / 1000000, track.stream_end / 1000000)    
+        this.play(track,  track.stream_start, track.stream_end)    
     }
 
     _do_play_next_track() {
@@ -89,7 +134,6 @@ class PlaybackController extends PydjayAudioFilePlayer {
                     this.dispatch('next-track-countdown', 0)
                     this._do_play_next_track();
                 } else {
-                    // console.log(delay)
                     this.dispatch('next-track-countdown', delay)
                     delay--;
                 }
