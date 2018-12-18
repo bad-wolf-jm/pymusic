@@ -95,14 +95,14 @@ class PrecuePlayerView extends EventDispatcher {
     }
 
     setRating (num) {
-        var html = "";
+        let html = "";
         for (let i=1; i<6; i++) {
-            html+=`<i id='preview-rating-star-${i}' class='fa " + ( i <= num ? "fa-star" : "fa-star-o") +"' style='margin-left:3px'></i>`;
+            html+=`<i id='precue-rating-star-${i}' class='fa ` + ( i <= num ? "fa-star" : "fa-star-o") +`' style='margin-left:3px'></i>`;
         }
         document.getElementById("precue-player-rating").innerHTML = html
         for (let i=1; i<6; i++) {
-            document.getElementById(`preview-rating-star-${i}`).addEventListener('click', () => {
-                if (i == 1 && this.rating == 1) {
+            document.getElementById(`precue-rating-star-${i}`).addEventListener('click', () => {
+                if (i == 1 && this._track.rating == 1) {
                     this.updateRating(0)
                 } else {
                     this.updateRating(i)
@@ -124,7 +124,7 @@ class PrecuePlayerView extends EventDispatcher {
         })
     }
 
-    updateloved(new_value) {
+    updateLoved(new_value) {
         DB.update_track_data(this._track.id, {favorite:new_value}, () => {
             this.setLoved(new_value)
         })
