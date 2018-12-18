@@ -12,24 +12,24 @@ button {
     color:   rgb(200, 200, 200);
 }
 
-/* table { 
-    border-collapse:collapse 
+/* table {
+    border-collapse:collapse
 } */
 
 .header {
-    margin:            0px; 
-    padding:           0px; 
-    width:             100%; 
-    height:            30px; 
+    margin:            0px;
+    padding:           0px;
+    width:             100%;
+    height:            30px;
     /* background-color:red;  */
-    background-color:rgb(24, 24, 24); 
+    background-color:rgb(24, 24, 24);
     /* position:          fixed;  */
-    display:           block  
+    display:           block
 }
 
 .header .settings-button {
     /* display:           inline-block; */
-    background-color:#000000; 
+    background-color:#000000;
     border:            none;
     color:           white;
     height:            100%;
@@ -42,7 +42,7 @@ button {
 
 .header .content {
     display: flex;
-    align-items: stretch; 
+    align-items: stretch;
     justify-content: space-between;
     width: calc(100% - 65px);
     height:100%;
@@ -51,27 +51,27 @@ button {
 }
 
 .header .content .item {
-    height:100%; 
+    height:100%;
     display: block;
-    flex: 0 1 auto; 
+    flex: 0 1 auto;
     list-style-type: none;
     margin-top:4px;
     margin-bottom:auto;
 }
 
 .header .item {
-    height:100%; 
+    height:100%;
     float:left;
 }
 
 .main_player {
-    margin: 0px; 
-    padding:0px; 
-    width:100%; 
-    height:150px; 
-    position:fixed; 
+    margin: 0px;
+    padding:0px;
+    width:100%;
+    height:150px;
+    position:fixed;
     top:30px;
-    background-color:blue; 
+    background-color:blue;
     background-image: linear-gradient(to top, #1E1E1E, #3C3C3C)
 
 }
@@ -82,58 +82,58 @@ button {
 }
 
 .main_space {
-    margin: 0px; 
-    padding:0px; 
-    width:100%; 
-    height:calc(100% - 210px); 
-    background-color:grey; 
-    position:fixed; 
+    margin: 0px;
+    padding:0px;
+    width:100%;
+    height:calc(100% - 210px);
+    background-color:grey;
+    position:fixed;
     top:180px
 }
 
 .side_bar {
-    margin: 0px; 
-    padding:0px; 
-    width:350px; 
-    height:100%; 
-    background-color:rgb(177, 36, 170); 
-    background-color:rgb(40,40,40); 
+    margin: 0px;
+    padding:0px;
+    width:350px;
+    height:100%;
+    background-color:rgb(177, 36, 170);
+    background-color:rgb(40,40,40);
     border-right: 1px solid grey;
     border-top: 1px solid grey;
     float:left
 }
 
 .main_list {
-    margin: 0px; 
-    padding:0px; 
-    width:calc(100% - 852px); 
-    height:100%; 
-    background-color:rgb(30, 148, 35); 
-    background-color:rgb(40,40,40); 
+    margin: 0px;
+    padding:0px;
+    width:calc(100% - 852px);
+    height:100%;
+    background-color:rgb(30, 148, 35);
+    background-color:rgb(40,40,40);
     border-right: 1px solid grey;
     border-top: 1px solid grey;
     float:left
 }
 
 .queue_list {
-    margin: 0px; 
-    padding:0px; 
-    width:500px; 
-    height:100%; 
-    background-color:rgb(14, 168, 173); 
-    background-color:rgb(40,40,40); 
+    margin: 0px;
+    padding:0px;
+    width:500px;
+    height:100%;
+    background-color:rgb(14, 168, 173);
+    background-color:rgb(40,40,40);
     border-top: 1px solid grey;
     float:right
 }
 
 .footer {
-    margin: 0px; 
-    padding:0px; 
-    width:100%; 
-    height:30px; 
-    background-color:rgb(79, 9, 172); 
+    margin: 0px;
+    padding:0px;
+    width:100%;
+    height:30px;
+    background-color:rgb(79, 9, 172);
     border-top: 1px solid grey;
-    position:fixed; 
+    position:fixed;
     bottom:0px
 }
 
@@ -151,9 +151,9 @@ button {
     text-transform:uppercase;
     font-weight:normal;
     font-size:11pt;
-    white-space: nowrap; 
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;    
+    text-overflow: ellipsis;
     width:calc(100% - 150px);
     height:15px;
     padding-left:15px;
@@ -169,18 +169,18 @@ button {
 }
 
 .main-player .track-info {
-    padding-left:5px; 
-    float:left; 
-    width:100%; 
-    display:block; 
-    height:40px 
+    padding-left:5px;
+    float:left;
+    width:100%;
+    display:block;
+    height:40px
 }
 
 .main_player .info {
     /* display: inline-block; */
     float:left;
     height:100%;
-    margin:5px !important;   
+    margin:5px !important;
     padding:0px !important;
     width:125px !important;;
 
@@ -189,8 +189,8 @@ button {
 .main_player .waveform {
     display:inline-block;
     text-align: center;
-    width:100%; 
-    height:40px; 
+    width:100%;
+    height:40px;
     background-color:rgb(27, 27, 27)
 }
 
@@ -220,7 +220,7 @@ button {
     display: inline-block;
     /* float:left; */
     /* height:100%; */
-    margin:10px !important;   
+    margin:10px !important;
     padding:0px !important;
     width:125px !important;
 }
@@ -233,7 +233,7 @@ button {
 
 .accordion {
     background-color: rgb(30, 30, 30);
-    color: rgb(182, 182, 182) !important; 
+    color: rgb(182, 182, 182) !important;
     cursor: pointer;
     width: 100%;
     text-align: left;
@@ -269,15 +269,15 @@ button {
 
 
 .accordion:before {
-    content: '\2795'; 
+    content: '\2795';
     font-size: 10pt;
-    color: rgb(182, 182, 182) !important; 
+    color: rgb(182, 182, 182) !important;
     float: left;
     margin-right: 5px;
 }
 
 .active:before {
-    content: "\2796"; 
+    content: "\2796";
     font-size: 10pt;
 }
 
@@ -334,7 +334,7 @@ button {
     height:32px;
     outline:none !important;
   }
-  
+
 .search-container button:hover {
     background: #ccc;
     background: rgb(80, 80, 80);
@@ -382,7 +382,7 @@ input.new-playlist[type=text] {
 }
 
 .footer .content .item {
-    height:100%; 
+    height:100%;
     display: block;
     flex: 0 1 auto; /* Default */
     list-style-type: none;
@@ -402,8 +402,8 @@ input.new-playlist[type=text] {
 
 /* .queue_list .main-list-header  */
 .queue-management-button {
-    height:75px; 
-    width:250px; 
+    height:75px;
+    width:250px;
     /* float:right; */
     border: 2px solid grey;
     border-radius: 25px;
@@ -428,8 +428,8 @@ input.new-playlist[type=text] {
 
 
 .queue_list .main-list-header .title {
-    height:50px; 
-    width:calc(100% - 110px); 
+    height:50px;
+    width:calc(100% - 110px);
     margin:0px;
 }
 
@@ -443,8 +443,8 @@ input.new-playlist[type=text] {
 }
 
 .queue_list .main-list-header .queue-management-button:hover {
-    height:50px; 
-    width:50px; 
+    height:50px;
+    width:50px;
     float:right;
     border: 0px solid grey;
     cursor: pointer;
@@ -475,8 +475,8 @@ input.new-playlist[type=text] {
 
 
 .queue-list .element .cover-image {
-    float:left; 
-    padding-right:7px; 
+    float:left;
+    padding-right:7px;
     padding-left:-3px;
     border-radius: 6px 0px 0px 6px
 }
@@ -551,9 +551,9 @@ input.new-playlist[type=text] {
     /* text-transform:uppercase; */
     font-weight:normal;
     font-size:9pt;
-    white-space: nowrap; 
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;    
+    text-overflow: ellipsis;
     height:12px
 }
 
@@ -575,13 +575,13 @@ input.new-playlist[type=text] {
     /* height:25px; */
     /* margin-left:10px; */
     float:left;
-    margin-right:15px; 
+    margin-right:15px;
     font-size:12pt;
 }
 
 .sidebar-library-item .arrow-icon {
     float:right;
-    margin-right:10px; 
+    margin-right:10px;
     font-size:12pt
 }
 
@@ -617,13 +617,13 @@ input.new-playlist[type=text] {
 
 .preview-player .metadata .tag-name{
     width:75px !important;
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 
 .preview-player .metadata .tag-value {
-    white-space: nowrap; 
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;    
+    text-overflow: ellipsis;
     max-width:200px;
 
 }
@@ -648,7 +648,7 @@ input.new-playlist[type=text] {
 }
 
 .main-track-list-area .main-track-list-table .header-row{
-    width:100%; 
+    width:100%;
     /* height:100%; */
     margin:0;
     padding:0;
@@ -660,12 +660,12 @@ input.new-playlist[type=text] {
 }
 
 .main-track-list-area .main-track-list-table .row {
-    width:100%; 
+    width:100%;
     height:20px;
     /* text-transform:uppercase; */
-    white-space: nowrap; 
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;    
+    text-overflow: ellipsis;
 }
 
 .main-track-list-area .main-track-list-table .row:hover {
@@ -690,20 +690,6 @@ input.new-playlist[type=text] {
 }
 
 
-/* .main-track-list-area .main-track-list-table .row:hover .selected {
-    background-color: rgb(83, 39, 153);
-}
-
-.main-track-list-area .main-track-list-table tr:nth-child(even) .selected {
-    background-color: rgb(70, 32, 114);
-}
-
-.main-track-list-area .main-track-list-table tr:nth-child(odd) .selected {
-    background-color: rgb(70, 32, 114);
-} */
-
-
-
 .main-track-list-area .main-track-list-table .header-row .sticky-header {
     position: sticky;
     top:     0;
@@ -711,13 +697,17 @@ input.new-playlist[type=text] {
     margin:  0;
     padding: 0;
     border:  0px solid transparent;
-    /* #To not have transparent background.
-    #background-color: white; */
     background-color: rgb(50,50,50);
 }
 
+
 .filtered {
    display: none;
+}
+
+
+.focus {
+    background-color:rgb(70,70,70);
 }
 
 
@@ -731,16 +721,16 @@ input.new-playlist[type=text] {
   }
 
 .precue-management-button:hover {
-    height:30px; 
-    width:30px; 
+    height:30px;
+    width:30px;
     border: 0px solid grey;
     cursor: pointer;
     background-color: rgb(100,25,25);
 }
 
 .precue-management-button {
-    height:30px; 
-    width:30px; 
+    height:30px;
+    width:30px;
     border: 0px solid grey;
     cursor: pointer;
     background-color: rgb(55,55,55);
@@ -753,7 +743,7 @@ input.new-playlist[type=text] {
     border: 0;
     height: 30px;
     width:calc(100% - 60px);
-    border-radius: 9px;  
+    border-radius: 9px;
     -webkit-appearance: none;
 	border: none;
 }

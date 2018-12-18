@@ -6,16 +6,19 @@ const {BrowserWindow} = remote
 class QueueView extends EventDispatcher {
     constructor(dom_ids) {
         super()
+
+        this.element = document.getElementById("queue-list")
+
         this.dom_id         = dom_ids.list
         this.controller     = undefined
         this.context_menu_element = undefined
-        this.list_dom       = document.getElementById(dom_ids.list); 
-        this.num_tracks_dom = document.getElementById(dom_ids.num_tracks); 
+        this.list_dom       = document.getElementById(dom_ids.list);
+        this.num_tracks_dom = document.getElementById(dom_ids.num_tracks);
         this.duration_dom   = document.getElementById(dom_ids.duration);
 
         this.view_list_order = []
         let queue_list = document.getElementById("queue-list-area")
-        queue_list.addEventListener('dragenter', this.handle_drag_enter.bind(this), false);          
+        queue_list.addEventListener('dragenter', this.handle_drag_enter.bind(this), false);
         queue_list.addEventListener('dragover',  this.on_drag_over.bind(this), false);
         queue_list.addEventListener('dragend',   this.handle_drag_end.bind(this), false);
         queue_list.addEventListener('drop',      this.handle_drop.bind(this), true);
@@ -23,7 +26,7 @@ class QueueView extends EventDispatcher {
         this.queue_content = undefined
 
         this.menu = new Menu()
-        this.menu.append(new MenuItem({label: 'Track info', click: () => { 
+        this.menu.append(new MenuItem({label: 'Track info', click: () => {
             let window = new BrowserWindow({width: 1250, height: 750})
             window.on('closed', () => {
                 window = null
@@ -33,20 +36,20 @@ class QueueView extends EventDispatcher {
 
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
-        this.menu.append(new MenuItem({label: 'Preview', 
+        this.menu.append(new MenuItem({label: 'Preview',
             submenu: [
                 {label: 'Full track', click: () => {pc.play(this.context_menu_element) }},
                 {label: 'Last 30 seconds', click: () => {pc.play_last_30_seconds(this.context_menu_element)  }},
                 {label: 'Last 10 seconds', click: () =>{pc.play_last_10_seconds(this.context_menu_element)  }}
             ]}))
-                
+
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Remove', click: () =>{ this.controller.remove(this.context_menu_element) }}))
-        
+
         this.menu.on("menu-will-show", (e) => {})
         this.menu.on("menu-will-close", (e) => {})
 
-        this.sortable = Sortable.create(this.list_dom, 
+        this.sortable = Sortable.create(this.list_dom,
             {
                 animation: 150,
                 ghostClass: "ghost",
@@ -66,7 +69,7 @@ class QueueView extends EventDispatcher {
                     this.view_list_order = new_order
                     this.dispatch("reorder", this.view_list_order)
                     this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-                    this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`            
+                    this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
                 },
             }
         )
@@ -81,7 +84,7 @@ class QueueView extends EventDispatcher {
 
     set_queue(queue) {
         this.view_list_order = []
-        let queue_rows = []  
+        let queue_rows = []
 
         for(let i=0; i<queue.length; i++) {
             let element = (queue[i] == null) ? {id: null, stream_length:0} : {
@@ -96,7 +99,7 @@ class QueueView extends EventDispatcher {
                     element.cover = "../../resources/images/default_album_cover.png"
                 } else {
                     element.cover = `file://${queue[i].image_root}/${queue[i].cover}`
-                }    
+                }
             }
             queue_rows.push(element)
             this.view_list_order.push(element.id)
@@ -116,6 +119,26 @@ class QueueView extends EventDispatcher {
             }
         )
     }
+
+
+    focus() {
+        this.element.classList.add("focus")
+    }
+
+    blur() {
+        this.element.classList.remove("focus")
+    }
+
+    move_down() {
+        this.controller.move_down(id)
+    }
+
+    move_up() {
+        this.controller.move_up(id)
+    }
+
+
+
 
     handle_double_click(e) {
         let x = e.target.closest(".queued-track")
@@ -148,7 +171,7 @@ class QueueView extends EventDispatcher {
             let track = JSON.parse(d)
             this.controller.append(track)
         } catch (error) {
-            console.log(error)        
+            console.log(error)
         }
 
     }
@@ -171,7 +194,7 @@ class QueueView extends EventDispatcher {
                 this.context_menu_element = track_element
                 this.menu.popup({window: remote.getCurrentWindow()})
               }, false)
-      
+
         });
     }
 

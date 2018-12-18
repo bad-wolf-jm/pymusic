@@ -3,20 +3,23 @@ const { ipcRenderer } = require('electron');
 class TrackListView extends EventDispatcher {
     constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
         super()
+
+        this.element = document.getElementById("main-list")
+
         this.dom_id         = dom_ids.list
         this.controller     = undefined
         this.table          = undefined
-        this.name_dom       = document.getElementById(dom_ids.name); 
-        this.num_tracks_dom = document.getElementById(dom_ids.num_tracks); 
+        this.name_dom       = document.getElementById(dom_ids.name);
+        this.num_tracks_dom = document.getElementById(dom_ids.num_tracks);
         this.duration_dom   = document.getElementById(dom_ids.duration);
-        this.filter_dom      = document.getElementById(dom_ids.filter); 
+        this.filter_dom      = document.getElementById(dom_ids.filter);
 
-        this.shortlist_controller = shortlist_controller        
+        this.shortlist_controller = shortlist_controller
         this.queue_controller = queue_controller
         this.unavailable_controller = unavailable_controller
 
         this.menu = new Menu()
-        this.menu.append(new MenuItem({label: 'Track info', click: () => { 
+        this.menu.append(new MenuItem({label: 'Track info', click: () => {
             let window = new BrowserWindow({width: 1250, height: 750})
             window.on('closed', () => {
                 window = null
@@ -29,20 +32,20 @@ class TrackListView extends EventDispatcher {
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Shortlist', click: () => {
             let T = this.context_menu_element
-            this.shortlist_controller.add(T)            
+            this.shortlist_controller.add(T)
 
         }}))
-        
+
         this.menu.append(new MenuItem({label: 'Marked as played', click: () => {
             let T = this.context_menu_element
-            this.unavailable_controller.add(T)            
+            this.unavailable_controller.add(T)
         }}))
         this.menu.append(new MenuItem({label: 'Add to queue', click: () => {
             let T = this.context_menu_element
             this.queue_controller.append(T)
         }}))
         this.menu.append(new MenuItem({type:  'separator'}))
-        this.menu.append(new MenuItem({label: 'Preview', 
+        this.menu.append(new MenuItem({label: 'Preview',
             submenu: [
                 {label: 'Full track', click: () => {
                     pc.play(this.context_menu_element)
@@ -54,9 +57,9 @@ class TrackListView extends EventDispatcher {
                     pc.play_last_10_seconds(this.context_menu_element)
                 }}
             ]}))
-                
+
         this.menu.append(new MenuItem({type: 'separator'}))
-        
+
         this.menu.on("menu-will-show", (e) => {})
         this.menu.on("menu-will-close", (e) => {})
 
@@ -98,7 +101,7 @@ class TrackListView extends EventDispatcher {
 
     set_list(name, queue) {
         this.view_list_order = []
-        let queue_rows       = []  
+        let queue_rows       = []
         if (queue == undefined) {
             queue = []
         }
@@ -113,7 +116,7 @@ class TrackListView extends EventDispatcher {
                 genre:       queue[i].genre,
                 last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
                 play_count:  queue[i].play_count,
-                rating:      this._get_rating(queue[i]), 
+                rating:      this._get_rating(queue[i]),
                 bpm:         queue[i].bpm,
                 duration:    format_nanoseconds(queue[i].stream_length),
             }
@@ -139,7 +142,7 @@ class TrackListView extends EventDispatcher {
                 (x) => {
                     let track_id = parseInt(x.attributes["data-track-id"].value)
                     this.table_rows[track_id] = x
-                } 
+                }
             )
             this._selected_row = undefined
         })
@@ -162,6 +165,24 @@ class TrackListView extends EventDispatcher {
         let id = parseInt(x.attributes["data-track-id"].value)
         this.controller.select_element(id)
     }
+
+
+    focus() {
+        this.element.classList.add("focus")
+    }
+
+    blur() {
+        this.element.classList.remove("focus")
+    }
+
+    move_down() {
+        this.controller.move_down(id)
+    }
+
+    move_up() {
+        this.controller.move_up(id)
+    }
+
 
     update_element(x) {
         let row = this.table_rows[x.id]
