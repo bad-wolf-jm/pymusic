@@ -17,6 +17,10 @@ class PrecuePlayerView extends EventDispatcher {
             this.controller.stop()
             document.getElementById("precue-dropdown").classList.remove("show")
         })
+        document.getElementById("track-color-value").onchange = (c) => {
+            let new_value = document.getElementById("track-color-value").value
+            //
+        }
     }
 
     show_options() {
@@ -55,6 +59,11 @@ class PrecuePlayerView extends EventDispatcher {
                 }
             }
         })
+        document.getElementById("precue-player-loved").addEventListener("click", () => {
+            if (this._track != undefined) {
+                this.updateLoved(!(this._track.favorite))
+            }
+        })
     }
 
     set_unset() {
@@ -86,20 +95,43 @@ class PrecuePlayerView extends EventDispatcher {
         document.getElementById("no-preview-track").style.display = "none"
         document.getElementById("precue-dropdown").classList.remove("show")
         //this._waveform.load(file_name)
+
+
     }
 
     setRating (num) {
         var html = "";
         for (let i=1; i<6; i++) {
-            html+="<i class='fa " + ( i <= num ? "fa-star" : "fa-star-o") +"' style='margin-left:3px'></i>";
+            html+=`<i id='preview-rating-star-${i}' class='fa " + ( i <= num ? "fa-star" : "fa-star-o") +"' style='margin-left:3px'></i>`;
         }
         document.getElementById("precue-player-rating").innerHTML = html
+        for (let i=1; i<6; i++) {
+            document.getElementById(`preview-rating-star-${i}`).addEventListener('click', () => {
+                if (i == 1 && this.rating == 1) {
+                    this.updateRating(0)
+                } else {
+                    this.updateRating(i)
+                }
+            })
+        }
     }
-    
+
     setLoved (value){
         var html = "";
         this.loved = value
         html+="<i title='"+value+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
         document.getElementById("precue-player-loved").innerHTML = html
+    }
+
+    updateRating(new_value) {
+        DB.update_track_data(this._track.id, {rating:new_value}, () => {
+            this.setRating(new_value)
+        })
+    }
+
+    updateloved(new_value) {
+        DB.update_track_data(this._track.id, {favorite:new_value}, () => {
+            this.setLoved(new_value)
+        })
     }
 }

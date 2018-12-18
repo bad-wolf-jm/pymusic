@@ -2,6 +2,7 @@
 <title>PYMUSIC DJ App</title>
 
 <link rel="stylesheet" href="../../../lib/clusterize.css">
+<link rel="stylesheet" href="../../../lib/huebee.css">
 <link rel="stylesheet" href="main_window.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -21,6 +22,8 @@
 <script src="../../../lib/moment.min.js"></script>
 <script src="../../../lib/Sortable.js"></script>
 <script src="../../../lib/clusterize.js"></script>
+<script src="../../../lib/jscolor.js"></script>
+<script src="../../../lib/huebee.pkgd.min.js"></script>
 
 <script src="../../utils.js"></script>
 <script src="../../data.js"></script>
@@ -263,8 +266,11 @@
                     <div style="float:left; display:block; width:calc(100% - 00px)">
                         <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
                             <div style="display:inline-block; width:100%">
-                                <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
-                                <div id="precue-player-color" class="color-chooser"></div>
+                                <div style="height:20px">
+                                    <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
+                                    <input type="text" id="track-color-value" value=""/>
+                                    <button id="precue-player-color" class="jscolor{valueElement:'track-color-value',value:''} color-chooser"></button>
+                                </div>
                                 <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>
                             </div>
                             <div style="display:inline-block; height:20px; width:100%">
