@@ -1,3 +1,28 @@
+var mysql = require('mysql');
+
+var db_connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "root",
+  database:'pymusic'
+});
+
+function $QUERY(sql, with_result) {
+    db_connection.query(
+        sql,
+        function (error, result) {
+            // console.log(error, result)
+            if (error) {
+                // console.log(error)
+                throw error;
+            } else {
+                // console.log(result)
+                with_result(result);
+            }
+        }
+    )
+}
+
 
 function addslashes(s) {
     if (s == null) return null;
@@ -106,69 +131,72 @@ function DataProvider() {
         $QUERY(sql, k);
     }
 
+    self.get_related_tracks = function (id, k) {
+        let sql = `(${self.base_track_view_sql()}) tracks_view`
+        sql = `SELECT tracks_view.* FROM track_relations JOIN ${sql} ON 
+                track_relations.related_track_id = tracks_view.id WHERE track_relations.track_id = ${id}`
+        $QUERY(sql, k)
+    }
+
     self.get_playlist_tracks = function (id, k) {
-        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* 
-                    FROM playlist_tracks 
-                    JOIN ${tracks_sql} 
-                    ON playlist_tracks.track_id=tracks_view.id 
-                    WHERE playlist_tracks.playlist_id=${id} ORDER BY title`
+        let sql = `SELECT track_id as id, position FROM playlist_tracks WHERE playlist_id = ${id} ORDER BY position`
         $QUERY(sql, k)        
     }
 
+    self.get_playback_history = function(id, k) {
+        sql = `SELECT sessions.event_name, session_tracks.start_time, 
+        session_tracks.end_time, session_tracks.position from session_tracks JOIN sessions 
+        ON sessions.id=session_tracks.session_id WHERE track_id=${id} ORDER BY start_time DESC`
+        $QUERY(sql, k)
+    }
+
     self.get_session_tracks = function (id, k) {
-        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* 
-                    FROM session_tracks 
-                    JOIN ${tracks_sql} 
-                    ON session_tracks.track_id=tracks_view.id 
-                    WHERE session_tracks.session_id=${id} 
-                    ORDER BY session_tracks.position`
+        let sql = `SELECT track_id as id, position FROM session_tracks WHERE session_id = ${id} ORDER BY position`
         $QUERY(sql, k)
     }
 
     self.get_never_played_tracks = function(k) {
-        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* 
-                    FROM ${tracks_sql} 
-                    WHERE tracks_view.play_count = 0 
-                    ORDER BY tracks_view.title`
+        let sql = `SELECT id FROM tracks WHERE id NOT IN (SELECT DISTINCT track_id as id FROM session_tracks)`
         $QUERY(sql, k)
     }
 
     self.get_played_tracks = function(k) {
-        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* 
-                    FROM ${tracks_sql} 
-                    WHERE tracks_view.play_count != 0 
-                    ORDER BY tracks_view.title`
+        let sql = `SELECT DISTINCT track_id as id FROM session_tracks`
         $QUERY(sql, k)
     }
 
     self.get_shortlisted_tracks = function (k) {
-        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* 
-                    FROM short_listed_tracks 
-                    JOIN ${tracks_sql} 
-                    ON tracks_view.id=short_listed_tracks.track_id 
-                    ORDER BY tracks_view.title`
+        let sql = `SELECT track_id as id FROM short_listed_tracks`
         $QUERY(sql, k)
     }
 
     self.get_unavailable_tracks = function (k) {
-        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* 
-                    FROM unavailable_tracks 
-                    JOIN ${tracks_sql} 
-                    ON tracks_view.id = unavailable_tracks.track_id 
-                    ORDER BY tracks_view.title`
-         $QUERY(sql, k)
+        let sql = `SELECT track_id as id FROM unavailable_tracks`
+        $QUERY(sql, k)
+    }
+
+    self.get_session_info = function (id, k) {
+        $QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions 
+        JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts 
+        ON sessions.id=counts.session_id WHERE sessions.id=${id}`, 
+        (list) => {
+            return k(list[0])
+        })
     }
 
     self.get_sessions_list = function (k) {
         $QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions 
         JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts 
         ON sessions.id=counts.session_id ORDER BY date ASC`, k)
+    }
+
+    self.get_group_info = function (id, k) {
+        $QUERY(`SELECT playlists.id as id , playlists.name, IFNULL(counts.count, 0) as count FROM
+        playlists LEFT JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
+        ON playlists.id=counts.playlist_id WHERE playlists.id=${id}`, 
+        (list) => {
+            return k(list[0])
+        })
     }
 
     self.get_group_list = function (k) {
@@ -188,34 +216,22 @@ function DataProvider() {
         $QUERY(sql, k)
     }
 
-    self.get_queue_track = function(id, k) {
-        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT session_queue.position AS position, \`tracks_view\`.* 
-                   FROM session_queue 
-                   JOIN ${tracks_sql} 
-                   ON tracks_view.id = session_queue.track_id 
-                   WHERE session_queue.status='pending' AND session_queue.track_id=${id} 
-                   ORDER BY session_queue.position`
+    self.get_queue_elements_ids = function (k) {
+        var sql = `SELECT track_id as id FROM current_queue ORDER BY position`
+        $QUERY(sql, k)
+    }
+
+    self.get_current_session_elements = function (k) {
+        var sql = `SELECT track_id, start_time, end_time, position, status FROM current_played_tracks ORDER BY start_time`
         $QUERY(sql, k)
     }
 
     self.get_suggested_tracks = function (k) {
-        var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-        var sql = `SELECT \`tracks_view\`.* 
-                    FROM ${tracks_sql} 
-                    WHERE tracks_view.id IN 
-                        (SELECT DISTINCT related_track_id 
-                            FROM track_relations 
-                            WHERE track_relations.track_id IN 
-                                (SELECT track_id FROM session_queue WHERE status='pending'))`
+        let sql = `SELECT DISTINCT related_track_id as id
+                        FROM track_relations 
+                        WHERE track_relations.track_id IN 
+                            (SELECT track_id FROM session_queue WHERE status='pending')`
         $QUERY(sql, k)
-    }
-
-    self.get_queue_duration = function (k) {
-        $QUERY(`SELECT SUM(duration) as duration, COUNT(id) as count, AVG(wait_time) as wait_time FROM
-        (SELECT 1 as id, tracks.stream_length as duration, session_queue.id as count, settings.wait_time as wait_time
-        FROM tracks JOIN session_queue ON tracks.id=session_queue.track_id LEFT JOIN settings on 1
-        WHERE session_queue.status='pending' OR session_queue.status='playing') dummy GROUP BY id`, k)
     }
 
     self.get_settings = function (k) {
@@ -255,27 +271,110 @@ function DataProvider() {
     self.update_track_data = function (id, track_info, k) {
         let sql = "UPDATE tracks SET "
         let fields = Object.keys(track_info);
-        sql += fields.indexOf("title") != -1 ? `title=${STRING(addslashes(track_info.title))},\n` : '' 
-        sql += fields.indexOf("artist") != -1 ? `artist=${STRING(addslashes(track_info.artist))},\n` : '' 
-        sql += fields.indexOf("album") != -1 ? `album=${STRING(addslashes(track_info.album))},\n` : '';
-        sql += fields.indexOf("year") != -1 ? `year=${track_info.year},\n` : '' 
-        sql += fields.indexOf("genre") != -1 ? `genre=${STRING(addslashes(track_info.genre))},\n` : '' 
-        sql += fields.indexOf("bpm") != -1 ? `bpm=${track_info.bpm},\n` : '' 
-        sql += fields.indexOf("rating") != -1 ? `rating=${track_info.rating},\n` : '' 
-        sql += fields.indexOf("favorite") != -1 ? `favorite=${track_info.favorite},\n` : '' 
-        sql += fields.indexOf("color") != -1 ? `color=${STRING(track_info.color)},\n` : '' 
-        sql += fields.indexOf("comments") != -1 ? `comments=${STRING(addslashes(track_info.comments))},\n` : '' 
-        sql += fields.indexOf("cover_medium") != -1 ? `cover_medium=${STRING(addslashes(track_info.cover_medium))},\n` : ''
-        sql += fields.indexOf("cover_small") != -1 ? `cover_small=${STRING(addslashes(track_info.cover_small))},\n` : '' 
-        sql += fields.indexOf("cover_large") != -1 ? `cover_large=${STRING(addslashes(track_info.cover_large))},\n` : '' 
+        sql += fields.indexOf("title")          != -1 ? `title=${STRING(addslashes(track_info.title))},\n` : '' 
+        sql += fields.indexOf("artist")         != -1 ? `artist=${STRING(addslashes(track_info.artist))},\n` : '' 
+        sql += fields.indexOf("album")          != -1 ? `album=${STRING(addslashes(track_info.album))},\n` : '';
+        sql += fields.indexOf("year")           != -1 ? `year=${(track_info.year != null) ? track_info.year : 'NULL'},\n` : 'NULL' 
+        sql += fields.indexOf("genre")          != -1 ? `genre=${STRING(addslashes(track_info.genre))},\n` : '' 
+        sql += fields.indexOf("bpm")            != -1 ? `bpm=${track_info.bpm},\n` : '' 
+        sql += fields.indexOf("rating")         != -1 ? `rating=${track_info.rating},\n` : '' 
+        sql += fields.indexOf("favorite")       != -1 ? `favorite=${track_info.favorite},\n` : '' 
+        sql += fields.indexOf("color")          != -1 ? `color=${STRING(track_info.color)},\n` : '' 
+        sql += fields.indexOf("comments")       != -1 ? `comments=${STRING(addslashes(track_info.comments))},\n` : '' 
+        sql += fields.indexOf("cover_medium")   != -1 ? `cover_medium=${STRING(addslashes(track_info.cover_medium))},\n` : ''
+        sql += fields.indexOf("cover_small")    != -1 ? `cover_small=${STRING(addslashes(track_info.cover_small))},\n` : '' 
+        sql += fields.indexOf("cover_large")    != -1 ? `cover_large=${STRING(addslashes(track_info.cover_large))},\n` : '' 
         sql += fields.indexOf("cover_original") != -1 ? `cover_original=${STRING(addslashes(track_info.cover_original))},\n` : '' 
-        sql += fields.indexOf("stream_start") != -1 ? `stream_start=${track_info.stream_start},\n` : '' 
-        sql += fields.indexOf("stream_end") != -1 ? `stream_end=${track_info.stream_end},\n` : '' 
-        sql += fields.indexOf("stream_length") != -1 ? `stream_length=${track_info.sttream_length},\n` : ''
-        sql += fields.indexOf("disabled") != -1 ? `disabled=${track_info.disabled},\n` : '' 
-        sql += fields.indexOf("grouping") != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
+        sql += fields.indexOf("stream_start")   != -1 ? `stream_start=${track_info.stream_start},\n` : '' 
+        sql += fields.indexOf("stream_end")     != -1 ? `stream_end=${track_info.stream_end},\n` : '' 
+        sql += fields.indexOf("stream_length")  != -1 ? `stream_length=${track_info.stream_length},\n` : ''
+        sql += fields.indexOf("disabled")       != -1 ? `disabled=${track_info.disabled},\n` : '' 
+        sql += fields.indexOf("grouping")       != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
         sql += `date_modified=${DATE(new Date())}\n` 
         sql += `WHERE id=${id}`
+        console.log(sql)
         $QUERY(sql, k)
+    }
+
+    self.get_queue_boundary_positions = function (cont){
+        sql = "SELECT min(position) as min, max(position) as max FROM session_queue WHERE status='pending'"
+        $QUERY(sql, function(result){
+            //if (error) throw error;
+            return cont(result[0].min, result[0].max)
+        })
+    }
+    
+
+    self.add_id_to_short_list = function (id, k) {
+        sql = `SELECT 1 FROM short_listed_tracks WHERE track_id=${id} LIMIT 1`;
+        $QUERY(sql,
+            function (result){
+                if (result.length == 0){
+                    insert_sql = `INSERT INTO short_listed_tracks (track_id) VALUES (${id})`;
+                    $QUERY(insert_sql, k)
+                } else {
+                    webix.message({
+                        text:"Track is already in the short list",
+                        type:"info",
+                        expire: 3000,
+                        id:"message1"
+                    });
+                }
+            }
+        )
+    },
+
+    self.add_id_to_unavailable = function (id, k) {
+        $QUERY(
+            `SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+            function (result) {
+                if (result.length == 0) {
+                    $QUERY(`INSERT INTO unavailable_tracks (track_id) VALUES (${id})`, k)
+                }
+            }
+        )
+    },
+
+    self.remove_id_from_unavailable = function (id, k) {
+        $QUERY(`SELECT 1 FROM unavailable_tracks WHERE track_id=${id} LIMIT 1`,
+            function (result) {
+                if (result.length > 0) {
+                    $QUERY(`DELETE FROM unavailable_tracks WHERE track_id=${id}`, k)
+                }
+            }
+        )
+    }
+
+    self.get_waiting_time = function (k) {
+        $QUERY(`SELECT wait_time FROM settings`,
+            (r) => {
+                k(r[0].wait_time)
+            }
+        )
+    }
+
+    self.add_id_to_playlist = function(track_id, playlist_id, k) {
+        $QUERY(`SELECT COUNT(*) as N FROM playlist_tracks WHERE track_id=${track_id} AND playlist_id=${playlist_id}`,
+            (count) => {
+                if (count[0].N == 0) {
+                    $QUERY(`INSERT INTO playlist_tracks (playlist_id, track_id) VALUES (${playlist_id}, ${track_id})`, k)
+                }
+            }
+        )
+    }
+
+    self.add_to_current_session = function (track_data, k) {
+        k()
+    }
+
+    self.create_playlist = function (name, done) {
+        $QUERY(`SELECT id FROM playlists WHERE name='${name}'`, (x) => {
+            if (x.length == 0) {
+                current_time = DATE(new Date());
+                $QUERY(`INSERT INTO playlists (name, created) VALUES ('${name}', ${current_time})`, done)
+            } else {
+                done()    
+            }
+        })
     }
 }

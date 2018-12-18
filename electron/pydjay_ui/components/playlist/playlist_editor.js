@@ -227,19 +227,19 @@ function PlaylistEditor(id) {
                 self.display_playlist_tracks()
                 $$(self.group_name_label).define('label', name);
                 $$(self.group_name_label).refresh();        
-                webix.UIManager.addHotKey("space", () => self.audio_player.togglePause(), $$(self.track_table.track_list));        
-                webix.UIManager.addHotKey("shift+space", () => self.audio_player.stop(), $$(self.track_table.track_list));        
-                webix.UIManager.addHotKey("space", () => self.audio_player.togglePause(), $$(self.track_list.list_id));        
-                webix.UIManager.addHotKey("shift+space", () => self.audio_player.stop(), $$(self.track_list.list_id));        
-                webix.UIManager.addHotKey("shift+a", self.add_to_playlist, $$(self.track_table.track_list));
-                webix.UIManager.addHotKey("ctrl+shift+enter", self.preview_last_30_seconds, $$(self.track_table.track_list));
-                webix.UIManager.addHotKey("shift+enter", self.preview_last_10_seconds, $$(self.track_table.track_list));
-                webix.UIManager.addHotKey("enter", self.preview_selected, $$(self.track_table.track_list));
+                webix.UIManager.addHotKey("space",       () => self.audio_player.togglePause(),   $$(self.track_table.track_list));        
+                webix.UIManager.addHotKey("shift+space", () => self.audio_player.stop(),          $$(self.track_table.track_list));        
+                webix.UIManager.addHotKey("space",       () => self.audio_player.togglePause(),   $$(self.track_list.list_id));        
+                webix.UIManager.addHotKey("shift+space", () => self.audio_player.stop(),          $$(self.track_list.list_id));        
+                webix.UIManager.addHotKey("shift+a",     self.add_to_playlist,                    $$(self.track_table.track_list));
+                webix.UIManager.addHotKey("ctrl+shift+enter", self.preview_last_30_seconds,       $$(self.track_table.track_list));
+                webix.UIManager.addHotKey("shift+enter",      self.preview_last_10_seconds,       $$(self.track_table.track_list));
+                webix.UIManager.addHotKey("enter",            self.preview_selected,              $$(self.track_table.track_list));
                 webix.UIManager.addHotKey("ctrl+shift+enter", self.group_preview_last_30_seconds, $$(self.track_list.list_id));
-                webix.UIManager.addHotKey("shift+enter", self.group_preview_last_10_seconds, $$(self.track_list.list_id));
-                webix.UIManager.addHotKey("enter", self.group_preview_selected, $$(self.track_list.list_id));
-                webix.UIManager.addHotKey("delete", self.remove_from_playlist, $$(self.track_list.list_id));
-                webix.UIManager.addHotKey("backspace", self.remove_from_playlist, $$(self.track_list.list_id));        
+                webix.UIManager.addHotKey("shift+enter",      self.group_preview_last_10_seconds, $$(self.track_list.list_id));
+                webix.UIManager.addHotKey("enter",            self.group_preview_selected,        $$(self.track_list.list_id));
+                webix.UIManager.addHotKey("delete",           self.remove_from_playlist,          $$(self.track_list.list_id));
+                webix.UIManager.addHotKey("backspace",        self.remove_from_playlist,          $$(self.track_list.list_id));        
             }
         )
     }

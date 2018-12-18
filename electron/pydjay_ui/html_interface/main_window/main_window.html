@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<title>PYMUSIC DJ App</title>
+
+<link rel="stylesheet" href="main_window.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<script src="../../../web-audio/event_dispatcher.js"></script>
+<script src="../../../web-audio/audio_context.js"></script>
+<script src="../../../web-audio/audio_player.js"></script>
+<script src="../../../web-audio/audio_player_base.js"></script>
+<script src="../../../web-audio/audio_player_buffer.js"></script>
+<script src="../../../web-audio/audio_player_file.js"></script>
+
+<script src="../../../lib/jui/core/lib/jquery-1.8.0.min.js"></script>
+<script src="../../../lib/jui/core/dist/core.min.js"></script>
+<script src="../../../lib/jui/ui/dist/ui.min.js"></script>
+<script src="../../../lib/jui/grid/dist/grid.min.js"></script>
+
+<script src="../../../lib/moment.min.js"></script>
+<script src="../../../lib/Sortable.js"></script>
+
+<script src="../../utils.js"></script>
+<script src="../../data.js"></script>
+
+
+<script src="../../models/base_model.js"></script>
+<script src="../../models/track.js"></script>
+<script src="../../models/playlist.js"></script>
+<script src="../../models/session.js"></script>
+<script src="../../models/unavailable.js"></script>
+<script src="../../models/shortlist.js"></script>
+<script src="../../models/suggested.js"></script>
+<script src="../../models/played_tracks.js"></script>
+<script src="../../models/never_played_tracks.js"></script>
+<script src="../../models/queue.js"></script>
+<script src="../../models/current_session.js"></script>
+<script src="../../models/union.js"></script>
+
+<script src="../../controllers/queue.js"></script>
+<script src="../../controllers/session.js"></script>
+<script src="../../controllers/playback.js"></script>
+<script src="../../controllers/track_list.js"></script>
+<script src="../../controllers/playlists.js"></script>
+<script src="../../controllers/sessions.js"></script>
+<script src="../../controllers/precue.js"></script>
+<script src="../../controllers/volume.js"></script>
+
+<script src="views/queue.js"></script>
+<script src="views/main_player.js"></script>
+<script src="views/track_list.js"></script>
+<script src="views/playlists.js"></script>
+<script src="views/sessions.js"></script>
+<script src="views/precue_player.js"></script>
+<script src="views/accordion.js"></script>
+
+<body class="jui" style="margin: 0px; padding:0px; height:100%">
+    <dialog id="save-session-dialog" style="z-index:1000; padding:0; background-color:rgb(100,100,100)">
+        <h1 style="background-color:rgb(30,30,30); text-align:center; font-size:11pt; margin:0px; color:rgb(200,200,200); height:30px; line-height:30px">Save current session</h1>
+        <div style="margin:10px">
+            <input id="session-name" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Name...">
+            <input id="session-location" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Location...">
+            <input id="session-address" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Address...">        
+        </div>
+        <menu>
+            <button id="session-save">SAVE</button>
+            <button id="session-save-cancel">CANCEL</button>
+        </menu>
+    </dialog>
+
+
+
+    <div class="header">
+        <div class="item">
+            <div class="dropdown">
+                <button id="settings-button" class="settings-button"><i class="fa fa-ellipsis-h"></i></button>
+                <div id="main-menu-dropdown" class="dropdown-content" style="left:0 !important; top:30px; min-width:180px">
+                    <a id="main-menu-add-track"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add tracks</a>
+                    <p></p>
+                    <a id="main-menu-stop-queue-now"><i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now</a>
+                    <a id="main-menu-skip-current-track"><i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track</a>
+                    <p></p>
+                    <a id="main-menu-save-session"><i class="fa fa-save"></i>&nbsp;&nbsp;Save current session</a>
+                    <p></p>
+                    <a id="main-menu-reset-audio"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Reset audio system</a>
+                    <a id="main-menu-settings"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a>
+                    <p></p>
+                    <a id="main-menu-quit"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Quit</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div  class="item"></div>
+            <div  class="item">
+                <span style="font-size:13px; color:rgb(150,150,150)"><b>DJ</b></span>
+            </div>
+            <div  class="item"></div>            
+        </div>
+    </div>
+    <div class="main_player" style="position:fixed">
+        <div class="overlay" id="main-player-overlay">
+            <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()">START</button>
+        </div>
+        <img id="main-player-track-cover" class="cover" src="" height="150" width="150"></img>
+        <div style="float:left; display:block; width:calc(100% - 150px)">
+            <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
+                <div style="display:inline-block; width:calc(100% - 150px)">
+                    <h1 id="main-player-track-title" class="title">Arkansas Blues</h1>
+                    <h2 class="artist"><strong id="main-player-track-album">Norbert Susemihl - Night On Frenchman Street</strong> 
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
+                        <em id="main-player-track-artist">(Norbert Susemihl, Jason Marsalis, Kerry Lewis)</em> </h2>        
+                </div>
+                <div style="padding-right:10px; position:absolute; right:0px; display:inline-block"><h1 id="main-player-time-remaining" class="time_remaining">-3:34</h1></div>            
+            </div>
+            <div class="track-info"> 
+                <div class="info">
+                    <div class="title">DURATION</div>
+                    <div id="main-player-track-duration" class="value">3:12</div>
+                </div>
+                <div class="info">
+                    <div class="title">BPM</div>
+                    <div id="main-player-track-bpm" class="value">120</div>
+                </div>
+                <div class="rating">
+                    <div id="main-player-rating" class="value"></div>
+                </div>
+                <div class="rating">
+                    <div id="main-player-loved" class="value">
+                        <i class="fa fa-heart"></i> 
+                    </div>
+                </div>
+                <div id="queue-stop-message" class="value" style="padding:0px; height:100%; color:red; display:none">
+                    <b style="margin:7px; line-height:100%">Queue will stop after this song</b>
+                </div>
+        
+            </div>
+            <div id="main-player-waveform" class="waveform"></div>
+        </div>
+    </div>
+    <div class="main_space">
+        
+        <div id="sidebar" class="side_bar">
+            <button class="accordion">Library</button>
+            <div class="panel" data-fixed-height="180">
+                <ul class="sidebar-library">
+                    <li class="sidebar-library-item" onclick="display_all_songs()">
+                        <i class="fa fa-database list-icon"></i>
+                        All songs
+                        <i class="fa fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item" onclick="display_current_session()">
+                        <i class="fa fa-calendar list-icon"></i>
+                        Current Session
+                        <i class="fa fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item" onclick="display_suggestions()">
+                        <i class="fa fa-smile-o list-icon"></i>
+                        Suggestions
+                        <i class="fa fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item" onclick="display_short_list()">
+                        <i class="fa fa-circle-o list-icon"></i>
+                        Short list
+                        <i class="fa fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item" onclick="display_played_tracks()">
+                        <i class="fa fa-circle-o list-icon"></i>
+                        Played songs
+                        <i class="fa fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item" onclick="display_never_played_tracks()">
+                        <i class="fa fa-circle-o list-icon"></i>
+                        Never played
+                        <i class="fa fa-angle-right arrow-icon"></i> 
+                    </li>
+                    <li class="sidebar-library-item" onclick="display_unavailable()">
+                        <i class="fa fa-circle-o list-icon"></i>
+                        Unavailable
+                        <i class="fa fa-angle-right arrow-icon"></i> 
+                    </li>
+                </ul>
+            </div>
+            
+            <button class="accordion open-on-drag-over">
+                Playlists
+                <div class="action-button-group">
+                    <i id="add-playlist" class="fa fa-plus action-icon" action="add-playlist"></i>
+                    <i id="refresh-playlists" class="fa fa-refresh action-icon" action="refresh-playlists"></i>
+                </div>
+            </button>
+            <div class="panel">
+                <div style="overflow-y:auto; max-height:100%">
+                    <table id="playlist-list-elements" style="border-collapse:collapse; height:100%">
+                        <tbody></tbody>
+                    </table>
+                    <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
+                        <! if(id == null) { !>
+                            <tr id="new-playlist" class="choice" style="height:20px; margin-left:10px; display:none">
+                                <td style="width:30px"></td>
+                                <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
+                                <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input id="new-playlist-name" type="text" class="new-playlist"></td>
+                            </tr>
+                        <! } else { !>
+                            <tr class="choice track-drop-target" style="height:20px;" onclick="display_playlist(<!= id !>)" data-playlist-id=<!= id !>>
+                                <td style="width:30px"></td>
+                                <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
+                                <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                                <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
+                            </tr>
+                        <! } !>
+                    </script>
+        
+                </div>
+            </div>            
+            <button class="accordion" style="margin-right:0">
+                Sessions
+                <div class="action-button-group">
+                    <i class="fa fa-refresh action-icon" action="refresh-sessions"></i>
+                </div>
+                </button>
+            <div class="panel">
+                <div style="overflow-y:auto; max-height:100%">
+                    <table id="session-list-elements" style="border-collapse:collapse">
+                        <tbody></tbody>
+                    </table>
+                    <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
+                            <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session(<!= id !>)">
+                                <td style="width:30px"></td>
+                                <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
+                                <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                                <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
+                                <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
+                            </tr>
+
+                    </script>
+        
+                </div>
+            </div>
+            <button class="accordion open-on-drag-over">Preview Player</button>
+            <div class="panel" data-fixed-height="320">
+                <div class="preview-player" style="position:relative">
+                    <div id="no-preview-track" class="overlay">
+                        No track to preview
+                    </div>
+                    <img id="precue-player-cover" class="cover" src="" height="75" width="75"></img>
+                    <div style="padding:20px; height:50px; width:calc(100% - 115px); display:inline-block">
+                        <button id="precue-player-play-button" class="precue-management-button" style="float:left"><i class="fa fa-play"></i></button>
+                        <progress id="precue-player-track-progress" value="10" max="100" class="precue-player-progress"></progress>
+                        <div class="dropdown" style="float:right">
+                            <button id="precue-options" class="precue-management-button"><i class="fa fa-ellipsis-h"></i></button>
+                            <div id="precue-dropdown" class="dropdown-content">
+                                <a id="precue-play-full-track">Play full track</a>
+                                <a id="precue-play-last-30-seconds">Play last 30 seconds</a>
+                                <a id="precue-play-last-10-seconds">Play last 10 seconds</a>
+                                <a id="precue-play-stop">Stop</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="float:left; display:block; width:calc(100% - 00px)">
+                        <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
+                            <div style="display:inline-block; width:100%">
+                                <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
+                                <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>     
+                            </div>
+                            <div style="display:inline-block; height:20px; width:100%">
+                                <div id="precue-player-loved" style="float:left"></div>
+                                <div style="float:left; width:25px">&nbsp;</div>
+                                <div id="precue-player-rating" style="float:left"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <table style="padding:3px; width:330px">
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Album:</b></td> 
+                            <td id="precue-player-album" class="tag-value">NORBERT SUSEMIHL - NIGHT ON FRENCHMAN STREET</td> 
+                        </tr> 
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Genre:</b></td> 
+                            <td id="precue-player-genre" class="tag-value">Jazz</td> 
+                        </tr> 
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Year:</b></td> 
+                            <td id="precue-player-year" class="tag-value">2012</td> 
+                        </tr> 
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Length:</b></td> 
+                            <td id="precue-player-duration" class="tag-value">3:45</td> 
+                        </tr>     
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>BPM:</b></td> 
+                            <td id="precue-player-bpm" class="tag-value">100</td> 
+                        </tr> 
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Last played:</b></td> 
+                            <td id="precue-player-last-played" class="tag-value">2018-03-04</td> 
+                        </tr> 
+                        <tr class="metadata"> 
+                            <td class="tag-name"><b>Play count:</b></td> 
+                            <td id="precue-player-play-count" class="tag-value">12</td> 
+                        </tr> 
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="main_list">
+            <div class="main-list-header">
+                <div class="title">
+                    <div class="name" id="main-track-list-name">
+                        ALL SONGS
+                    </div>
+                    <div class="count" style="margin-top:4px">
+                        <div class="count" style="margin-top:4px">
+                            <div id="main-track-list-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="main-track-list-duration" style="display:inline-block">57 minutes 37 seconds</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="search-container">
+                    <button type="submit" class="search-submit-button"><i class="fa fa-search"></i></button>
+                    <input id="filter-track-list" type="text" placeholder="Filter list..." name="search" class="main-track-search">
+                </div>
+              
+            </div>
+            <div class="main-track-list-area">
+                <table class="main-track-list-table" id="track-list-elements">
+                    <thead style="border:0px solid transparent; margin:0; padding:0">
+                        <tr class="header-row">
+                            <th class="sticky-header"><b><i class='fa fa-heart' style='font-size: 12px'/></b></th>
+                            <th class="sticky-header">Title</th>
+                            <th class="sticky-header">Artist</th>
+                            <th class="sticky-header">Genre</th>
+                            <th class="sticky-header"><b><span class='fa fa-play'/></b></th>
+                            <th class="sticky-header"><b><span class='fa fa-calendar' style='font-size: 15px'/></b></th>
+                            <th class="sticky-header">Rating</th>
+                            <th class="sticky-header"><b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b></th>
+                            <th class="sticky-header" style="text-align:right">Time</th>
+                            <th class="sticky-header"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="main-elements-body" class="list-group"></tbody>
+                </table>
+            </div>
+            <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
+                <tr class="list-group-item row track-entry" style="color:<!= color !>" draggable=true data-track-id=<!= id !>>
+                    <td style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt"><!= loved !></td>
+                    <td style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= title !></td>
+                    <td style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= artist !></td>
+                    <td style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= genre !></td>
+                    <td style="text-align:right; width:25px; padding-right:9px"><!= play_count !></td>
+                    <td style="width:75px"><!= last_played !></td>
+                    <td style="width:25px"><!= rating !></td>
+                    <td style="width:30px; text-align:right; padding-right:5px"><!= bpm !></td>
+                    <td style="width:45px; text-align:right"><!= duration !></td>
+                    <td style="width:15px"></td>
+                </tr>
+            </script>
+    </div>
+        <div class="queue_list">
+            <div class="main-list-header">
+                <div class="title">
+                    <div class="name">
+                        QUEUE
+                    </div>
+                    <div class="count" style="margin-top:4px">
+                        <div id="queue-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="queue-duration" style="display:inline-block">57 minutes 37 seconds</div>
+                    </div>
+                </div>
+            </div>
+            <div id="queue-list-area" class="queue-list" id="queue-list-elements-div">
+                <table id="queue-list-elements" style="width:100%">
+                    <thead style="width:100%">
+                    <tr style="width:100%"></tr></thead>
+                    <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
+                </table>
+                <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
+                    <! if (id != null ) { !>
+                        <tr class="list-group-item queued-track" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                            <td style="width:100%; margin:0; padding:0">
+                                <div class="element" contextmenu="mymenu">
+                                    <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
+                                    <div style="margin:0px; padding:0px; float:left; width:275px">
+                                        <div class="queue_element_title"><b><!= title !></b></div>
+                                        <div class="queue_element_artist"><i><!= artist !></i></div>
+                                    </div>
+                                    <div class="queue_element_bpm"><!= bpm !> BPM</div>
+                                    <div class="queue_element_duration">
+                                        <b><!= duration !></b>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <! } else { !>
+                        <tr class="list-group-item queued-track" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                            <td style="width:100%; margin:0; padding:0">
+                                <div class="element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center">
+                                    <b>END OF QUEUE</b>
+                                </div>
+                            </td>
+                        </tr>
+                    <! } !>
+                </script>
+            </div>        
+        </div>
+    </div>
+    <div class="footer">
+        <div class="content">
+            <div  class="item">
+                <span style="font-size:10pt; color:rgb(150,150,150)"><b>ENDS:</b></span> <span style="font-size:10pt; color:rgb(225,225,225)">3:45:56</span>
+            </div>        
+            <div  class="item">
+                <span style="font-size:10pt; color:rgb(200,200,200)">2018-03-02</span> <span style="font-size:10pt; color:rgb(225,225,225)"></span>| <b>3:45:56</b></span>
+            </div>            
+        </div>
+    </div>
+<script src="drag_and_drop.js"></script>
+<script src="main_window.js"></script>
+</body>
