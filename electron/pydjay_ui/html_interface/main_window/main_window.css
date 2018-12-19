@@ -581,15 +581,17 @@ input.new-playlist[type=text] {
 }
 
 .preview-player .title {
+    position:relative;
     text-align:left;
     text-transform:uppercase;
-    /* font-weight:bold; */
     float:left;
     font-size:9pt;
     height:20px;
+    transform:translateY(-25%)
 }
 
 .preview-player .artist {
+    position:absolute;
     text-align:left;
     /* text-transform:uppercase; */
     padding:0;
