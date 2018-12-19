@@ -570,7 +570,7 @@ input.new-playlist[type=text] {
 /* .huebee__close-button {
     background: red;
 } */
-  
+
 .huebee__close-button__x {
     stroke-width: 2;
 }
@@ -802,6 +802,7 @@ input.new-playlist[type=text] {
     height: 30px;
     width:calc(100% - 60px);
     border-radius: 9px;
+    position:relative;
     -webkit-appearance: none;
 	border: none;
 }

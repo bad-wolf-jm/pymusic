@@ -21,6 +21,17 @@ class PrecuePlayerView extends EventDispatcher {
             this.controller.stop()
             document.getElementById("precue-dropdown").classList.remove("show")
         })
+        document.getElementById("precue-player-track-progress").addEventListener("click", (e) => {
+            let x = e.target.getBoundingClientRect()
+            let mouseX = (e.clientX - x.left)
+            let ratio = mouseX / x.width
+            if (this.controller.track != undefined) {
+                this.controller.play(this.controller.track,
+                                     this.controller.track.stream_start +
+                                        (this.controller.track.stream_length * ratio))
+            }
+        })
+
         this.hueb = new Huebee(document.getElementById("track-color-value"), {
             notation: "hex",
             saturations: 1
@@ -72,11 +83,10 @@ class PrecuePlayerView extends EventDispatcher {
             document.getElementById("precue-player-play-button").innerHTML = `<i class="fa fa-pause"></i>`
         })
         document.getElementById("precue-player-play-button").addEventListener('click', () => {
-            console.log(this.controller.state)
             if ((this.controller.state == "PAUSED") || (this.controller.state == "PLAYING")) {
                 this.controller.togglePause()
             } else {
-                if (controller.track != undefined) {
+                if (this.controller.track != undefined) {
                     this.controller.play(this.controller.track)
                 }
             }
