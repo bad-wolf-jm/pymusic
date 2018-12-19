@@ -4,11 +4,11 @@
 // pl_channel_config2 = {headphones:{left:0, right:1}}
 // mpl_channel_config2 = {master:{left:0, right:1}}
 
-pl_channel_config = {headphones:{left:0, right:1}}
-mpl_channel_config = {master:{left:4, right:5}, headphones:{left:0, right:1}}
+// pl_channel_config = {headphones:{left:0, right:1}}
+// mpl_channel_config = {master:{left:4, right:5}, headphones:{left:0, right:1}}
 
-pl_channel_config2 = {headphones:{left:0, right:1}}
-mpl_channel_config2 = {master:{left:0, right:1}}
+// pl_channel_config2 = {headphones:{left:0, right:1}}
+// mpl_channel_config2 = {master:{left:0, right:1}}
 
 
 class PrecueController extends EventDispatcher {
@@ -19,7 +19,7 @@ class PrecueController extends EventDispatcher {
         // this.on('end-of-stream', () => {
         //         this.dispatch("track-finished")
         //     }
-        // )        
+        // )
     }
 
     reset_audio() {
@@ -36,7 +36,7 @@ class PrecueController extends EventDispatcher {
         //     super.play(url, time, end_time)
         // }
     }
-    
+
     init_audio() {
         // if (this.audio_context.audio_ctx.destination.maxChannelCount == 6) {
         //     this.connectOutputs(pl_channel_config)
@@ -47,19 +47,19 @@ class PrecueController extends EventDispatcher {
 
     togglePause() {
         if (this.state == 'PLAYING') {
-            ipcRenderer.send("mixer-pause", {channel: "headphones"})    
+            ipcRenderer.send("mixer-pause", {channel: "headphones"})
             this.state = 'PAUSED'
         } else if (this.state == 'PAUSED') {
-            ipcRenderer.send("mixer-resume", {channel: "headphones"})   
-            this.state = 'PLAYING' 
+            ipcRenderer.send("mixer-resume", {channel: "headphones"})
+            this.state = 'PLAYING'
         } else {
 
         }
     }
 
     stop() {
-        ipcRenderer.send("mixer-stop", {channel: "headphones"}) 
-        this.state == 'STOPPED' 
+        ipcRenderer.send("mixer-stop", {channel: "headphones"})
+        this.state == 'STOPPED'
     }
 
     play(track, stream_start, stream_end) {
@@ -76,7 +76,7 @@ class PrecueController extends EventDispatcher {
         // if (stream_start == undefined) {
         //     stream_start = this.track.stream_start
         //     stream_end = this.track.stream_end
-        // } else if (stream_end == undefined) {  
+        // } else if (stream_end == undefined) {
         //     stream_end = this.track.stream_end
         //     if (stream_start < 0) {
         //         stream_start = stream_end + stream_start;
