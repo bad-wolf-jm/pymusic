@@ -60,7 +60,7 @@ class PrecuePlayerView extends EventDispatcher {
         })
         document.getElementById("precue-player-loved").addEventListener("click", () => {
             if (this._track != undefined) {
-                this.updateLoved(!(this._track.favorite))
+                this.updateLoved(!this._track.favorite)
             }
         })
     }
@@ -120,12 +120,15 @@ class PrecuePlayerView extends EventDispatcher {
 
     updateRating(new_value) {
         DB.update_track_data(this._track.id, {rating:new_value}, () => {
+            this._track.rating = new_value
             this.setRating(new_value)
         })
     }
 
     updateLoved(new_value) {
         DB.update_track_data(this._track.id, {favorite:new_value}, () => {
+            console.log(new_value)
+            this._track.favorite = new_value
             this.setLoved(new_value)
         })
     }
