@@ -1,9 +1,9 @@
 
-pl_channel_config = {headphones:{left:4, right:5}}
-mpl_channel_config = {master:{left:0, right:1}, headphones:{left:4, right:5}}
+// pl_channel_config = {headphones:{left:4, right:5}}
+// mpl_channel_config = {master:{left:0, right:1}, headphones:{left:4, right:5}}
 
-pl_channel_config2 = {headphones:{left:0, right:1}}
-mpl_channel_config2 = {master:{left:0, right:1}}
+// pl_channel_config2 = {headphones:{left:0, right:1}}
+// mpl_channel_config2 = {master:{left:0, right:1}}
 
 class MainPlayerView extends PydjayAudioFilePlayer {
     constructor () {
@@ -16,23 +16,23 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.rating = undefined
         this.current_stream_position = null
         this.audio_player = new PydjayAudioBufferPlayer()
-        if (this.audio_player.audio_context.audio_ctx.destination.maxChannelCount == 6) {
-            this.audio_player.connectOutputs(pl_channel_config)    
-        } else {
-            this.audio_player.connectOutputs(pl_channel_config2)    
-        }
+        // if (this.audio_player.audio_context.audio_ctx.destination.maxChannelCount == 6) {
+        //     this.audio_player.connectOutputs(pl_channel_config)    
+        // } else {
+        //     this.audio_player.connectOutputs(pl_channel_config2)    
+        // }
 
-        this.audio_player.on("playback-started", () => {
-            ipcRenderer.send("playback-started")
-        })
+        // this.audio_player.on("playback-started", () => {
+        //     ipcRenderer.send("playback-started")
+        // })
 
-        this.audio_player.on("playback-paused", () => {
-            ipcRenderer.send("playback-stopped")
-        })
+        // this.audio_player.on("playback-paused", () => {
+        //     ipcRenderer.send("playback-stopped")
+        // })
         
-        this.audio_player.on("playback-stopped", () => {
-            ipcRenderer.send("playback-stopped")
-        })
+        // this.audio_player.on("playback-stopped", () => {
+        //     ipcRenderer.send("playback-stopped")
+        // })
     }
 
     set_track(track) {
