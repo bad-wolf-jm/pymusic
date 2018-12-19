@@ -62,7 +62,7 @@
         <div style="margin:10px">
             <input id="session-name" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Name...">
             <input id="session-location" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Location...">
-            <input id="session-address" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Address...">        
+            <input id="session-address" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Address...">
         </div>
         <menu>
             <button id="session-save">SAVE</button>
@@ -98,7 +98,7 @@
             <div  class="item">
                 <span style="font-size:13px; color:rgb(150,150,150)"><b>DJ</b></span>
             </div>
-            <div  class="item"></div>            
+            <div  class="item"></div>
         </div>
     </div>
     <div class="main_player" style="position:fixed">
@@ -110,13 +110,13 @@
             <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
                 <div style="display:inline-block; width:calc(100% - 150px)">
                     <h1 id="main-player-track-title" class="title">Arkansas Blues</h1>
-                    <h2 class="artist"><strong id="main-player-track-album">Norbert Susemihl - Night On Frenchman Street</strong> 
+                    <h2 class="artist"><strong id="main-player-track-album">Norbert Susemihl - Night On Frenchman Street</strong>
                         &nbsp;&nbsp;|&nbsp;&nbsp;
-                        <em id="main-player-track-artist">(Norbert Susemihl, Jason Marsalis, Kerry Lewis)</em> </h2>        
+                        <em id="main-player-track-artist">(Norbert Susemihl, Jason Marsalis, Kerry Lewis)</em> </h2>
                 </div>
-                <div style="padding-right:10px; position:absolute; right:0px; display:inline-block"><h1 id="main-player-time-remaining" class="time_remaining">-3:34</h1></div>            
+                <div style="padding-right:10px; position:absolute; right:0px; display:inline-block"><h1 id="main-player-time-remaining" class="time_remaining">-3:34</h1></div>
             </div>
-            <div class="track-info"> 
+            <div class="track-info">
                 <div class="info">
                     <div class="title">DURATION</div>
                     <div id="main-player-track-duration" class="value">3:12</div>
@@ -130,19 +130,19 @@
                 </div>
                 <div class="rating">
                     <div id="main-player-loved" class="value">
-                        <i class="fa fa-heart"></i> 
+                        <i class="fa fa-heart"></i>
                     </div>
                 </div>
                 <div id="queue-stop-message" class="value" style="padding:0px; height:100%; color:red; display:none">
                     <b style="margin:7px; line-height:100%">Queue will stop after this song</b>
                 </div>
-        
+
             </div>
             <div id="main-player-waveform" class="waveform"></div>
         </div>
     </div>
     <div class="main_space">
-        
+
         <div id="sidebar" class="side_bar">
             <button class="accordion">Library</button>
             <div class="panel" data-fixed-height="180">
@@ -150,41 +150,41 @@
                     <li class="sidebar-library-item" onclick="display_all_songs()">
                         <i class="fa fa-database list-icon"></i>
                         All songs
-                        <i class="fa fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i>
                     </li>
                     <li class="sidebar-library-item" onclick="display_current_session()">
                         <i class="fa fa-calendar list-icon"></i>
                         Current Session
-                        <i class="fa fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i>
                     </li>
                     <li class="sidebar-library-item" onclick="display_suggestions()">
                         <i class="fa fa-smile-o list-icon"></i>
                         Suggestions
-                        <i class="fa fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i>
                     </li>
                     <li class="sidebar-library-item" onclick="display_short_list()">
                         <i class="fa fa-circle-o list-icon"></i>
                         Short list
-                        <i class="fa fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i>
                     </li>
                     <li class="sidebar-library-item" onclick="display_played_tracks()">
                         <i class="fa fa-circle-o list-icon"></i>
                         Played songs
-                        <i class="fa fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i>
                     </li>
                     <li class="sidebar-library-item" onclick="display_never_played_tracks()">
                         <i class="fa fa-circle-o list-icon"></i>
                         Never played
-                        <i class="fa fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i>
                     </li>
                     <li class="sidebar-library-item" onclick="display_unavailable()">
                         <i class="fa fa-circle-o list-icon"></i>
                         Unavailable
-                        <i class="fa fa-angle-right arrow-icon"></i> 
+                        <i class="fa fa-angle-right arrow-icon"></i>
                     </li>
                 </ul>
             </div>
-            
+
             <button class="accordion open-on-drag-over">
                 Playlists
                 <div class="action-button-group">
@@ -213,9 +213,9 @@
                             </tr>
                         <! } !>
                     </script>
-        
+
                 </div>
-            </div>            
+            </div>
             <button class="accordion" style="margin-right:0">
                 Sessions
                 <div class="action-button-group">
@@ -237,15 +237,15 @@
                             </tr>
 
                     </script>
-        
+
                 </div>
             </div>
             <button class="accordion open-on-drag-over">Preview Player</button>
             <div class="panel" data-fixed-height="320">
                 <div class="preview-player" style="position:relative">
-                    <div id="no-preview-track" class="overlay">
+                    <!-- <div id="no-preview-track" class="overlay">
                         No track to preview
-                    </div>
+                    </div> -->
                     <img id="precue-player-cover" class="cover" src="" height="75" width="75"></img>
                     <div style="padding:20px; height:50px; width:calc(100% - 115px); display:inline-block">
                         <button id="precue-player-play-button" class="precue-management-button" style="float:left"><i class="fa fa-play"></i></button>
@@ -264,7 +264,7 @@
                         <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
                             <div style="display:inline-block; width:100%">
                                 <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
-                                <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>     
+                                <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>
                             </div>
                             <div style="display:inline-block; height:20px; width:100%">
                                 <div id="precue-player-loved" style="float:left"></div>
@@ -274,34 +274,34 @@
                         </div>
                     </div>
                     <table style="padding:3px; width:330px">
-                        <tr class="metadata"> 
-                            <td class="tag-name"><b>Album:</b></td> 
-                            <td id="precue-player-album" class="tag-value">NORBERT SUSEMIHL - NIGHT ON FRENCHMAN STREET</td> 
-                        </tr> 
-                        <tr class="metadata"> 
-                            <td class="tag-name"><b>Genre:</b></td> 
-                            <td id="precue-player-genre" class="tag-value">Jazz</td> 
-                        </tr> 
-                        <tr class="metadata"> 
-                            <td class="tag-name"><b>Year:</b></td> 
-                            <td id="precue-player-year" class="tag-value">2012</td> 
-                        </tr> 
-                        <tr class="metadata"> 
-                            <td class="tag-name"><b>Length:</b></td> 
-                            <td id="precue-player-duration" class="tag-value">3:45</td> 
-                        </tr>     
-                        <tr class="metadata"> 
-                            <td class="tag-name"><b>BPM:</b></td> 
-                            <td id="precue-player-bpm" class="tag-value">100</td> 
-                        </tr> 
-                        <tr class="metadata"> 
-                            <td class="tag-name"><b>Last played:</b></td> 
-                            <td id="precue-player-last-played" class="tag-value">2018-03-04</td> 
-                        </tr> 
-                        <tr class="metadata"> 
-                            <td class="tag-name"><b>Play count:</b></td> 
-                            <td id="precue-player-play-count" class="tag-value">12</td> 
-                        </tr> 
+                        <tr class="metadata">
+                            <td class="tag-name"><b>Album:</b></td>
+                            <td id="precue-player-album" class="tag-value">NORBERT SUSEMIHL - NIGHT ON FRENCHMAN STREET</td>
+                        </tr>
+                        <tr class="metadata">
+                            <td class="tag-name"><b>Genre:</b></td>
+                            <td id="precue-player-genre" class="tag-value">Jazz</td>
+                        </tr>
+                        <tr class="metadata">
+                            <td class="tag-name"><b>Year:</b></td>
+                            <td id="precue-player-year" class="tag-value">2012</td>
+                        </tr>
+                        <tr class="metadata">
+                            <td class="tag-name"><b>Length:</b></td>
+                            <td id="precue-player-duration" class="tag-value">3:45</td>
+                        </tr>
+                        <tr class="metadata">
+                            <td class="tag-name"><b>BPM:</b></td>
+                            <td id="precue-player-bpm" class="tag-value">100</td>
+                        </tr>
+                        <tr class="metadata">
+                            <td class="tag-name"><b>Last played:</b></td>
+                            <td id="precue-player-last-played" class="tag-value">2018-03-04</td>
+                        </tr>
+                        <tr class="metadata">
+                            <td class="tag-name"><b>Play count:</b></td>
+                            <td id="precue-player-play-count" class="tag-value">12</td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -322,7 +322,7 @@
                     <button type="submit" class="search-submit-button"><i class="fa fa-search"></i></button>
                     <input id="filter-track-list" type="text" placeholder="Filter list..." name="search" class="main-track-search">
                 </div>
-              
+
             </div>
 
             <div class="clusterize main-track-list-area" id="main-track-list">
@@ -409,17 +409,17 @@
                         </tr>
                     <! } !>
                 </script>
-            </div>        
+            </div>
         </div>
     </div>
     <div class="footer">
         <div class="content">
             <div  class="item">
                 <span style="font-size:10pt; color:rgb(150,150,150)"><b>ENDS:</b></span> <span style="font-size:10pt; color:rgb(225,225,225)">3:45:56</span>
-            </div>        
+            </div>
             <div  class="item">
                 <span style="font-size:10pt; color:rgb(200,200,200)">2018-03-02</span> <span style="font-size:10pt; color:rgb(225,225,225)"></span>| <b>3:45:56</b></span>
-            </div>            
+            </div>
         </div>
     </div>
 <script src="drag_and_drop.js"></script>

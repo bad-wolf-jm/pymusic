@@ -18,9 +18,14 @@ class PrecuePlayerView extends EventDispatcher {
             document.getElementById("precue-dropdown").classList.remove("show")
         })
         document.getElementById("precue-player-track-progress").addEventListener("click", (e) => {
-            //console.log(e.offsetX)
-            console.log(e.clientX)
-            console.log(e.clientY)
+            let x = e.target.getBoundingClientRect()
+            let mouseX = (e.clientX - x.left)
+            let ratio = mouseX / x.width
+            if (this.controller.track != undefined) {
+                this.controller.play(this.controller.track,
+                                     this.controller.track.stream_start +
+                                        (this.controller.track.stream_length * ratio))
+            }
         })
     }
 
@@ -51,11 +56,10 @@ class PrecuePlayerView extends EventDispatcher {
             document.getElementById("precue-player-play-button").innerHTML = `<i class="fa fa-pause"></i>`
         })
         document.getElementById("precue-player-play-button").addEventListener('click', () => {
-            console.log(this.controller.state)
             if ((this.controller.state == "PAUSED") || (this.controller.state == "PLAYING")) {
                 this.controller.togglePause()
             } else {
-                if (controller.track != undefined) {
+                if (this.controller.track != undefined) {
                     this.controller.play(this.controller.track)
                 }
             }
@@ -69,7 +73,6 @@ class PrecuePlayerView extends EventDispatcher {
     set_track(track) {
         let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
-        // document.getElementById("main-player-track-title").innerHTML    = track.title
         document.getElementById("precue-player-title").innerHTML       = track.title
         document.getElementById("precue-player-album").innerHTML       = track.album
         document.getElementById("precue-player-artist").innerHTML      = track.artist
@@ -100,7 +103,7 @@ class PrecuePlayerView extends EventDispatcher {
         }
         document.getElementById("precue-player-rating").innerHTML = html
     }
-    
+
     setLoved (value){
         var html = "";
         this.loved = value
