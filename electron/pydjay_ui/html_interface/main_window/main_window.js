@@ -87,7 +87,7 @@ M = new MainPlayerView()
 M.set_controller(mpc)
 M.init()
 
-P = new PrecuePlayerView()
+P = new PrecuePlayerView(tracks_model)
 P.set_controller(pc)
 
 mpc.on("queue-started",

@@ -39,13 +39,13 @@ class TrackListModel extends BaseListModel {
     }
 
     set_metadata(track, metadata) {
-        X = this.track_list[track.id]
-        metadata_keys = Object.keys(metadata)
+        let X = this.track_list[track.id]
+        let metadata_keys = Object.keys(metadata)
         Object.keys(metadata).forEach((x) => {
             X[x] = metadata[x]
         })
-        DB.update_track_data(id, metadata, () => {
-            this.dispatch("metadata-changed", this.track_list[id])
+        DB.update_track_data(track.id, metadata, () => {
+            this.update(track.id)
         })
     }
 }

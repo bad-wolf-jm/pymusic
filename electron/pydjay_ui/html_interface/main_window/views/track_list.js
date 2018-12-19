@@ -21,6 +21,7 @@ class TrackListView extends EventDispatcher {
                     [].forEach.call(elements, (e) => {
                         let track_id = parseInt(e.attributes["data-track-id"].value)
                         this.table_rows[track_id] = e
+
                     });
                 },
                 scrollingProgress: (progress) => {}
@@ -259,25 +260,6 @@ class TrackListView extends EventDispatcher {
     }
 
 
-    // connect_drag() {
-    //     let elements = document.querySelectorAll('.track-entry');
-    //     [].forEach.call(elements, (e) => {
-    //         e.addEventListener('dragstart', this.handle_drag_start.bind(this), false);
-    //         e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
-    //         e.addEventListener("click", this.select_row.bind(this))
-    //         e.addEventListener('contextmenu', (e) => {
-    //             e.preventDefault()
-    //             this.select_row(e)
-    //             let x = e.target.closest(".track-entry")
-    //             let track_id = parseInt(x.attributes["data-track-id"].value)
-    //             let track_element = this.controller.get_id(track_id)
-    //             this.context_menu_element = track_element
-    //             this.menu.popup({window: remote.getCurrentWindow()})
-    //           }, false)
-
-    //     });
-    // }
-
     filter_list (text) {
         let i = 0;
         let search_tokens = text.split(' ')
@@ -353,14 +335,7 @@ class TrackListView extends EventDispatcher {
                 queue_rows.push(this.render_row(k))
             }        
         })
-        console.log(queue_rows.length)
 
-        // Object.keys(this.table_rows).forEach((k) => {
-        //     if (filter[k]) {
-        //         queue_rows.push(this.queue_rows[k])
-        //     }        
-        // })
-        //this.list_cluster.clear()
         this.list_cluster.update(queue_rows)
     };
 }
