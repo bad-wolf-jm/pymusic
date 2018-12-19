@@ -1,6 +1,10 @@
+
+Huebee = require("huebee")
+
 class PrecuePlayerView extends EventDispatcher {
-    constructor () {
+    constructor (track_list_model) {
         super()
+        this.track_list_model = track_list_model
         this.controller = undefined
         document.getElementById("precue-options").addEventListener('click', this.show_options.bind(this))
 
@@ -17,9 +21,28 @@ class PrecuePlayerView extends EventDispatcher {
             this.controller.stop()
             document.getElementById("precue-dropdown").classList.remove("show")
         })
-        document.getElementById("track-color-value").onchange = (c) => {
-            let new_value = document.getElementById("track-color-value").value
-        }
+        this.hueb = new Huebee(document.getElementById("track-color-value"), {
+            notation: "hex",
+            saturations: 1
+        })
+
+        this.hueb.on( 'change', ( color, hue, sat, lum ) => {
+            this.track_list_model.set_metadata(this._track, {color: color})
+            this.hueb.close()
+            // DB.update_track_data(this._track.id, {color:color}, () => {
+            //     document.getElementById("precue-player-color").style.background = color
+            // })
+        })
+
+        document.getElementById("precue-player-color").addEventListener("click", () => {
+            this.hueb.open()
+        })
+
+        this.track_list_model.on("metadata-changed", (track) => {
+            if (track.id == this._track.id) {
+                this.set_track(track)
+            }
+        })
     }
 
     show_options() {
@@ -80,6 +103,11 @@ class PrecuePlayerView extends EventDispatcher {
         document.getElementById("precue-player-play-count").innerHTML  = track.play_count
         document.getElementById("precue-player-bpm").innerHTML         = track.bpm
         document.getElementById("precue-player-duration").innerHTML    = `${format_nanoseconds(stream_length)}`
+        if (track.color == null) {
+            document.getElementById("precue-player-color").style.background = "#ffffff"
+        } else {
+            document.getElementById("precue-player-color").style.background = track.color
+        }
         this.setRating(track.rating)
         this.setLoved(track.favorite)
         let cover_source = undefined

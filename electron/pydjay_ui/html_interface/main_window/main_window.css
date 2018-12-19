@@ -542,9 +542,38 @@ input.new-playlist[type=text] {
     border:none;
     border-radius:2px;
     background-color:rgb(116, 116, 240);
-
 }
 
+.color-picker {
+    width:300px;
+    height:100px;
+    background:rbg(100,100,100);
+    z-index:1000;
+}
+
+.huebee__cursor {
+    width: 20px;
+    height: 20px;
+}
+
+
+  .huebee__container {
+    position: absolute;
+    background: #777;
+    border: 2px solid #aaa;
+    border-radius: 5px;
+    z-index:1000;
+    width:300px;
+    height:200px;
+  }
+
+/* .huebee__close-button {
+    background: red;
+} */
+  
+.huebee__close-button__x {
+    stroke-width: 2;
+}
 
 .preview-player .cover {
     padding:0px;

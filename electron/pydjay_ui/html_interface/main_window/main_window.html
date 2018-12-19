@@ -244,9 +244,9 @@
             <button class="accordion open-on-drag-over">Preview Player</button>
             <div class="panel" data-fixed-height="320">
                 <div class="preview-player" style="position:relative">
-                    <!-- <div id="no-preview-track" class="overlay">
+                    <div id="no-preview-track" class="overlay">
                         No track to preview
-                    </div> -->
+                    </div>
                     <img id="precue-player-cover" class="cover" src="" height="75" width="75"></img>
                     <div style="padding:20px; height:50px; width:calc(100% - 115px); display:inline-block">
                         <button id="precue-player-play-button" class="precue-management-button" style="float:left"><i class="fa fa-play"></i></button>
@@ -266,8 +266,8 @@
                             <div style="display:inline-block; width:100%">
                                 <div style="height:20px">
                                     <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
-                                    <input type="text" id="track-color-value" value=""/>
-                                    <button id="precue-player-color" class="jscolor{valueElement:'track-color-value',value:''} color-chooser"></button>
+                                    <input type="hidden" id="track-color-value" value=""/>
+                                    <button id="precue-player-color" class="color-chooser"></button>
                                 </div>
                                 <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>
                             </div>

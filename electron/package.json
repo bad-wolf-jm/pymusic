@@ -17,6 +17,7 @@
     "clusterize.js": "^0.18.1",
     "fs-extra": "^6.0.1",
     "highcharts": "^5.0.15",
+    "huebee": "^2.0.0",
     "jimp": "^0.2.28",
     "jquery": "^3.3.1",
     "jsmediatags": "^3.8.1",
