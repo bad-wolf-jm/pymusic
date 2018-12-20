@@ -72,14 +72,43 @@ Mousetrap.bind('home', () => {
 Mousetrap.bind('g i', function() { console.log('go to inbox'); });
 
 
-// webix.UIManager.addHotKey("space",       () => self.audio_player.togglePause(),   $$(self.track_table.track_list));
-// webix.UIManager.addHotKey("shift+space", () => self.audio_player.stop(),          $$(self.track_table.track_list));
-// webix.UIManager.addHotKey("space",       () => self.audio_player.togglePause(),   $$(self.track_list.list_id));
-// webix.UIManager.addHotKey("shift+space", () => self.audio_player.stop(),          $$(self.track_list.list_id));
+Mousetrap.bind("space", () => {
+    if ((pc.state == "PAUSED") || (pc.state == "PLAYING")) {
+        pc.togglePause()
+    } else {
+        if (pc.track != undefined) {
+            pc.play(pc.track)
+        }
+    }
+})
+
+
+Mousetrap.bind("shift+space", () => {
+    pc.stop()
+})
+
+
+Mousetrap.bind("enter", () => {
+    if (focus_list != undefined) {
+        pc.play(focus_list.controller.selection[0])
+    }
+})
+
+Mousetrap.bind("shift+enter", () => {
+    if (focus_list != undefined) {
+        pc.play_last_30_seconds(focus_list.controller.selection[0])
+    }
+})
+
+Mousetrap.bind("ctrl+shift+enter", () => {
+    if (focus_list != undefined) {
+        pc.play_last_10_seconds(focus_list.controller.selection[0])
+    }
+})
+
+
+
 // webix.UIManager.addHotKey("shift+a",     self.add_to_playlist,                    $$(self.track_table.track_list));
-// webix.UIManager.addHotKey("ctrl+shift+enter", self.preview_last_30_seconds,       $$(self.track_table.track_list));
-// webix.UIManager.addHotKey("shift+enter",      self.preview_last_10_seconds,       $$(self.track_table.track_list));
-// webix.UIManager.addHotKey("enter",            self.preview_selected,              $$(self.track_table.track_list));
 // webix.UIManager.addHotKey("ctrl+shift+enter", self.group_preview_last_30_seconds, $$(self.track_list.list_id));
 // webix.UIManager.addHotKey("shift+enter",      self.group_preview_last_10_seconds, $$(self.track_list.list_id));
 // webix.UIManager.addHotKey("enter",            self.group_preview_selected,        $$(self.track_list.list_id));

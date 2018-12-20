@@ -47,7 +47,7 @@ class PrecuePlayerView extends EventDispatcher {
             if ((this.controller.state == "PAUSED") || (this.controller.state == "PLAYING")) {
                 this.controller.togglePause()
             } else {
-                if (controller.track != undefined) {
+                if (this.controller.track != undefined) {
                     this.controller.play(this.controller.track)
                 }
             }

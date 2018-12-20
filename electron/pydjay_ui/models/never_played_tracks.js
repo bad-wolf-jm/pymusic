@@ -28,6 +28,18 @@ class NeverPlayedTracksModel extends BaseListModel {
         return Q
     }
 
+    get_first_track() {
+
+    }
+
+    get_next_track(track) {
+
+    }
+
+    get_previous_track(track) {
+
+    }
+
     get_track_by_id(id) {
         return this.track_list[id]
     }

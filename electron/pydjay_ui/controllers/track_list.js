@@ -16,7 +16,8 @@ class TrackListController extends EventDispatcher {
         this.on_content_changed = (q) => {
             this.set_list(this.name, q)
             let U = this.unavailable.get_all_track_ids()
-            Object.keys(U).forEach((id) => {this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
+            Object.keys(U).forEach((id) => {
+                this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
         }
         this.on_metadata_changed = (q) => {
             this.list[q.id] = q            
@@ -39,7 +40,8 @@ class TrackListController extends EventDispatcher {
             let track_list = this.model.get_all_tracks()
             this.set_list(name, track_list)
             let U = this.unavailable.get_all_track_ids()
-            Object.keys(U).forEach((id) => {this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
+            Object.keys(U).forEach((id) => {
+                this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
         })
     }
 
@@ -68,6 +70,15 @@ class TrackListController extends EventDispatcher {
     select_element(id) {
         this.selection = [this.model.get_track_by_id(id)]
         this.dispatch("selection-changed", this.selection)
+    }
+
+    select_next() {
+        if ((this.selection == undefined) || (this.selection.length == 0)) {
+            this.selection = [this.model.get_first_track()]
+        } else {
+            this.selection = [this.model.get_next_track(this.selection[0])]
+            this.dispatch("selection-changed", this.selection)    
+        }
     }
 
     set_data(element, field, value) {
