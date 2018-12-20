@@ -2,13 +2,11 @@ Sortable              = require("../../../lib/Sortable.js")
 WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
-//const { ipcRenderer } = require('electron');
 
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
     SE_controller.refresh(() => {})
-    // console.log("refresh-sessions")
 })
 
 
@@ -30,8 +28,8 @@ shortlist_model           = new ShortlistModel(tracks_model)
 suggested_model           = new SuggestedModel(tracks_model)
 played_tracks_model       = new PlayedTracksModel(tracks_model)
 never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
-queue_model               = new QueueModel(tracks_model)
 current_session_model     = new CurrentSessionModel(tracks_model)
+queue_model               = new QueueModel(tracks_model, current_session_model)
 
 
 un_model = new UnionModel()
@@ -89,10 +87,10 @@ M = new MainPlayerView()
 M.set_controller(mpc)
 M.init()
 
-P = new PrecuePlayerView()
+P = new PrecuePlayerView(tracks_model)
 P.set_controller(pc)
 
-mpc.on("queue-started", 
+mpc.on("queue-started",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-stop\"></i>"
@@ -101,7 +99,7 @@ mpc.on("queue-started",
     }
 )
 
-mpc.on("queue-stopped", 
+mpc.on("queue-stopped",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
@@ -110,7 +108,7 @@ mpc.on("queue-stopped",
     }
 )
 
-mpc.on("queue-finished", 
+mpc.on("queue-finished",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
@@ -119,35 +117,67 @@ mpc.on("queue-finished",
     }
 )
 
-mpc.on("track-started", 
+mpc.on("track-started",
     () => {
     }
 )
 
-mpc.on("track-finished", 
+mpc.on("track-finished",
     () => {
     }
 )
 
-pc.on('playback-stopped',  () => {
-        vc.restore_monitor()
-    }
-)
 
-pc.on('playback-paused', () => {
-        vc.restore_monitor()
-    }
-)
+ipcRenderer.on("headphone-playback-stopped", () => {
+    pc.dispatch("playback-stopped")
+})
+
+
+ipcRenderer.on("headphone-playback-paused", () => {
+    pc.dispatch("playback-paused")
+})
+
+ipcRenderer.on("headphone-playback-started", () => {
+    pc.dispatch("playback-started")
+})
+
+
+ipcRenderer.on("headphone-stream-position", (event, pos) => {
+    pc.dispatch("stream-position", pos)
+})
+
+
+ipcRenderer.on("master-end-of-stream", () => {
+    mpc.dispatch("end-of-stream")
+})
+
+
+ipcRenderer.on("master-playback-stopped", () => {
+    mpc.dispatch("playback-stopped")
+})
+
+ipcRenderer.on("master-playback-paused", () => {
+    mpc.dispatch("playback-paused")
+})
+
+ipcRenderer.on("master-playback-started", () => {
+    mpc.dispatch("playback-started")
+})
+
+
+ipcRenderer.on("master-stream-position", (event, pos) => {
+    mpc.dispatch("stream-position", pos)
+})
+
 
 pc.on('playback-started', () => {
-        vc.mute_monitor()
+        //vc.mute_monitor()
         SV.open_panel(3)
     }
 )
 
 
-
-mpc.on("queue-stop-requested", 
+mpc.on("queue-stop-requested",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-close\"></i>"
@@ -155,7 +185,7 @@ mpc.on("queue-stop-requested",
     }
 )
 
-mpc.on("queue-stop-request-cancelled", 
+mpc.on("queue-stop-request-cancelled",
     () => {
         let M = document.getElementById("queue-stop-message")
         M.style.display="none"
@@ -177,6 +207,14 @@ mpc.on("next-track-countdown", (time) => {
     }
 })
 
+window.addEventListener("resize", (event) => {
+    let h = document.getElementById("track-list-elements-header")
+    let ta = document.getElementById("main-track-list-scroller")
+    let tl = document.getElementById("main-track-list")
+    list_height = (tl.clientHeight - h.clientHeight) - 5
+    ta.style.maxHeight = list_height + "px";
+})
+
 document.getElementById("settings-button").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
@@ -186,7 +224,7 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
 })
 
 document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
-    vc.reset_audio()
+    ipcRenderer.send("reset-audio-system", {})
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
@@ -215,10 +253,7 @@ document.getElementById("session-save").addEventListener('click', () => {
         current_session_model.store_session(name, location, address, () => {
             SE_controller.refresh(() => {})
         })
-        
-        //console.log(name)
     }
-
     document.getElementById("save-session-dialog").close();
 })
 
@@ -233,8 +268,17 @@ document.getElementById("main-menu-settings").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
+
+document.getElementById("main-menu-mixer").addEventListener('click', () => {
+    ipcRenderer.send("show-mixer-window")
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+
+
 document.getElementById("main-menu-quit").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
+    ipcRenderer.send("quit-pymusic")
 })
 
 ///////////////////////////////////////////////
@@ -272,7 +316,7 @@ function display_never_played_tracks() {
 }
 
 function display_session(id) {
-    DB.get_session_info(id, 
+    DB.get_session_info(id,
         (info) => {
             let L = new SessionModel(info, tracks_model)
             T_controller.set_model(info.name, L)
@@ -281,7 +325,7 @@ function display_session(id) {
 }
 
 function display_playlist(id) {
-    DB.get_group_info(id, 
+    DB.get_group_info(id,
         (info) => {
             let L = new PlaylistModel(info, tracks_model)
             T_controller.set_model(info.name, L)
@@ -289,7 +333,7 @@ function display_playlist(id) {
     )
 }
 
-ipcRenderer.on('playback-started', (event, arg) => {        
+ipcRenderer.on('playback-started', (event, arg) => {
     vc.mute_monitor()});
 
 ipcRenderer.on('playback-stopped', (event, arg) => {

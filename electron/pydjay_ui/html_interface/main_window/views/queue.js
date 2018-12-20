@@ -177,8 +177,12 @@ class QueueView extends EventDispatcher {
     }
 
     select_row(e) {
+        if (this.current_selection != undefined) {
+            this.current_selection.classList.remove("selected")
+        }
         let x = e.target.closest(".element")
         x.classList.add("selected")
+        this.current_selection = x
     }
 
     connect_events() {

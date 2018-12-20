@@ -93,12 +93,8 @@ class TrackListController extends EventDispatcher {
     filter_ids (func) {
         let mapping = {}
         let x = this.model.get_all_tracks().forEach((t) => {
-            //let o = {}
             mapping[t.id] = func(t)
-            //return o
         })
-        // console.log("tracks=", this.model.get_all_tracks())
-        // console.log("x=", mapping)
         return mapping
     }
 }

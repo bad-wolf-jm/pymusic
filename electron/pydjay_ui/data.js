@@ -274,7 +274,7 @@ function DataProvider() {
         sql += fields.indexOf("title")          != -1 ? `title=${STRING(addslashes(track_info.title))},\n` : '' 
         sql += fields.indexOf("artist")         != -1 ? `artist=${STRING(addslashes(track_info.artist))},\n` : '' 
         sql += fields.indexOf("album")          != -1 ? `album=${STRING(addslashes(track_info.album))},\n` : '';
-        sql += fields.indexOf("year")           != -1 ? `year=${(track_info.year != null) ? track_info.year : 'NULL'},\n` : 'NULL' 
+        sql += fields.indexOf("year")           != -1 ? `year=${(track_info.year != null) ? track_info.year : 'NULL'},\n` : '' 
         sql += fields.indexOf("genre")          != -1 ? `genre=${STRING(addslashes(track_info.genre))},\n` : '' 
         sql += fields.indexOf("bpm")            != -1 ? `bpm=${track_info.bpm},\n` : '' 
         sql += fields.indexOf("rating")         != -1 ? `rating=${track_info.rating},\n` : '' 
@@ -299,7 +299,6 @@ function DataProvider() {
     self.get_queue_boundary_positions = function (cont){
         sql = "SELECT min(position) as min, max(position) as max FROM session_queue WHERE status='pending'"
         $QUERY(sql, function(result){
-            //if (error) throw error;
             return cont(result[0].min, result[0].max)
         })
     }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <title>PYMUSIC DJ App</title>
 
+<link rel="stylesheet" href="../../../lib/clusterize.css">
 <link rel="stylesheet" href="main_window.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -20,6 +21,8 @@
 
 <script src="../../../lib/moment.min.js"></script>
 <script src="../../../lib/Sortable.js"></script>
+<script src="../../../lib/clusterize.js"></script>
+<script src="../../../lib/jscolor.js"></script>
 
 <script src="../../utils.js"></script>
 <script src="../../data.js"></script>
@@ -85,6 +88,7 @@
                     <p></p>
                     <a id="main-menu-reset-audio"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Reset audio system</a>
                     <a id="main-menu-settings"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a>
+                    <a id="main-menu-mixer"><i class="fa fa-cog"></i>&nbsp;&nbsp;Show mixer</a>
                     <p></p>
                     <a id="main-menu-quit"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Quit</a>
                 </div>
@@ -241,9 +245,9 @@
             <button class="accordion open-on-drag-over">Preview Player</button>
             <div class="panel" data-fixed-height="320">
                 <div class="preview-player" style="position:relative">
-                    <div id="no-preview-track" class="overlay">
+                    <!-- <div id="no-preview-track" class="overlay">
                         No track to preview
-                    </div>
+                    </div> -->
                     <img id="precue-player-cover" class="cover" src="" height="75" width="75"></img>
                     <div style="padding:20px; height:50px; width:calc(100% - 115px); display:inline-block">
                         <button id="precue-player-play-button" class="precue-management-button" style="float:left"><i class="fa fa-play"></i></button>
@@ -261,8 +265,14 @@
                     <div style="float:left; display:block; width:calc(100% - 00px)">
                         <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
                             <div style="display:inline-block; width:100%">
-                                <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
-                                <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>
+                                <div style="height:20px">
+                                    <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
+                                    <input type="hidden" id="track-color-value" value=""/>
+                                    <button id="precue-player-color" class="color-chooser"></button>
+                                </div>
+                                <div style="height:20px">
+                                    <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>
+                                </div>
                             </div>
                             <div style="display:inline-block; height:20px; width:100%">
                                 <div id="precue-player-loved" style="float:left"></div>
@@ -321,24 +331,21 @@
                     <input id="filter-track-list" type="text" placeholder="Filter list..." name="search" class="main-track-search">
                 </div>
             </div>
-            <div class="main-track-list-area">
-                <table class="main-track-list-table" id="track-list-elements">
-                    <thead style="border:0px solid transparent; margin:0; padding:0">
-                        <tr class="header-row">
-                            <th class="sticky-header"><b><i class='fa fa-heart' style='font-size: 12px'/></b></th>
-                            <th class="sticky-header">Title</th>
-                            <th class="sticky-header">Artist</th>
-                            <th class="sticky-header">Genre</th>
-                            <th class="sticky-header"><b><span class='fa fa-play'/></b></th>
-                            <th class="sticky-header"><b><span class='fa fa-calendar' style='font-size: 15px'/></b></th>
-                            <th class="sticky-header">Rating</th>
-                            <th class="sticky-header"><b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b></th>
-                            <th class="sticky-header" style="text-align:right">Time</th>
-                            <th class="sticky-header"></th>
-                        </tr>
+
+            <div class="clusterize main-track-list-area" id="main-track-list">
+                <table class="main-track-list-table" id="track-list-elements-header">
+                    <thead id="track-list-header" style="border:0px solid transparent; margin:0; padding:0">
                     </thead>
-                    <tbody id="main-elements-body" class="list-group"></tbody>
                 </table>
+                <div id="main-track-list-scroller" class="clusterize-scroll">
+                    <table class="main-track-list-table">
+                        <tbody id="main-track-list-body" class="clusterize-content list-group" style="border:0px solid transparent; margin:0; padding:0">
+                            <tr class="clusterize-no-data">
+                                <td>Loading data…</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <script data-jui="#track-list-elements" data-tpl="row" type="text/template">
                 <tr class="list-group-item row track-entry" style="color:<!= color !>" draggable=true data-track-id=<!= id !>>
@@ -356,6 +363,8 @@
             </script>
         </div>
         <div id="queue-list" class="queue_list">
+        </div>
+        <div class="queue_list">
             <div class="main-list-header">
                 <div class="title">
                     <div class="name">

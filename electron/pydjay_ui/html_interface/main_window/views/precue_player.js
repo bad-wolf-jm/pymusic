@@ -1,6 +1,10 @@
+
+Huebee = require("huebee")
+
 class PrecuePlayerView extends EventDispatcher {
-    constructor () {
+    constructor (track_list_model) {
         super()
+        this.track_list_model = track_list_model
         this.controller = undefined
         document.getElementById("precue-options").addEventListener('click', this.show_options.bind(this))
 
@@ -17,6 +21,39 @@ class PrecuePlayerView extends EventDispatcher {
             this.controller.stop()
             document.getElementById("precue-dropdown").classList.remove("show")
         })
+        document.getElementById("precue-player-track-progress").addEventListener("click", (e) => {
+            let x = e.target.getBoundingClientRect()
+            let mouseX = (e.clientX - x.left)
+            let ratio = mouseX / x.width
+            if (this.controller.track != undefined) {
+                this.controller.play(this.controller.track,
+                                     this.controller.track.stream_start +
+                                        (this.controller.track.stream_length * ratio))
+            }
+        })
+
+        this.hueb = new Huebee(document.getElementById("track-color-value"), {
+            notation: "hex",
+            saturations: 1
+        })
+
+        this.hueb.on( 'change', ( color, hue, sat, lum ) => {
+            this.track_list_model.set_metadata(this._track, {color: color})
+            this.hueb.close()
+            // DB.update_track_data(this._track.id, {color:color}, () => {
+            //     document.getElementById("precue-player-color").style.background = color
+            // })
+        })
+
+        document.getElementById("precue-player-color").addEventListener("click", () => {
+            this.hueb.open()
+        })
+
+        this.track_list_model.on("metadata-changed", (track) => {
+            if (track.id == this._track.id) {
+                this.set_track(track)
+            }
+        })
     }
 
     show_options() {
@@ -25,9 +62,11 @@ class PrecuePlayerView extends EventDispatcher {
 
     set_controller(controller) {
         this.controller = controller
-        this.controller.on("stream-position", (pos) => {
-            let remaining = Math.abs(this.controller.source.duration*1000 - pos)
-            let percent = (pos*100 / (this.controller.source.duration*1000))
+        this.controller.on("stream-position", (pos_data) => {
+            let pos = pos_data.position
+            let duration = pos_data.duration
+            let remaining = Math.abs(duration*1000 - pos)
+            let percent = (pos*100 / (duration*1000))
             if (isFinite(percent)) {
                 document.getElementById("precue-player-track-progress").value = percent;
             }
@@ -52,6 +91,11 @@ class PrecuePlayerView extends EventDispatcher {
                 }
             }
         })
+        document.getElementById("precue-player-loved").addEventListener("click", () => {
+            if (this._track != undefined) {
+                this.updateLoved(!this._track.favorite)
+            }
+        })
     }
 
     set_unset() {
@@ -61,7 +105,6 @@ class PrecuePlayerView extends EventDispatcher {
     set_track(track) {
         let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
-        // document.getElementById("main-player-track-title").innerHTML    = track.title
         document.getElementById("precue-player-title").innerHTML       = track.title
         document.getElementById("precue-player-album").innerHTML       = track.album
         document.getElementById("precue-player-artist").innerHTML      = track.artist
@@ -70,6 +113,11 @@ class PrecuePlayerView extends EventDispatcher {
         document.getElementById("precue-player-play-count").innerHTML  = track.play_count
         document.getElementById("precue-player-bpm").innerHTML         = track.bpm
         document.getElementById("precue-player-duration").innerHTML    = `${format_nanoseconds(stream_length)}`
+        if (track.color == null) {
+            document.getElementById("precue-player-color").style.background = "#ffffff"
+        } else {
+            document.getElementById("precue-player-color").style.background = track.color
+        }
         this.setRating(track.rating)
         this.setLoved(track.favorite)
         let cover_source = undefined
@@ -82,21 +130,44 @@ class PrecuePlayerView extends EventDispatcher {
         this._track = track
         document.getElementById("no-preview-track").style.display = "none"
         document.getElementById("precue-dropdown").classList.remove("show")
-        //this._waveform.load(file_name)
     }
 
     setRating (num) {
-        var html = "";
+        let html = "";
         for (let i=1; i<6; i++) {
-            html+="<i class='fa " + ( i <= num ? "fa-star" : "fa-star-o") +"' style='margin-left:3px'></i>";
+            html+=`<i id='precue-rating-star-${i}' class='fa ` + ( i <= num ? "fa-star" : "fa-star-o") +`' style='margin-left:3px'></i>`;
         }
         document.getElementById("precue-player-rating").innerHTML = html
+        for (let i=1; i<6; i++) {
+            document.getElementById(`precue-rating-star-${i}`).addEventListener('click', () => {
+                if (i == 1 && this._track.rating == 1) {
+                    this.updateRating(0)
+                } else {
+                    this.updateRating(i)
+                }
+            })
+        }
     }
-    
+
     setLoved (value){
         var html = "";
         this.loved = value
         html+="<i title='"+value+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
         document.getElementById("precue-player-loved").innerHTML = html
+    }
+
+    updateRating(new_value) {
+        DB.update_track_data(this._track.id, {rating:new_value}, () => {
+            this._track.rating = new_value
+            this.setRating(new_value)
+        })
+    }
+
+    updateLoved(new_value) {
+        DB.update_track_data(this._track.id, {favorite:new_value}, () => {
+            console.log(new_value)
+            this._track.favorite = new_value
+            this.setLoved(new_value)
+        })
     }
 }
