@@ -1,3 +1,27 @@
+/* width */
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #0F0F0F;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #606060;
+    border-radius: 2px;
+}
+
+  /* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #6F6F6F;
+    border-radius: 2px;
+}
+
+
+
 body {
     font-family: Helvetica, sans-serif;
     font-size:   10pt;
