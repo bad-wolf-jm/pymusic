@@ -6,6 +6,10 @@ class TrackListView extends EventDispatcher {
 
         this.element = document.getElementById("main-list")
 
+        document.getElementById("main-track-list-table").onfocus = (e) => {
+            console.log(e)
+        }
+
         this.dom_id         = dom_ids.list
         this.controller     = undefined
         this.table          = undefined
@@ -21,16 +25,11 @@ class TrackListView extends EventDispatcher {
                 },
                 clusterChanged: () => {
                     let elements = document.querySelectorAll('.track-entry');
-                    //this.table_rows = {}
                     [].forEach.call(elements, (e) => {
                         let track_id = parseInt(e.attributes["data-track-id"].value)
                         this.table_rows[track_id] = e
 
                     });
-                    console.log("cluster-changed", Object.keys(this.table_rows).length);
-                    //if (this._selected_row != undefined) {
-                    //    this.ensure_row_visible(this._selected_row[0])
-                   // }
                 },
                 scrollingProgress: (progress) => {}
             }
@@ -39,7 +38,6 @@ class TrackListView extends EventDispatcher {
         $('#main-track-list-body').on('click', (e) => {
             this.select_row(e)
             focusWindow(this)
-
         });
 
         $('#main-track-list-body').on('dblclick', (e) => {
@@ -409,9 +407,12 @@ class TrackListView extends EventDispatcher {
             return true;
         })
         let queue_rows = []
+        this.view_list_id_order = []
         this.view_list_order.forEach((k) => {
             if (filter[k.id]) {
                 queue_rows.push(this.render_row(k))
+                this.view_list_id_order.push(k.id)
+
             }
         })
 

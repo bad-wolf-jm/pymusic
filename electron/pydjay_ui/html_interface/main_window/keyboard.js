@@ -26,30 +26,36 @@ Mousetrap.bind('esc', () => {
 });
 
 
-Mousetrap.bind('up', () => {
+Mousetrap.bind('up', (e) => {
     if (focus_list != undefined) {
         focus_list.move_up()
+        e.preventDefault()
     }
 });
 
 
-Mousetrap.bind('down', () => {
+Mousetrap.bind('down', (e) => {
     if (focus_list != undefined) {
         focus_list.move_down()
+        e.preventDefault()
     }
 });
 
 
-Mousetrap.bind('left', () => {
+Mousetrap.bind('left', (e) => {
     index = lists.indexOf(focus_list)
     if (index != -1) {
         if (index - 1 < 0) {
             focusWindow(undefined)
+            e.preventDefault()
+            // e.preventDefault()
         } else {
             focusWindow(lists[index - 1])
+            e.preventDefault()
         }
     } else {
         focusWindow(lists[lists.length - 1])
+        e.preventDefault()
     }
 });
 
@@ -93,15 +99,15 @@ Mousetrap.bind('end', () => {
 });
 
 
-Mousetrap.bind('alt+end', () => {
+Mousetrap.bind('shift+end', () => {
     console.log('');
 });
 
 
-Mousetrap.bind('g i', function() { console.log('go to inbox'); });
+// Mousetrap.bind('g i', function() { console.log('go to inbox'); });
 
 
-Mousetrap.bind("space", () => {
+Mousetrap.bind("space", (e) => {
     if ((pc.state == "PAUSED") || (pc.state == "PLAYING")) {
         pc.togglePause()
     } else {
@@ -109,70 +115,88 @@ Mousetrap.bind("space", () => {
             pc.play(pc.track)
         }
     }
+    e.preventDefault()
 })
 
 
-Mousetrap.bind("shift+space", () => {
+Mousetrap.bind("shift+space", (e) => {
     pc.stop()
+    e.preventDefault()
 })
 
 
 Mousetrap.bind("enter", () => {
     if (focus_list != undefined) {
         pc.play(focus_list.controller.selection[0])
+        e.preventDefault()
     }
 })
 
-Mousetrap.bind("shift+enter", () => {
+Mousetrap.bind("shift+enter", (e) => {
     if (focus_list != undefined) {
         pc.play_last_30_seconds(focus_list.controller.selection[0])
+        e.preventDefault()
     }
 })
 
-Mousetrap.bind("ctrl+shift+enter", () => {
+Mousetrap.bind("ctrl+shift+enter", (e) => {
     if (focus_list != undefined) {
         pc.play_last_10_seconds(focus_list.controller.selection[0])
+        e.preventDefault()
     }
 })
 
 
-Mousetrap.bind("shift+left", () => {
+Mousetrap.bind("shift+left", (e) => {
     if (focus_list != undefined) {
         // pc.play_last_10_seconds(focus_list.controller.selection[0])
     }
 })
 
-Mousetrap.bind("shift+right", () => {
-    if (focus_list != undefined) {
-        // pc.play_last_10_seconds(focus_list.controller.selection[0])
-    }
-})
-
-
-Mousetrap.bind("ctrl+shift+left", () => {
-    if (focus_list != undefined) {
-        // pc.play_last_10_seconds(focus_list.controller.selection[0])
-    }
-})
-
-Mousetrap.bind("ctrl+shift+right", () => {
+Mousetrap.bind("shift+right", (e) => {
     if (focus_list != undefined) {
         // pc.play_last_10_seconds(focus_list.controller.selection[0])
     }
 })
 
 
+Mousetrap.bind("ctrl+shift+left", (e) => {
+    if (focus_list != undefined) {
+        // pc.play_last_10_seconds(focus_list.controller.selection[0])
+    }
+})
 
-Mousetrap.bind(": T", () => {
+Mousetrap.bind("ctrl+shift+right", (e) => {
+    if (focus_list != undefined) {
+        // pc.play_last_10_seconds(focus_list.controller.selection[0])
+    }
+})
+
+
+Mousetrap.bind(": alt+t", (e) => {
     let window = electron.remote.getCurrentWindow();
     window.openDevTools();
 })
 
 
-Mousetrap.bind(": F", () => {
+Mousetrap.bind(": alt+f", () => {
     let window = electron.remote.getCurrentWindow();
     window.setFullScreen(!(window.isFullScreen()));
 })
+
+
+Mousetrap.bind(": alt+r", () => {
+    let window = electron.remote.getCurrentWindow();
+    window.reload();
+})
+
+
+Mousetrap.bind(": alt+q", () => {
+    let window = electron.remote.getCurrentWindow();
+    // QUIT
+    //window.reload();
+})
+
 
 // webix.UIManager.addHotKey("shift+a",     self.add_to_playlist,                    $$(self.track_table.track_list));
 // webix.UIManager.addHotKey("ctrl+shift+enter", self.group_preview_last_30_seconds, $$(self.track_list.list_id));

@@ -1,3 +1,27 @@
+
+/* width */
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #0F0F0F;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #606060;
+    border-radius: 2px;
+}
+
+  /* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #6F6F6F;
+    border-radius: 2px;
+}
+
+
 body {
     font-family: Helvetica, sans-serif;
     font-size:   10pt;
@@ -96,7 +120,6 @@ button {
     padding:0px;
     width:350px;
     height:100%;
-    background-color:rgb(177, 36, 170);
     background-color:rgb(40,40,40);
     border-right: 1px solid grey;
     border-top: 1px solid grey;
@@ -106,9 +129,8 @@ button {
 .main_list {
     margin: 0px;
     padding:0px;
-    width:calc(100% - 852px);
+    width:calc(100% - 854px);
     height:100%;
-    background-color:rgb(30, 148, 35);
     background-color:rgb(40,40,40);
     border-right: 1px solid grey;
     border-top: 1px solid grey;
@@ -755,7 +777,8 @@ input.new-playlist[type=text] {
 
 
 .focus {
-    background-color:rgb(70,70,70);
+    /* background-color:rgb(70,70,70); */
+    border: 1px solid white
 }
 
 
