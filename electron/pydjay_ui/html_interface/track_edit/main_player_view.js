@@ -1,9 +1,9 @@
 
-pl_channel_config = {headphones:{left:4, right:5}}
-mpl_channel_config = {master:{left:0, right:1}, headphones:{left:4, right:5}}
+// pl_channel_config = {headphones:{left:4, right:5}}
+// mpl_channel_config = {master:{left:0, right:1}, headphones:{left:4, right:5}}
 
-pl_channel_config2 = {headphones:{left:0, right:1}}
-mpl_channel_config2 = {master:{left:0, right:1}}
+// pl_channel_config2 = {headphones:{left:0, right:1}}
+// mpl_channel_config2 = {master:{left:0, right:1}}
 
 class MainPlayerView extends PydjayAudioFilePlayer {
     constructor () {
@@ -15,12 +15,13 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.favorite = undefined
         this.rating = undefined
         this.current_stream_position = null
-        this.audio_player = new PydjayAudioBufferPlayer()
-        if (this.audio_player.audio_context.audio_ctx.destination.maxChannelCount == 6) {
-            this.audio_player.connectOutputs(pl_channel_config)    
-        } else {
-            this.audio_player.connectOutputs(pl_channel_config2)    
-        }
+        this.audio_player = new PrecueController() // new PydjayAudioBufferPlayer()
+
+        // if (this.audio_player.audio_context.audio_ctx.destination.maxChannelCount == 6) {
+        //     this.audio_player.connectOutputs(pl_channel_config)    
+        // } else {
+        //     this.audio_player.connectOutputs(pl_channel_config2)    
+        // }
 
         this.audio_player.on("playback-started", () => {
             ipcRenderer.send("playback-started")
@@ -49,18 +50,23 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         document.getElementById("main-player-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
 
         document.getElementById("play-button").addEventListener("click", () => {
+            let start;
             if (this.audio_player.state == "PLAYING") {
-                this.audio_player.stop()
                 this.current_stream_position = null
+                this.audio_player.stop()
             } else {
-                let start;
-                if (this.current_stream_position != null) {
-                    start = this.current_stream_position * this._track.track_length  / 1000000               
+                if (this.current_stream_position == null) {
+                    start = this.stream_start
                 } else {
-                    start = this.stream_start / 1000000
+                    start = this.current_stream_position
                 }
-                this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end / 1000000)
-            }})
+                if (this.stream_end == Infinity) {
+                    this.audio_player.play(this._track, start, this._track.stream_end)
+                } else {
+                    this.audio_player.play(this._track, start, this.stream_end)
+                }
+            }
+       })
 
         document.getElementById("main-player-loved").addEventListener("click", () => {
             this.setLoved(!(this.loved))
@@ -85,9 +91,9 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.stream_start = this._track.stream_start
         this.stream_end = this._track.stream_end
         this._position_tracker = this.audio_player.on("stream-position", (pos) => {
+            this.current_stream_position = pos*1000000
             this._waveform.seekAndCenter(pos*1000000 / this._track.track_length)
         })
-
     }
 
 
@@ -127,9 +133,16 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         )
         this._waveform.on(
             "seek", (p) => {
-                this.current_stream_position = p
+                console.log(p)
+                let s = (p * this._track.track_length)
+                this.current_stream_position = s
+                if (this.audio_player.state == "PLAYING") {
+                    this.audio_player.play(this._track, s, this._track.stream_end)
+                }
             }
         )
+        //     }
+        // )
 
 
     }

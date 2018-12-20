@@ -4,22 +4,41 @@
 // pl_channel_config2 = {headphones:{left:0, right:1}}
 // mpl_channel_config2 = {master:{left:0, right:1}}
 
-pl_channel_config = {headphones:{left:0, right:1}}
-mpl_channel_config = {master:{left:4, right:5}, headphones:{left:0, right:1}}
+// pl_channel_config = {headphones:{left:0, right:1}}
+// mpl_channel_config = {master:{left:4, right:5}, headphones:{left:0, right:1}}
 
-pl_channel_config2 = {headphones:{left:0, right:1}}
-mpl_channel_config2 = {master:{left:0, right:1}}
+// pl_channel_config2 = {headphones:{left:0, right:1}}
+// mpl_channel_config2 = {master:{left:0, right:1}}
 
 
 class PrecueController extends EventDispatcher {
     constructor() {
         super()
+        this.track = 
         this.views = []
         // ipsRenderer.on()
-        // this.on('end-of-stream', () => {
-        //         this.dispatch("track-finished")
-        //     }
-        // )        
+        this.on('end-of-stream', () => {
+                this.dispatch("end-of-stream")
+            }
+        )
+
+        ipcRenderer.on("headphone-playback-stopped", () => {
+            this.dispatch("playback-stopped")
+        })
+        
+        
+        ipcRenderer.on("headphone-playback-paused", () => {
+            this.dispatch("playback-paused")
+        })
+        
+        ipcRenderer.on("headphone-playback-started", () => {
+            this.dispatch("playback-started")
+        })
+        
+        ipcRenderer.on("headphone-stream-position", (event, pos) => {
+            this.dispatch("stream-position", pos)
+        })
+        
     }
 
     reset_audio() {
@@ -36,7 +55,7 @@ class PrecueController extends EventDispatcher {
         //     super.play(url, time, end_time)
         // }
     }
-    
+
     init_audio() {
         // if (this.audio_context.audio_ctx.destination.maxChannelCount == 6) {
         //     this.connectOutputs(pl_channel_config)
@@ -47,19 +66,19 @@ class PrecueController extends EventDispatcher {
 
     togglePause() {
         if (this.state == 'PLAYING') {
-            ipcRenderer.send("mixer-pause", {channel: "headphones"})    
+            ipcRenderer.send("mixer-pause", {channel: "headphones"})
             this.state = 'PAUSED'
         } else if (this.state == 'PAUSED') {
-            ipcRenderer.send("mixer-resume", {channel: "headphones"})   
-            this.state = 'PLAYING' 
+            ipcRenderer.send("mixer-resume", {channel: "headphones"})
+            this.state = 'PLAYING'
         } else {
 
         }
     }
 
     stop() {
-        ipcRenderer.send("mixer-stop", {channel: "headphones"}) 
-        this.state = 'STOPPED' 
+        ipcRenderer.send("mixer-stop", {channel: "headphones"})
+        this.state = 'STOPPED'
     }
 
     play(track, stream_start, stream_end) {
@@ -76,7 +95,7 @@ class PrecueController extends EventDispatcher {
         // if (stream_start == undefined) {
         //     stream_start = this.track.stream_start
         //     stream_end = this.track.stream_end
-        // } else if (stream_end == undefined) {  
+        // } else if (stream_end == undefined) {
         //     stream_end = this.track.stream_end
         //     if (stream_start < 0) {
         //         stream_start = stream_end + stream_start;
@@ -85,22 +104,22 @@ class PrecueController extends EventDispatcher {
         // super.play(file_name, stream_start / 1000000, stream_end / 1000000)
     }
 
-    play_last_10_seconds(track) {
-        if (track != undefined) {
-            this.play(track, -10000000000)
-        } else if (this.track != undefined) {
-            this.play(this.track, -10000000000)
-        } else {
+    // play_last_10_seconds(track) {
+    //     if (track != undefined) {
+    //         this.play(track, -10000000000)
+    //     } else if (this.track != undefined) {
+    //         this.play(this.track, -10000000000)
+    //     } else {
 
-        }
-    }
+    //     }
+    // }
 
-    play_last_30_seconds(track) {
-        if (track != undefined) {
-            this.play(track, -30000000000)
-        } else if (this.track != undefined) {
-            this.play(this.track, -30000000000)
-        }
-    }
+    // play_last_30_seconds(track) {
+    //     if (track != undefined) {
+    //         this.play(track, -30000000000)
+    //     } else if (this.track != undefined) {
+    //         this.play(this.track, -30000000000)
+    //     }
+    // }
 
 }
