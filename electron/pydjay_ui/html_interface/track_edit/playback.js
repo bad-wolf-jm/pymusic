@@ -14,12 +14,31 @@
 class PrecueController extends EventDispatcher {
     constructor() {
         super()
+        this.track = 
         this.views = []
         // ipsRenderer.on()
-        // this.on('end-of-stream', () => {
-        //         this.dispatch("track-finished")
-        //     }
-        // )
+        this.on('end-of-stream', () => {
+                this.dispatch("end-of-stream")
+            }
+        )
+
+        ipcRenderer.on("headphone-playback-stopped", () => {
+            this.dispatch("playback-stopped")
+        })
+        
+        
+        ipcRenderer.on("headphone-playback-paused", () => {
+            this.dispatch("playback-paused")
+        })
+        
+        ipcRenderer.on("headphone-playback-started", () => {
+            this.dispatch("playback-started")
+        })
+        
+        ipcRenderer.on("headphone-stream-position", (event, pos) => {
+            this.dispatch("stream-position", pos)
+        })
+        
     }
 
     reset_audio() {
