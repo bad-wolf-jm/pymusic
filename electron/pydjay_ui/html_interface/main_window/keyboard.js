@@ -27,12 +27,16 @@ Mousetrap.bind('esc', () => {
 
 
 Mousetrap.bind('up', () => {
-    focus_list.move_up()
+    if (focus_list != undefined) {
+        focus_list.move_up()
+    }
 });
 
 
 Mousetrap.bind('down', () => {
-    focus_list.move_down()
+    if (focus_list != undefined) {
+        focus_list.move_down()
+    }
 });
 
 
@@ -66,6 +70,31 @@ Mousetrap.bind('right', () => {
 
 Mousetrap.bind('home', () => {
     console.log('home');
+});
+
+
+Mousetrap.bind('shift+home', () => {
+    console.log('home');
+});
+
+
+
+Mousetrap.bind('pagedown', () => {
+    console.log('');
+});
+
+Mousetrap.bind('pageup', () => {
+    console.log('');
+});
+
+
+Mousetrap.bind('end', () => {
+    console.log('');
+});
+
+
+Mousetrap.bind('alt+end', () => {
+    console.log('');
 });
 
 
@@ -106,6 +135,31 @@ Mousetrap.bind("ctrl+shift+enter", () => {
     }
 })
 
+
+Mousetrap.bind("shift+left", () => {
+    if (focus_list != undefined) {
+        // pc.play_last_10_seconds(focus_list.controller.selection[0])
+    }
+})
+
+Mousetrap.bind("shift+right", () => {
+    if (focus_list != undefined) {
+        // pc.play_last_10_seconds(focus_list.controller.selection[0])
+    }
+})
+
+
+Mousetrap.bind("ctrl+shift+left", () => {
+    if (focus_list != undefined) {
+        // pc.play_last_10_seconds(focus_list.controller.selection[0])
+    }
+})
+
+Mousetrap.bind("ctrl+shift+right", () => {
+    if (focus_list != undefined) {
+        // pc.play_last_10_seconds(focus_list.controller.selection[0])
+    }
+})
 
 
 // webix.UIManager.addHotKey("shift+a",     self.add_to_playlist,                    $$(self.track_table.track_list));

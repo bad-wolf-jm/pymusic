@@ -61,14 +61,14 @@ class TrackListView extends EventDispatcher {
             genre:       "Genre",
             last_played: "<b><span class='fa fa-calendar' style='font-size: 15px'/></b>",
             play_count:  "<b><span class='fa fa-play'/></b>",
-            rating:      "Rating", 
+            rating:      "Rating",
             bpm:         "<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>",
             duration:    "Time",
 
         });
 
-        this.name_dom       = document.getElementById(dom_ids.name); 
-        this.num_tracks_dom = document.getElementById(dom_ids.num_tracks); 
+        this.name_dom       = document.getElementById(dom_ids.name);
+        this.num_tracks_dom = document.getElementById(dom_ids.num_tracks);
         this.duration_dom   = document.getElementById(dom_ids.duration);
         this.filter_dom      = document.getElementById(dom_ids.filter);
 
@@ -185,7 +185,7 @@ class TrackListView extends EventDispatcher {
     set_list(name, queue) {
         this.view_list_order = []
         this.view_list_id_order = []
-        this.queue_rows = []  
+        this.queue_rows = []
         this.table_rows = {}
         if (queue == undefined) {
             queue = []
@@ -256,7 +256,7 @@ class TrackListView extends EventDispatcher {
             } else {
                 n = 0
             }
-            console.log(this.view_list_id_order[n])
+            console.log(document.getElementById("main-track-list-scroller").scrollTop)
             this.controller.select_element(this.view_list_id_order[n])
         } else {
             this.controller.select_element(this.view_list_id_order[0])
@@ -302,6 +302,20 @@ class TrackListView extends EventDispatcher {
         this._selected_row.forEach((x) => {
             if (this.table_rows[x.id] != undefined) {
                 this.table_rows[x.id].classList.add("selected")
+                let row = this.table_rows[x.id]
+                let scroller = document.getElementById("main-track-list-scroller")
+                let scrollerRect = scroller.getBoundingClientRect()
+                let rowRect = row.getBoundingClientRect()
+                let offsetTop = (rowRect.y - scrollerRect.y)
+                let offsetBottom = offsetTop + rowRect.height
+                let y = document.getElementById("main-track-list-scroller").getBoundingClientRect()
+                let visible = (offsetBottom <= y.height) && (offsetTop >= 0)
+
+                if (offsetBottom > y.height) {
+                    document.getElementById("main-track-list-scroller").scrollTop += (offsetBottom - y.height)
+                } else if (offsetTop < 0) {
+                    document.getElementById("main-track-list-scroller").scrollTop += (offsetTop)
+                }
             }
         })
     }
@@ -380,7 +394,7 @@ class TrackListView extends EventDispatcher {
         this.view_list_order.forEach((k) => {
             if (filter[k.id]) {
                 queue_rows.push(this.render_row(k))
-            }        
+            }
         })
 
         this.list_cluster.update(queue_rows)
