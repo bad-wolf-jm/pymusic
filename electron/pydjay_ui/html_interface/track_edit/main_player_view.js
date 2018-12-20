@@ -51,15 +51,20 @@ class MainPlayerView extends PydjayAudioFilePlayer {
 
         document.getElementById("play-button").addEventListener("click", () => {
             let start;
-            if (this.current_stream_position == null) {
-                start = this.stream_start
+            if (this.audio_player.state == "PLAYING") {
+                this.current_stream_position = null
+                this.audio_player.stop()
             } else {
-                start = this.current_stream_position
-            }
-            if (this.stream_end == Infinity) {
-                this.audio_player.play(this._track, start, this._track.stream_end)
-            } else {
-                this.audio_player.play(this._track, start, this.stream_end)
+                if (this.current_stream_position == null) {
+                    start = this.stream_start
+                } else {
+                    start = this.current_stream_position
+                }
+                if (this.stream_end == Infinity) {
+                    this.audio_player.play(this._track, start, this._track.stream_end)
+                } else {
+                    this.audio_player.play(this._track, start, this.stream_end)
+                }
             }
        })
 

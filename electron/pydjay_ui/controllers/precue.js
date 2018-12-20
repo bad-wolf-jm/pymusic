@@ -59,7 +59,7 @@ class PrecueController extends EventDispatcher {
 
     stop() {
         ipcRenderer.send("mixer-stop", {channel: "headphones"}) 
-        this.state == 'STOPPED' 
+        this.state = 'STOPPED' 
     }
 
     play(track, stream_start, stream_end) {

@@ -78,7 +78,7 @@ class PrecueController extends EventDispatcher {
 
     stop() {
         ipcRenderer.send("mixer-stop", {channel: "headphones"})
-        this.state == 'STOPPED'
+        this.state = 'STOPPED'
     }
 
     play(track, stream_start, stream_end) {
@@ -104,22 +104,22 @@ class PrecueController extends EventDispatcher {
         // super.play(file_name, stream_start / 1000000, stream_end / 1000000)
     }
 
-    play_last_10_seconds(track) {
-        if (track != undefined) {
-            this.play(track, -10000000000)
-        } else if (this.track != undefined) {
-            this.play(this.track, -10000000000)
-        } else {
+    // play_last_10_seconds(track) {
+    //     if (track != undefined) {
+    //         this.play(track, -10000000000)
+    //     } else if (this.track != undefined) {
+    //         this.play(this.track, -10000000000)
+    //     } else {
 
-        }
-    }
+    //     }
+    // }
 
-    play_last_30_seconds(track) {
-        if (track != undefined) {
-            this.play(track, -30000000000)
-        } else if (this.track != undefined) {
-            this.play(this.track, -30000000000)
-        }
-    }
+    // play_last_30_seconds(track) {
+    //     if (track != undefined) {
+    //         this.play(track, -30000000000)
+    //     } else if (this.track != undefined) {
+    //         this.play(this.track, -30000000000)
+    //     }
+    // }
 
 }
