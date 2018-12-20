@@ -184,6 +184,7 @@ class TrackListView extends EventDispatcher {
 
     set_list(name, queue) {
         this.view_list_order = []
+        this.view_list_id_order = []
         this.queue_rows = []  
         this.table_rows = {}
         if (queue == undefined) {
@@ -204,9 +205,9 @@ class TrackListView extends EventDispatcher {
                 bpm:         queue[i].bpm,
                 duration:    format_nanoseconds(queue[i].stream_length),
             }
-            //this.object_rows.push(element)
             this.queue_rows.push(this.render_row(element))
             this.view_list_order.push(element) //queue[i].id)
+            this.view_list_id_order.push(element.id) //queue[i].id)
         }
         this.name_dom.innerHTML       = `${name}`
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
@@ -246,11 +247,36 @@ class TrackListView extends EventDispatcher {
     }
 
     move_down() {
-        this.controller.move_down(id)
+        if (this._selected_row != undefined) {
+            let r = this._selected_row[0]
+            let i = this.view_list_id_order.indexOf(r.id)
+            let n
+            if (i != -1) {
+                n = (i+1) < this.view_list_id_order.length ? i+1 : this.view_list_id_order.length
+            } else {
+                n = 0
+            }
+            console.log(this.view_list_id_order[n])
+            this.controller.select_element(this.view_list_id_order[n])
+        } else {
+            this.controller.select_element(this.view_list_id_order[0])
+        }
     }
 
     move_up() {
-        this.controller.move_up(id)
+        if (this._selected_row != undefined) {
+            let r = this._selected_row[0]
+            let i = this.view_list_id_order.indexOf(r.id)
+            let n
+            if (i != -1) {
+                n = (i-1) >= 0 ? i-1 : 0
+            } else {
+                n = 0
+            }
+            this.controller.select_element(this.view_list_id_order[n])
+        } else {
+            this.controller.select_element(this.view_list_id_order[this.view_list_id_order.length-1])
+        }
     }
 
 
