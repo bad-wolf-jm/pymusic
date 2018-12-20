@@ -17,15 +17,20 @@ class TrackListView extends EventDispatcher {
             contentId: 'main-track-list-body',
             callbacks: {
                 clusterWillChange: () => {
-                    this.table_rows = []
+                    this.table_rows = {}
                 },
                 clusterChanged: () => {
                     let elements = document.querySelectorAll('.track-entry');
+                    //this.table_rows = {}
                     [].forEach.call(elements, (e) => {
                         let track_id = parseInt(e.attributes["data-track-id"].value)
                         this.table_rows[track_id] = e
 
                     });
+                    console.log("cluster-changed", Object.keys(this.table_rows).length);
+                    //if (this._selected_row != undefined) {
+                    //    this.ensure_row_visible(this._selected_row[0])
+                   // }
                 },
                 scrollingProgress: (progress) => {}
             }
@@ -33,6 +38,8 @@ class TrackListView extends EventDispatcher {
 
         $('#main-track-list-body').on('click', (e) => {
             this.select_row(e)
+            focusWindow(this)
+
         });
 
         $('#main-track-list-body').on('dblclick', (e) => {
@@ -256,7 +263,7 @@ class TrackListView extends EventDispatcher {
             } else {
                 n = 0
             }
-            console.log(document.getElementById("main-track-list-scroller").scrollTop)
+            //console.log(document.getElementById("main-track-list-scroller").scrollTop)
             this.controller.select_element(this.view_list_id_order[n])
         } else {
             this.controller.select_element(this.view_list_id_order[0])
@@ -291,6 +298,30 @@ class TrackListView extends EventDispatcher {
         }
     }
 
+
+    ensure_row_visible(x) {
+        let row = this.table_rows[x.id]
+        let scroller = document.getElementById("main-track-list-scroller")
+        let scrollerRect = scroller.getBoundingClientRect()
+
+        if (row == undefined) {
+            scroller.scrollTop -= (30)
+        } else {
+            let rowRect = row.getBoundingClientRect()
+            let offsetTop = (rowRect.y - scrollerRect.y)
+            let offsetBottom = offsetTop + rowRect.height
+            let y = scroller.getBoundingClientRect()
+            if (offsetBottom > y.height) {
+                scroller.scrollTop += (offsetBottom - y.height)
+            } else if (offsetTop < 0) {
+                scroller.scrollTop += (offsetTop)
+            }
+
+        }
+
+
+    }
+
     update_selection(selection) {
         if (this._selected_row != undefined) {
             this._selected_row.forEach((x) => {
@@ -300,22 +331,9 @@ class TrackListView extends EventDispatcher {
         }
         this._selected_row = selection
         this._selected_row.forEach((x) => {
+            this.ensure_row_visible(x)
             if (this.table_rows[x.id] != undefined) {
                 this.table_rows[x.id].classList.add("selected")
-                let row = this.table_rows[x.id]
-                let scroller = document.getElementById("main-track-list-scroller")
-                let scrollerRect = scroller.getBoundingClientRect()
-                let rowRect = row.getBoundingClientRect()
-                let offsetTop = (rowRect.y - scrollerRect.y)
-                let offsetBottom = offsetTop + rowRect.height
-                let y = document.getElementById("main-track-list-scroller").getBoundingClientRect()
-                let visible = (offsetBottom <= y.height) && (offsetTop >= 0)
-
-                if (offsetBottom > y.height) {
-                    document.getElementById("main-track-list-scroller").scrollTop += (offsetBottom - y.height)
-                } else if (offsetTop < 0) {
-                    document.getElementById("main-track-list-scroller").scrollTop += (offsetTop)
-                }
             }
         })
     }

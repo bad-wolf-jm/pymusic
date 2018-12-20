@@ -162,6 +162,18 @@ Mousetrap.bind("ctrl+shift+right", () => {
 })
 
 
+
+Mousetrap.bind(": T", () => {
+    let window = electron.remote.getCurrentWindow();
+    window.openDevTools();
+})
+
+
+Mousetrap.bind(": F", () => {
+    let window = electron.remote.getCurrentWindow();
+    window.setFullScreen(!(window.isFullScreen()));
+})
+
 // webix.UIManager.addHotKey("shift+a",     self.add_to_playlist,                    $$(self.track_table.track_list));
 // webix.UIManager.addHotKey("ctrl+shift+enter", self.group_preview_last_30_seconds, $$(self.track_list.list_id));
 // webix.UIManager.addHotKey("shift+enter",      self.group_preview_last_10_seconds, $$(self.track_list.list_id));
