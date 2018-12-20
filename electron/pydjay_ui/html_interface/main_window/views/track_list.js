@@ -37,7 +37,6 @@ class TrackListView extends EventDispatcher {
         });
 
         document.getElementById('main-track-list-body').addEventListener('dragstart', (e) => {
-            console.log(e)
             this.handle_drag_start(e)
         }, false);
 
@@ -83,10 +82,7 @@ class TrackListView extends EventDispatcher {
             window.webContents.once("did-finish-load", () => {
                 window.webContents.send("track-id", this.context_menu_element)
             })
-
-            
-
-
+            pc.stop()
             window.loadURL('file://' + __dirname + '/../track_edit/layout.html')
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
