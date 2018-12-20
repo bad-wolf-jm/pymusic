@@ -131,13 +131,26 @@ class QueueView extends EventDispatcher {
     }
 
     move_down() {
-        this.controller.move_down(id)
+        // this.controller.move_down(id)
     }
 
     move_up() {
-        this.controller.move_up(id)
+        // this.controller.move_up(id)
     }
 
+
+    move_last() {
+        // let e = this.view_list_id_order[this.view_list_id_order.length-1]
+        // this.ensure_row_visible(e)
+        // this.controller.select_element(e)
+    }
+
+
+    move_first() {
+        // let e = this.view_list_id_order[0]
+        // this.ensure_row_visible(e)
+        // this.controller.select_element(e)
+    }
 
 
 
