@@ -60,16 +60,19 @@ Mousetrap.bind('left', (e) => {
 });
 
 
-Mousetrap.bind('right', () => {
+Mousetrap.bind('right', (e) => {
     index = lists.indexOf(focus_list)
     if (index != -1) {
         if (index + 1 >= lists.length) {
             focusWindow(undefined)
+            e.preventDefault()
         } else {
             focusWindow(lists[index + 1])
+            e.preventDefault()
         }
     } else {
         focusWindow(lists[0])
+        e.preventDefault()
     }
 });
 
@@ -79,8 +82,11 @@ Mousetrap.bind('home', () => {
 });
 
 
-Mousetrap.bind('shift+home', () => {
-    console.log('home');
+Mousetrap.bind('shift+home', (e) => {
+    if (focus_list != undefined) {
+        focus_list.move_first()
+        e.preventDefault()
+    }
 });
 
 
@@ -99,8 +105,11 @@ Mousetrap.bind('end', () => {
 });
 
 
-Mousetrap.bind('shift+end', () => {
-    console.log('');
+Mousetrap.bind('shift+end', (e) => {
+    if (focus_list != undefined) {
+        focus_list.move_last()
+        e.preventDefault()
+    }
 });
 
 

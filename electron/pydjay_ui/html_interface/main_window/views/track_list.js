@@ -261,7 +261,6 @@ class TrackListView extends EventDispatcher {
             } else {
                 n = 0
             }
-            //console.log(document.getElementById("main-track-list-scroller").scrollTop)
             this.controller.select_element(this.view_list_id_order[n])
         } else {
             this.controller.select_element(this.view_list_id_order[0])
@@ -282,6 +281,20 @@ class TrackListView extends EventDispatcher {
         } else {
             this.controller.select_element(this.view_list_id_order[this.view_list_id_order.length-1])
         }
+    }
+
+
+    move_last() {
+        let e = this.view_list_id_order[this.view_list_id_order.length-1]
+        this.ensure_row_visible(e)
+        this.controller.select_element(e)
+    }
+
+
+    move_first() {
+        let e = this.view_list_id_order[0]
+        this.ensure_row_visible(e)
+        this.controller.select_element(e)
     }
 
 
