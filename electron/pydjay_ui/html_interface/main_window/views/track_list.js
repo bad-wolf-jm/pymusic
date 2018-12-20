@@ -298,6 +298,16 @@ class TrackListView extends EventDispatcher {
     }
 
 
+    page_up() {
+
+    }
+
+
+    page_down() {
+
+    }
+
+
     update_element(x) {
         let row = this.table_rows[x.id]
         if (row != undefined) {

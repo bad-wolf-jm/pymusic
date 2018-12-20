@@ -152,6 +152,13 @@ class QueueView extends EventDispatcher {
         // this.controller.select_element(e)
     }
 
+    page_up() {
+
+    }
+
+    page_down() {
+
+    }
 
 
     handle_double_click(e) {

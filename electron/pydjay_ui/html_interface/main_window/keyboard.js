@@ -3,9 +3,6 @@
 
 var focus_list = undefined
 
-// var main_list_area = document.getElementById("main-list")
-// var queue_list_area = document.getElementById("queue-list")
-
 
 function focusWindow(w) {
     if (focus_list != undefined) {
@@ -48,7 +45,6 @@ Mousetrap.bind('left', (e) => {
         if (index - 1 < 0) {
             focusWindow(undefined)
             e.preventDefault()
-            // e.preventDefault()
         } else {
             focusWindow(lists[index - 1])
             e.preventDefault()
@@ -90,10 +86,10 @@ Mousetrap.bind('shift+home', (e) => {
 });
 
 
-
 Mousetrap.bind('pagedown', () => {
     console.log('');
 });
+
 
 Mousetrap.bind('pageup', () => {
     console.log('');
@@ -111,9 +107,6 @@ Mousetrap.bind('shift+end', (e) => {
         e.preventDefault()
     }
 });
-
-
-// Mousetrap.bind('g i', function() { console.log('go to inbox'); });
 
 
 Mousetrap.bind("space", (e) => {
