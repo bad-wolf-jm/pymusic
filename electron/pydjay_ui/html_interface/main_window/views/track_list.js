@@ -211,15 +211,13 @@ class TrackListView extends EventDispatcher {
                 duration:    format_nanoseconds(queue[i].stream_length),
             }
             this.queue_rows.push(this.render_row(element))
-            this.view_list_order.push(element) //queue[i].id)
-            this.view_list_id_order.push(element.id) //queue[i].id)
+            this.view_list_order.push(element)
+            this.view_list_id_order.push(element.id)
         }
         this.name_dom.innerHTML       = `${name}`
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         this.list_cluster.update(this.queue_rows)
-
-        //this.connect_drag()
     }
 
     handle_drag_start(e) {
@@ -299,14 +297,39 @@ class TrackListView extends EventDispatcher {
 
 
     page_up() {
-
+        let scroller = document.getElementById("main-track-list-scroller")
+        let y = scroller.getBoundingClientRect()
+        scroller.scrollTop -= y.height
     }
-
 
     page_down() {
-
+        let scroller = document.getElementById("main-track-list-scroller")
+        let y = scroller.getBoundingClientRect()
+        scroller.scrollTop += y.height
     }
 
+    add_selection_to_queue() {
+        if (this._selected_row != undefined) {
+            let r = this._selected_row[0]
+            this.queue_controller.append(r)
+        }
+    }
+
+    add_selection_to_shortlist() {
+        this._selected_row.forEach((x) => {
+            this.shortlist_controller.add(x)
+        })
+    }
+
+    add_selection_to_unavailable() {
+        this._selected_row.forEach((x) => {
+            this.unavailable_controller.add(x)
+        })
+    }
+
+    remove_selection_from_unavailable() {
+
+    }
 
     update_element(x) {
         let row = this.table_rows[x.id]
