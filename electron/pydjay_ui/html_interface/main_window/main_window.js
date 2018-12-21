@@ -336,9 +336,14 @@ function display_playlist(id) {
 ipcRenderer.on('playback-started', (event, arg) => {
     vc.mute_monitor()});
 
+
 ipcRenderer.on('playback-stopped', (event, arg) => {
     vc.restore_monitor()});
 
+
+function checkTime(i) {
+    return (i < 10) ? "0" + i : i;
+}
 
 function startTime() {
     let today = new Date()
@@ -349,7 +354,7 @@ function startTime() {
     M = checkTime(today.getMonth()+1)
     Y = today.getFullYear()
     document.getElementById("footer-date").innerHTML = `${Y}-${M}-${d}`
-    document.getElementById("footer-timee").innerHTML = `${h}:${m}`
+    document.getElementById("footer-time").innerHTML = `${h}:${m}`
     // $$('calendar').define('label', `<span style="color:rgb(200,200,200)">${Y}-${M}-${d}</span> | <b>${h}:${m}</b>`)
     // $$('calendar').refresh()
     t = setTimeout(function () {
