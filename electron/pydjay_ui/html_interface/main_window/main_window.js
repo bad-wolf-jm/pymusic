@@ -281,6 +281,13 @@ document.getElementById("main-menu-quit").addEventListener('click', () => {
     ipcRenderer.send("quit-pymusic")
 })
 
+document.getElementById("filter-track-list").addEventListener("keyup", (e) => {
+    console.log(e.key)
+    if ((e.key == "Escape") || (e.key == "Enter")) {
+        document.getElementById("filter-track-list").blur()
+    }
+});
+
 ///////////////////////////////////////////////
 
 function refresh_sessions(x) {
@@ -300,7 +307,7 @@ function display_suggestions() {
 }
 
 function display_short_list() {
-    T_controller.set_model("All Songs", shortlist_model)
+    T_controller.set_model("Short list", shortlist_model)
 }
 
 function display_unavailable() {
