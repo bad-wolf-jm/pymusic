@@ -62,7 +62,7 @@ class QueueView extends EventDispatcher {
             {
                 animation: 150,
                 ghostClass: "ghost",
-
+                dataIdAttr: "data-track-id",
                 onStart: (evt) => {
 
                 },
@@ -78,7 +78,7 @@ class QueueView extends EventDispatcher {
                     this.view_list_order = new_order
                     this.dispatch("reorder", this.view_list_order)
                     this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-                    this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
+                    this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
                 },
             }
         )
@@ -194,8 +194,11 @@ class QueueView extends EventDispatcher {
     selected_element() {
         if (this.current_selection != undefined) {
             let track_id = parseInt(this.current_selection.attributes["data-track-id"].value)
+            // console.log(track_id)
             if (!isNaN(track_id)) {
                 return this.controller.get_id(track_id)
+            } else {
+                return null
             }
         }
         return undefined
@@ -239,15 +242,52 @@ class QueueView extends EventDispatcher {
     }
 
     move_selection_up() {
-
+        let selected = this.selected_element()
+        let selected_id;
+        if (selected !== undefined) {
+            selected_id = (selected != null) ? selected.id : selected
+            let position = this.view_list_order.indexOf(selected_id)
+            if (position > 0) {
+                let x = this.view_list_order[position - 1]
+                this.view_list_order[position - 1] = selected_id
+                this.view_list_order[position] = x
+                this.dispatch("reorder", this.view_list_order)
+                this.sortable.sort(this.view_list_order)
+                
+            }
+        }
     }
 
     move_selection_down() {
-        
+        let selected = this.selected_element()
+        let selected_id;
+        if (selected !== undefined) {
+            selected_id = (selected != null) ? selected.id : selected
+            let position = this.view_list_order.indexOf(selected_id)
+
+            if (position + 1 < this.view_list_order.length) {
+                let x = this.view_list_order[position + 1]
+                this.view_list_order[position + 1] = selected_id
+                this.view_list_order[position] = x
+                this.dispatch("reorder", this.view_list_order)
+                this.sortable.sort(this.view_list_order)
+                
+            }
+        }
     }
 
     move_selection_to_top() {
-        
+        let selected = this.selected_element()
+        let selected_id;
+        if (selected !== undefined) {
+            selected_id = (selected != null) ? selected.id : selected
+            let position = this.view_list_order.indexOf(selected_id)
+
+            this.view_list_order.splice(position, 1)
+            this.view_list_order.splice(0, 0, selected_id)
+            this.dispatch("reorder", this.view_list_order)
+            this.sortable.sort(this.view_list_order)
+        }
     }
 
 
