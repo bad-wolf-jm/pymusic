@@ -41,6 +41,16 @@ ipcRenderer.on('resume', (event, arg) => {
 
 });
 
+ipcRenderer.on('skip', (event, arg) => {        
+    let channel = arg.channel
+    if (channel == "headphones") {
+        pc.skip(arg.delta)
+    } else if (channel == "master") {
+        mpc.skip(arg.delta)
+    }
+
+});
+
 
 ipcRenderer.on('reset-audio-system', (event, arg) => {        
     vc.reset_audio()

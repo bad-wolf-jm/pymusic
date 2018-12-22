@@ -178,28 +178,28 @@ Mousetrap.bind("ctrl+shift+enter", (e) => {
 
 Mousetrap.bind("shift+left", (e) => {
     if (focus_list != undefined) {
-        pc.skip(-10)
+        pc.skip(-1)
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("shift+right", (e) => {
     if (focus_list != undefined) {
-        pc.skip(10)
+        pc.skip(1)
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("ctrl+shift+left", (e) => {
     if (focus_list != undefined) {
-        pc.skip(-30)
+        pc.skip(-5)
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("ctrl+shift+right", (e) => {
     if (focus_list != undefined) {
-        pc.skip(30)
+        pc.skip(5)
         e.preventDefault()
     }
 })

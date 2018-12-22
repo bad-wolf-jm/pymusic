@@ -116,7 +116,7 @@ button {
 
 .side_bar {
     margin: 0px;
-    padding:0px;
+    padding: 0px;
     width:350px;
     height:100%;
     background-color:rgb(40,40,40);
@@ -128,10 +128,10 @@ button {
 .main_list {
     margin: 0px;
     padding:0px;
-    width:calc(100% - 854px);
+    width:calc(100% - 852px);
     height:100%;
     background-color:rgb(40,40,40);
-    border-right: 1px solid grey;
+    /* border-right: 1px solid grey; */
     border-top: 1px solid grey;
     float:left
 }
@@ -777,7 +777,7 @@ input.new-playlist[type=text] {
 
 .focus {
     /* background-color:rgb(70,70,70); */
-    border: 1px solid white
+    outline: 1px solid white
 }
 
 
