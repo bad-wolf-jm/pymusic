@@ -38,6 +38,31 @@ Mousetrap.bind('down', (e) => {
 });
 
 
+Mousetrap.bind('shift+up', (e) => {
+    if (focus_list != undefined) {
+        focus_list.move_selection_up()
+        e.preventDefault()
+    }
+});
+
+
+Mousetrap.bind('shift+down', (e) => {
+    if (focus_list != undefined) {
+        focus_list.move_selection_down()
+        e.preventDefault()
+    }
+});
+
+
+Mousetrap.bind('ctrl+shift+up', (e) => {
+    if (focus_list != undefined) {
+        focus_list.move_selection_to_top()
+        e.preventDefault()
+    }
+});
+
+
+
 Mousetrap.bind('Q', (e) => {
     if (focus_list != undefined) {
         focus_list.add_selection_to_queue()

@@ -238,6 +238,19 @@ class QueueView extends EventDispatcher {
 
     }
 
+    move_selection_up() {
+
+    }
+
+    move_selection_down() {
+        
+    }
+
+    move_selection_to_top() {
+        
+    }
+
+
     handle_double_click(e) {
         let x = e.target.closest(".queued-track")
         let track_id = parseInt(x.attributes["data-track-id"].value)

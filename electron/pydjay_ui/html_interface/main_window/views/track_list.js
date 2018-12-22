@@ -306,6 +306,19 @@ class TrackListView extends EventDispatcher {
     }
 
 
+    move_selection_up() {
+
+    }
+
+    move_selection_down() {
+        
+    }
+
+    move_selection_to_top() {
+        
+    }
+
+
     page_up() {
         let scroller = document.getElementById("main-track-list-scroller")
         let y = scroller.getBoundingClientRect()
