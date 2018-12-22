@@ -51,7 +51,9 @@ class QueueView extends EventDispatcher {
             ]}))
 
         this.menu.append(new MenuItem({type: 'separator'}))
-        this.menu.append(new MenuItem({label: 'Remove', click: () =>{ this.controller.remove(this.context_menu_element) }}))
+        this.menu.append(new MenuItem({label: 'Remove', click: () =>{ 
+            this.controller.remove(this.context_menu_element) 
+        }}))
 
         this.menu.on("menu-will-show", (e) => {})
         this.menu.on("menu-will-close", (e) => {})
@@ -137,6 +139,17 @@ class QueueView extends EventDispatcher {
         this.element.classList.remove("focus")
     }
 
+    delete_selection() {
+        let selected = this.selected_element()
+
+        if (selected != undefined) {
+            let position = this.view_list_order.indexOf(selected.id)
+            this.controller.remove(this.selected_element())
+            this._select_row(this.view_elements[this.view_list_order[position]])
+        }
+    }
+
+
     move_down() {
         if (this.current_selection != undefined) {
             let track_id = parseInt(this.current_selection.attributes["data-track-id"].value)
@@ -150,7 +163,6 @@ class QueueView extends EventDispatcher {
             } else {
                 n = 0
             }
-            //let next_id;
 
             this._select_row(this.view_elements[this.view_list_order[n]])
         } else {
@@ -185,17 +197,8 @@ class QueueView extends EventDispatcher {
             if (!isNaN(track_id)) {
                 return this.controller.get_id(track_id)
             }
-            // let position = this.view_list_order.indexOf(track_id)
-            // let n
-            // if (position != -1) {
-            //     n = (position-1) >= 0 ? position-1 : 0
-            // } else {
-            //     n = 0
-            // }
-            // this._select_row(this.view_elements[this.view_list_order[n]])
-        // } else {
-        //     this._select_row(this.view_elements[this.view_list_order[this.view_elements.length-1]])
         }
+        return undefined
     }
 
     move_last() {

@@ -254,6 +254,11 @@ class TrackListView extends EventDispatcher {
     }
 
 
+    delete_selection() {
+        
+    }
+
+
     move_down() {
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]

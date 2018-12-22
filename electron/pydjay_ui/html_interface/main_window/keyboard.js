@@ -18,6 +18,13 @@ function focusWindow(w) {
 var lists = [T, Q]
 
 
+Mousetrap.bind(["shift+delete", "shift+backspace"], (e) => {
+    if (focus_list != undefined) {
+        focus_list.delete_selection()
+        e.preventDefault()
+    }
+})
+
 Mousetrap.bind('up', (e) => {
     if (focus_list != undefined) {
         focus_list.move_up()
