@@ -131,25 +131,21 @@ class QueueView extends EventDispatcher {
     }
 
     move_down() {
-        // this.controller.move_down(id)
+
     }
 
     move_up() {
-        // this.controller.move_up(id)
+
     }
 
 
     move_last() {
-        // let e = this.view_list_id_order[this.view_list_id_order.length-1]
-        // this.ensure_row_visible(e)
-        // this.controller.select_element(e)
+
     }
 
 
     move_first() {
-        // let e = this.view_list_id_order[0]
-        // this.ensure_row_visible(e)
-        // this.controller.select_element(e)
+
     }
 
     page_up() {
@@ -160,6 +156,21 @@ class QueueView extends EventDispatcher {
 
     }
 
+    add_selection_to_queue() {
+
+    }
+
+    add_selection_to_shortlist() {
+
+    }
+
+    add_selection_to_unavailable() {
+
+    }
+
+    remove_selection_from_unavailable() {
+
+    }
 
     handle_double_click(e) {
         let x = e.target.closest(".queued-track")
@@ -169,11 +180,11 @@ class QueueView extends EventDispatcher {
     }
 
     handle_drag_enter(e) {
-        //console.log(e)
+
     }
 
     handle_drag_end(e) {
-        //console.log(e)
+
     }
 
     on_drag_over(evt) {

@@ -18,11 +18,6 @@ function focusWindow(w) {
 var lists = [T, Q]
 
 
-Mousetrap.bind('esc', () => {
-    console.log('escape');
-});
-
-
 Mousetrap.bind('up', (e) => {
     if (focus_list != undefined) {
         focus_list.move_up()
@@ -36,6 +31,44 @@ Mousetrap.bind('down', (e) => {
         focus_list.move_down()
         e.preventDefault()
     }
+});
+
+
+Mousetrap.bind('Q', (e) => {
+    if (focus_list != undefined) {
+        focus_list.add_selection_to_queue()
+        e.preventDefault()
+    }
+});
+
+
+Mousetrap.bind('S', (e) => {
+    if (focus_list != undefined) {
+        focus_list.add_selection_to_shortlist()
+        e.preventDefault()
+    }
+});
+
+
+Mousetrap.bind(': + u', (e) => {
+    if (focus_list != undefined) {
+        focus_list.add_selection_to_unavailable()
+        e.preventDefault()
+    }
+});
+
+
+Mousetrap.bind(': - u', (e) => {
+    if (focus_list != undefined) {
+        focus_list.remove_selection_from_unavailable()
+        e.preventDefault()
+    }
+});
+
+
+Mousetrap.bind('ctrl+f', (e) => {
+    document.getElementById("filter-track-list").focus()
+    e.preventDefault()
 });
 
 
@@ -73,11 +106,6 @@ Mousetrap.bind('right', (e) => {
 });
 
 
-Mousetrap.bind('home', () => {
-    console.log('home');
-});
-
-
 Mousetrap.bind('shift+home', (e) => {
     if (focus_list != undefined) {
         focus_list.move_first()
@@ -86,18 +114,19 @@ Mousetrap.bind('shift+home', (e) => {
 });
 
 
-Mousetrap.bind('pagedown', () => {
-    console.log('');
+Mousetrap.bind('pagedown', (e) => {
+    if (focus_list != undefined) {
+        focus_list.page_down()
+        e.preventDefault()
+    }
 });
 
 
-Mousetrap.bind('pageup', () => {
-    console.log('');
-});
-
-
-Mousetrap.bind('end', () => {
-    console.log('');
+Mousetrap.bind('pageup', (e) => {
+    if (focus_list != undefined) {
+        focus_list.page_up()
+        e.preventDefault()
+    }
 });
 
 
@@ -119,7 +148,6 @@ Mousetrap.bind("space", (e) => {
     }
     e.preventDefault()
 })
-
 
 Mousetrap.bind("shift+space", (e) => {
     pc.stop()
@@ -148,29 +176,31 @@ Mousetrap.bind("ctrl+shift+enter", (e) => {
     }
 })
 
-
 Mousetrap.bind("shift+left", (e) => {
     if (focus_list != undefined) {
-        // pc.play_last_10_seconds(focus_list.controller.selection[0])
+        pc.skip(-10)
+        e.preventDefault()
     }
 })
 
 Mousetrap.bind("shift+right", (e) => {
     if (focus_list != undefined) {
-        // pc.play_last_10_seconds(focus_list.controller.selection[0])
+        pc.skip(10)
+        e.preventDefault()
     }
 })
 
-
 Mousetrap.bind("ctrl+shift+left", (e) => {
     if (focus_list != undefined) {
-        // pc.play_last_10_seconds(focus_list.controller.selection[0])
+        pc.skip(-30)
+        e.preventDefault()
     }
 })
 
 Mousetrap.bind("ctrl+shift+right", (e) => {
     if (focus_list != undefined) {
-        // pc.play_last_10_seconds(focus_list.controller.selection[0])
+        pc.skip(30)
+        e.preventDefault()
     }
 })
 
@@ -178,31 +208,25 @@ Mousetrap.bind("ctrl+shift+right", (e) => {
 Mousetrap.bind(": alt+t", (e) => {
     let window = electron.remote.getCurrentWindow();
     window.openDevTools();
+    e.preventDefault()
 })
 
 
 Mousetrap.bind(": alt+f", () => {
     let window = electron.remote.getCurrentWindow();
     window.setFullScreen(!(window.isFullScreen()));
+    e.preventDefault()
 })
 
 
 Mousetrap.bind(": alt+r", () => {
     let window = electron.remote.getCurrentWindow();
     window.reload();
+    e.preventDefault()
 })
 
 
 Mousetrap.bind(": alt+q", () => {
     let window = electron.remote.getCurrentWindow();
-    // QUIT
-    //window.reload();
+    e.preventDefault()
 })
-
-
-// webix.UIManager.addHotKey("shift+a",     self.add_to_playlist,                    $$(self.track_table.track_list));
-// webix.UIManager.addHotKey("ctrl+shift+enter", self.group_preview_last_30_seconds, $$(self.track_list.list_id));
-// webix.UIManager.addHotKey("shift+enter",      self.group_preview_last_10_seconds, $$(self.track_list.list_id));
-// webix.UIManager.addHotKey("enter",            self.group_preview_selected,        $$(self.track_list.list_id));
-// webix.UIManager.addHotKey("delete",           self.remove_from_playlist,          $$(self.track_list.list_id));
-// webix.UIManager.addHotKey("backspace",        self.remove_from_playlist,          $$(self.track_list.list_id));
