@@ -260,7 +260,7 @@ class TrackListView extends EventDispatcher {
             let i = this.view_list_id_order.indexOf(r.id)
             let n
             if (i != -1) {
-                n = (i+1) < this.view_list_id_order.length ? i+1 : this.view_list_id_order.length
+                n = (i+1) < this.view_list_id_order.length ? i+1 : this.view_list_id_order.length - 1
             } else {
                 n = 0
             }

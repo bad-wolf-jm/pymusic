@@ -146,7 +146,7 @@ class QueueView extends EventDispatcher {
             let position = this.view_list_order.indexOf(track_id)
             let n
             if (position != -1) {
-                n = (position+1) < this.view_list_order.length ? position+1 : this.view_list_order.length
+                n = (position+1) < this.view_list_order.length ? position+1 : this.view_list_order.length - 1
             } else {
                 n = 0
             }
