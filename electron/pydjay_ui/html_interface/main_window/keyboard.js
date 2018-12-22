@@ -1,6 +1,3 @@
-
-//var keyboard_listener = Mousetrap()
-
 var focus_list = undefined
 
 
