@@ -381,9 +381,9 @@
                 </table>
                 <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
                     <! if (id != null ) { !>
-                        <tr class="list-group-item queued-track" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                        <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
                             <td style="width:100%; margin:0; padding:0">
-                                <div class="element" contextmenu="mymenu">
+                                <div class="queued-track element" contextmenu="mymenu" data-track-id=<!= id !>>
                                     <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
                                     <div style="margin:0px; padding:0px; float:left; width:275px">
                                         <div class="queue_element_title"><b><!= title !></b></div>
@@ -397,9 +397,9 @@
                             </td>
                         </tr>
                     <! } else { !>
-                        <tr class="list-group-item queued-track" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                        <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
                             <td style="width:100%; margin:0; padding:0">
-                                <div class="element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center">
+                                <div class="queued-track element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center" data-track-id=<!= id !>>
                                     <b>END OF QUEUE</b>
                                 </div>
                             </td>

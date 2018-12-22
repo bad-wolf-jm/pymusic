@@ -249,6 +249,11 @@ class TrackListView extends EventDispatcher {
         this.element.classList.remove("focus")
     }
 
+    selected_element() {
+        return this.controller.selection[0]
+    }
+
+
     move_down() {
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]

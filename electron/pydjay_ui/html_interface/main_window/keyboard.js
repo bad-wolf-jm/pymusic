@@ -6,7 +6,7 @@ var focus_list = undefined
 
 function focusWindow(w) {
     if (focus_list != undefined) {
-        focus_list.blur() //classList.remove("focus")
+        focus_list.blur()
     }
     focus_list = w
     if (focus_list != undefined) {
@@ -157,21 +157,21 @@ Mousetrap.bind("shift+space", (e) => {
 
 Mousetrap.bind("enter", () => {
     if (focus_list != undefined) {
-        pc.play(focus_list.controller.selection[0])
+        pc.play(focus_list.selected_element())
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("shift+enter", (e) => {
     if (focus_list != undefined) {
-        pc.play_last_30_seconds(focus_list.controller.selection[0])
+        pc.play_last_30_seconds(focus_list.selected_element())
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("ctrl+shift+enter", (e) => {
     if (focus_list != undefined) {
-        pc.play_last_10_seconds(focus_list.controller.selection[0])
+        pc.play_last_10_seconds(focus_list.selected_element())
         e.preventDefault()
     }
 })

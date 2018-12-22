@@ -39,9 +39,15 @@ class QueueView extends EventDispatcher {
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Preview',
             submenu: [
-                {label: 'Full track', click: () => {pc.play(this.context_menu_element) }},
-                {label: 'Last 30 seconds', click: () => {pc.play_last_30_seconds(this.context_menu_element)  }},
-                {label: 'Last 10 seconds', click: () =>{pc.play_last_10_seconds(this.context_menu_element)  }}
+                {label: 'Full track', click: () => {
+                    pc.play(this.context_menu_element)
+                }},
+                {label: 'Last 30 seconds', click: () => {
+                    pc.play_last_30_seconds(this.context_menu_element)
+                }},
+                {label: 'Last 10 seconds', click: () =>{
+                    pc.play_last_10_seconds(this.context_menu_element)
+                }}
             ]}))
 
         this.menu.append(new MenuItem({type: 'separator'}))
@@ -85,6 +91,7 @@ class QueueView extends EventDispatcher {
 
     set_queue(queue) {
         this.view_list_order = []
+        //this.view_id_list_order = []
         let queue_rows = []
 
         for(let i=0; i<queue.length; i++) {
@@ -112,7 +119,7 @@ class QueueView extends EventDispatcher {
                     this.queue_content.reset()
                 }
                 this.queue_content = table("#queue-list-elements", {
-                    data:queue_rows,
+                    data: queue_rows,
                     scroll: false,
                     resize: false
                 });
@@ -131,13 +138,65 @@ class QueueView extends EventDispatcher {
     }
 
     move_down() {
+        if (this.current_selection != undefined) {
+            let track_id = parseInt(this.current_selection.attributes["data-track-id"].value)
+            if (isNaN(track_id)) {
+                track_id = null
+            }
+            let position = this.view_list_order.indexOf(track_id)
+            let n
+            if (position != -1) {
+                n = (position+1) < this.view_list_order.length ? position+1 : this.view_list_order.length
+            } else {
+                n = 0
+            }
+            //let next_id;
 
+            this._select_row(this.view_elements[this.view_list_order[n]])
+        } else {
+            this._select_row(this.view_elements[this.view_list_order[0]])
+        }
     }
+
 
     move_up() {
+        if (this.current_selection != undefined) {
+            let track_id = parseInt(this.current_selection.attributes["data-track-id"].value)
+            if (isNaN(track_id)) {
+                track_id = null
+            }
+            let position = this.view_list_order.indexOf(track_id)
+            let n
+            if (position != -1) {
+                n = (position-1) >= 0 ? position-1 : 0
+            } else {
+                n = 0
+            }
+            this._select_row(this.view_elements[this.view_list_order[n]])
+        } else {
+            this._select_row(this.view_elements[this.view_list_order[this.view_elements.length-1]])
+        }
 
     }
 
+    selected_element() {
+        if (this.current_selection != undefined) {
+            let track_id = parseInt(this.current_selection.attributes["data-track-id"].value)
+            if (!isNaN(track_id)) {
+                return this.controller.get_id(track_id)
+            }
+            // let position = this.view_list_order.indexOf(track_id)
+            // let n
+            // if (position != -1) {
+            //     n = (position-1) >= 0 ? position-1 : 0
+            // } else {
+            //     n = 0
+            // }
+            // this._select_row(this.view_elements[this.view_list_order[n]])
+        // } else {
+        //     this._select_row(this.view_elements[this.view_list_order[this.view_elements.length-1]])
+        }
+    }
 
     move_last() {
 
@@ -149,11 +208,15 @@ class QueueView extends EventDispatcher {
     }
 
     page_up() {
-
+        let scroller = document.getElementById("main-track-list-scroller")
+        let y = scroller.getBoundingClientRect()
+        scroller.scrollTop -= y.height
     }
 
     page_down() {
-
+        let scroller = document.getElementById("main-track-list-scroller")
+        let y = scroller.getBoundingClientRect()
+        scroller.scrollTop += y.height
     }
 
     add_selection_to_queue() {
@@ -208,18 +271,28 @@ class QueueView extends EventDispatcher {
 
     }
 
-    select_row(e) {
+    _select_row(x) {
         if (this.current_selection != undefined) {
             this.current_selection.classList.remove("selected")
         }
-        let x = e.target.closest(".element")
         x.classList.add("selected")
         this.current_selection = x
     }
 
+    select_row(e) {
+        let x = e.target.closest(".element")
+        this._select_row(x)
+    }
+
     connect_events() {
         let elements = document.querySelectorAll('.queued-track');
+        this.view_elements = {};
         [].forEach.call(elements, (e) => {
+            let track_id = parseInt(e.attributes["data-track-id"].value)
+            if (isNaN(track_id)) {
+                track_id = null
+            }
+            this.view_elements[track_id] = e
             e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
             e.addEventListener("click", this.select_row.bind(this))
             e.addEventListener('contextmenu', (e) => {
