@@ -3,6 +3,13 @@ const Clusterize = require("clusterize.js")
 class TrackListView extends EventDispatcher {
     constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
         super()
+
+        this.element = document.getElementById("main-list")
+
+        document.getElementById("main-track-list-table").onfocus = (e) => {
+            console.log(e)
+        }
+
         this.dom_id         = dom_ids.list
         this.controller     = undefined
         this.table          = undefined
@@ -14,7 +21,7 @@ class TrackListView extends EventDispatcher {
             contentId: 'main-track-list-body',
             callbacks: {
                 clusterWillChange: () => {
-                    this.table_rows = []
+                    this.table_rows = {}
                 },
                 clusterChanged: () => {
                     let elements = document.querySelectorAll('.track-entry');
@@ -30,6 +37,7 @@ class TrackListView extends EventDispatcher {
 
         $('#main-track-list-body').on('click', (e) => {
             this.select_row(e)
+            focusWindow(this)
         });
 
         $('#main-track-list-body').on('dblclick', (e) => {
@@ -58,23 +66,23 @@ class TrackListView extends EventDispatcher {
             genre:       "Genre",
             last_played: "<b><span class='fa fa-calendar' style='font-size: 15px'/></b>",
             play_count:  "<b><span class='fa fa-play'/></b>",
-            rating:      "Rating", 
+            rating:      "Rating",
             bpm:         "<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>",
             duration:    "Time",
 
         });
 
-        this.name_dom       = document.getElementById(dom_ids.name); 
-        this.num_tracks_dom = document.getElementById(dom_ids.num_tracks); 
+        this.name_dom       = document.getElementById(dom_ids.name);
+        this.num_tracks_dom = document.getElementById(dom_ids.num_tracks);
         this.duration_dom   = document.getElementById(dom_ids.duration);
-        this.filter_dom      = document.getElementById(dom_ids.filter); 
+        this.filter_dom      = document.getElementById(dom_ids.filter);
 
-        this.shortlist_controller = shortlist_controller        
+        this.shortlist_controller = shortlist_controller
         this.queue_controller = queue_controller
         this.unavailable_controller = unavailable_controller
 
         this.menu = new Menu()
-        this.menu.append(new MenuItem({label: 'Track info', click: () => { 
+        this.menu.append(new MenuItem({label: 'Track info', click: () => {
             let window = new BrowserWindow({width: 1250, height: 750})
             window.on('closed', () => {
                 window = null
@@ -88,20 +96,20 @@ class TrackListView extends EventDispatcher {
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Shortlist', click: () => {
             let T = this.context_menu_element
-            this.shortlist_controller.add(T)            
+            this.shortlist_controller.add(T)
 
         }}))
-        
+
         this.menu.append(new MenuItem({label: 'Marked as played', click: () => {
             let T = this.context_menu_element
-            this.unavailable_controller.add(T)            
+            this.unavailable_controller.add(T)
         }}))
         this.menu.append(new MenuItem({label: 'Add to queue', click: () => {
             let T = this.context_menu_element
             this.queue_controller.append(T)
         }}))
         this.menu.append(new MenuItem({type:  'separator'}))
-        this.menu.append(new MenuItem({label: 'Preview', 
+        this.menu.append(new MenuItem({label: 'Preview',
             submenu: [
                 {label: 'Full track', click: () => {
                     pc.play(this.context_menu_element)
@@ -113,9 +121,9 @@ class TrackListView extends EventDispatcher {
                     pc.play_last_10_seconds(this.context_menu_element)
                 }}
             ]}))
-                
+
         this.menu.append(new MenuItem({type: 'separator'}))
-        
+
         this.menu.on("menu-will-show", (e) => {})
         this.menu.on("menu-will-close", (e) => {})
 
@@ -181,7 +189,8 @@ class TrackListView extends EventDispatcher {
 
     set_list(name, queue) {
         this.view_list_order = []
-        this.queue_rows = []  
+        this.view_list_id_order = []
+        this.queue_rows = []
         this.table_rows = {}
         if (queue == undefined) {
             queue = []
@@ -197,20 +206,18 @@ class TrackListView extends EventDispatcher {
                 genre:       queue[i].genre,
                 last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
                 play_count:  queue[i].play_count,
-                rating:      this._get_rating(queue[i]), 
+                rating:      this._get_rating(queue[i]),
                 bpm:         queue[i].bpm,
                 duration:    format_nanoseconds(queue[i].stream_length),
             }
-            //this.object_rows.push(element)
             this.queue_rows.push(this.render_row(element))
-            this.view_list_order.push(element) //queue[i].id)
+            this.view_list_order.push(element)
+            this.view_list_id_order.push(element.id)
         }
         this.name_dom.innerHTML       = `${name}`
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         this.list_cluster.update(this.queue_rows)
-
-        //this.connect_drag()
     }
 
     handle_drag_start(e) {
@@ -233,6 +240,120 @@ class TrackListView extends EventDispatcher {
         this.controller.select_element(id)
     }
 
+
+    focus() {
+        this.element.classList.add("focus")
+    }
+
+    blur() {
+        this.element.classList.remove("focus")
+    }
+
+    selected_element() {
+        return this.controller.selection[0]
+    }
+
+
+    delete_selection() {
+        
+    }
+
+
+    move_down() {
+        if (this._selected_row != undefined) {
+            let r = this._selected_row[0]
+            let i = this.view_list_id_order.indexOf(r.id)
+            let n
+            if (i != -1) {
+                n = (i+1) < this.view_list_id_order.length ? i+1 : this.view_list_id_order.length - 1
+            } else {
+                n = 0
+            }
+            this.controller.select_element(this.view_list_id_order[n])
+        } else {
+            this.controller.select_element(this.view_list_id_order[0])
+        }
+    }
+
+    move_up() {
+        if (this._selected_row != undefined) {
+            let r = this._selected_row[0]
+            let i = this.view_list_id_order.indexOf(r.id)
+            let n
+            if (i != -1) {
+                n = (i-1) >= 0 ? i-1 : 0
+            } else {
+                n = 0
+            }
+            this.controller.select_element(this.view_list_id_order[n])
+        } else {
+            this.controller.select_element(this.view_list_id_order[this.view_list_id_order.length-1])
+        }
+    }
+
+
+    move_last() {
+        let e = this.view_list_id_order[this.view_list_id_order.length-1]
+        this.ensure_row_visible(e)
+        this.controller.select_element(e)
+    }
+
+
+    move_first() {
+        let e = this.view_list_id_order[0]
+        this.ensure_row_visible(e)
+        this.controller.select_element(e)
+    }
+
+
+    move_selection_up() {
+
+    }
+
+    move_selection_down() {
+        
+    }
+
+    move_selection_to_top() {
+        
+    }
+
+
+    page_up() {
+        let scroller = document.getElementById("main-track-list-scroller")
+        let y = scroller.getBoundingClientRect()
+        scroller.scrollTop -= y.height
+    }
+
+    page_down() {
+        let scroller = document.getElementById("main-track-list-scroller")
+        let y = scroller.getBoundingClientRect()
+        scroller.scrollTop += y.height
+    }
+
+    add_selection_to_queue() {
+        if (this._selected_row != undefined) {
+            let r = this._selected_row[0]
+            this.queue_controller.append(r)
+        }
+    }
+
+    add_selection_to_shortlist() {
+        this._selected_row.forEach((x) => {
+            this.shortlist_controller.add(x)
+        })
+    }
+
+    add_selection_to_unavailable() {
+        this._selected_row.forEach((x) => {
+            this.unavailable_controller.add(x)
+        })
+    }
+
+    remove_selection_from_unavailable() {
+
+    }
+
     update_element(x) {
         let row = this.table_rows[x.id]
         if (row != undefined) {
@@ -244,6 +365,30 @@ class TrackListView extends EventDispatcher {
         }
     }
 
+
+    ensure_row_visible(x) {
+        let row = this.table_rows[x.id]
+        let scroller = document.getElementById("main-track-list-scroller")
+        let scrollerRect = scroller.getBoundingClientRect()
+
+        if (row == undefined) {
+            scroller.scrollTop -= (30)
+        } else {
+            let rowRect = row.getBoundingClientRect()
+            let offsetTop = (rowRect.y - scrollerRect.y)
+            let offsetBottom = offsetTop + rowRect.height
+            let y = scroller.getBoundingClientRect()
+            if (offsetBottom > y.height) {
+                scroller.scrollTop += (offsetBottom - y.height)
+            } else if (offsetTop < 0) {
+                scroller.scrollTop += (offsetTop)
+            }
+
+        }
+
+
+    }
+
     update_selection(selection) {
         if (this._selected_row != undefined) {
             this._selected_row.forEach((x) => {
@@ -253,6 +398,7 @@ class TrackListView extends EventDispatcher {
         }
         this._selected_row = selection
         this._selected_row.forEach((x) => {
+            this.ensure_row_visible(x)
             if (this.table_rows[x.id] != undefined) {
                 this.table_rows[x.id].classList.add("selected")
             }
@@ -330,10 +476,13 @@ class TrackListView extends EventDispatcher {
             return true;
         })
         let queue_rows = []
+        this.view_list_id_order = []
         this.view_list_order.forEach((k) => {
             if (filter[k.id]) {
                 queue_rows.push(this.render_row(k))
-            }        
+                this.view_list_id_order.push(k.id)
+
+            }
         })
 
         this.list_cluster.update(queue_rows)

@@ -5,19 +5,19 @@ class UnavailableModel extends BaseListModel {
         this.refresh(() => {
             for(let i=0; i<this.ready_wait_queue.length; i++) {
                 this.ready_wait_queue[i]()
-            }                                                            
+            }
         })
     }
 
     refresh(k) {
-        DB.get_unavailable_tracks( (tracks) => { 
+        DB.get_unavailable_tracks( (tracks) => {
             this.tracks_order = []
             tracks.forEach((t) => {
-                this.tracks_order.push(t)
+                this.tracks_order.push(t.id)
             })
             k()
             this.dispatch("content-changed", this.queue)
-        })            
+        })
     }
 
 
@@ -26,7 +26,7 @@ class UnavailableModel extends BaseListModel {
         let y = b.title.toLowerCase();
         if (x < y) {return -1;}
         if (x > y) {return 1;}
-        return 0;        
+        return 0;
     }
 
     ready(func) {
@@ -40,7 +40,7 @@ class UnavailableModel extends BaseListModel {
     get_all_tracks() {
         Q = []
         this.tracks_order.forEach((x) => {
-            Q.push(this.tracks_model.get_track_by_id(x.id))})
+            Q.push(this.tracks_model.get_track_by_id(x))})
         Q.sort(this.compare_tracks)
         return Q
     }
@@ -50,9 +50,22 @@ class UnavailableModel extends BaseListModel {
     }
 
     add(element) {
-        this.tracks_order.push(element)
+        console.log(element)
+        this.tracks_order.push(element.id)
         this.save()
         this.dispatch("content-changed", this.get_all_tracks())
+    }
+
+
+    remove(element) {
+        if (this.tracks_order != undefined) {
+            let I = this.tracks_order.indexOf(element.id)
+            if (I != -1) {
+                this.tracks_order.splice(I, 1)
+                this.save()
+                this.dispatch("content-changed", this.get_all_tracks())
+            }
+        }
     }
 
     save() {
@@ -60,7 +73,7 @@ class UnavailableModel extends BaseListModel {
             let queue_tuples = []
             for (let i=0; i < this.tracks_order.length; i++) {
                 T = this.tracks_order[i]
-                queue_tuples.push(`(${T.id})`)
+                queue_tuples.push(`(${T})`)
             }
             $QUERY(`INSERT INTO unavailable_tracks (track_id) VALUES ${queue_tuples.join(",")}`, () => {})
         })
@@ -77,7 +90,7 @@ class UnavailableModel extends BaseListModel {
         if (this.tracks_order != undefined) {
             let d = 0
             this.tracks_order.forEach((i) => {
-                let x = this.tracks_model.get_track_by_id(i.id)
+                let x = this.tracks_model.get_track_by_id(i)
                 d += x.stream_length
             })
             return d

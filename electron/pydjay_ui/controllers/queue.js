@@ -45,7 +45,6 @@ class QueueController extends EventDispatcher {
 
     is_empty() {
         return this.model.is_empty()
-        // (this.queue == undefined) || (this)
     }
 
     get_id(id) {

@@ -119,6 +119,16 @@ ipcMain.on("mixer-stop", (event, message) => {
 
 
 // message = {
+//   delta: milliseconds
+//   channel:"master"
+// }
+ipcMain.on("mixer-skip", (event, message) => {
+  mixerWindow.webContents.send("skip", message)
+})
+
+
+
+// message = {
 //   channel:"master"
 //   event_type:"master"
 //   event_value:"master"

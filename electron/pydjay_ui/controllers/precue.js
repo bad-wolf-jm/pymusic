@@ -72,18 +72,13 @@ class PrecueController extends EventDispatcher {
         })
         this.state = "PLAYING"
         this.dispatch("track-started", track)
-        // let file_name = path.join(this.track.music_root, this.track.file_name);
-        // if (stream_start == undefined) {
-        //     stream_start = this.track.stream_start
-        //     stream_end = this.track.stream_end
-        // } else if (stream_end == undefined) {  
-        //     stream_end = this.track.stream_end
-        //     if (stream_start < 0) {
-        //         stream_start = stream_end + stream_start;
-        //     }
-        // }
-        // super.play(file_name, stream_start / 1000000, stream_end / 1000000)
     }
+
+
+    skip(seconds) {
+        ipcRenderer.send("mixer-skip", {delta: seconds, channel: "headphones"}) 
+    }
+
 
     play_last_10_seconds(track) {
         if (track != undefined) {

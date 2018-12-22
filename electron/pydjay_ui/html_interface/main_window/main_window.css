@@ -21,7 +21,6 @@
 }
 
 
-
 body {
     font-family: Helvetica, sans-serif;
     font-size:   10pt;
@@ -117,10 +116,9 @@ button {
 
 .side_bar {
     margin: 0px;
-    padding:0px;
+    padding: 0px;
     width:350px;
     height:100%;
-    background-color:rgb(177, 36, 170);
     background-color:rgb(40,40,40);
     border-right: 1px solid grey;
     border-top: 1px solid grey;
@@ -132,9 +130,8 @@ button {
     padding:0px;
     width:calc(100% - 852px);
     height:100%;
-    background-color:rgb(30, 148, 35);
     background-color:rgb(40,40,40);
-    border-right: 1px solid grey;
+    /* border-right: 1px solid grey; */
     border-top: 1px solid grey;
     float:left
 }
@@ -757,23 +754,9 @@ input.new-playlist[type=text] {
 }
 
 .unavailable {
-    background-color: rgb(135, 2, 7) !important;
+    /* background-color: rgb(135, 2, 7) !important; */
     opacity: 0.15
 }
-
-
-/* .main-track-list-area .main-track-list-table .row:hover .selected {
-    background-color: rgb(83, 39, 153);
-}
-
-.main-track-list-area .main-track-list-table tr:nth-child(even) .selected {
-    background-color: rgb(70, 32, 114);
-}
-
-.main-track-list-area .main-track-list-table tr:nth-child(odd) .selected {
-    background-color: rgb(70, 32, 114);
-} */
-
 
 
 .main-track-list-area .main-track-list-table .header-row .sticky-header {
@@ -783,13 +766,18 @@ input.new-playlist[type=text] {
     margin:  0;
     padding: 0;
     border:  0px solid transparent;
-    /* #To not have transparent background.
-    #background-color: white; */
     background-color: rgb(50,50,50);
 }
 
+
 .filtered {
    display: none;
+}
+
+
+.focus {
+    /* background-color:rgb(70,70,70); */
+    outline: 1px solid white
 }
 
 
