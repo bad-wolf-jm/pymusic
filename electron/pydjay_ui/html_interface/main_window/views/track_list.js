@@ -25,9 +25,18 @@ class TrackListView extends EventDispatcher {
                 },
                 clusterChanged: () => {
                     let elements = document.querySelectorAll('.track-entry');
+                    let unavailable;
+                    if  (this.controller != undefined) {
+                        unavailable = this.controller.unavailable.get_all_track_ids();
+                    } else {
+                        unavailable = {}
+                    }
                     [].forEach.call(elements, (e) => {
                         let track_id = parseInt(e.attributes["data-track-id"].value)
                         this.table_rows[track_id] = e
+                        if (unavailable[track_id] != undefined) {
+                            e.classList.add("unavailable")
+                        }
 
                     });
                 },
@@ -177,6 +186,7 @@ class TrackListView extends EventDispatcher {
                 }
             }
         })
+
     }
 
     _get_rating(track_object) {
