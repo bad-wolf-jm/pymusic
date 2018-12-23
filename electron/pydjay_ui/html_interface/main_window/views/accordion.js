@@ -40,7 +40,22 @@ class AccordionView extends EventDispatcher {
             header_height += this.headers[i].clientHeight
         }
         this.available_height = total_height - header_height
+
+        window.addEventListener("resize", (event) => {
+            let total_height = this.div.clientHeight
+            let header_height = 0
+            for(let i=0; i<this.headers.length; i++) {
+                header_height += this.headers[i].clientHeight
+            }
+            this.available_height = total_height - header_height  
+            this.resize_panels()  
+        })
     }
+
+    resize_panels() {
+        
+    }
+
 
     open_panel(i) {
         if (!(this.panel_open[i])) {

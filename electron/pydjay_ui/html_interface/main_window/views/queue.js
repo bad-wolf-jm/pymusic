@@ -362,6 +362,7 @@ class QueueView extends EventDispatcher {
     select_row(e) {
         let x = e.target.closest(".element")
         this._select_row(x)
+        focusWindow(this)
     }
 
     connect_events() {
