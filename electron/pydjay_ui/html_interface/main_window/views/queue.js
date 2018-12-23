@@ -214,13 +214,13 @@ class QueueView extends EventDispatcher {
     }
 
     page_up() {
-        let scroller = document.getElementById("main-track-list-scroller")
+        let scroller = document.getElementById("queue-list-area")
         let y = scroller.getBoundingClientRect()
         scroller.scrollTop -= y.height
     }
 
     page_down() {
-        let scroller = document.getElementById("main-track-list-scroller")
+        let scroller = document.getElementById("queue-list-area")
         let y = scroller.getBoundingClientRect()
         scroller.scrollTop += y.height
     }
@@ -239,6 +239,25 @@ class QueueView extends EventDispatcher {
 
     remove_selection_from_unavailable() {
 
+    }
+
+    ensure_row_visible(row) {
+        let scroller = document.getElementById("queue-list-area")
+        let scrollerRect = scroller.getBoundingClientRect()
+
+        if (row == undefined) {
+            scroller.scrollTop -= (30)
+        } else {
+            let rowRect = row.getBoundingClientRect()
+            let offsetTop = (rowRect.y - scrollerRect.y)
+            let offsetBottom = offsetTop + rowRect.height
+            let y = scroller.getBoundingClientRect()
+            if (offsetBottom > y.height) {
+                scroller.scrollTop += (offsetBottom - y.height)
+            } else if (offsetTop < 0) {
+                scroller.scrollTop += (offsetTop)
+            }
+        }
     }
 
     move_selection_up() {
@@ -289,6 +308,8 @@ class QueueView extends EventDispatcher {
             this.view_list_order.splice(0, 0, selected_id)
             this.dispatch("reorder", this.view_list_order)
             this.sortable.sort(this.view_list_order)
+            this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
+            this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         }
     }
 
@@ -335,6 +356,7 @@ class QueueView extends EventDispatcher {
         }
         x.classList.add("selected")
         this.current_selection = x
+        this.ensure_row_visible(x)
     }
 
     select_row(e) {

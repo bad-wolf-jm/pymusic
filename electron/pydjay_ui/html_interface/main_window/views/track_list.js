@@ -383,10 +383,7 @@ class TrackListView extends EventDispatcher {
             } else if (offsetTop < 0) {
                 scroller.scrollTop += (offsetTop)
             }
-
         }
-
-
     }
 
     update_selection(selection) {
