@@ -120,6 +120,13 @@
             </div>
             <div class="track-info">
                 <div class="info">
+                    <div class="title">COLOR</div>
+                    <div id="main-player-track-color" class="value">  
+                        <input type="hidden" id="main-track-color-value" value=""/>                                  
+                        <button id="main-player-color" class="color-chooser"></button>
+                    </div>
+                </div>
+                <div class="info">
                     <div class="title">DURATION</div>
                     <div id="main-player-track-duration" class="value">3:12</div>
                 </div>
@@ -245,9 +252,9 @@
             <button class="accordion open-on-drag-over">Preview Player</button>
             <div class="panel" data-fixed-height="320">
                 <div class="preview-player" style="position:relative">
-                    <!-- <div id="no-preview-track" class="overlay">
+                    <div id="no-preview-track" class="overlay">
                         No track to preview
-                    </div> -->
+                    </div>
                     <img id="precue-player-cover" class="cover" src="" height="75" width="75"></img>
                     <div style="padding:20px; height:50px; width:calc(100% - 115px); display:inline-block">
                         <button id="precue-player-play-button" class="precue-management-button" style="float:left"><i class="fa fa-play"></i></button>

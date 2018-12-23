@@ -2,6 +2,32 @@ class MainPlayerView extends PydjayAudioFilePlayer {
     constructor () {
         super()
         this.controller = undefined
+
+        this.hueb = new Huebee(document.getElementById("main-track-color-value"), {
+            notation: "hex",
+            saturations: 1
+        })
+
+        this.hueb.on( 'change', ( color, hue, sat, lum ) => {
+            //this.track_list_model.set_metadata(this._track, {color: color})
+            this.hueb.close()
+        })
+
+        document.getElementById("main-player-color").addEventListener("click", () => {
+            this.hueb.open()
+        })
+
+        // this.track_list_model.on("metadata-changed", (track) => {
+        //     if (track.id == this._track.id) {
+        //         this.set_track(track)
+        //     }
+        // })
+
+        document.getElementById("main-player-loved").addEventListener("click", () => {
+            if (this._track != undefined) {
+                this.updateLoved(!this._track.favorite)
+            }
+        })
     }
 
     set_controller(controller) {
@@ -78,9 +104,18 @@ class MainPlayerView extends PydjayAudioFilePlayer {
     setRating (num) {
         var html = "";
         for (var i=1; i<6; i++) {
-            html+="<i class='fa " + ( i <= num ? "fa-star" : "fa-star-o") +"' style='margin-left:3px'></i>";
+            html+=`<i id='main-rating-star-${i}' class='fa ` + ( i <= num ? "fa-star" : "fa-star-o") +`' style='margin-left:3px'></i>`;
         }
         document.getElementById("main-player-rating").innerHTML = html
+        for (let i=1; i<6; i++) {
+            document.getElementById(`main-rating-star-${i}`).addEventListener('click', () => {
+                if (i == 1 && this._track.rating == 1) {
+                    this.updateRating(0)
+                } else {
+                    this.updateRating(i)
+                }
+            })
+        }
     }
     
     setLoved (value){
@@ -89,4 +124,19 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         html+="<i title='"+value+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
         document.getElementById("main-player-loved").innerHTML = html
     }
+
+    updateRating(new_value) {
+        DB.update_track_data(this._track.id, {rating:new_value}, () => {
+            this._track.rating = new_value
+            this.setRating(new_value)
+        })
+    }
+
+    updateLoved(new_value) {
+        DB.update_track_data(this._track.id, {favorite:new_value}, () => {
+            this._track.favorite = new_value
+            this.setLoved(new_value)
+        })
+    }
+
 }

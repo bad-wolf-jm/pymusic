@@ -40,9 +40,6 @@ class PrecuePlayerView extends EventDispatcher {
         this.hueb.on( 'change', ( color, hue, sat, lum ) => {
             this.track_list_model.set_metadata(this._track, {color: color})
             this.hueb.close()
-            // DB.update_track_data(this._track.id, {color:color}, () => {
-            //     document.getElementById("precue-player-color").style.background = color
-            // })
         })
 
         document.getElementById("precue-player-color").addEventListener("click", () => {
