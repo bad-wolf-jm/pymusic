@@ -11,7 +11,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.hueb.on( 'change', ( color, hue, sat, lum ) => {
             if (this.track_list_model != undefined) {
                 this.track_list_model.set_metadata(this._track, {color: color})
-                this.hueb.close()    
+                this.hueb.close()
             }
         })
 
@@ -21,10 +21,12 @@ class MainPlayerView extends PydjayAudioFilePlayer {
 
         if (this.track_list_model != undefined) {
             this.track_list_model.on("metadata-changed", (track) => {
-                if (track.id == this._track.id) {
-                    this.set_track(track)
+                if (this._track != undefined) {
+                    if (track.id == this._track.id) {
+                        this.set_track(track)
+                    }
                 }
-            })    
+            })
         }
 
         document.getElementById("main-player-loved").addEventListener("click", () => {
@@ -41,9 +43,9 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             document.getElementById("main-player-time-remaining").innerHTML = `-${format_nanoseconds(remaining*1000000)}`
         })
         this.controller.on("queue-stopped",                this.set_queue.bind(this))
-        this.controller.on("track-finished",                this.set_queue.bind(this))
+        this.controller.on("track-finished",               this.set_queue.bind(this))
         this.controller.on("track-started",                this.set_track.bind(this))
-        this.controller.on("queue-finished",                this.set_queue.bind(this))
+        this.controller.on("queue-finished",               this.set_queue.bind(this))
         this.controller.on("queue-stopped",                this.set_queue.bind(this))
         this.controller.on("queue-stop-requested",         this.set_queue.bind(this))
         this.controller.on("queue-stop-request-cancelled", this.set_queue.bind(this))
@@ -88,8 +90,8 @@ class MainPlayerView extends PydjayAudioFilePlayer {
                     deferInit: false,
                 })
             ]
-        });       
-        this._position_tracker = this.controller.on("stream-position", 
+        });
+        this._position_tracker = this.controller.on("stream-position",
             (pos) => {
                 let p = pos.position*1000000 / this._track.track_length
                 p = Math.max(p,0.0)
@@ -121,7 +123,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             })
         }
     }
-    
+
     setLoved (value){
         var html = "";
         this.loved = value
@@ -132,25 +134,13 @@ class MainPlayerView extends PydjayAudioFilePlayer {
     updateRating(new_value) {
         if (this.track_list_model != undefined) {
             this.track_list_model.set_metadata(this._track, {rating:new_value})
-            // this.hueb.close()    
         }
-
-        // DB.update_track_data(this._track.id, , () => {
-        //     this._track.rating = new_value
-        //     this.setRating(new_value)
-        // })
     }
 
     updateLoved(new_value) {
         if (this.track_list_model != undefined) {
             this.track_list_model.set_metadata(this._track, {favorite:new_value})
-            // this.hueb.close()    
         }
-
-        // DB.update_track_data(this._track.id, , () => {
-        //     this._track.favorite = new_value
-        //     this.setLoved(new_value)
-        // })
     }
 
 }
