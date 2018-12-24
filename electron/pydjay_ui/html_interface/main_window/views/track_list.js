@@ -147,7 +147,7 @@ class TrackListView extends EventDispatcher {
             <${element} style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
             <${element} style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
             <${element} style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
-            <${element} style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
+            <${element} style="max-width:40px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
             <${element} style="text-align:right; width:25px; padding-right:9px">${track.play_count}</${element}>
             <${element} style="width:75px">${track.last_played}</${element}>
             <${element} style="width:25px">${track.rating}</${element}>
@@ -265,7 +265,7 @@ class TrackListView extends EventDispatcher {
 
 
     delete_selection() {
-        
+
     }
 
 
@@ -321,11 +321,11 @@ class TrackListView extends EventDispatcher {
     }
 
     move_selection_down() {
-        
+
     }
 
     move_selection_to_top() {
-        
+
     }
 
 
