@@ -83,7 +83,7 @@ SE.set_controller(SE_controller)
 
 mpc.init_audio()
 pc.init_audio()
-M = new MainPlayerView()
+M = new MainPlayerView(tracks_model)
 M.set_controller(mpc)
 M.init()
 

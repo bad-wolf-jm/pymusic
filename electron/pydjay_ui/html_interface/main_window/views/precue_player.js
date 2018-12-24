@@ -154,17 +154,27 @@ class PrecuePlayerView extends EventDispatcher {
     }
 
     updateRating(new_value) {
-        DB.update_track_data(this._track.id, {rating:new_value}, () => {
-            this._track.rating = new_value
-            this.setRating(new_value)
-        })
+        if (this.track_list_model != undefined) {
+            this.track_list_model.set_metadata(this._track, {rating:new_value})
+            // this.hueb.close()    
+        }
+
+        // DB.update_track_data(this._track.id, {rating:new_value}, () => {
+        //     this._track.rating = new_value
+        //     this.setRating(new_value)
+        // })
     }
 
     updateLoved(new_value) {
-        DB.update_track_data(this._track.id, {favorite:new_value}, () => {
-            console.log(new_value)
-            this._track.favorite = new_value
-            this.setLoved(new_value)
-        })
+        if (this.track_list_model != undefined) {
+            this.track_list_model.set_metadata(this._track, {favorite:new_value})
+            // this.hueb.close()    
+        }
+
+        // DB.update_track_data(this._track.id, {favorite:new_value}, () => {
+        //     console.log(new_value)
+        //     this._track.favorite = new_value
+        //     this.setLoved(new_value)
+        // })
     }
 }
