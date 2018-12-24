@@ -1,27 +1,31 @@
 class MainPlayerView extends PydjayAudioFilePlayer {
-    constructor () {
+    constructor (track_list_model) {
         super()
         this.controller = undefined
-
+        this.track_list_model = track_list_model
         this.hueb = new Huebee(document.getElementById("main-track-color-value"), {
             notation: "hex",
             saturations: 1
         })
 
         this.hueb.on( 'change', ( color, hue, sat, lum ) => {
-            //this.track_list_model.set_metadata(this._track, {color: color})
-            this.hueb.close()
+            if (this.track_list_model != undefined) {
+                this.track_list_model.set_metadata(this._track, {color: color})
+                this.hueb.close()    
+            }
         })
 
         document.getElementById("main-player-color").addEventListener("click", () => {
             this.hueb.open()
         })
 
-        // this.track_list_model.on("metadata-changed", (track) => {
-        //     if (track.id == this._track.id) {
-        //         this.set_track(track)
-        //     }
-        // })
+        if (this.track_list_model != undefined) {
+            this.track_list_model.on("metadata-changed", (track) => {
+                if (track.id == this._track.id) {
+                    this.set_track(track)
+                }
+            })    
+        }
 
         document.getElementById("main-player-loved").addEventListener("click", () => {
             if (this._track != undefined) {
