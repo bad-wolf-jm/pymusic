@@ -137,7 +137,6 @@ class TrackListView extends EventDispatcher {
         this.filter_dom.oninput = (e) => {
             this.filter_list(this.filter_dom.value)
         }
-
     }
 
     render_row_internal(track, element) {
