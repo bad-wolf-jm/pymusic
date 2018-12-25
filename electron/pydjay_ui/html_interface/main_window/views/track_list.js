@@ -15,6 +15,9 @@ class TrackListView extends EventDispatcher {
         this.table          = undefined
         this.queue_rows     = undefined
 
+        this.prevWidth = [];
+
+
         this.list_cluster = new Clusterize({
             rows: [],
             scrollId: 'main-track-list-scroller',
@@ -37,16 +40,15 @@ class TrackListView extends EventDispatcher {
                         if (unavailable[track_id] != undefined) {
                             e.classList.add("unavailable")
                         }
-
                     });
+                    this.fitHeaderColumns()
                 },
                 scrollingProgress: (progress) => {}
             }
           });
 
         $('#main-track-list-body').on('click', (e) => {
-            this.select_row(e)
-            focusWindow(this)
+            this.handle_click(e)
         });
 
         $('#main-track-list-body').on('dblclick', (e) => {
@@ -144,6 +146,10 @@ class TrackListView extends EventDispatcher {
 
     render_row_internal(track, element) {
         return `<tr class="list-group-item row track-entry" style="color:${track.color}" draggable=true data-track-id=${track.id}>
+            <${element} style="width:25px; text-align:center">                         
+                <input type="hidden" id="main-track-color-value" value=""/>                                  
+                <button id="main-player-color" class="color-chooser"></button>
+            </${element}>
             <${element} style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
             <${element} style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
             <${element} style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
@@ -156,6 +162,20 @@ class TrackListView extends EventDispatcher {
             <${element} style="width:15px"></${element}>
         </tr>`
 
+    }
+
+    fitHeaderColumns() {
+        let $headers = $("#track-list-elements-header")
+        let $firstRow = $("#main-track-list-table").find('tr:not(.clusterize-extra-row):first');
+        let columnsWidth = [];
+        $firstRow.children().each(function () {
+            columnsWidth.push($(this).width());
+        });
+        if (columnsWidth.toString() == this.prevWidth.toString()) return;
+        $headers.find('tr').children().each(function(i) {
+            $(this).width(columnsWidth[i]);
+        });
+        this.prevWidth = columnsWidth;
     }
 
     render_row(track) {
@@ -243,6 +263,12 @@ class TrackListView extends EventDispatcher {
         let track_element = this.controller.get_id(track_id)
         pc.play(track_element)
     }
+
+    handle_click(e) {
+        this.select_row(e)
+        focusWindow(this)    
+    }
+
 
     select_row(e) {
         let x = e.target.closest("tr")

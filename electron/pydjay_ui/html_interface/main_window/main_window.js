@@ -214,6 +214,7 @@ window.addEventListener("load", (event) => {
     let tl = document.getElementById("main-track-list")
     list_height = (tl.clientHeight - h.clientHeight) - 5
     ta.style.maxHeight = list_height + "px";
+    T.fitHeaderColumns()
 })
 
 
@@ -223,6 +224,7 @@ window.addEventListener("resize", (event) => {
     let tl = document.getElementById("main-track-list")
     list_height = (tl.clientHeight - h.clientHeight) - 5
     ta.style.maxHeight = list_height + "px";
+    T.fitHeaderColumns()
 })
 
 document.getElementById("settings-button").addEventListener('click', () => {
@@ -259,7 +261,6 @@ document.getElementById("session-save").addEventListener('click', () => {
     let address = document.getElementById("session-address").value
 
     if (name != "") {
-        //save
         current_session_model.store_session(name, location, address, () => {
             SE_controller.refresh(() => {})
         })
@@ -267,23 +268,18 @@ document.getElementById("session-save").addEventListener('click', () => {
     document.getElementById("save-session-dialog").close();
 })
 
-
 document.getElementById("session-save-cancel").addEventListener('click', () => {
     document.getElementById("save-session-dialog").close();
 })
-
-
 
 document.getElementById("main-menu-settings").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-
 document.getElementById("main-menu-mixer").addEventListener('click', () => {
     ipcRenderer.send("show-mixer-window")
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
 
 
 document.getElementById("main-menu-quit").addEventListener('click', () => {
@@ -292,7 +288,6 @@ document.getElementById("main-menu-quit").addEventListener('click', () => {
 })
 
 document.getElementById("filter-track-list").addEventListener("keyup", (e) => {
-    console.log(e.key)
     if ((e.key == "Escape") || (e.key == "Enter")) {
         document.getElementById("filter-track-list").blur()
     }
