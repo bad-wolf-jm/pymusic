@@ -23,6 +23,7 @@ class TrackListView extends EventDispatcher {
                     this.table_rows = {}
                 },
                 clusterChanged: () => {
+                    this.hueb = {}
                     let elements = document.querySelectorAll('.track-entry');
                     let unavailable;
                     if  (this.controller != undefined) {
@@ -38,6 +39,29 @@ class TrackListView extends EventDispatcher {
                         }
                     });
                     this.fitHeaderColumns()
+                    elements = document.querySelectorAll('.main-list-color-value');
+                    [].forEach.call(elements, (e) => {
+                        let track_id = parseInt(e.attributes['data-track-id'].value)
+                        this.hueb[track_id] = (new Huebee(e, {
+                            notation: "hex",
+                            saturations: 1
+                        }))
+                        this.hueb[track_id].on( 'change', ( color, hue, sat, lum ) => {
+                            let track = this.controller.get_id(track_id)
+                            this.controller.set_metadata(track, {color: color})
+                            this.hueb[track_id].close()
+                        })
+                    })
+
+                    elements = document.querySelectorAll('.show-color-picker');
+                    [].forEach.call(elements, (e) => {
+                        e.addEventListener("click", () => {
+                            let track_id = parseInt(e.attributes['data-track-id'].value)
+                            let picker = this.hueb[track_id]
+                            if (picker != undefined) {
+                                picker.open()
+                            }})
+                    })
                 },
                 scrollingProgress: (progress) => {}
             }
@@ -140,10 +164,10 @@ class TrackListView extends EventDispatcher {
     }
 
     render_row_internal(track, element) {
-        return `<tr class="list-group-item row track-entry" style="color:${track.color}" draggable=true data-track-id=${track.id}>
+        return `<tr  id='track-row-${track.id}' class="list-group-item row track-entry" style="color:${track.color}" draggable=true data-track-id=${track.id}>
             <${element} style="width:25px; text-align:center">                         
-                <input type="hidden" id="main-track-color-value" value=""/>                                  
-                <button id="main-player-color" class="color-chooser"></button>
+                <input id='track-color-value-${track.id}' type="hidden" value="" class="main-list-color-value" data-track-id=${track.id}/>                                  
+                <button id='track-color-${track.id}' class="main-list color-chooser show-color-picker" style="background-color:${track.color}" data-track-id=${track.id}></button>
             </${element}>
             <${element} id='track-loved-${track.id}' style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
             <${element} style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
@@ -428,6 +452,10 @@ class TrackListView extends EventDispatcher {
         rating_cell.innerHTML = this._get_rating(x)
         let loved_cell = document.getElementById(`track-loved-${x.id}`)
         loved_cell.innerHTML = this._get_loved(x)
+        let color_cell = document.getElementById(`track-color-${x.id}`)
+        color_cell.style.backgroundColor = x.color
+        let row_dom = document.getElementById(`track-row-${x.id}`)
+        row_dom.style.color = x.color
     }
 
 
