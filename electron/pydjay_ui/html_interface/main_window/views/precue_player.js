@@ -47,8 +47,10 @@ class PrecuePlayerView extends EventDispatcher {
         })
 
         this.track_list_model.on("metadata-changed", (track) => {
-            if (track.id == this._track.id) {
-                this.set_track(track)
+            if (this._track != undefined) {
+                if (track.id == this._track.id) {
+                    this.set_track(track)
+                }    
             }
         })
     }

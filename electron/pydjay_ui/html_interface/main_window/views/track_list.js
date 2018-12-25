@@ -146,13 +146,13 @@ class TrackListView extends EventDispatcher {
                 <input type="hidden" id="main-track-color-value" value=""/>                                  
                 <button id="main-player-color" class="color-chooser"></button>
             </${element}>
-            <${element} style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
+            <${element} id='track-loved-${track.id}' style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
             <${element} style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
             <${element} style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
             <${element} style="max-width:40px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
             <${element} style="text-align:right; width:25px; padding-right:9px">${track.play_count}</${element}>
             <${element} style="width:75px">${track.last_played}</${element}>
-            <${element} style="width:25px">${track.rating}</${element}>
+            <${element} id='track-rating-${track.id}' style="width:25px">${track.rating}</${element}>
             <${element} style="width:30px; text-align:right; padding-right:5px">${track.bpm}</${element}>
             <${element} style="width:45px; text-align:right">${track.duration}</${element}>
             <${element} style="width:15px"></${element}>
@@ -204,6 +204,10 @@ class TrackListView extends EventDispatcher {
         })
     }
 
+    _get_loved(track_object) {
+        return `<i id='main-track-loved-${track_object.id}' title='${track_object.id}' class='fa ${(track_object.favorite ? "fa-heart" : "fa-heart-o")}'></i>`
+    }
+
     _get_rating(track_object) {
         let html = "";
         for (let j=1; j<6; j++) {
@@ -225,7 +229,7 @@ class TrackListView extends EventDispatcher {
                 id:          queue[i].id,
                 available:   queue[i].available,
                 color:       queue[i].color,
-                loved:       `<i id='main-track-loved-${queue[i].id}' title='${i}' class='fa ${(queue[i].favorite ? "fa-heart" : "fa-heart-o")}'></i>`,
+                loved:       this._get_loved(queue[i]), //`<i id='main-track-loved-${queue[i].id}' title='${i}' class='fa ${(queue[i].favorite ? "fa-heart" : "fa-heart-o")}'></i>`,
                 title:       queue[i].title,
                 artist:      queue[i].artist,
                 genre:       queue[i].genre,
@@ -286,11 +290,17 @@ class TrackListView extends EventDispatcher {
 
 
     set_rating(id, value) {
-        console.log(id, value)
+        let track = this.controller.get_id(id)
+        if (value == 1 && track.rating == 1) {
+            this.controller.set_metadata(track, {rating:0})
+        } else {
+            this.controller.set_metadata(track, {rating: value})
+        }
     }
 
     toggle_loved(id) {
-        console.log(id)
+        let track = this.controller.get_id(id)
+        this.controller.set_metadata(track, {favorite: !(track.favorite)})
     }
 
     select_row(e) {
@@ -415,13 +425,10 @@ class TrackListView extends EventDispatcher {
 
     update_element(x) {
         let row = this.table_rows[x.id]
-        if (row != undefined) {
-            if (x.available) {
-                row.classList.remove("unavailable")
-            } else {
-                row.classList.add("unavailable")
-            }
-        }
+        let rating_cell = document.getElementById(`track-rating-${x.id}`)
+        rating_cell.innerHTML = this._get_rating(x)
+        let loved_cell = document.getElementById(`track-loved-${x.id}`)
+        loved_cell.innerHTML = this._get_loved(x)
     }
 
 

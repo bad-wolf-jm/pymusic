@@ -20,7 +20,8 @@ class TrackListController extends EventDispatcher {
                 this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
         }
         this.on_metadata_changed = (q) => {
-            this.list[q.id] = q            
+            this.list[q.id] = q
+            this.dispatch("element-updated", q)
         }
     }
     
@@ -81,10 +82,13 @@ class TrackListController extends EventDispatcher {
         }
     }
 
-    set_data(element, field, value) {
-        element[field] = value
-        this.dispatch("element-updated", element)
+    set_metadata(track, metadata) {
+        if (this.model != undefined) {
+            this.model.set_metadata(track, metadata)
+        }
     }
+
+
 
     duration () {
         return this.model.duration()
