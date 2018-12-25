@@ -6,14 +6,10 @@ class TrackListView extends EventDispatcher {
 
         this.element = document.getElementById("main-list")
 
-        document.getElementById("main-track-list-table").onfocus = (e) => {
-            console.log(e)
-        }
-
-        this.dom_id         = dom_ids.list
-        this.controller     = undefined
-        this.table          = undefined
-        this.queue_rows     = undefined
+        this.dom_id     = dom_ids.list
+        this.controller = undefined
+        this.table      = undefined
+        this.queue_rows = undefined
 
         this.prevWidth = [];
 
@@ -206,13 +202,12 @@ class TrackListView extends EventDispatcher {
                 }
             }
         })
-
     }
 
     _get_rating(track_object) {
         let html = "";
         for (let j=1; j<6; j++) {
-            html+="<i class='fa " + ( j <= track_object.rating ? "fa-star" : "fa-star-o") +"' style='font-size:8pt; margin-left:3px'></i>";
+            html += `<i id='main-track-rating-${track_object.id}-${j}' class='fa ${( j <= track_object.rating ? "fa-star" : "fa-star-o")}' style='font-size:8pt; margin-left:3px'></i>`;
         }
         return html
     }
@@ -230,7 +225,7 @@ class TrackListView extends EventDispatcher {
                 id:          queue[i].id,
                 available:   queue[i].available,
                 color:       queue[i].color,
-                loved:       "<i title='"+i+"' class='fa " + (queue[i].favorite ? "fa-heart" : "fa-heart-o") +"'></i>",
+                loved:       `<i id='main-track-loved-${queue[i].id}' title='${i}' class='fa ${(queue[i].favorite ? "fa-heart" : "fa-heart-o")}'></i>`,
                 title:       queue[i].title,
                 artist:      queue[i].artist,
                 genre:       queue[i].genre,
@@ -265,10 +260,38 @@ class TrackListView extends EventDispatcher {
     }
 
     handle_click(e) {
+        let id = e.target.attributes["id"]
+        if (id != undefined) {
+            let rating_regex = /main-track-rating-(\d+)-(\d+)/g
+            let matches = rating_regex.exec(id.value)
+            if (matches != undefined) {
+                let track_id = parseInt(matches[1])
+                let rating_value = parseInt(matches[2])
+                this.set_rating(track_id, rating_value)
+                e.preventDefault()
+                return;                    
+            }
+            let loved_regex = /main-track-loved-(\d+)/g
+            matches = loved_regex.exec(id.value)
+            if (matches != undefined) {
+                let track_id = parseInt(matches[1])
+                this.toggle_loved(track_id)
+                e.preventDefault()
+                return;                    
+            }
+        }
         this.select_row(e)
         focusWindow(this)    
     }
 
+
+    set_rating(id, value) {
+        console.log(id, value)
+    }
+
+    toggle_loved(id) {
+        console.log(id)
+    }
 
     select_row(e) {
         let x = e.target.closest("tr")
