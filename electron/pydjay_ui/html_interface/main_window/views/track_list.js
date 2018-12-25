@@ -229,7 +229,7 @@ class TrackListView extends EventDispatcher {
                 id:          queue[i].id,
                 available:   queue[i].available,
                 color:       queue[i].color,
-                loved:       this._get_loved(queue[i]), //`<i id='main-track-loved-${queue[i].id}' title='${i}' class='fa ${(queue[i].favorite ? "fa-heart" : "fa-heart-o")}'></i>`,
+                loved:       this._get_loved(queue[i]), 
                 title:       queue[i].title,
                 artist:      queue[i].artist,
                 genre:       queue[i].genre,
