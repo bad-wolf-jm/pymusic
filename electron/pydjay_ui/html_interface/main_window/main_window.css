@@ -136,6 +136,20 @@ button {
     float:left
 }
 
+
+.main_list .color-chooser {
+    cursor: pointer;
+    width:12px;
+    height:12px;
+    border:none;
+    border-radius:6px;
+    outline:none;
+    /* border: 1px solid rgb(200,200,200); */
+    /* border-color:rgb(155,155,155); */
+    /* background-color:rgb(116, 116, 240); */
+}
+
+
 .queue_list {
     margin: 0px;
     padding:0px;
@@ -569,7 +583,8 @@ input.new-playlist[type=text] {
     width:300px;
     height:100px;
     background:rbg(100,100,100);
-    z-index:1000;
+    z-index:10000;
+    position: absolute;
 }
 
 .huebee__cursor {
@@ -583,7 +598,7 @@ input.new-playlist[type=text] {
     background: #777;
     border: 2px solid #aaa;
     border-radius: 5px;
-    z-index:1000;
+    z-index:10000;
     width:300px;
     height:200px;
   }
@@ -883,4 +898,151 @@ input.new-playlist[type=text] {
 .dropdown-content a:hover {background-color: #ddd}
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {display:block;}
+
+.overlay-color-picker-top {
+    display: none;
+    position: absolute;
+    width:325px;
+    height:200px;
+    background-color: #818181;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 15;
+	border-radius: .4em;
+}
+
+.overlay-color-picker-top:after {
+	content: '';
+	position: absolute;
+	top: 1.4em;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+}
+
+
+
+.overlay-color-picker-middle {
+    display: none;
+    position: absolute;
+    width:325px;
+    height:200px;
+    background-color: #818181;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 15;
+	border-radius: .4em;
+}
+
+.overlay-color-picker-middle:after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+}
+
+
+.overlay-color-picker-bottom {
+    display: none;
+    position: absolute;
+    width:325px;
+    height:200px;
+    background-color: #818181;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 15;
+	border-radius: .4em;
+}
+
+.overlay-color-picker-bottom:after {
+	content: '';
+	position: absolute;
+	bottom:1.4em;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+}
+
+
+
+/* .overlay-color-picker {
+    display: none;
+    position: absolute;
+    width:325px;
+    height:200px;
+    background-color: #818181;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 15;
+	border-radius: .4em;
+} */
+
+/* .overlay-color-picker .middle:after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+}
+
+.top:after {
+	content: '';
+	position: absolute;
+	top: 0%;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+}
+
+.overlay-color-picker .bottom:after {
+	content: '';
+	position: absolute;
+	bottom: 0%;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+} */
+
+
+.color-swatch {
+    height:22px;
+    width:22px;
+    border-radius:5px
+}
+
+.show {
+    display: block;
+}

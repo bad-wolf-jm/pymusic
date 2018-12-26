@@ -5,6 +5,13 @@
 // pl_channel_config2 = {headphones:{left:0, right:1}}
 // mpl_channel_config2 = {master:{left:0, right:1}}
 
+function rgb2hex(rgb) {
+    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    function hex(x) {
+        return ("0" + parseInt(x).toString(16)).slice(-2);
+    }
+    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+} 
 class MainPlayerView extends PydjayAudioFilePlayer {
     constructor () {
         super()
@@ -22,6 +29,55 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         // } else {
         //     this.audio_player.connectOutputs(pl_channel_config2)    
         // }
+
+        document.getElementById("color-swatch-list").addEventListener("click", (e) => {
+            let cp = document.getElementById("track-edit-color-chooser")
+            //let track = this.controller.get_id(this.color_picker_track_id)
+            //let x = e.target
+            this.color = rgb2hex(e.target.style.backgroundColor)
+            let x = document.getElementById("main-player-color")
+            x.style.backgroundColor = this.color
+            //this.controller.set_metadata(track, {color: rgb2hex(color)})
+            cp.classList.remove("show")
+        })
+
+        document.getElementById("remove-color").addEventListener("click", (e) => {
+            let cp = document.getElementById("track-edit-color-chooser")
+            this.color = null
+            let x = document.getElementById("main-player-color")
+            x.style.backgroundColor = this.color
+            //let track = this.controller.get_id(this.color_picker_track_id)
+            //this.controller.set_metadata(track, {color: null})
+            cp.classList.remove("show")
+        })
+ 
+
+        document.getElementById("main-player-color").addEventListener("click", (ev) => {
+            let e = document.getElementById("main-player-color")
+            //let track_id = parseInt(e.attributes['data-track-id'].value)
+            let cp = document.getElementById("track-edit-color-chooser")
+            let button_rect = e.getBoundingClientRect()
+            //let scroller = document.getElementById("main-track-list-scroller")
+            //let scroller_rect = scroller.getBoundingClientRect()
+            //let button_offset = (button_rect.top - scroller_rect.top)
+
+            //if (button_offset + 100 > scroller_rect.height) {
+            // cp.className = "overlay-color-picker-bottom" + (cp.classList.contains("show") ? " show" : "")
+            let button_offset = (button_rect.bottom - 200 + 25) 
+            cp.style.top = (button_offset)+"px"
+            //} else {
+            //    let button_offset_to_frame = (button_rect.top - 100 +5) // + 53 + 25 - 100)
+            //    cp.className = "overlay-color-picker-middle" + (cp.classList.contains("show") ? " show" : "")
+            //    cp.style.top = (button_offset_to_frame)+"px"
+           // }
+            cp.style.left = (button_rect.left - 150)+"px"
+            cp.style.top = button_rect.bottom + 17+"px"
+            cp.classList.toggle("show")
+            // this.color_picker_track_id = track_id
+            // ev.preventDefault()
+        })
+    //})})
+
 
         this.audio_player.on("playback-started", () => {
             ipcRenderer.send("playback-started")
@@ -48,7 +104,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         document.getElementById("main-player-track-start").innerHTML = `${format_nanoseconds(track.stream_start)}`
         document.getElementById("main-player-track-end").innerHTML = `${format_nanoseconds(track.stream_end)}`
         document.getElementById("main-player-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
-
+        document.getElementById("main-player-color").style.backgroundColor = track.color
         document.getElementById("play-button").addEventListener("click", () => {
             let start;
             if (this.audio_player.state == "PLAYING") {
@@ -181,6 +237,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             bpm:    F("main-player-track-bpm").value,
             genre:  F("main-player-track-genre").value,
             year:   F("main-player-track-year").value,
+            color:  this.color, //F("main-player-color").style.backgroundColor,
             stream_start: this.stream_start,
             stream_end:   this.stream_end,
             favorite:     this.loved,

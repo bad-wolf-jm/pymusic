@@ -4,6 +4,11 @@ class QueueModel extends BaseListModel {
         this.current_session_model = current_session_model
         this.tracks_model = tracks_model
         this.tracks_order = []
+
+        this.tracks_model.on('metadata-changed', (x) => {
+            this.dispatch("metadata-changed", x)
+        })
+
         DB.get_queue_elements_ids( (tracks) => { 
             this.tracks_order = []
             if (tracks.length == 0) {
@@ -110,14 +115,15 @@ class QueueModel extends BaseListModel {
 
 
     set_metadata(track, metadata) {
-        X = this.track_list[track.id]
-        metadata_keys = Object.keys(metadata)
-        Object.keys(metadata).forEach((x) => {
-            X[x] = metadata[x]
-        })
-        DB.update_track_data(id, metadata, () => {
-            this.dispatch("content-changed", this.get_all_tracks())
-        })
+        this.tracks_model.set_metadata(track, metadata)
+        // X = this.track_list[track.id]
+        // metadata_keys = Object.keys(metadata)
+        // Object.keys(metadata).forEach((x) => {
+        //     X[x] = metadata[x]
+        // })
+        // DB.update_track_data(id, metadata, () => {
+        //     this.dispatch("metadata-changed", this.track_list[id])
+        // })
     }
 
     length() {

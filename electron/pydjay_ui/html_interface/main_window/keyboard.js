@@ -184,7 +184,7 @@ Mousetrap.bind("shift+space", (e) => {
 })
 
 
-Mousetrap.bind("enter", () => {
+Mousetrap.bind("enter", (e) => {
     if (focus_list != undefined) {
         pc.play(focus_list.selected_element())
         e.preventDefault()

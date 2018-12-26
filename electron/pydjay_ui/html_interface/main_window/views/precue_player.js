@@ -1,5 +1,5 @@
 
-Huebee = require("huebee")
+// Huebee = require("huebee")
 
 class PrecuePlayerView extends EventDispatcher {
     constructor (track_list_model) {
@@ -32,26 +32,35 @@ class PrecuePlayerView extends EventDispatcher {
             }
         })
 
-        this.hueb = new Huebee(document.getElementById("track-color-value"), {
-            notation: "hex",
-            saturations: 1
-        })
+        // this.hueb = new Huebee(document.getElementById("track-color-value"), {
+        //     notation: "hex",
+        //     saturations: 1
+        // })
 
-        this.hueb.on( 'change', ( color, hue, sat, lum ) => {
-            this.track_list_model.set_metadata(this._track, {color: color})
-            this.hueb.close()
-            // DB.update_track_data(this._track.id, {color:color}, () => {
-            //     document.getElementById("precue-player-color").style.background = color
-            // })
-        })
+        // this.hueb.on( 'change', ( color, hue, sat, lum ) => {
+        //     this.track_list_model.set_metadata(this._track, {color: color})
+        //     this.hueb.close()
+        // })
 
-        document.getElementById("precue-player-color").addEventListener("click", () => {
-            this.hueb.open()
-        })
+        // document.getElementById("precue-player-color").addEventListener("click", () => {
+        //     //this.hueb.open()
+        //     //let track_id = this._track.id //parseInt(e.attributes['data-track-id'].value)
+        //     let cp = document.getElementById("precue-color-chooser")
+        //     let button_rect = document.getElementById("precue-player-color").getBoundingClientRect()
+        //     let scroller = document.getElementById("preview-player-surface")
+        //     let scroller_rect = scroller.getBoundingClientRect()
+        //     let button_offset = (button_rect.top - scroller_rect.top)
+        //     cp.style.top = (button_offset)+"px"
+        //     cp.style.left = (button_rect.left)+"px"
+        //     cp.classList.toggle("show")
+        //     console.log(button_rect)
+        // })
 
         this.track_list_model.on("metadata-changed", (track) => {
-            if (track.id == this._track.id) {
-                this.set_track(track)
+            if (this._track != undefined) {
+                if (track.id == this._track.id) {
+                    this.set_track(track)
+                }    
             }
         })
     }
@@ -113,11 +122,11 @@ class PrecuePlayerView extends EventDispatcher {
         document.getElementById("precue-player-play-count").innerHTML  = track.play_count
         document.getElementById("precue-player-bpm").innerHTML         = track.bpm
         document.getElementById("precue-player-duration").innerHTML    = `${format_nanoseconds(stream_length)}`
-        if (track.color == null) {
-            document.getElementById("precue-player-color").style.background = "#ffffff"
-        } else {
-            document.getElementById("precue-player-color").style.background = track.color
-        }
+        // if (track.color == null) {
+        //     document.getElementById("precue-player-color").style.background = "#ffffff"
+        // } else {
+        //     document.getElementById("precue-player-color").style.background = track.color
+        // }
         this.setRating(track.rating)
         this.setLoved(track.favorite)
         let cover_source = undefined
@@ -157,17 +166,27 @@ class PrecuePlayerView extends EventDispatcher {
     }
 
     updateRating(new_value) {
-        DB.update_track_data(this._track.id, {rating:new_value}, () => {
-            this._track.rating = new_value
-            this.setRating(new_value)
-        })
+        if (this.track_list_model != undefined) {
+            this.track_list_model.set_metadata(this._track, {rating:new_value})
+            // this.hueb.close()    
+        }
+
+        // DB.update_track_data(this._track.id, {rating:new_value}, () => {
+        //     this._track.rating = new_value
+        //     this.setRating(new_value)
+        // })
     }
 
     updateLoved(new_value) {
-        DB.update_track_data(this._track.id, {favorite:new_value}, () => {
-            console.log(new_value)
-            this._track.favorite = new_value
-            this.setLoved(new_value)
-        })
+        if (this.track_list_model != undefined) {
+            this.track_list_model.set_metadata(this._track, {favorite:new_value})
+            // this.hueb.close()    
+        }
+
+        // DB.update_track_data(this._track.id, {favorite:new_value}, () => {
+        //     console.log(new_value)
+        //     this._track.favorite = new_value
+        //     this.setLoved(new_value)
+        // })
     }
 }

@@ -1,19 +1,47 @@
 const { ipcRenderer } = require('electron');
 const Clusterize = require("clusterize.js")
+
+function rgb2hex(rgb) {
+    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    function hex(x) {
+        return ("0" + parseInt(x).toString(16)).slice(-2);
+    }
+    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+}
 class TrackListView extends EventDispatcher {
     constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
         super()
 
         this.element = document.getElementById("main-list")
 
-        document.getElementById("main-track-list-table").onfocus = (e) => {
-            console.log(e)
-        }
+        this.dom_id     = dom_ids.list
+        this.controller = undefined
+        this.table      = undefined
+        this.queue_rows = undefined
 
-        this.dom_id         = dom_ids.list
-        this.controller     = undefined
-        this.table          = undefined
-        this.queue_rows     = undefined
+        this.prevWidth = [];
+
+        document.getElementById("color-swatch-list").addEventListener("click", (e) => {
+            let cp = document.getElementById("main-track-list-color-chooser")
+            let track = this.controller.get_id(this.color_picker_track_id)
+            let x = e.target
+            let color = x.style.backgroundColor
+            this.controller.set_metadata(track, {color: rgb2hex(color)})
+            cp.classList.remove("show")
+        })
+
+        document.getElementById("remove-color").addEventListener("click", (e) => {
+            let cp = document.getElementById("main-track-list-color-chooser")
+            let track = this.controller.get_id(this.color_picker_track_id)
+            this.controller.set_metadata(track, {color: null})
+            cp.classList.remove("show")
+        })
+
+        document.getElementById("main-track-list-scroller").addEventListener("scroll", (e) => {
+            let cp = document.getElementById("main-track-list-color-chooser")
+            cp.classList.remove("show")
+        })
+
 
         this.list_cluster = new Clusterize({
             rows: [],
@@ -37,16 +65,41 @@ class TrackListView extends EventDispatcher {
                         if (unavailable[track_id] != undefined) {
                             e.classList.add("unavailable")
                         }
-
                     });
+                    this.fitHeaderColumns()
+
+                    elements = document.querySelectorAll('.show-color-picker');
+                    [].forEach.call(elements, (e) => {
+                        e.addEventListener("click", (ev) => {
+                            let track_id = parseInt(e.attributes['data-track-id'].value)
+                            let cp = document.getElementById("main-track-list-color-chooser")
+                            let button_rect = e.getBoundingClientRect()
+                            let scroller = document.getElementById("main-track-list-scroller")
+                            let scroller_rect = scroller.getBoundingClientRect()
+                            let button_offset = (button_rect.top - scroller_rect.top)
+
+                            if (button_offset + 100 > scroller_rect.height) {
+                                cp.className = "overlay-color-picker-bottom" + (cp.classList.contains("show") ? " show" : "")
+                                button_offset = (button_rect.bottom - 200 + 25) 
+                                cp.style.top = (button_offset)+"px"
+                            } else {
+                                let button_offset_to_frame = (button_rect.top - 100 +5) // + 53 + 25 - 100)
+                                cp.className = "overlay-color-picker-middle" + (cp.classList.contains("show") ? " show" : "")
+                                cp.style.top = (button_offset_to_frame)+"px"
+                            }
+                            cp.style.left = (button_rect.right+17)+"px"
+                            cp.classList.toggle("show")
+                            this.color_picker_track_id = track_id
+                            ev.preventDefault()
+
+                    })})
                 },
                 scrollingProgress: (progress) => {}
             }
           });
 
         $('#main-track-list-body').on('click', (e) => {
-            this.select_row(e)
-            focusWindow(this)
+            this.handle_click(e)
         });
 
         $('#main-track-list-body').on('dblclick', (e) => {
@@ -139,23 +192,40 @@ class TrackListView extends EventDispatcher {
         this.filter_dom.oninput = (e) => {
             this.filter_list(this.filter_dom.value)
         }
-
     }
 
     render_row_internal(track, element) {
-        return `<tr class="list-group-item row track-entry" style="color:${track.color}" draggable=true data-track-id=${track.id}>
-            <${element} style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
+        return `<tr  id='track-row-${track.id}' class="list-group-item row track-entry" style="color:${track.color}" draggable=true data-track-id=${track.id}>
+            <${element} style="width:25px; text-align:center">                         
+                <input id='track-color-value-${track.id}' type="hidden" value="" class="main-list-color-value" data-track-id=${track.id}/>                                  
+                <button id='track-color-${track.id}' class="main-list color-chooser show-color-picker" style="background-color:${track.color}" data-track-id=${track.id}></button>
+            </${element}>
+            <${element} id='track-loved-${track.id}' style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
             <${element} style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
             <${element} style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
-            <${element} style="max-width:40px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
+            <${element} style="max-width:40px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
             <${element} style="text-align:right; width:25px; padding-right:9px">${track.play_count}</${element}>
             <${element} style="width:75px">${track.last_played}</${element}>
-            <${element} style="width:25px">${track.rating}</${element}>
+            <${element} id='track-rating-${track.id}' style="width:25px">${track.rating}</${element}>
             <${element} style="width:30px; text-align:right; padding-right:5px">${track.bpm}</${element}>
             <${element} style="width:45px; text-align:right">${track.duration}</${element}>
             <${element} style="width:15px"></${element}>
         </tr>`
 
+    }
+
+    fitHeaderColumns() {
+        let $headers = $("#track-list-elements-header")
+        let $firstRow = $("#main-track-list-table").find('tr:not(.clusterize-extra-row):first');
+        let columnsWidth = [];
+        $firstRow.children().each(function () {
+            columnsWidth.push($(this).width());
+        });
+        if (columnsWidth.toString() == this.prevWidth.toString()) return;
+        $headers.find('tr').children().each(function(i) {
+            $(this).width(columnsWidth[i]);
+        });
+        this.prevWidth = columnsWidth;
     }
 
     render_row(track) {
@@ -186,13 +256,16 @@ class TrackListView extends EventDispatcher {
                 }
             }
         })
+    }
 
+    _get_loved(track_object) {
+        return `<i id='main-track-loved-${track_object.id}' title='${track_object.id}' class='fa ${(track_object.favorite ? "fa-heart" : "fa-heart-o")}'></i>`
     }
 
     _get_rating(track_object) {
         let html = "";
         for (let j=1; j<6; j++) {
-            html+="<i class='fa " + ( j <= track_object.rating ? "fa-star" : "fa-star-o") +"' style='font-size:8pt; margin-left:3px'></i>";
+            html += `<i id='main-track-rating-${track_object.id}-${j}' class='fa ${( j <= track_object.rating ? "fa-star" : "fa-star-o")}' style='font-size:8pt; margin-left:3px'></i>`;
         }
         return html
     }
@@ -210,7 +283,7 @@ class TrackListView extends EventDispatcher {
                 id:          queue[i].id,
                 available:   queue[i].available,
                 color:       queue[i].color,
-                loved:       "<i title='"+i+"' class='fa " + (queue[i].favorite ? "fa-heart" : "fa-heart-o") +"'></i>",
+                loved:       this._get_loved(queue[i]), 
                 title:       queue[i].title,
                 artist:      queue[i].artist,
                 genre:       queue[i].genre,
@@ -244,6 +317,46 @@ class TrackListView extends EventDispatcher {
         pc.play(track_element)
     }
 
+    handle_click(e) {
+        let id = e.target.attributes["id"]
+        if (id != undefined) {
+            let rating_regex = /main-track-rating-(\d+)-(\d+)/g
+            let matches = rating_regex.exec(id.value)
+            if (matches != undefined) {
+                let track_id = parseInt(matches[1])
+                let rating_value = parseInt(matches[2])
+                this.set_rating(track_id, rating_value)
+                e.preventDefault()
+                return;                    
+            }
+            let loved_regex = /main-track-loved-(\d+)/g
+            matches = loved_regex.exec(id.value)
+            if (matches != undefined) {
+                let track_id = parseInt(matches[1])
+                this.toggle_loved(track_id)
+                e.preventDefault()
+                return;                    
+            }
+        }
+        this.select_row(e)
+        focusWindow(this)
+    }
+
+
+    set_rating(id, value) {
+        let track = this.controller.get_id(id)
+        if (value == 1 && track.rating == 1) {
+            this.controller.set_metadata(track, {rating:0})
+        } else {
+            this.controller.set_metadata(track, {rating: value})
+        }
+    }
+
+    toggle_loved(id) {
+        let track = this.controller.get_id(id)
+        this.controller.set_metadata(track, {favorite: !(track.favorite)})
+    }
+
     select_row(e) {
         let x = e.target.closest("tr")
         let id = parseInt(x.attributes["data-track-id"].value)
@@ -265,7 +378,7 @@ class TrackListView extends EventDispatcher {
 
 
     delete_selection() {
-        
+
     }
 
 
@@ -321,11 +434,11 @@ class TrackListView extends EventDispatcher {
     }
 
     move_selection_down() {
-        
+
     }
 
     move_selection_to_top() {
-        
+
     }
 
 
@@ -366,13 +479,14 @@ class TrackListView extends EventDispatcher {
 
     update_element(x) {
         let row = this.table_rows[x.id]
-        if (row != undefined) {
-            if (x.available) {
-                row.classList.remove("unavailable")
-            } else {
-                row.classList.add("unavailable")
-            }
-        }
+        let rating_cell = document.getElementById(`track-rating-${x.id}`)
+        rating_cell.innerHTML = this._get_rating(x)
+        let loved_cell = document.getElementById(`track-loved-${x.id}`)
+        loved_cell.innerHTML = this._get_loved(x)
+        let color_cell = document.getElementById(`track-color-${x.id}`)
+        color_cell.style.backgroundColor = x.color
+        let row_dom = document.getElementById(`track-row-${x.id}`)
+        row_dom.style.color = x.color
     }
 
 
