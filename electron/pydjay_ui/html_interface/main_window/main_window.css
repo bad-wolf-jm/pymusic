@@ -899,7 +899,7 @@ input.new-playlist[type=text] {
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 
-.overlay-color-picker {
+.overlay-color-picker-top {
     display: none;
     position: absolute;
     width:325px;
@@ -911,7 +911,35 @@ input.new-playlist[type=text] {
 	border-radius: .4em;
 }
 
-.overlay-color-picker:before {
+.overlay-color-picker-top:after {
+	content: '';
+	position: absolute;
+	top: 1.4em;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+}
+
+
+
+.overlay-color-picker-middle {
+    display: none;
+    position: absolute;
+    width:325px;
+    height:200px;
+    background-color: #818181;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 15;
+	border-radius: .4em;
+}
+
+.overlay-color-picker-middle:after {
 	content: '';
 	position: absolute;
 	top: 50%;
@@ -924,6 +952,90 @@ input.new-playlist[type=text] {
 	margin-left: -12px;
 	margin-top: -12px;
 }
+
+
+.overlay-color-picker-bottom {
+    display: none;
+    position: absolute;
+    width:325px;
+    height:200px;
+    background-color: #818181;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 15;
+	border-radius: .4em;
+}
+
+.overlay-color-picker-bottom:after {
+	content: '';
+	position: absolute;
+	bottom:1.4em;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+}
+
+
+
+/* .overlay-color-picker {
+    display: none;
+    position: absolute;
+    width:325px;
+    height:200px;
+    background-color: #818181;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 15;
+	border-radius: .4em;
+} */
+
+/* .overlay-color-picker .middle:after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+}
+
+.top:after {
+	content: '';
+	position: absolute;
+	top: 0%;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+}
+
+.overlay-color-picker .bottom:after {
+	content: '';
+	position: absolute;
+	bottom: 0%;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+} */
+
 
 .color-swatch {
     height:22px;

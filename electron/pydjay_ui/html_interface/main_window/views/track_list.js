@@ -21,21 +21,6 @@ class TrackListView extends EventDispatcher {
 
         this.prevWidth = [];
 
-        // let cp = document.getElementById("main-track-list-color-chooser")
-        // this.hueb = (new Huebee(cp, {
-        //     notation: "hex",
-        //     saturations: 1,
-        //     // staticOpen:true
-        // }))
-        // this.hueb.on( 'change', ( color, hue, sat, lum ) => {
-        //     let track = this.controller.get_id(this.color_picker_track_id)
-        //     this.controller.set_metadata(track, {color: color})
-        //     let cp = document.getElementById("main-track-list-color-chooser")
-        //     cp.classList.remove("show")
-        //     this.color_picker_track_id = undefined
-        //     this.hueb.close()
-        // })
-
         document.getElementById("color-swatch-list").addEventListener("click", (e) => {
             let cp = document.getElementById("main-track-list-color-chooser")
             let track = this.controller.get_id(this.color_picker_track_id)
@@ -52,6 +37,10 @@ class TrackListView extends EventDispatcher {
             cp.classList.remove("show")
         })
 
+        document.getElementById("main-track-list-scroller").addEventListener("scroll", (e) => {
+            let cp = document.getElementById("main-track-list-color-chooser")
+            cp.classList.remove("show")
+        })
 
 
         this.list_cluster = new Clusterize({
@@ -81,17 +70,28 @@ class TrackListView extends EventDispatcher {
 
                     elements = document.querySelectorAll('.show-color-picker');
                     [].forEach.call(elements, (e) => {
-                        e.addEventListener("click", () => {
+                        e.addEventListener("click", (ev) => {
                             let track_id = parseInt(e.attributes['data-track-id'].value)
                             let cp = document.getElementById("main-track-list-color-chooser")
                             let button_rect = e.getBoundingClientRect()
                             let scroller = document.getElementById("main-track-list-scroller")
                             let scroller_rect = scroller.getBoundingClientRect()
                             let button_offset = (button_rect.top - scroller_rect.top)
-                            cp.style.top = (button_offset + 53 + 25 - 100)+"px"
+
+                            if (button_offset + 100 > scroller_rect.height) {
+                                cp.className = "overlay-color-picker-bottom" + (cp.classList.contains("show") ? " show" : "")
+                                button_offset = (button_rect.bottom - 200 + 25) 
+                                cp.style.top = (button_offset)+"px"
+                            } else {
+                                let button_offset_to_frame = (button_rect.top - 100 +5) // + 53 + 25 - 100)
+                                cp.className = "overlay-color-picker-middle" + (cp.classList.contains("show") ? " show" : "")
+                                cp.style.top = (button_offset_to_frame)+"px"
+                            }
                             cp.style.left = (button_rect.right+17)+"px"
                             cp.classList.toggle("show")
                             this.color_picker_track_id = track_id
+                            ev.preventDefault()
+
                     })})
                 },
                 scrollingProgress: (progress) => {}
@@ -339,7 +339,7 @@ class TrackListView extends EventDispatcher {
             }
         }
         this.select_row(e)
-        focusWindow(this)    
+        focusWindow(this)
     }
 
 
