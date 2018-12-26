@@ -2,6 +2,10 @@ class NeverPlayedTracksModel extends BaseListModel {
     constructor(tracks_model) {
         super()
         this.tracks_model = tracks_model
+        
+        this.tracks_model.on('metadata-changed', (x) => {
+            this.dispatch("metadata-changed", x)
+        })
         DB.get_never_played_tracks( (tracks) => { 
             this.track_list = {}
             tracks.forEach((t) => {
@@ -45,13 +49,14 @@ class NeverPlayedTracksModel extends BaseListModel {
     }
 
     set_metadata(track, metadata) {
-        X = this.track_list[track.id]
-        metadata_keys = Object.keys(metadata)
-        Object.keys(metadata).forEach((x) => {
-            X[x] = metadata[x]
-        })
-        DB.update_track_data(id, metadata, () => {
-            this.dispatch("metadata-changed", this.track_list[id])
-        })
+        this.tracks_model.set_metadata(track, metadata)
+        // X = this.track_list[track.id]
+        // metadata_keys = Object.keys(metadata)
+        // Object.keys(metadata).forEach((x) => {
+        //     X[x] = metadata[x]
+        // })
+        // DB.update_track_data(id, metadata, () => {
+        //     this.dispatch("metadata-changed", this.track_list[id])
+        // })
     }
 }
