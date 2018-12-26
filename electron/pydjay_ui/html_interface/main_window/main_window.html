@@ -258,7 +258,43 @@
             </div>
             <button class="accordion open-on-drag-over">Preview Player</button>
             <div class="panel" data-fixed-height="320">
-                <div class="preview-player" style="position:relative">
+                <div id="preview-player-surface" class="preview-player" style="position:relative">
+                    <!-- <div id="precue-color-chooser" class="overlay-color-picker">
+                        <table id="precue-color-swatch-list" style="width:300px; height:150px;margin:10px">
+                            <tr style="height:10px">
+                                <td><div class="color-swatch" style="background-color:#ff3855"></div></td>
+                                <td><div class="color-swatch" style="background-color:#fd3a4a"></div></td>
+                                <td><div class="color-swatch" style="background-color:#fb4d46"></div></td>
+                                <td><div class="color-swatch" style="background-color:#fa5b3d"></div></td>
+                                <td><div class="color-swatch" style="background-color:#ffaa1d"></div></td>
+                                <td><div class="color-swatch" style="background-color:#fff700"></div></td>
+                                <td><div class="color-swatch" style="background-color:#299617"></div></td>
+                                <td><div class="color-swatch" style="background-color:#a7f432"></div></td>
+                            </tr>
+                            <tr style="height:15px">
+                                <td><div class="color-swatch" style="background-color:#2243b6"></div></td>
+                                <td><div class="color-swatch" style="background-color:#5dadec"></div></td>
+                                <td><div class="color-swatch" style="background-color:#5946b2"></div></td>
+                                <td><div class="color-swatch" style="background-color:#9c51b6"></div></td>
+                                <td><div class="color-swatch" style="background-color:#a83731"></div></td>
+                                <td><div class="color-swatch" style="background-color:#af6e4d"></div></td>
+                                <td><div class="color-swatch" style="background-color:#1b1b1b"></div></td>
+                                <td><div class="color-swatch" style="background-color:#bfafb2"></div></td>    
+                            </tr>
+                            <tr style="height:15px">
+                                <td><div class="color-swatch" style="background-color:#ff5470"></div></td>
+                                <td><div class="color-swatch" style="background-color:#ffbd00"></div></td>
+                                <td><div class="color-swatch" style="background-color:#ff7a00"></div></td>
+                                <td><div class="color-swatch" style="background-color:#fdff00"></div></td>
+                                <td><div class="color-swatch" style="background-color:#87ff2a"></div></td>
+                                <td><div class="color-swatch" style="background-color:#0048ba"></div></td>
+                                <td><div class="color-swatch" style="background-color:#ff007c"></div></td>
+                                <td><div class="color-swatch" style="background-color:#e936a7"></div></td>    
+                            </tr>
+                        </table>
+                        <button id="precue-remove-color" style="width:300px; height:30px; color:#101010">Remove color</button>
+                    </div> -->
+        
                     <div id="no-preview-track" class="overlay">
                         No track to preview
                     </div>
@@ -281,8 +317,8 @@
                             <div style="display:inline-block; width:100%">
                                 <div style="height:20px">
                                     <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
-                                    <input type="hidden" id="track-color-value" value=""/>
-                                    <button id="precue-player-color" class="color-chooser"></button>
+                                    <!-- <input type="hidden" id="track-color-value" value=""/>
+                                    <button id="precue-player-color" class="color-chooser"></button> -->
                                 </div>
                                 <div style="height:20px">
                                     <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>
@@ -347,16 +383,47 @@
             </div>
 
             <div class="clusterize main-track-list-area" id="main-track-list">
-                <div id="main-track-list-color-chooser" class="overlay-color-picker">
-                    <!-- <input id='anchor-for-color-picker' type="hidden" value="" class="main-list-color-value"/>                                   -->
-                    <!-- <div id=""></div> -->
-                    <!-- this is a color picker -->
-                </div>
                 <table class="main-track-list-table" id="track-list-elements-header">
                     <thead id="track-list-header" style="border:0px solid transparent; margin:0; padding:0">
                     </thead>
                 </table>
                 <div id="main-track-list-scroller" class="clusterize-scroll">
+                    <div id="main-track-list-color-chooser" class="overlay-color-picker">
+                        <table id="color-swatch-list" style="width:300px; height:150px;margin:10px">
+                            <tr style="height:10px">
+                                <td><div class="color-swatch" style="background-color:#ff3855"></div></td>
+                                <td><div class="color-swatch" style="background-color:#fd3a4a"></div></td>
+                                <td><div class="color-swatch" style="background-color:#fb4d46"></div></td>
+                                <td><div class="color-swatch" style="background-color:#fa5b3d"></div></td>
+                                <td><div class="color-swatch" style="background-color:#ffaa1d"></div></td>
+                                <td><div class="color-swatch" style="background-color:#fff700"></div></td>
+                                <td><div class="color-swatch" style="background-color:#299617"></div></td>
+                                <td><div class="color-swatch" style="background-color:#a7f432"></div></td>
+                            </tr>
+                            <tr style="height:15px">
+                                <td><div class="color-swatch" style="background-color:#2243b6"></div></td>
+                                <td><div class="color-swatch" style="background-color:#5dadec"></div></td>
+                                <td><div class="color-swatch" style="background-color:#5946b2"></div></td>
+                                <td><div class="color-swatch" style="background-color:#9c51b6"></div></td>
+                                <td><div class="color-swatch" style="background-color:#a83731"></div></td>
+                                <td><div class="color-swatch" style="background-color:#af6e4d"></div></td>
+                                <td><div class="color-swatch" style="background-color:#1b1b1b"></div></td>
+                                <td><div class="color-swatch" style="background-color:#bfafb2"></div></td>    
+                            </tr>
+                            <tr style="height:15px">
+                                <td><div class="color-swatch" style="background-color:#ff5470"></div></td>
+                                <td><div class="color-swatch" style="background-color:#ffbd00"></div></td>
+                                <td><div class="color-swatch" style="background-color:#ff7a00"></div></td>
+                                <td><div class="color-swatch" style="background-color:#fdff00"></div></td>
+                                <td><div class="color-swatch" style="background-color:#87ff2a"></div></td>
+                                <td><div class="color-swatch" style="background-color:#0048ba"></div></td>
+                                <td><div class="color-swatch" style="background-color:#ff007c"></div></td>
+                                <td><div class="color-swatch" style="background-color:#e936a7"></div></td>    
+                            </tr>
+                        </table>
+                        <button id="remove-color" style="width:300px; height:30px; color:#101010">Remove color</button>
+                    </div>
+                        
                     <table id="main-track-list-table" class="main-track-list-table">
                         <tbody id="main-track-list-body" class="clusterize-content list-group" style="border:0px solid transparent; margin:0; padding:0">
                             <tr class="clusterize-no-data">

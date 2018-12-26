@@ -902,12 +902,33 @@ input.new-playlist[type=text] {
 .overlay-color-picker {
     display: none;
     position: absolute;
-    width:200px;
+    width:325px;
     height:200px;
-    background-color: #a1a1a1;
+    background-color: #818181;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 15;
+	border-radius: .4em;
+}
+
+.overlay-color-picker:before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 0;
+	height: 0;
+	border: 12px solid transparent;
+	border-right-color: #818181;
+	border-left: 0;
+	margin-left: -12px;
+	margin-top: -12px;
+}
+
+.color-swatch {
+    height:22px;
+    width:22px;
+    border-radius:5px
 }
 
 .show {

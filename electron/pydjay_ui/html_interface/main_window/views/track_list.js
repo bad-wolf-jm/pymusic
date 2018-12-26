@@ -1,5 +1,13 @@
 const { ipcRenderer } = require('electron');
 const Clusterize = require("clusterize.js")
+
+function rgb2hex(rgb) {
+    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    function hex(x) {
+        return ("0" + parseInt(x).toString(16)).slice(-2);
+    }
+    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+}
 class TrackListView extends EventDispatcher {
     constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
         super()
@@ -13,20 +21,37 @@ class TrackListView extends EventDispatcher {
 
         this.prevWidth = [];
 
-        let cp = document.getElementById("main-track-list-color-chooser")
-        this.hueb = (new Huebee(cp, {
-            notation: "hex",
-            saturations: 1,
-            // staticOpen:true
-        }))
-        this.hueb.on( 'change', ( color, hue, sat, lum ) => {
-            let track = this.controller.get_id(this.color_picker_track_id)
-            this.controller.set_metadata(track, {color: color})
+        // let cp = document.getElementById("main-track-list-color-chooser")
+        // this.hueb = (new Huebee(cp, {
+        //     notation: "hex",
+        //     saturations: 1,
+        //     // staticOpen:true
+        // }))
+        // this.hueb.on( 'change', ( color, hue, sat, lum ) => {
+        //     let track = this.controller.get_id(this.color_picker_track_id)
+        //     this.controller.set_metadata(track, {color: color})
+        //     let cp = document.getElementById("main-track-list-color-chooser")
+        //     cp.classList.remove("show")
+        //     this.color_picker_track_id = undefined
+        //     this.hueb.close()
+        // })
+
+        document.getElementById("color-swatch-list").addEventListener("click", (e) => {
             let cp = document.getElementById("main-track-list-color-chooser")
+            let track = this.controller.get_id(this.color_picker_track_id)
+            let x = e.target
+            let color = x.style.backgroundColor
+            this.controller.set_metadata(track, {color: rgb2hex(color)})
             cp.classList.remove("show")
-            this.color_picker_track_id = undefined
-            this.hueb.close()
         })
+
+        document.getElementById("remove-color").addEventListener("click", (e) => {
+            let cp = document.getElementById("main-track-list-color-chooser")
+            let track = this.controller.get_id(this.color_picker_track_id)
+            this.controller.set_metadata(track, {color: null})
+            cp.classList.remove("show")
+        })
+
 
 
         this.list_cluster = new Clusterize({
@@ -57,15 +82,15 @@ class TrackListView extends EventDispatcher {
                     elements = document.querySelectorAll('.show-color-picker');
                     [].forEach.call(elements, (e) => {
                         e.addEventListener("click", () => {
-                            this.hueb.open()
                             let track_id = parseInt(e.attributes['data-track-id'].value)
-                            //let scroller = document.getElementById("main-track-list-scroller")
-                            //let cp = document.getElementById("main-track-list-color-chooser")
-                            //let button_rect = e.getBoundingClientRect()
-                            //let scrollerRect = scroller.getBoundingClientRect()
-                            //cp.style.top = (button_rect.bottom - scrollerRect.top)+"px"
-                            //cp.style.left = (button_rect.right)+"px"
-                            //cp.classList.toggle("show")
+                            let cp = document.getElementById("main-track-list-color-chooser")
+                            let button_rect = e.getBoundingClientRect()
+                            let scroller = document.getElementById("main-track-list-scroller")
+                            let scroller_rect = scroller.getBoundingClientRect()
+                            let button_offset = (button_rect.top - scroller_rect.top)
+                            cp.style.top = (button_offset + 53 + 25 - 100)+"px"
+                            cp.style.left = (button_rect.right+17)+"px"
+                            cp.classList.toggle("show")
                             this.color_picker_track_id = track_id
                     })})
                 },
