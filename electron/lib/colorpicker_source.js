@@ -465,6 +465,7 @@
   
   }( window, function factory( window, EvEmitter, Unipointer ) {
   
+    
   function Huebee( anchor, options ) {
     // anchor
     anchor = getQueryElement( anchor );

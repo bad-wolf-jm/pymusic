@@ -898,4 +898,18 @@ input.new-playlist[type=text] {
 .dropdown-content a:hover {background-color: #ddd}
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {display:block;}
+
+.overlay-color-picker {
+    display: none;
+    position: absolute;
+    width:200px;
+    height:200px;
+    background-color: #a1a1a1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 15;
+}
+
+.show {
+    display: block;
+}

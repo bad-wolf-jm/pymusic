@@ -3,27 +3,12 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         super()
         this.controller = undefined
         this.track_list_model = track_list_model
-        this.hueb = new Huebee(document.getElementById("main-track-color-value"), {
-            notation: "hex",
-            saturations: 1
-        })
-
-        this.hueb.on( 'change', ( color, hue, sat, lum ) => {
-            if (this.track_list_model != undefined) {
-                this.track_list_model.set_metadata(this._track, {color: color})
-                this.hueb.close()
-            }
-        })
-
-        document.getElementById("main-player-color").addEventListener("click", () => {
-            this.hueb.open()
-        })
 
         if (this.track_list_model != undefined) {
             this.track_list_model.on("metadata-changed", (track) => {
                 if (this._track != undefined) {
                     if (track.id == this._track.id) {
-                        this.set_track(track)
+                        this.set_track_metadata(track)
                     }
                 }
             })
@@ -56,24 +41,30 @@ class MainPlayerView extends PydjayAudioFilePlayer {
 
     }
 
+    set_track_metadata(track) {
+        if (this._track != undefined && track.id == this._track.id) {
+            let stream_length = (track.stream_end-track.stream_start);
+            document.getElementById("main-player-track-title").innerHTML    = track.title
+            document.getElementById("main-player-track-album").innerHTML    = track.album
+            document.getElementById("main-player-track-artist").innerHTML   = track.artist
+            document.getElementById("main-player-track-bpm").innerHTML      = track.bpm
+            document.getElementById("main-player-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
+            this.setRating(track.rating)
+            this.setLoved(track.favorite)
+            let cover_source = undefined
+            if (track.cover == null) {
+                cover_source = "../../resources/images/default_album_cover.png"
+            } else {
+                cover_source = `file://${track.image_root}/${track.cover}`;
+            }
+            document.getElementById("main-player-track-cover").src = cover_source    
+        }
+    }
+
     set_track(track) {
         let file_name = path.join(track.music_root, track.file_name);
-        let stream_length = (track.stream_end-track.stream_start);
-        document.getElementById("main-player-track-title").innerHTML    = track.title
-        document.getElementById("main-player-track-album").innerHTML    = track.album
-        document.getElementById("main-player-track-artist").innerHTML   = track.artist
-        document.getElementById("main-player-track-bpm").innerHTML      = track.bpm
-        document.getElementById("main-player-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
-        this.setRating(track.rating)
-        this.setLoved(track.favorite)
-        let cover_source = undefined
-        if (track.cover == null) {
-            cover_source = "../../resources/images/default_album_cover.png"
-        } else {
-            cover_source = `file://${track.image_root}/${track.cover}`;
-        }
-        document.getElementById("main-player-track-cover").src = cover_source
         this._track = track
+        this.set_track_metadata(track)
         this._waveform.load(file_name)
     }
 

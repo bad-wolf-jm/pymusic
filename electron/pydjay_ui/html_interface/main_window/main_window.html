@@ -103,7 +103,15 @@
             <div  class="item"></div>
         </div>
     </div>
+    <!-- <div>
+        <input type="hidden" id="main-track-color-value" value="" style="position:absolute; height:0px"/>                                  
+    </div>  -->
+
     <div class="main_player" style="position:fixed">
+        <!-- <div style="display:none">  
+            <input type="hidden" id="main-track-color-value" value=""/>                                  
+            <button id="main-player-color" class="color-chooser"></button>
+        </div> -->
         <div class="overlay" id="main-player-overlay">
             <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()">START</button>
         </div>
@@ -119,13 +127,12 @@
                 <div style="padding-right:10px; position:absolute; right:0px; display:inline-block"><h1 id="main-player-time-remaining" class="time_remaining">-3:34</h1></div>
             </div>
             <div class="track-info">
-                <div class="info">
+                <!-- <div class="info">
                     <div class="title">COLOR</div>
                     <div id="main-player-track-color" class="value">  
-                        <input type="hidden" id="main-track-color-value" value=""/>                                  
                         <button id="main-player-color" class="color-chooser"></button>
                     </div>
-                </div>
+                </div> -->
                 <div class="info">
                     <div class="title">DURATION</div>
                     <div id="main-player-track-duration" class="value">3:12</div>
@@ -340,6 +347,11 @@
             </div>
 
             <div class="clusterize main-track-list-area" id="main-track-list">
+                <div id="main-track-list-color-chooser" class="overlay-color-picker">
+                    <!-- <input id='anchor-for-color-picker' type="hidden" value="" class="main-list-color-value"/>                                   -->
+                    <!-- <div id=""></div> -->
+                    <!-- this is a color picker -->
+                </div>
                 <table class="main-track-list-table" id="track-list-elements-header">
                     <thead id="track-list-header" style="border:0px solid transparent; margin:0; padding:0">
                     </thead>

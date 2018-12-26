@@ -13,6 +13,21 @@ class TrackListView extends EventDispatcher {
 
         this.prevWidth = [];
 
+        let cp = document.getElementById("main-track-list-color-chooser")
+        this.hueb = (new Huebee(cp, {
+            notation: "hex",
+            saturations: 1,
+            // staticOpen:true
+        }))
+        this.hueb.on( 'change', ( color, hue, sat, lum ) => {
+            let track = this.controller.get_id(this.color_picker_track_id)
+            this.controller.set_metadata(track, {color: color})
+            let cp = document.getElementById("main-track-list-color-chooser")
+            cp.classList.remove("show")
+            this.color_picker_track_id = undefined
+            this.hueb.close()
+        })
+
 
         this.list_cluster = new Clusterize({
             rows: [],
@@ -23,7 +38,6 @@ class TrackListView extends EventDispatcher {
                     this.table_rows = {}
                 },
                 clusterChanged: () => {
-                    this.hueb = {}
                     let elements = document.querySelectorAll('.track-entry');
                     let unavailable;
                     if  (this.controller != undefined) {
@@ -39,29 +53,21 @@ class TrackListView extends EventDispatcher {
                         }
                     });
                     this.fitHeaderColumns()
-                    elements = document.querySelectorAll('.main-list-color-value');
-                    [].forEach.call(elements, (e) => {
-                        let track_id = parseInt(e.attributes['data-track-id'].value)
-                        this.hueb[track_id] = (new Huebee(e, {
-                            notation: "hex",
-                            saturations: 1
-                        }))
-                        this.hueb[track_id].on( 'change', ( color, hue, sat, lum ) => {
-                            let track = this.controller.get_id(track_id)
-                            this.controller.set_metadata(track, {color: color})
-                            this.hueb[track_id].close()
-                        })
-                    })
 
                     elements = document.querySelectorAll('.show-color-picker');
                     [].forEach.call(elements, (e) => {
                         e.addEventListener("click", () => {
+                            this.hueb.open()
                             let track_id = parseInt(e.attributes['data-track-id'].value)
-                            let picker = this.hueb[track_id]
-                            if (picker != undefined) {
-                                picker.open()
-                            }})
-                    })
+                            //let scroller = document.getElementById("main-track-list-scroller")
+                            //let cp = document.getElementById("main-track-list-color-chooser")
+                            //let button_rect = e.getBoundingClientRect()
+                            //let scrollerRect = scroller.getBoundingClientRect()
+                            //cp.style.top = (button_rect.bottom - scrollerRect.top)+"px"
+                            //cp.style.left = (button_rect.right)+"px"
+                            //cp.classList.toggle("show")
+                            this.color_picker_track_id = track_id
+                    })})
                 },
                 scrollingProgress: (progress) => {}
             }
