@@ -9,6 +9,18 @@ class PlaylistsView extends EventDispatcher {
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Edit...', click: () => {
             let T = this.context_menu_element
+            this.controller.get_playlist_by_id(T, (p) => {
+                let L = new PlaylistModel(p, tracks_model)
+                //T_controller.set_model(info.name, L)
+                PE_controller.set_model(p.name, L)
+                document.getElementById("playlist-edit-display").style.display = "block"
+                document.getElementById("queue-list-display").style.display = null
+
+                //let dialog = document.getElementById("delete-playlist-dialog")
+                //document.getElementById("delete-playlist-name").innerHTML = p.name
+                //dialog.showModal()    
+            })
+
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Rename', click: () => {
@@ -64,6 +76,8 @@ class PlaylistsView extends EventDispatcher {
             this.context_menu_element = undefined
             document.getElementById("delete-playlist-dialog").close()
         })
+
+
 
     }
 
@@ -129,48 +143,51 @@ class PlaylistsView extends EventDispatcher {
             list_rows.push(element)
         }
         
-        jui.ready([ "grid.table" ], function(table) {
+        jui.ready([ "grid.table" ], (table) => {
                 table("#playlist-list-elements", {
                     data:   list_rows,
                     scroll: false,
                     resize: false
                 });
+
+                let X = document.getElementById("new-playlist-name")
+                X.addEventListener("keyup", (e) => {
+                    if (e.key == "Escape") {
+                        document.getElementById("new-playlist").style.display="none"
+                    } else if (e.key == "Enter") {
+                        let new_name = X.value
+                        this.controller.create_playlist(new_name)
+                    }
+                })
+        
+                var drop_targets = document.querySelectorAll('.track-drop-target');
+                [].forEach.call(drop_targets, (col) => {
+                    col.addEventListener('dragenter', this.on_drag_enter.bind(this), false);
+                    col.addEventListener('dragleave', this.on_drag_leave.bind(this), false);
+                    col.addEventListener('dragover',  this.on_drag_over.bind(this), false);
+                    col.addEventListener('dragend',   this.on_drag_end.bind(this), false);
+                    col.addEventListener('drop',      this.on_drop.bind(this), false);
+                    col.addEventListener('click',     (e) => {
+                        let x = e.target.closest(".track-drop-target")
+                        let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
+                        display_playlist(playlist_id)
+                    }, false);
+        
+                    col.addEventListener('contextmenu', (e) => {
+                        e.preventDefault()
+                        let x = e.target.closest(".track-drop-target")
+                        let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
+                        this.context_menu_element = playlist_id
+                        this.context_menu_cell = document.getElementById(`playlist-element-${playlist_id}`)
+                        this.menu.popup({window: remote.getCurrentWindow()})
+                      }, false)
+        
+                });
+        
+
             }
         )
 
-        let X = document.getElementById("new-playlist-name")
-        X.addEventListener("keyup", (e) => {
-            if (e.key == "Escape") {
-                document.getElementById("new-playlist").style.display="none"
-            } else if (e.key == "Enter") {
-                let new_name = X.value
-                this.controller.create_playlist(new_name)
-            }
-        })
-
-        var drop_targets = document.querySelectorAll('.track-drop-target');
-        [].forEach.call(drop_targets, (col) => {
-            col.addEventListener('dragenter', this.on_drag_enter.bind(this), false);
-            col.addEventListener('dragleave', this.on_drag_leave.bind(this), false);
-            col.addEventListener('dragover',  this.on_drag_over.bind(this), false);
-            col.addEventListener('dragend',   this.on_drag_end.bind(this), false);
-            col.addEventListener('drop',      this.on_drop.bind(this), false);
-            col.addEventListener('click',     (e) => {
-                let x = e.target.closest(".track-drop-target")
-                let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
-                display_playlist(playlist_id)
-            }, false);
-
-            col.addEventListener('contextmenu', (e) => {
-                e.preventDefault()
-                let x = e.target.closest(".track-drop-target")
-                let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
-                this.context_menu_element = playlist_id
-                this.context_menu_cell = document.getElementById(`playlist-element-${playlist_id}`)
-                this.menu.popup({window: remote.getCurrentWindow()})
-              }, false)
-
-        });
 
     }
 }

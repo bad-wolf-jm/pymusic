@@ -50,6 +50,7 @@
 <script src="../../controllers/precue.js"></script>
 <script src="../../controllers/volume.js"></script>
 
+<script src="views/playlist_edit.js"></script>
 <script src="views/queue.js"></script>
 <script src="views/main_player.js"></script>
 <script src="views/track_list.js"></script>
@@ -165,10 +166,6 @@
     </div>  -->
 
     <div class="main_player" style="position:fixed">
-        <!-- <div style="display:none">  
-            <input type="hidden" id="main-track-color-value" value=""/>                                  
-            <button id="main-player-color" class="color-chooser"></button>
-        </div> -->
         <div class="overlay" id="main-player-overlay">
             <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()">START</button>
         </div>
@@ -184,12 +181,6 @@
                 <div style="padding-right:10px; position:absolute; right:0px; display:inline-block"><h1 id="main-player-time-remaining" class="time_remaining">-3:34</h1></div>
             </div>
             <div class="track-info">
-                <!-- <div class="info">
-                    <div class="title">COLOR</div>
-                    <div id="main-player-track-color" class="value">  
-                        <button id="main-player-color" class="color-chooser"></button>
-                    </div>
-                </div> -->
                 <div class="info">
                     <div class="title">DURATION</div>
                     <div id="main-player-track-duration" class="value">3:12</div>
@@ -339,8 +330,6 @@
                             <div style="display:inline-block; width:100%">
                                 <div style="height:20px">
                                     <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
-                                    <!-- <input type="hidden" id="track-color-value" value=""/>
-                                    <button id="precue-player-color" class="color-chooser"></button> -->
                                 </div>
                                 <div style="height:20px">
                                     <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>
@@ -422,27 +411,27 @@
             </div>
         </div>
         <div id="queue-list" class="queue_list">
-            <div class="main-list-header">
-                <div class="title">
-                    <div class="name">
-                        QUEUE
-                    </div>
-                    <div class="count" style="margin-top:4px">
-                        <div id="queue-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="queue-duration" style="display:inline-block">57 minutes 37 seconds</div>
+            <div id="playlist-edit-display" class="playlist-edit-overlay">
+                <div class="main-list-header">
+                    <div class="title">
+                        <div id="playlist-edit-name" class="name">
+                            PLAYLIST
+                        </div>
+                        <div class="count" style="margin-top:4px">
+                            <div id="playlist-edit-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="playlist-edit-duration" style="display:inline-block">57 minutes 37 seconds</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div id="queue-list-area" class="queue-list">
-                <table id="queue-list-elements" style="width:100%">
-                    <thead style="width:100%">
-                    <tr style="width:100%"></tr></thead>
-                    <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
-                </table>
-                <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
-                    <! if (id != null ) { !>
+                <div id="playlist-edit-area" class="playlist-edit-list">
+                    <table id="playlist-edit-elements" style="width:100%">
+                        <thead style="width:100%">
+                        <tr style="width:100%"></tr></thead>
+                        <tbody id="playlist-edit-elements-body" class="list-group" style="width:100%;"></tbody>
+                    </table>
+                    <script data-jui="#playlist-edit-elements" data-tpl="row" type="text/template">
                         <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
                             <td style="width:100%; margin:0; padding:0">
-                                <div class="queued-track element" contextmenu="mymenu" data-track-id=<!= id !>>
+                                <div class="playlist-track element" contextmenu="mymenu" data-track-id=<!= id !>>
                                     <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
                                     <div style="margin:0px; padding:0px; float:left; width:275px">
                                         <div class="queue_element_title"><b><!= title !></b></div>
@@ -455,16 +444,58 @@
                                 </div>
                             </td>
                         </tr>
-                    <! } else { !>
-                        <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
-                            <td style="width:100%; margin:0; padding:0">
-                                <div class="queued-track element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center" data-track-id=<!= id !>>
-                                    <b>END OF QUEUE</b>
-                                </div>
-                            </td>
-                        </tr>
-                    <! } !>
-                </script>
+                    </script>
+                </div>
+                <div style="padding-left:10px; padding-right:10px; width:100%; height:75px">
+                    <button id="edit-playlist-save" class="playlist-edit-save-button">SAVE</button>     
+                    <button id="edit-playlist-cancel" class="playlist-edit-cancel-button">CANCEL</button>                 
+                </div>
+            </div>
+            <div id="queue-list-display">
+                <div class="main-list-header">
+                    <div class="title">
+                        <div class="name">
+                            QUEUE
+                        </div>
+                        <div class="count" style="margin-top:4px">
+                            <div id="queue-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="queue-duration" style="display:inline-block">57 minutes 37 seconds</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="queue-list-area" class="queue-list">
+                    <table id="queue-list-elements" style="width:100%">
+                        <thead style="width:100%">
+                        <tr style="width:100%"></tr></thead>
+                        <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
+                    </table>
+                    <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
+                        <! if (id != null ) { !>
+                            <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                                <td style="width:100%; margin:0; padding:0">
+                                    <div class="queued-track element" contextmenu="mymenu" data-track-id=<!= id !>>
+                                        <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
+                                        <div style="margin:0px; padding:0px; float:left; width:275px">
+                                            <div class="queue_element_title"><b><!= title !></b></div>
+                                            <div class="queue_element_artist"><i><!= artist !></i></div>
+                                        </div>
+                                        <div class="queue_element_bpm"><!= bpm !> BPM</div>
+                                        <div class="queue_element_duration">
+                                            <b><!= duration !></b>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        <! } else { !>
+                            <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                                <td style="width:100%; margin:0; padding:0">
+                                    <div class="queued-track element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center" data-track-id=<!= id !>>
+                                        <b>END OF QUEUE</b>
+                                    </div>
+                                </td>
+                            </tr>
+                        <! } !>
+                    </script>
+                </div>
             </div>
         </div>
     </div>

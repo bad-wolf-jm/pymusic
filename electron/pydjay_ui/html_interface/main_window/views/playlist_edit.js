@@ -1,10 +1,10 @@
-// const {remote} = require('electron')
-// const {Menu, MenuItem} = remote
-// const {BrowserWindow} = remote
-// const electron = require('electron');
+const {remote} = require('electron')
+const {Menu, MenuItem} = remote
+const {BrowserWindow} = remote
+const electron = require('electron');
 
 
-class QueueView extends EventDispatcher {
+class PlaylistEditView extends EventDispatcher {
     constructor(dom_ids) {
         super()
 
@@ -18,7 +18,7 @@ class QueueView extends EventDispatcher {
         this.duration_dom   = document.getElementById(dom_ids.duration);
 
         this.view_list_order = []
-        let queue_list = document.getElementById("queue-list-area")
+        let queue_list = document.getElementById("playlist-edit-area")
         queue_list.addEventListener('dragenter', this.handle_drag_enter.bind(this), false);
         queue_list.addEventListener('dragover',  this.on_drag_over.bind(this), false);
         queue_list.addEventListener('dragend',   this.handle_drag_end.bind(this), false);
@@ -82,20 +82,29 @@ class QueueView extends EventDispatcher {
                 },
             }
         )
+
+        document.getElementById("edit-playlist-save").addEventListener("click", () => {
+            document.getElementById("playlist-edit-display").style.display = null
+            document.getElementById("queue-list-display").style.display = "block"
+        })
+        document.getElementById("edit-playlist-cancel").addEventListener("click", () => {
+            document.getElementById("playlist-edit-display").style.display = null
+            document.getElementById("queue-list-display").style.display = "block"
+        })
+
     }
 
     set_controller(controller) {
         this.controller = controller
         this.controller.addView(this)
         this.controller.on("content-changed", this.set_queue.bind(this))
-        this.controller.ready(this.set_queue.bind(this))
+        //this.controller.ready(this.set_queue.bind(this))
     }
 
-    set_queue(queue) {
+    set_queue(name, queue) {
         this.view_list_order = []
         //this.view_id_list_order = []
         let queue_rows = []
-
         for(let i=0; i<queue.length; i++) {
             let element = (queue[i] == null) ? {id: null, stream_length:0} : {
                 id:       queue[i].id,
@@ -114,13 +123,14 @@ class QueueView extends EventDispatcher {
             queue_rows.push(element)
             this.view_list_order.push(element.id)
         }
+        document.getElementById("playlist-edit-name").innerHTML = name
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         jui.ready([ "grid.table" ], (table) => {
                 if (this.queue_content != undefined) {
                     this.queue_content.reset()
                 }
-                this.queue_content = table("#queue-list-elements", {
+                this.queue_content = table("#playlist-edit-elements", {
                     data: queue_rows,
                     scroll: false,
                     resize: false
@@ -366,7 +376,7 @@ class QueueView extends EventDispatcher {
     }
 
     connect_events() {
-        let elements = document.querySelectorAll('.queued-track');
+        let elements = document.querySelectorAll('.playlist-track');
         this.view_elements = {};
         [].forEach.call(elements, (e) => {
             let track_id = parseInt(e.attributes["data-track-id"].value)
@@ -378,7 +388,7 @@ class QueueView extends EventDispatcher {
             e.addEventListener("click", this.select_row.bind(this))
             e.addEventListener('contextmenu', (e) => {
                 e.preventDefault()
-                let x = e.target.closest(".queued-track")
+                let x = e.target.closest('.playlist-track')
                 let track_id = parseInt(x.attributes["data-track-id"].value)
                 let track_element = this.controller.get_id(track_id)
                 this.context_menu_element = track_element

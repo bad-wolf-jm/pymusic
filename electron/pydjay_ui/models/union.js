@@ -15,6 +15,7 @@ class UnionModel extends EventDispatcher {
             })
             this.model_tracks[name] = [] 
             this.models[name].on("content-changed", (q) => {
+                let Q;
                 if (q != undefined) {
                     Q = q.map((x) => {return (x != null) ? x.id : null})
                 } else {

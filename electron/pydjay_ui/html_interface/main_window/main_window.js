@@ -38,6 +38,7 @@ un_model.addModel("current_session", current_session_model)
 un_model.addModel("unavailable", unavailable_model)
 
 T_controller              = new TrackListController(un_model)
+PE_controller             = new TrackListController(un_model)
 Q_controller              = new QueueController()
 S_controller              = new SessionController()
 PL_controller             = new PlaylistsController()
@@ -54,6 +55,15 @@ ipcRenderer.on("track-modified", (e, id) => {
     //console.log(e, id)
     tracks_model.update(id)
 })
+
+
+PE = new PlaylistEditView({
+    list:       'playlist-edit-elements-body',
+    num_tracks: "playlist-edit-number-of-tracks",
+    duration:   "playlist-edit-duration"
+})
+PE.set_controller(PE_controller)
+
 
 
 Q = new QueueView({
@@ -341,6 +351,7 @@ function display_playlist(id) {
         (info) => {
             let L = new PlaylistModel(info, tracks_model)
             T_controller.set_model(info.name, L)
+            // PE_controller.set_model(info.name, L)
         }
     )
 }
