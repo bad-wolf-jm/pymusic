@@ -569,6 +569,12 @@ input.new-playlist[type=text] {
     transform: translateY(-50%);
 }
 
+.queue-overlay {
+    position:relative;
+    height:calc(100% - 0px);
+    margin:0px;
+}
+
 
 .playlist-edit-overlay {
     display:none;

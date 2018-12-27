@@ -103,7 +103,6 @@ class PlaylistEditView extends EventDispatcher {
 
     set_queue(name, queue) {
         this.view_list_order = []
-        //this.view_id_list_order = []
         let queue_rows = []
         for(let i=0; i<queue.length; i++) {
             let element = (queue[i] == null) ? {id: null, stream_length:0} : {
