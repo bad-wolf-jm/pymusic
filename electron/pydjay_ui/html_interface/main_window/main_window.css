@@ -435,7 +435,7 @@ input.new-playlist[type=text] {
 .playlist-edit-list {
     overflow-y: auto;
     position:relative;
-    height:calc(100% - 50px);
+    height:calc(100% - 125px);
 }
 
 
@@ -573,7 +573,7 @@ input.new-playlist[type=text] {
 .playlist-edit-overlay {
     display:none;
     position:relative;
-    height:calc(100% - 60px);
+    height:calc(100% - 0px);
     margin:0px;
 }
 
