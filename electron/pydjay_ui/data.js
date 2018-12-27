@@ -396,6 +396,13 @@ function DataProvider() {
         })
     }
 
+    self.get_playlist_by_id = function (id, done) {
+        $QUERY(`SELECT * FROM playlists WHERE id=${id}`, (x) => {
+            done(x[0])
+        })
+    }
+
+
     self.duplicate_playlist = function (id, done) {
         $QUERY(`SELECT name FROM playlists`, (name_list) => {
             $QUERY(`SELECT name FROM playlists WHERE id=${id}`, (n) => {
@@ -442,4 +449,6 @@ function DataProvider() {
             }
         )
     }
+
+
 }

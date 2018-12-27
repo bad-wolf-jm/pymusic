@@ -77,4 +77,8 @@ class PlaylistsController extends EventDispatcher {
         DB.check_playlist_name_availability(name, k)
     }
 
+    get_playlist_by_id(id, k) {
+        DB.get_playlist_by_id(id, k)
+    }
+
 }

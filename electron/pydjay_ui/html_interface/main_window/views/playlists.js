@@ -47,7 +47,24 @@ class PlaylistsView extends EventDispatcher {
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Delete', click: () => {
             let T = this.context_menu_element
+            this.controller.get_playlist_by_id(T, (p) => {
+                let dialog = document.getElementById("delete-playlist-dialog")
+                document.getElementById("delete-playlist-name").innerHTML = p.name
+                dialog.showModal()    
+            })
         }}))
+
+        document.getElementById("delete-playlist").addEventListener('click', (e) => {
+            this.controller.delete_playlist(this.context_menu_element)
+            this.context_menu_element = undefined
+            document.getElementById("delete-playlist-dialog").close()
+        })
+
+        document.getElementById("delete-playlist-cancel").addEventListener('click', (e) => {
+            this.context_menu_element = undefined
+            document.getElementById("delete-playlist-dialog").close()
+        })
+
     }
 
     begin_add() {
