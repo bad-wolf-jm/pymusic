@@ -13,6 +13,34 @@ class PlaylistsView extends EventDispatcher {
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Rename', click: () => {
             let T = this.context_menu_element
+            let old_value = this.context_menu_cell.innerHTML
+            this.context_menu_cell.innerHTML = `<input id="new-playlist-name-${T}" type="text" class="new-playlist" value="${old_value}">`
+            let X = document.getElementById(`new-playlist-name-${T}`)
+            X.focus()
+            X.addEventListener("keyup", (e) => {
+                if (e.key == "Escape") {
+                    this.context_menu_cell.innerHTML = old_value
+                } else if (e.key == "Enter") {
+                    let new_name = X.value
+                    this.controller.check_name_availability(new_name, (a) => {
+                        if (a) {
+                            this.controller.rename_playlist(T, new_name)
+                        } else {
+                            X.style.color = "#dd0000"
+                        }
+                    })
+                } else {
+                    this.controller.check_name_availability(X.value, (a) => {
+                        if (a) {
+                            X.style.color = null
+                        } else {
+                            X.style.color = "#dd0000"
+                        }
+                    })
+                }
+            })
+    
+
         }}))
         this.menu.append(new MenuItem({label: 'Duplicate', click: () => {
             let T = this.context_menu_element
@@ -111,13 +139,18 @@ class PlaylistsView extends EventDispatcher {
             col.addEventListener('dragover',  this.on_drag_over.bind(this), false);
             col.addEventListener('dragend',   this.on_drag_end.bind(this), false);
             col.addEventListener('drop',      this.on_drop.bind(this), false);
+            col.addEventListener('click',     (e) => {
+                let x = e.target.closest(".track-drop-target")
+                let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
+                display_playlist(playlist_id)
+            }, false);
+
             col.addEventListener('contextmenu', (e) => {
                 e.preventDefault()
-                //this.select_row(e)
-                //let x = e.target.closest(".track-entry")
-                //let track_id = parseInt(x.attributes["data-track-id"].value)
-                //let track_element = this.controller.get_id(track_id)
-                //this.context_menu_element = track_element
+                let x = e.target.closest(".track-drop-target")
+                let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
+                this.context_menu_element = playlist_id
+                this.context_menu_cell = document.getElementById(`playlist-element-${playlist_id}`)
                 this.menu.popup({window: remote.getCurrentWindow()})
               }, false)
 

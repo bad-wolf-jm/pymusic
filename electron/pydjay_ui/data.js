@@ -367,13 +367,33 @@ function DataProvider() {
     }
 
     self.create_playlist = function (name, done) {
-        $QUERY(`SELECT id FROM playlists WHERE name='${name}'`, (x) => {
+        $QUERY(`SELECT id FROM playlists WHERE name='${addslashes(name)}'`, (x) => {
             if (x.length == 0) {
                 current_time = DATE(new Date());
-                $QUERY(`INSERT INTO playlists (name, created) VALUES ('${name}', ${current_time})`, done)
+                $QUERY(`INSERT INTO playlists (name, created) VALUES ('${addslashes(name)}', ${current_time})`, done)
             } else {
                 done()    
             }
         })
     }
+
+
+
+    self.rename_playlist = function (id, name, done) {
+        $QUERY(`SELECT id FROM playlists WHERE name='${addslashes(name)}'`, (x) => {
+            if (x.length == 0) {
+                current_time = DATE(new Date());
+                $QUERY(`UPDATE playlists SET name='${addslashes(name)}' WHERE id=${id}`, done)
+            } else {
+                done()    
+            }
+        })
+    }
+
+    self.check_playlist_name_availability = function (name, done) {
+        $QUERY(`SELECT id FROM playlists WHERE name='${addslashes(name)}'`, (x) => {
+            done(x.length == 0)
+        })
+    }
+
 }

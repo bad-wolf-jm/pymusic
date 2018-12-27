@@ -256,10 +256,10 @@
                                 <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input id="new-playlist-name" type="text" class="new-playlist"></td>
                             </tr>
                         <! } else { !>
-                            <tr class="choice track-drop-target" style="height:20px;" onclick="display_playlist(<!= id !>)" data-playlist-id=<!= id !>>
+                            <tr class="choice track-drop-target" style="height:20px;" data-playlist-id=<!= id !>>
                                 <td style="width:30px"></td>
                                 <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
-                                <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                                <td id="playlist-element-<!= id !>" style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
                                 <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
                             </tr>
                         <! } !>
@@ -279,13 +279,13 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
-                            <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session(<!= id !>)">
-                                <td style="width:30px"></td>
-                                <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
-                                <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
-                                <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
-                                <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
-                            </tr>
+                        <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session(<!= id !>)">
+                            <td style="width:30px"></td>
+                            <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
+                            <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                            <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
+                            <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
+                        </tr>
 
                     </script>
 

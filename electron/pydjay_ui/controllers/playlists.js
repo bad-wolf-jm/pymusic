@@ -9,6 +9,7 @@ class PlaylistsController extends EventDispatcher {
             for(let i=0; i<this.ready_wait_queue.length; i++) {
                 this.ready_wait_queue[i](this.queue)
             }    
+            this.dispatch("content-changed", this.queue)
         })
     }
 
@@ -20,7 +21,7 @@ class PlaylistsController extends EventDispatcher {
                 this.queue_table[queue[i].id] = queue[i]
             }
             k()
-            this.dispatch("content-changed", this.queue)
+            
         })
     }
 
@@ -47,4 +48,17 @@ class PlaylistsController extends EventDispatcher {
             })
         })
     }
+
+    rename_playlist(id, new_name) {
+        DB.rename_playlist(id, new_name, () => {
+            this.refresh(() => {
+                this.dispatch("content-changed", this.queue)
+            })
+        })
+    }
+
+    check_name_availability(name, k) {
+        DB.check_playlist_name_availability(name, k)
+    }
+
 }
