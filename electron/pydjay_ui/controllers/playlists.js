@@ -57,6 +57,14 @@ class PlaylistsController extends EventDispatcher {
         })
     }
 
+    duplicate_playlist(id) {
+        DB.duplicate_playlist(id, () => {
+            this.refresh(() => {
+                this.dispatch("content-changed", this.queue)
+            })
+        })
+    }
+
     check_name_availability(name, k) {
         DB.check_playlist_name_availability(name, k)
     }

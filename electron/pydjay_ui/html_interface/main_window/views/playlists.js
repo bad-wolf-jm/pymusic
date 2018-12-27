@@ -39,11 +39,10 @@ class PlaylistsView extends EventDispatcher {
                     })
                 }
             })
-    
-
         }}))
         this.menu.append(new MenuItem({label: 'Duplicate', click: () => {
             let T = this.context_menu_element
+            this.controller.duplicate_playlist(T)
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Delete', click: () => {
