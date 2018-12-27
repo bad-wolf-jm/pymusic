@@ -65,6 +65,14 @@ class PlaylistsController extends EventDispatcher {
         })
     }
 
+    delete_playlist(id) {
+        DB.delete_playlist(id, () => {
+            this.refresh(() => {
+                this.dispatch("content-changed", this.queue)
+            })
+        })
+    }
+
     check_name_availability(name, k) {
         DB.check_playlist_name_availability(name, k)
     }

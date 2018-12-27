@@ -432,4 +432,14 @@ function DataProvider() {
             })    
         })
     }
+
+    self.delete_playlist = function (playlist_id, done) {
+        $QUERY(`DELETE FROM playlists WHERE id=${playlist_id}`, function (r) {
+                $QUERY(`DELETE FROM playlist_tracks WHERE playlist_id=${playlist_id}`, function (r) {
+                        done()
+                    }
+                )
+            }
+        )
+    }
 }
