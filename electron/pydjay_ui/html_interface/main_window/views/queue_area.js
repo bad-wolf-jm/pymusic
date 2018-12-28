@@ -9,11 +9,11 @@ class QueueAreaView extends EventDispatcher {
         this.displayed = undefined
 
 
-        document.getElementById("edit-playlist-save").addEventListener("click", () => {
-            this.controller.save_playlist_tracks(this.view_list_order, () => {
-                this.hide_playlist_editor()
-            })
-        })
+        // document.getElementById("edit-playlist-save").addEventListener("click", () => {
+        //     this.controller.save_playlist_tracks(this.view_list_order, () => {
+        //         this.hide_playlist_editor()
+        //     })
+        // })
         document.getElementById("edit-playlist-cancel").addEventListener("click", () => {
             this.hide_playlist_editor()
             this.playlist_editor.set_queue("",  [])
@@ -45,6 +45,13 @@ class QueueAreaView extends EventDispatcher {
     delete_selection() {
         if (this.displayed != undefined) {
             this.displayed.delete_selection()
+        }
+    }
+
+
+    selected_element() {
+        if (this.displayed != undefined) {
+            return this.displayed.selected_element()
         }
     }
 

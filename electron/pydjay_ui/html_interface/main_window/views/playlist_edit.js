@@ -91,7 +91,6 @@ class PlaylistEditView extends EventDispatcher {
     }
 
     set_queue(name, queue) {
-        console.log(queue)
         this.view_list_order = []
         let queue_rows = []
         for(let i=0; i<queue.length; i++) {
@@ -109,7 +108,6 @@ class PlaylistEditView extends EventDispatcher {
                     element.cover = `file://${queue[i].image_root}/${queue[i].cover}`
                 }
             }
-            //console.log(element)
             queue_rows.push(element)
             this.view_list_order.push(element.id)
         }
@@ -140,6 +138,12 @@ class PlaylistEditView extends EventDispatcher {
     }
 
     delete_selection() {
+        let selected = this.selected_element()
+        if (selected != undefined) {
+            let position = this.view_list_order.indexOf(selected.id)
+            this.controller.remove(this.selected_element())
+            this._select_row(this.view_elements[this.view_list_order[position]])
+        }
 
     }
 
@@ -298,7 +302,7 @@ class PlaylistEditView extends EventDispatcher {
         let d = evt.dataTransfer.getData("text/plain")
         try {
             let track = JSON.parse(d)
-            this.controller.append(track)
+            this.controller.add(track)
         } catch (error) {
             console.log(error)
         }
@@ -312,6 +316,7 @@ class PlaylistEditView extends EventDispatcher {
         x.classList.add("selected")
         this.current_selection = x
         this.ensure_row_visible(x)
+        console.log(this.current_selection)
     }
 
     select_row(e) {

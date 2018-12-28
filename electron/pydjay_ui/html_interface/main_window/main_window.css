@@ -596,9 +596,9 @@ input.new-playlist[type=text] {
 
 .playlist-edit-cancel-button {
     height:50px;
-    width: calc(50% - 10px);
+    width: calc(100% - 20px);
     border: 0px solid grey;
-    float:right;
+    /* float:right; */
     cursor: pointer;
     background-color: rgb(100,25,25);
     outline:none !important;

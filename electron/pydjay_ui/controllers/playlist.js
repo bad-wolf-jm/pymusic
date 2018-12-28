@@ -15,4 +15,17 @@ class PlaylistController extends TrackListController {
     add(e) {
         this.model.add(e)
     }
+
+    remove(element) {
+        this.model.remove(element)
+    }
+
+    // q_length() {
+    //     return this.model.length()
+    // }
+
+    // duration () {
+    //     return this.model.duration()
+    // }
+
 }
