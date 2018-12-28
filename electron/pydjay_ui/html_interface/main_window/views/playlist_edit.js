@@ -138,22 +138,13 @@ class PlaylistEditView extends EventDispatcher {
     }
 
     delete_selection() {
-        // let selected = this.selected_element()
 
-        // if (selected != undefined) {
-        //     let position = this.view_list_order.indexOf(selected.id)
-        //     this.controller.remove(this.selected_element())
-        //     this._select_row(this.view_elements[this.view_list_order[position]])
-        // }
     }
 
 
     add_element(e) {
         console.log(e)
     }
-
-
-
 
     move_down() {
         if (this.current_selection != undefined) {
@@ -199,7 +190,6 @@ class PlaylistEditView extends EventDispatcher {
     selected_element() {
         if (this.current_selection != undefined) {
             let track_id = parseInt(this.current_selection.attributes["data-track-id"].value)
-            // console.log(track_id)
             if (!isNaN(track_id)) {
                 return this.controller.get_id(track_id)
             } else {

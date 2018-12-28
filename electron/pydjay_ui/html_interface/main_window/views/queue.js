@@ -1,9 +1,3 @@
-// const {remote} = require('electron')
-// const {Menu, MenuItem} = remote
-// const {BrowserWindow} = remote
-// const electron = require('electron');
-
-
 class QueueView extends EventDispatcher {
     constructor(dom_ids) {
         super()
