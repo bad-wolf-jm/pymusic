@@ -285,6 +285,31 @@ document.getElementById("session-save-cancel").addEventListener('click', () => {
     document.getElementById("save-session-dialog").close();
 })
 
+
+
+
+
+document.getElementById("main-menu-discard-session").addEventListener('click', () => {
+    document.getElementById("discard-session-dialog").showModal();
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+document.getElementById("session-discard").addEventListener('click', () => {
+    current_session_model.discard_session(() => {
+        SE_controller.refresh(() => {})
+    })
+    document.getElementById("discard-session-dialog").close();
+})
+
+document.getElementById("session-discard-cancel").addEventListener('click', () => {
+    document.getElementById("discard-session-dialog").close();
+})
+
+
+
+
+
+
 document.getElementById("main-menu-settings").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
