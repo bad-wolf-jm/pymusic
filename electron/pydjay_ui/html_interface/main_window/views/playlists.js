@@ -12,7 +12,7 @@ class PlaylistsView extends EventDispatcher {
             this.controller.get_playlist_by_id(T, (p) => {
                 let L = new PlaylistModel(p, tracks_model)
                 //T_controller.set_model(info.name, L)
-                PE_controller.set_model(p.name, L)
+                PE_controller.set_model(p, L)
                 document.getElementById("playlist-edit-display").style.display = "block"
                 document.getElementById("queue-list-display").style.display = null
 

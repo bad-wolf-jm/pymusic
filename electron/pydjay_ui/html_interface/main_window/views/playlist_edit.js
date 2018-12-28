@@ -84,12 +84,17 @@ class PlaylistEditView extends EventDispatcher {
         )
 
         document.getElementById("edit-playlist-save").addEventListener("click", () => {
-            document.getElementById("playlist-edit-display").style.display = null
-            document.getElementById("queue-list-display").style.display = "block"
+            console.log(this.view_list_order)
+            this.controller.save_playlist_tracks(this.view_list_order, () => {
+                document.getElementById("playlist-edit-display").style.display = null
+                document.getElementById("queue-list-display").style.display = "block"    
+            })
+            // console.log()
         })
         document.getElementById("edit-playlist-cancel").addEventListener("click", () => {
             document.getElementById("playlist-edit-display").style.display = null
             document.getElementById("queue-list-display").style.display = "block"
+            this.set_queue("",  [])
         })
 
     }

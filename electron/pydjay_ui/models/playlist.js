@@ -2,6 +2,7 @@ class PlaylistModel extends BaseListModel {
     constructor(playlist, tracks_model) {
         super()
         this.tracks_model = tracks_model
+        this.info = playlist
 
         this.tracks_model.on('metadata-changed', (x) => {
             this.dispatch("metadata-changed", x)
@@ -52,5 +53,9 @@ class PlaylistModel extends BaseListModel {
         // DB.update_track_data(id, metadata, () => {
         //     this.dispatch("metadata-changed", this.track_list[id])
         // })
+    }
+
+    set_tracks(track_list, k) {
+        DB.set_playlist_tracks(this.info.id, track_list, k)
     }
 }

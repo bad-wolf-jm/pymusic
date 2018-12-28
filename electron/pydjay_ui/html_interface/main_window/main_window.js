@@ -38,7 +38,7 @@ un_model.addModel("current_session", current_session_model)
 un_model.addModel("unavailable", unavailable_model)
 
 T_controller              = new TrackListController(un_model)
-PE_controller             = new TrackListController(un_model)
+PE_controller             = new PlaylistController(un_model)
 Q_controller              = new QueueController()
 S_controller              = new SessionController()
 PL_controller             = new PlaylistsController()
@@ -64,14 +64,16 @@ PE = new PlaylistEditView({
 })
 PE.set_controller(PE_controller)
 
-
-
 Q = new QueueView({
     list:       'queue-elements-body',
     num_tracks: "queue-number-of-tracks",
     duration:   "queue-duration"
 })
 Q.set_controller(Q_controller)
+
+
+
+
 
 T = new TrackListView({
     name:       "main-track-list-name",

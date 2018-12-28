@@ -450,5 +450,23 @@ function DataProvider() {
         )
     }
 
+    self.set_playlist_tracks = function(id, list, k) {
+        playlist_data = []
+        if (list.length > 0) {
+            for (i=0; i<list.length; i++) {
+                playlist_data.push(`(${id}, ${list[i]})`)
+            }
+            delete_sql = `DELETE FROM playlist_tracks WHERE playlist_id=${id}`
+            replace_sql = `INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`
+            $QUERY(`DELETE FROM playlist_tracks WHERE playlist_id=${id}`,
+                () => {
+                    $QUERY(`INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`, 
+                        () => {k();})
+                }
+            )
+        }
+
+    }
+
 
 }
