@@ -11,4 +11,8 @@ class PlaylistController extends TrackListController {
     save_playlist_tracks(y, k) {
         this.model.set_tracks(y, k)
     }
+
+    add(e) {
+        this.model.add(e)
+    }
 }

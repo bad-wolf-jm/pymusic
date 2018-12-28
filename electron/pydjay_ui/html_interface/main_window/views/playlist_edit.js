@@ -91,6 +91,7 @@ class PlaylistEditView extends EventDispatcher {
     }
 
     set_queue(name, queue) {
+        console.log(queue)
         this.view_list_order = []
         let queue_rows = []
         for(let i=0; i<queue.length; i++) {
@@ -108,6 +109,7 @@ class PlaylistEditView extends EventDispatcher {
                     element.cover = `file://${queue[i].image_root}/${queue[i].cover}`
                 }
             }
+            //console.log(element)
             queue_rows.push(element)
             this.view_list_order.push(element.id)
         }
@@ -143,7 +145,7 @@ class PlaylistEditView extends EventDispatcher {
 
 
     add_element(e) {
-        console.log(e)
+        this.controller.add(e)
     }
 
     move_down() {
