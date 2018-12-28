@@ -15,15 +15,6 @@ function focusWindow(w) {
 var lists = [T, Q]
 
 
-// Mousetrap.bind('escape', (e) => {
-//     if (focus_list != undefined) {
-//         focus_list.move_up()
-//         e.preventDefault()
-//     }
-// });
-
-
-
 Mousetrap.bind(["shift+delete", "shift+backspace"], (e) => {
     if (focus_list != undefined) {
         focus_list.delete_selection()
