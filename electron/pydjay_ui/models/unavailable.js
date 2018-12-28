@@ -55,7 +55,7 @@ class UnavailableModel extends BaseListModel {
     }
 
     add(element) {
-        console.log(element)
+        //console.log(element)
         this.tracks_order.push(element.id)
         this.save()
         this.dispatch("content-changed", this.get_all_tracks())

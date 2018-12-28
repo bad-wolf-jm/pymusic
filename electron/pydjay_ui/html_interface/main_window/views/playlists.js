@@ -109,7 +109,7 @@ class PlaylistsView extends EventDispatcher {
     }
 
     on_drag_end(evt) {
-        console.log(evt.target)
+        //console.log(evt.target)
     }
 
     on_drop(evt) {

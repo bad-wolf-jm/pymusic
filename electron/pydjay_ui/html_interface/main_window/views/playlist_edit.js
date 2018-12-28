@@ -316,7 +316,7 @@ class PlaylistEditView extends EventDispatcher {
         x.classList.add("selected")
         this.current_selection = x
         this.ensure_row_visible(x)
-        console.log(this.current_selection)
+        //console.log(this.current_selection)
     }
 
     select_row(e) {

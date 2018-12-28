@@ -74,8 +74,8 @@ class QueueModel extends BaseListModel {
     }
 
     _check_availability(element, do_insert) {
-        console.log(this.tracks_order.indexOf(element.id) )
-        console.log(this.current_session_model.tracks_order.indexOf(element.id) )
+        //console.log(this.tracks_order.indexOf(element.id) )
+        //console.log(this.current_session_model.tracks_order.indexOf(element.id) )
         if ((this.tracks_order.indexOf(element.id) == -1) && 
                 !(this.current_session_model.check_membership(element))) {
             do_insert(element)

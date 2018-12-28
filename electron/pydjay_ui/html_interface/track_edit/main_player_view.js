@@ -189,7 +189,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         )
         this._waveform.on(
             "seek", (p) => {
-                console.log(p)
+                //console.log(p)
                 let s = (p * this._track.track_length)
                 this.current_stream_position = s
                 if (this.audio_player.state == "PLAYING") {

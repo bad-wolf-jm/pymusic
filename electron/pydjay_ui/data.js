@@ -292,7 +292,7 @@ function DataProvider() {
         sql += fields.indexOf("grouping")       != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
         sql += `date_modified=${DATE(new Date())}\n` 
         sql += `WHERE id=${id}`
-        console.log(sql)
+        //console.log(sql)
         $QUERY(sql, k)
     }
 
