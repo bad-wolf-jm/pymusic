@@ -457,7 +457,8 @@ class TrackListView extends EventDispatcher {
     add_selection_to_queue() {
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]
-            this.queue_controller.append(r)
+            Q.add_element(r)
+            // this.queue_controller.append(r)
         }
     }
 

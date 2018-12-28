@@ -82,28 +82,12 @@ class PlaylistEditView extends EventDispatcher {
                 },
             }
         )
-
-        document.getElementById("edit-playlist-save").addEventListener("click", () => {
-            console.log(this.view_list_order)
-            this.controller.save_playlist_tracks(this.view_list_order, () => {
-                document.getElementById("playlist-edit-display").style.display = null
-                document.getElementById("queue-list-display").style.display = "block"    
-            })
-            // console.log()
-        })
-        document.getElementById("edit-playlist-cancel").addEventListener("click", () => {
-            document.getElementById("playlist-edit-display").style.display = null
-            document.getElementById("queue-list-display").style.display = "block"
-            this.set_queue("",  [])
-        })
-
     }
 
     set_controller(controller) {
         this.controller = controller
         this.controller.addView(this)
         this.controller.on("content-changed", this.set_queue.bind(this))
-        //this.controller.ready(this.set_queue.bind(this))
     }
 
     set_queue(name, queue) {
@@ -154,14 +138,21 @@ class PlaylistEditView extends EventDispatcher {
     }
 
     delete_selection() {
-        let selected = this.selected_element()
+        // let selected = this.selected_element()
 
-        if (selected != undefined) {
-            let position = this.view_list_order.indexOf(selected.id)
-            this.controller.remove(this.selected_element())
-            this._select_row(this.view_elements[this.view_list_order[position]])
-        }
+        // if (selected != undefined) {
+        //     let position = this.view_list_order.indexOf(selected.id)
+        //     this.controller.remove(this.selected_element())
+        //     this._select_row(this.view_elements[this.view_list_order[position]])
+        // }
     }
+
+
+    add_element(e) {
+        console.log(e)
+    }
+
+
 
 
     move_down() {
@@ -222,7 +213,6 @@ class PlaylistEditView extends EventDispatcher {
 
     }
 
-
     move_first() {
 
     }
@@ -256,7 +246,7 @@ class PlaylistEditView extends EventDispatcher {
     }
 
     ensure_row_visible(row) {
-        let scroller = document.getElementById("queue-list-area")
+        let scroller = document.getElementById("playlist-edit-area")
         let scrollerRect = scroller.getBoundingClientRect()
 
         if (row == undefined) {
@@ -275,56 +265,15 @@ class PlaylistEditView extends EventDispatcher {
     }
 
     move_selection_up() {
-        let selected = this.selected_element()
-        let selected_id;
-        if (selected !== undefined) {
-            selected_id = (selected != null) ? selected.id : selected
-            let position = this.view_list_order.indexOf(selected_id)
-            if (position > 0) {
-                let x = this.view_list_order[position - 1]
-                this.view_list_order[position - 1] = selected_id
-                this.view_list_order[position] = x
-                this.dispatch("reorder", this.view_list_order)
-                this.sortable.sort(this.view_list_order)
-                this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-            }
-        }
+
     }
 
     move_selection_down() {
-        let selected = this.selected_element()
-        let selected_id;
-        if (selected !== undefined) {
-            selected_id = (selected != null) ? selected.id : selected
-            let position = this.view_list_order.indexOf(selected_id)
 
-            if (position + 1 < this.view_list_order.length) {
-                let x = this.view_list_order[position + 1]
-                this.view_list_order[position + 1] = selected_id
-                this.view_list_order[position] = x
-                this.dispatch("reorder", this.view_list_order)
-                this.sortable.sort(this.view_list_order)
-                this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-            }
-        }
     }
 
     move_selection_to_top() {
-        let selected = this.selected_element()
-        let selected_id;
-        if (selected !== undefined) {
-            selected_id = (selected != null) ? selected.id : selected
-            let position = this.view_list_order.indexOf(selected_id)
 
-            this.view_list_order.splice(position, 1)
-            this.view_list_order.splice(0, 0, selected_id)
-            this.dispatch("reorder", this.view_list_order)
-            this.sortable.sort(this.view_list_order)
-            this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-            this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-        }
     }
 
 
@@ -376,7 +325,7 @@ class PlaylistEditView extends EventDispatcher {
     select_row(e) {
         let x = e.target.closest(".element")
         this._select_row(x)
-        focusWindow(this)
+        //focusWindow(this)
     }
 
     connect_events() {

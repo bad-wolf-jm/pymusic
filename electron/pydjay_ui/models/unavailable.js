@@ -43,7 +43,7 @@ class UnavailableModel extends BaseListModel {
     }
 
     get_all_tracks() {
-        Q = []
+        let Q = []
         this.tracks_order.forEach((x) => {
             Q.push(this.tracks_model.get_track_by_id(x))})
         Q.sort(this.compare_tracks)

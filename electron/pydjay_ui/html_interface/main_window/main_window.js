@@ -64,15 +64,16 @@ PE = new PlaylistEditView({
 })
 PE.set_controller(PE_controller)
 
-Q = new QueueView({
+QL = new QueueView({
     list:       'queue-elements-body',
     num_tracks: "queue-number-of-tracks",
     duration:   "queue-duration"
 })
-Q.set_controller(Q_controller)
+QL.set_controller(Q_controller)
 
 
-
+Q = new QueueAreaView(QL, PE)
+Q.hide_playlist_editor()
 
 
 T = new TrackListView({

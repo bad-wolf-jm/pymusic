@@ -149,6 +149,9 @@ class QueueView extends EventDispatcher {
         }
     }
 
+    add_element(e) {
+        this.controller.append(e)
+    }
 
     move_down() {
         if (this.current_selection != undefined) {
@@ -362,7 +365,7 @@ class QueueView extends EventDispatcher {
     select_row(e) {
         let x = e.target.closest(".element")
         this._select_row(x)
-        focusWindow(this)
+        //focusWindow(this)
     }
 
     connect_events() {

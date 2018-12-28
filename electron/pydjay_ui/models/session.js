@@ -23,7 +23,7 @@ class SessionModel extends BaseListModel {
     }
 
     get_all_tracks() {
-        Q = []
+        let Q = []
         this.tracks_order.forEach((x) => {Q.push(this.track_list[x])})
         return Q
     }

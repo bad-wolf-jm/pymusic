@@ -33,7 +33,7 @@ class PlaylistModel extends BaseListModel {
 
 
     get_all_tracks() {
-        Q = []
+        let Q = []
         this.tracks_order.forEach((x) => {Q.push(this.track_list[x])})
         Q.sort(this.compare_tracks)
         return Q
