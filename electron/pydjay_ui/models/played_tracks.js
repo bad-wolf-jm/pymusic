@@ -1,20 +1,14 @@
-class PlayedTracksModel extends BaseListModel {
+class PlayedTracksModel extends BaseObjectSubsetModel {
     constructor(tracks_model) {
-        super()
-        this.tracks_model = tracks_model
-        
-        this.tracks_model.on('metadata-changed', (x) => {
-            this.dispatch("metadata-changed", x)
-        })
+        super(tracks_model)
+        this.initialize()
+    }
 
+    refresh(k) {
         DB.get_played_tracks( (tracks) => { 
-            this.track_list = {}
-            tracks.forEach((t) => {
-                this.track_list[t.id] = this.tracks_model.get_track_by_id(t.id)
-            })
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i]()
-            }                                                            
+            this.objects = {}
+            tracks.forEach((t) => {this.objects[t.id] = t})
+            super.refresh(k)
         })            
     }
 
@@ -27,25 +21,10 @@ class PlayedTracksModel extends BaseListModel {
     }
 
     get_all_tracks() {
-        let Q = []
-        Object.keys(this.track_list).forEach((x) => {Q.push(this.track_list[x])})
-        Q.sort(this.compare_tracks)
-        return Q
+        return this.get_all_objects()
     }
 
     get_track_by_id(id) {
-        return this.track_list[id]
-    }
-
-    set_metadata(track, metadata) {
-        this.tracks_model.set_metadata(track, metadata)
-        // X = this.track_list[track.id]
-        // metadata_keys = Object.keys(metadata)
-        // Object.keys(metadata).forEach((x) => {
-        //     X[x] = metadata[x]
-        // })
-        // DB.update_track_data(id, metadata, () => {
-        //     this.dispatch("metadata-changed", this.track_list[id])
-        // })
+        return this.get_object_by_id(id)
     }
 }
