@@ -274,7 +274,7 @@ class PlaylistEditView extends EventDispatcher {
 
 
     handle_double_click(e) {
-        let x = e.target.closest(".queued-track")
+        let x = e.target.closest(".playlist-track")
         let track_id = parseInt(x.attributes["data-track-id"].value)
         let track_element = this.controller.get_id(track_id)
         pc.play(track_element)
