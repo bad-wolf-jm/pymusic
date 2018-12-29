@@ -77,8 +77,6 @@ class PlaylistModel extends BaseListModel {
     }
 
     remove(index) {
-        //console.log(index)
-        //console.log(this.tracks_order)
         if (this.tracks_order != undefined) {
             let I = this.tracks_order.indexOf(index.id.toString())
             if (I != -1) {

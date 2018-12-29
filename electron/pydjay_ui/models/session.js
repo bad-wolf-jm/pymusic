@@ -34,13 +34,5 @@ class SessionModel extends BaseListModel {
 
     set_metadata(track, metadata) {
         this.tracks_model.set_metadata(track, metadata)
-        // X = this.track_list[track.id]
-        // metadata_keys = Object.keys(metadata)
-        // Object.keys(metadata).forEach((x) => {
-        //     X[x] = metadata[x]
-        // })
-        // DB.update_track_data(id, metadata, () => {
-        //     this.dispatch("metadata-changed", this.track_list[id])
-        // })
     }
 }
