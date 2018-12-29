@@ -1,5 +1,6 @@
 class BaseObjectSubsetModel extends BaseObjectListModel {
     constructor(model) {
+        super()
         this.model = model
         this.model.on('metadata-changed', (x) => {
             this.dispatch("metadata-changed", x)
@@ -7,7 +8,7 @@ class BaseObjectSubsetModel extends BaseObjectListModel {
     }
 
     get_object_by_id(id) {
-        return this.models.get_object_by_id(id)
+        return this.model.get_object_by_id(id)
     }
 
     get_all_objects() {
@@ -28,6 +29,6 @@ class BaseObjectSubsetModel extends BaseObjectListModel {
     }
 
     duration() {
-        this.model.duration(Object.keys(this.objects))
+        return this.model.duration(Object.keys(this.objects).map((i) => {return parseInt(i)}))
     }
 }

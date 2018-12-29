@@ -1,7 +1,7 @@
 class BaseOrderedObjectSubsetModel extends BaseObjectSubsetModel {
     constructor(model) {
         super(model)
-        this.ordering = []
+        this.ordering = undefined
     }
 
     get_all_objects() {

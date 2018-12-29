@@ -1,18 +1,21 @@
 class BaseObjectListModel extends EventDispatcher {
     constructor() {
         super()
-        this.objects = {}
+        this.objects = undefined
         this.controllers = []
         this.ready_wait_queue = []
-        this.initialize()
     }
 
     ready(func) {
-        if (this.track_list != undefined) {
+        if (this.is_ready()) {
             func(this.get_all_objects())
         } else {
             this.ready_wait_queue.push(func)
         }
+    }
+
+    is_ready() {
+        return (this.objects != undefined)
     }
 
     add(element) {
@@ -51,18 +54,27 @@ class BaseObjectListModel extends EventDispatcher {
 
     removeController(controller) {
         let X = this.controllers.indexOf(controller)
-        (X != -1) && this.controllers.splice(X, 1);
+        if (X != -1) {
+            this.controllers.splice(X, 1);
+        } 
     }
 
     get_object_by_id(id) {
+        if (!(this.is_ready())) {
+            return undefined
+        }
+
         return this.objects[id]
     }
 
     get_objects(idxs, cmp) {
+        if (!(this.is_ready())) {
+            return undefined
+        }
         if (idxs == undefined) {
             idxs = Object.keys(this.objects).map((i) => {return parseInt(i)})
         }
-        let objects = idxs.map((id) => {this.objects[id]}) 
+        let objects = idxs.map((id) => {return this.objects[id]}) 
         if (cmp != undefined) {
             objects.sort(cmp)
         }
@@ -70,6 +82,9 @@ class BaseObjectListModel extends EventDispatcher {
     }
 
     get_all_objects() {
+        if (!(this.is_ready())) {
+            return undefined
+        }
         let objects = Object.values(this.objects)
         if (this.compare_objects != undefined) {
             objects.sort(this.compare_objects)
@@ -78,11 +93,14 @@ class BaseObjectListModel extends EventDispatcher {
     }
 
     set_metadata(object, metadata) {
+        if (!(this.is_ready())) {
+            return undefined
+        }
         object = this.objects[object.id]
         Object.keys(metadata).forEach((x) => {
             object[x] = metadata[x]
         })
-        this.dispatch("object-metadata-changed", this.objects[object.id])
+        this.dispatch("metadata-changed", this.objects[object.id])
     }
 
     length() {
@@ -93,14 +111,20 @@ class BaseObjectListModel extends EventDispatcher {
     }
 
     duration(idxs) {
+        if (!(this.is_ready())) {
+            return undefined
+        }
+
         if (idxs == undefined) {
             idxs = Object.keys(this.objects).map((i) => {return parseInt(i)})
         }
+//        console.log(idxs)
         if (this.objects != undefined) {
             let d = 0
             idxs.forEach((id) => {
                 d += (this.objects[id] != undefined) ? this.objects[id].stream_length : 0
             })
+            //console.log(d)
             return d
         }
         return undefined
