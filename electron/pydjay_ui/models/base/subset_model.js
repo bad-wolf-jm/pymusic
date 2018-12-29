@@ -1,7 +1,6 @@
 class BaseObjectSubsetModel extends BaseObjectListModel {
     constructor(model) {
         this.model = model
-
         this.model.on('metadata-changed', (x) => {
             this.dispatch("metadata-changed", x)
         })
