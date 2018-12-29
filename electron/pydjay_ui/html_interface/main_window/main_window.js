@@ -38,6 +38,7 @@ un_model.addModel("current_session", current_session_model)
 un_model.addModel("unavailable", unavailable_model)
 
 T_controller              = new TrackListController(un_model)
+PE_controller             = new PlaylistController(un_model)
 Q_controller              = new QueueController()
 S_controller              = new SessionController()
 PL_controller             = new PlaylistsController()
@@ -56,12 +57,24 @@ ipcRenderer.on("track-modified", (e, id) => {
 })
 
 
-Q = new QueueView({
+PE = new PlaylistEditView({
+    list:       'playlist-edit-elements-body',
+    num_tracks: "playlist-edit-number-of-tracks",
+    duration:   "playlist-edit-duration"
+})
+PE.set_controller(PE_controller)
+
+QL = new QueueView({
     list:       'queue-elements-body',
     num_tracks: "queue-number-of-tracks",
     duration:   "queue-duration"
 })
-Q.set_controller(Q_controller)
+QL.set_controller(Q_controller)
+
+
+Q = new QueueAreaView(QL, PE)
+Q.hide_playlist_editor()
+
 
 T = new TrackListView({
     name:       "main-track-list-name",
@@ -272,6 +285,31 @@ document.getElementById("session-save-cancel").addEventListener('click', () => {
     document.getElementById("save-session-dialog").close();
 })
 
+
+
+
+
+document.getElementById("main-menu-discard-session").addEventListener('click', () => {
+    document.getElementById("discard-session-dialog").showModal();
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+document.getElementById("session-discard").addEventListener('click', () => {
+    current_session_model.discard_session(() => {
+        SE_controller.refresh(() => {})
+    })
+    document.getElementById("discard-session-dialog").close();
+})
+
+document.getElementById("session-discard-cancel").addEventListener('click', () => {
+    document.getElementById("discard-session-dialog").close();
+})
+
+
+
+
+
+
 document.getElementById("main-menu-settings").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
@@ -341,6 +379,7 @@ function display_playlist(id) {
         (info) => {
             let L = new PlaylistModel(info, tracks_model)
             T_controller.set_model(info.name, L)
+            // PE_controller.set_model(info.name, L)
         }
     )
 }

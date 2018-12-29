@@ -45,12 +45,15 @@
 <script src="../../controllers/session.js"></script>
 <script src="../../controllers/playback.js"></script>
 <script src="../../controllers/track_list.js"></script>
+<script src="../../controllers/playlist.js"></script>
 <script src="../../controllers/playlists.js"></script>
 <script src="../../controllers/sessions.js"></script>
 <script src="../../controllers/precue.js"></script>
 <script src="../../controllers/volume.js"></script>
 
+<script src="views/playlist_edit.js"></script>
 <script src="views/queue.js"></script>
+<script src="views/queue_area.js"></script>
 <script src="views/main_player.js"></script>
 <script src="views/track_list.js"></script>
 <script src="views/playlists.js"></script>
@@ -72,54 +75,77 @@
         </menu>
     </dialog>
 
-    <div id="main-track-list-color-chooser" class="overlay-color-picker-bottom">
-            <table id="color-swatch-list" style="width:300px; height:150px;margin:10px">
-                <tr style="height:10px">
-                    <td><div class="color-swatch" style="background-color:#ff3855"></div></td>
-                    <td><div class="color-swatch" style="background-color:#fd3a4a"></div></td>
-                    <td><div class="color-swatch" style="background-color:#fb4d46"></div></td>
-                    <td><div class="color-swatch" style="background-color:#fa5b3d"></div></td>
-                    <td><div class="color-swatch" style="background-color:#ffaa1d"></div></td>
-                    <td><div class="color-swatch" style="background-color:#fff700"></div></td>
-                    <td><div class="color-swatch" style="background-color:#299617"></div></td>
-                    <td><div class="color-swatch" style="background-color:#a7f432"></div></td>
-                </tr>
-                <tr style="height:15px">
-                    <td><div class="color-swatch" style="background-color:#2243b6"></div></td>
-                    <td><div class="color-swatch" style="background-color:#5dadec"></div></td>
-                    <td><div class="color-swatch" style="background-color:#5946b2"></div></td>
-                    <td><div class="color-swatch" style="background-color:#9c51b6"></div></td>
-                    <td><div class="color-swatch" style="background-color:#a83731"></div></td>
-                    <td><div class="color-swatch" style="background-color:#af6e4d"></div></td>
-                    <td><div class="color-swatch" style="background-color:#1b1b1b"></div></td>
-                    <td><div class="color-swatch" style="background-color:#bfafb2"></div></td>    
-                </tr>
-                <tr style="height:15px">
-                    <td><div class="color-swatch" style="background-color:#ff5470"></div></td>
-                    <td><div class="color-swatch" style="background-color:#ffbd00"></div></td>
-                    <td><div class="color-swatch" style="background-color:#ff7a00"></div></td>
-                    <td><div class="color-swatch" style="background-color:#fdff00"></div></td>
-                    <td><div class="color-swatch" style="background-color:#87ff2a"></div></td>
-                    <td><div class="color-swatch" style="background-color:#0048ba"></div></td>
-                    <td><div class="color-swatch" style="background-color:#ff007c"></div></td>
-                    <td><div class="color-swatch" style="background-color:#e936a7"></div></td>    
-                </tr>
-            </table>
-            <button id="remove-color" style="width:300px; height:30px; color:#101010">Remove color</button>
+    <dialog id="delete-playlist-dialog" style="z-index:1000; padding:0; background-color:rgb(100,100,100)">
+        <h1 style="background-color:rgb(30,30,30); text-align:center; font-size:11pt; margin:0px; color:rgb(200,200,200); height:30px; line-height:30px">Delete playlist?</h1>
+        <div style="margin:10px">
+            Really delete playlist '<i id="delete-playlist-name"></i>'? This operation cannot be undone.
         </div>
+        <menu>
+            <button id="delete-playlist">OK</button>
+            <button id="delete-playlist-cancel">CANCEL</button>
+        </menu>
+    </dialog>
+
+    <dialog id="discard-session-dialog" style="z-index:1000; padding:0; background-color:rgb(100,100,100)">
+        <h1 style="background-color:rgb(30,30,30); text-align:center; font-size:11pt; margin:0px; color:rgb(200,200,200); height:30px; line-height:30px">Delete playlist?</h1>
+        <div style="margin:10px">
+            Discard the current session? This operation cannot be undone.
+        </div>
+        <menu>
+            <button id="session-discard">OK</button>
+            <button id="session-discard-cancel">CANCEL</button>
+        </menu>
+    </dialog>
+    
+    <div id="main-track-list-color-chooser" class="overlay-color-picker-bottom">
+        <table id="color-swatch-list" style="width:300px; height:150px;margin:10px">
+            <tr style="height:10px">
+                <td><div class="color-swatch" style="background-color:#ff3855"></div></td>
+                <td><div class="color-swatch" style="background-color:#fd3a4a"></div></td>
+                <td><div class="color-swatch" style="background-color:#fb4d46"></div></td>
+                <td><div class="color-swatch" style="background-color:#fa5b3d"></div></td>
+                <td><div class="color-swatch" style="background-color:#ffaa1d"></div></td>
+                <td><div class="color-swatch" style="background-color:#fff700"></div></td>
+                <td><div class="color-swatch" style="background-color:#299617"></div></td>
+                <td><div class="color-swatch" style="background-color:#a7f432"></div></td>
+            </tr>
+            <tr style="height:15px">
+                <td><div class="color-swatch" style="background-color:#2243b6"></div></td>
+                <td><div class="color-swatch" style="background-color:#5dadec"></div></td>
+                <td><div class="color-swatch" style="background-color:#5946b2"></div></td>
+                <td><div class="color-swatch" style="background-color:#9c51b6"></div></td>
+                <td><div class="color-swatch" style="background-color:#a83731"></div></td>
+                <td><div class="color-swatch" style="background-color:#af6e4d"></div></td>
+                <td><div class="color-swatch" style="background-color:#1b1b1b"></div></td>
+                <td><div class="color-swatch" style="background-color:#bfafb2"></div></td>    
+            </tr>
+            <tr style="height:15px">
+                <td><div class="color-swatch" style="background-color:#ff5470"></div></td>
+                <td><div class="color-swatch" style="background-color:#ffbd00"></div></td>
+                <td><div class="color-swatch" style="background-color:#ff7a00"></div></td>
+                <td><div class="color-swatch" style="background-color:#fdff00"></div></td>
+                <td><div class="color-swatch" style="background-color:#87ff2a"></div></td>
+                <td><div class="color-swatch" style="background-color:#0048ba"></div></td>
+                <td><div class="color-swatch" style="background-color:#ff007c"></div></td>
+                <td><div class="color-swatch" style="background-color:#e936a7"></div></td>    
+            </tr>
+        </table>
+        <button id="remove-color" style="width:300px; height:30px; color:#101010">Remove color</button>
+    </div>
 
 
     <div class="header">
         <div class="item">
             <div class="dropdown">
                 <button id="settings-button" class="settings-button"><i class="fa fa-ellipsis-h"></i></button>
-                <div id="main-menu-dropdown" class="dropdown-content" style="left:0 !important; top:30px; min-width:180px">
+                <div id="main-menu-dropdown" class="dropdown-content" style="left:0 !important; top:30px; min-width:210px">
                     <a id="main-menu-add-track"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add tracks</a>
                     <p></p>
                     <a id="main-menu-stop-queue-now"><i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now</a>
                     <a id="main-menu-skip-current-track"><i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track</a>
                     <p></p>
                     <a id="main-menu-save-session"><i class="fa fa-save"></i>&nbsp;&nbsp;Save current session</a>
+                    <a id="main-menu-discard-session"><i class="fa fa-minus"></i>&nbsp;&nbsp;Discard current session</a>
                     <p></p>
                     <a id="main-menu-reset-audio"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Reset audio system</a>
                     <a id="main-menu-settings"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a>
@@ -143,10 +169,6 @@
     </div>  -->
 
     <div class="main_player" style="position:fixed">
-        <!-- <div style="display:none">  
-            <input type="hidden" id="main-track-color-value" value=""/>                                  
-            <button id="main-player-color" class="color-chooser"></button>
-        </div> -->
         <div class="overlay" id="main-player-overlay">
             <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()">START</button>
         </div>
@@ -162,12 +184,6 @@
                 <div style="padding-right:10px; position:absolute; right:0px; display:inline-block"><h1 id="main-player-time-remaining" class="time_remaining">-3:34</h1></div>
             </div>
             <div class="track-info">
-                <!-- <div class="info">
-                    <div class="title">COLOR</div>
-                    <div id="main-player-track-color" class="value">  
-                        <button id="main-player-color" class="color-chooser"></button>
-                    </div>
-                </div> -->
                 <div class="info">
                     <div class="title">DURATION</div>
                     <div id="main-player-track-duration" class="value">3:12</div>
@@ -256,10 +272,10 @@
                                 <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input id="new-playlist-name" type="text" class="new-playlist"></td>
                             </tr>
                         <! } else { !>
-                            <tr class="choice track-drop-target" style="height:20px;" onclick="display_playlist(<!= id !>)" data-playlist-id=<!= id !>>
+                            <tr class="choice track-drop-target" style="height:20px;" data-playlist-id=<!= id !>>
                                 <td style="width:30px"></td>
                                 <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
-                                <td style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                                <td id="playlist-element-<!= id !>" style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
                                 <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
                             </tr>
                         <! } !>
@@ -279,13 +295,13 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
-                            <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session(<!= id !>)">
-                                <td style="width:30px"></td>
-                                <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
-                                <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
-                                <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
-                                <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
-                            </tr>
+                        <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session(<!= id !>)">
+                            <td style="width:30px"></td>
+                            <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
+                            <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                            <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
+                            <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
+                        </tr>
 
                     </script>
 
@@ -294,41 +310,6 @@
             <button class="accordion open-on-drag-over">Preview Player</button>
             <div class="panel" data-fixed-height="320">
                 <div id="preview-player-surface" class="preview-player" style="position:relative">
-                    <!-- <div id="precue-color-chooser" class="overlay-color-picker">
-                        <table id="precue-color-swatch-list" style="width:300px; height:150px;margin:10px">
-                            <tr style="height:10px">
-                                <td><div class="color-swatch" style="background-color:#ff3855"></div></td>
-                                <td><div class="color-swatch" style="background-color:#fd3a4a"></div></td>
-                                <td><div class="color-swatch" style="background-color:#fb4d46"></div></td>
-                                <td><div class="color-swatch" style="background-color:#fa5b3d"></div></td>
-                                <td><div class="color-swatch" style="background-color:#ffaa1d"></div></td>
-                                <td><div class="color-swatch" style="background-color:#fff700"></div></td>
-                                <td><div class="color-swatch" style="background-color:#299617"></div></td>
-                                <td><div class="color-swatch" style="background-color:#a7f432"></div></td>
-                            </tr>
-                            <tr style="height:15px">
-                                <td><div class="color-swatch" style="background-color:#2243b6"></div></td>
-                                <td><div class="color-swatch" style="background-color:#5dadec"></div></td>
-                                <td><div class="color-swatch" style="background-color:#5946b2"></div></td>
-                                <td><div class="color-swatch" style="background-color:#9c51b6"></div></td>
-                                <td><div class="color-swatch" style="background-color:#a83731"></div></td>
-                                <td><div class="color-swatch" style="background-color:#af6e4d"></div></td>
-                                <td><div class="color-swatch" style="background-color:#1b1b1b"></div></td>
-                                <td><div class="color-swatch" style="background-color:#bfafb2"></div></td>    
-                            </tr>
-                            <tr style="height:15px">
-                                <td><div class="color-swatch" style="background-color:#ff5470"></div></td>
-                                <td><div class="color-swatch" style="background-color:#ffbd00"></div></td>
-                                <td><div class="color-swatch" style="background-color:#ff7a00"></div></td>
-                                <td><div class="color-swatch" style="background-color:#fdff00"></div></td>
-                                <td><div class="color-swatch" style="background-color:#87ff2a"></div></td>
-                                <td><div class="color-swatch" style="background-color:#0048ba"></div></td>
-                                <td><div class="color-swatch" style="background-color:#ff007c"></div></td>
-                                <td><div class="color-swatch" style="background-color:#e936a7"></div></td>    
-                            </tr>
-                        </table>
-                        <button id="precue-remove-color" style="width:300px; height:30px; color:#101010">Remove color</button>
-                    </div> -->
         
                     <div id="no-preview-track" class="overlay">
                         No track to preview
@@ -352,8 +333,6 @@
                             <div style="display:inline-block; width:100%">
                                 <div style="height:20px">
                                     <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
-                                    <!-- <input type="hidden" id="track-color-value" value=""/>
-                                    <button id="precue-player-color" class="color-chooser"></button> -->
                                 </div>
                                 <div style="height:20px">
                                     <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>
@@ -435,27 +414,27 @@
             </div>
         </div>
         <div id="queue-list" class="queue_list">
-            <div class="main-list-header">
-                <div class="title">
-                    <div class="name">
-                        QUEUE
-                    </div>
-                    <div class="count" style="margin-top:4px">
-                        <div id="queue-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="queue-duration" style="display:inline-block">57 minutes 37 seconds</div>
+            <div id="playlist-edit-display" class="playlist-edit-overlay">
+                <div class="main-list-header">
+                    <div class="title">
+                        <div id="playlist-edit-name" class="name">
+                            PLAYLIST
+                        </div>
+                        <div class="count" style="margin-top:4px">
+                            <div id="playlist-edit-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="playlist-edit-duration" style="display:inline-block">57 minutes 37 seconds</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div id="queue-list-area" class="queue-list">
-                <table id="queue-list-elements" style="width:100%">
-                    <thead style="width:100%">
-                    <tr style="width:100%"></tr></thead>
-                    <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
-                </table>
-                <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
-                    <! if (id != null ) { !>
+                <div id="playlist-edit-area" class="playlist-edit-list">
+                    <table id="playlist-edit-elements" style="width:100%">
+                        <thead style="width:100%">
+                        <tr style="width:100%"></tr></thead>
+                        <tbody id="playlist-edit-elements-body" class="list-group" style="width:100%;"></tbody>
+                    </table>
+                    <script data-jui="#playlist-edit-elements" data-tpl="row" type="text/template">
                         <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
                             <td style="width:100%; margin:0; padding:0">
-                                <div class="queued-track element" contextmenu="mymenu" data-track-id=<!= id !>>
+                                <div class="playlist-track element" contextmenu="mymenu" data-track-id=<!= id !>>
                                     <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
                                     <div style="margin:0px; padding:0px; float:left; width:275px">
                                         <div class="queue_element_title"><b><!= title !></b></div>
@@ -468,16 +447,58 @@
                                 </div>
                             </td>
                         </tr>
-                    <! } else { !>
-                        <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
-                            <td style="width:100%; margin:0; padding:0">
-                                <div class="queued-track element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center" data-track-id=<!= id !>>
-                                    <b>END OF QUEUE</b>
-                                </div>
-                            </td>
-                        </tr>
-                    <! } !>
-                </script>
+                    </script>
+                </div>
+                <div style="display:block; position:absolute; padding-left:10px; padding-right:10px; padding-top:10px; width:100%; height:75px">
+                    <!-- <button id="edit-playlist-save" class="playlist-edit-save-button">SAVE</button>      -->
+                    <button id="edit-playlist-cancel" class="playlist-edit-cancel-button">CLOSE</button>                 
+                </div>
+            </div>
+            <div id="queue-list-display" class="queue-overlay">
+                <div class="main-list-header">
+                    <div class="title">
+                        <div class="name">
+                            QUEUE
+                        </div>
+                        <div class="count" style="margin-top:4px">
+                            <div id="queue-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="queue-duration" style="display:inline-block">57 minutes 37 seconds</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="queue-list-area" class="queue-list">
+                    <table id="queue-list-elements" style="width:100%">
+                        <thead style="width:100%">
+                        <tr style="width:100%"></tr></thead>
+                        <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
+                    </table>
+                    <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
+                        <! if (id != null ) { !>
+                            <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                                <td style="width:100%; margin:0; padding:0">
+                                    <div class="queued-track element" contextmenu="mymenu" data-track-id=<!= id !>>
+                                        <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
+                                        <div style="margin:0px; padding:0px; float:left; width:275px">
+                                            <div class="queue_element_title"><b><!= title !></b></div>
+                                            <div class="queue_element_artist"><i><!= artist !></i></div>
+                                        </div>
+                                        <div class="queue_element_bpm"><!= bpm !> BPM</div>
+                                        <div class="queue_element_duration">
+                                            <b><!= duration !></b>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        <! } else { !>
+                            <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                                <td style="width:100%; margin:0; padding:0">
+                                    <div class="queued-track element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center" data-track-id=<!= id !>>
+                                        <b>END OF QUEUE</b>
+                                    </div>
+                                </td>
+                            </tr>
+                        <! } !>
+                    </script>
+                </div>
             </div>
         </div>
     </div>

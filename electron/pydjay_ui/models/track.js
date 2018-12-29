@@ -19,7 +19,7 @@ class TrackListModel extends BaseListModel {
     }
 
     get_all_tracks() {
-        Q = []
+        let Q = []
         Object.keys(this.track_list).forEach((x) => {Q.push(this.track_list[x])})
         Q.sort(this.compare_tracks)
         return Q

@@ -383,6 +383,7 @@ class TrackListView extends EventDispatcher {
 
 
     move_down() {
+        this.d = 1
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]
             let i = this.view_list_id_order.indexOf(r.id)
@@ -399,6 +400,7 @@ class TrackListView extends EventDispatcher {
     }
 
     move_up() {
+        this.d = -1
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]
             let i = this.view_list_id_order.indexOf(r.id)
@@ -457,7 +459,8 @@ class TrackListView extends EventDispatcher {
     add_selection_to_queue() {
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]
-            this.queue_controller.append(r)
+            Q.add_element(r)
+            // this.queue_controller.append(r)
         }
     }
 
@@ -490,19 +493,19 @@ class TrackListView extends EventDispatcher {
     }
 
 
-    ensure_row_visible(x) {
+    ensure_row_visible(x, direction) {
         let row = this.table_rows[x.id]
         let scroller = document.getElementById("main-track-list-scroller")
         let scrollerRect = scroller.getBoundingClientRect()
-
+        //console.log(row)
         if (row == undefined) {
-            scroller.scrollTop -= (30)
+            scroller.scrollTop += (this.d*30)
         } else {
             let rowRect = row.getBoundingClientRect()
             let offsetTop = (rowRect.y - scrollerRect.y)
             let offsetBottom = offsetTop + rowRect.height
             let y = scroller.getBoundingClientRect()
-            if (offsetBottom > y.height) {
+            if (offsetBottom >= y.height) {
                 scroller.scrollTop += (offsetBottom - y.height)
             } else if (offsetTop < 0) {
                 scroller.scrollTop += (offsetTop)

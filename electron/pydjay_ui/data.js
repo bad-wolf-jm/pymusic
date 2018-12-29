@@ -292,7 +292,6 @@ function DataProvider() {
         sql += fields.indexOf("grouping")       != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
         sql += `date_modified=${DATE(new Date())}\n` 
         sql += `WHERE id=${id}`
-        console.log(sql)
         $QUERY(sql, k)
     }
 
@@ -367,13 +366,106 @@ function DataProvider() {
     }
 
     self.create_playlist = function (name, done) {
-        $QUERY(`SELECT id FROM playlists WHERE name='${name}'`, (x) => {
+        $QUERY(`SELECT id FROM playlists WHERE name='${addslashes(name)}'`, (x) => {
             if (x.length == 0) {
                 current_time = DATE(new Date());
-                $QUERY(`INSERT INTO playlists (name, created) VALUES ('${name}', ${current_time})`, done)
+                $QUERY(`INSERT INTO playlists (name, created) VALUES ('${addslashes(name)}', ${current_time})`, (x) => {
+                    done(x)
+                })
             } else {
                 done()    
             }
         })
     }
+
+    self.rename_playlist = function (id, name, done) {
+        $QUERY(`SELECT id FROM playlists WHERE name='${addslashes(name)}'`, (x) => {
+            if (x.length == 0) {
+                current_time = DATE(new Date());
+                $QUERY(`UPDATE playlists SET name='${addslashes(name)}' WHERE id=${id}`, done)
+            } else {
+                done()    
+            }
+        })
+    }
+
+    self.check_playlist_name_availability = function (name, done) {
+        $QUERY(`SELECT id FROM playlists WHERE name='${addslashes(name)}'`, (x) => {
+            done(x.length == 0)
+        })
+    }
+
+    self.get_playlist_by_id = function (id, done) {
+        $QUERY(`SELECT * FROM playlists WHERE id=${id}`, (x) => {
+            done(x[0])
+        })
+    }
+
+
+    self.duplicate_playlist = function (id, done) {
+        $QUERY(`SELECT name FROM playlists`, (name_list) => {
+            $QUERY(`SELECT name FROM playlists WHERE id=${id}`, (n) => {
+                let name = n[0].name
+                let l = name_list.map((x) => {x.name})
+                let i = 1
+                let new_name = name + `.${i}` 
+
+                while (l.indexOf(new_name) != -1) {
+                     i += 1
+                     new_name = name + `.${i}`
+                }
+                this.create_playlist(new_name, (x) => {
+                    if (x != undefined) {
+                        let new_id = x.insertId
+                        $QUERY(
+                            `SELECT track_id FROM playlist_tracks WHERE playlist_id=${id}`,
+                            function (list) {
+                                playlist_data = []
+                                if (list.length > 0) {
+                                    for (i=0; i<list.length; i++) {
+                                        playlist_data.push(`(${new_id}, ${list[i].track_id})`)
+                                    }
+                                    $QUERY(`INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`, 
+                                            (x) => {
+                                                done()
+                                            }
+                                        )
+                                }
+                            }
+                        )
+                    }
+                })
+            })    
+        })
+    }
+
+    self.delete_playlist = function (playlist_id, done) {
+        $QUERY(`DELETE FROM playlists WHERE id=${playlist_id}`, function (r) {
+                $QUERY(`DELETE FROM playlist_tracks WHERE playlist_id=${playlist_id}`, function (r) {
+                        done()
+                    }
+                )
+            }
+        )
+    }
+
+    self.set_playlist_tracks = function(id, list, k) {
+        playlist_data = []
+        if (list.length > 0) {
+            for (i=0; i<list.length; i++) {
+                playlist_data.push(`(${id}, ${list[i]})`)
+            }
+            delete_sql = `DELETE FROM playlist_tracks WHERE playlist_id=${id}`
+            replace_sql = `INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`
+            $QUERY(`DELETE FROM playlist_tracks WHERE playlist_id=${id}`,
+                () => {
+                    $QUERY(`INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`, 
+                        () => {k();})
+                }
+            )
+        }
+
+    }
+
+
 }

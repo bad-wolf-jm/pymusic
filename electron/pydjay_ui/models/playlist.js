@@ -2,6 +2,7 @@ class PlaylistModel extends BaseListModel {
     constructor(playlist, tracks_model) {
         super()
         this.tracks_model = tracks_model
+        this.info = playlist
 
         this.tracks_model.on('metadata-changed', (x) => {
             this.dispatch("metadata-changed", x)
@@ -11,10 +12,11 @@ class PlaylistModel extends BaseListModel {
             (tracks) => { 
                 this.track_list = {}
                 this.tracks_order = []
+                let elements = {}
                 tracks.forEach((t) => {
-                    this.tracks_order.push(t.id)
-                    this.track_list[t.id] = this.tracks_model.get_track_by_id(t.id)
+                    elements[t.id] = true 
                 })
+                this.tracks_order = Object.keys(elements)
                 for(let i=0; i<this.ready_wait_queue.length; i++) {
                     this.ready_wait_queue[i]()
                 }                                                            
@@ -32,25 +34,85 @@ class PlaylistModel extends BaseListModel {
 
 
     get_all_tracks() {
-        Q = []
-        this.tracks_order.forEach((x) => {Q.push(this.track_list[x])})
+        let Q = []
+        this.tracks_order.forEach((x) => {
+            Q.push(this.tracks_model.get_track_by_id(x))
+        })
         Q.sort(this.compare_tracks)
         return Q
     }
 
     get_track_by_id(id) {
-        return this.track_list[id]
+        return this.tracks_model.get_track_by_id(id)
     }
 
     set_metadata(track, metadata) {
         this.tracks_model.set_metadata(track, metadata)
-        // X = this.track_list[track.id]
-        // metadata_keys = Object.keys(metadata)
-        // Object.keys(metadata).forEach((x) => {
-        //     X[x] = metadata[x]
-        // })
-        // DB.update_track_data(id, metadata, () => {
-        //     this.dispatch("metadata-changed", this.track_list[id])
-        // })
     }
+
+    save() {
+        let elements = {}
+        this.tracks_order.forEach((t) => {
+            elements[t] = true 
+        })
+        DB.set_playlist_tracks(this.info.id, Object.keys(elements), () => {})
+    }
+    
+
+    _check_availability(element, do_insert) {
+        if ((this.tracks_order.indexOf(element.id.toString()) == -1)) {
+            do_insert(element)
+        }
+    }
+
+
+    add(element) {
+        if (this.tracks_order != undefined) {
+            this._check_availability(element, (e) => {
+                this.tracks_order.push(e.id.toString())
+                this.save()
+                this.dispatch("content-changed", this.get_all_tracks())    
+            })
+        }
+    }
+
+    remove(index) {
+        //console.log(index)
+        //console.log(this.tracks_order)
+        if (this.tracks_order != undefined) {
+            let I = this.tracks_order.indexOf(index.id.toString())
+            if (I != -1) {
+                this.tracks_order.splice(I, 1)
+                this.save()
+                this.dispatch("content-changed", this.get_all_tracks())
+            }
+        }
+    }
+
+    length() {
+        if (this.tracks_order != undefined) {
+            return this.tracks_order.length 
+        }
+        return undefined
+    }
+
+    duration() {
+        if (this.tracks_order != undefined) {
+            let d = 0
+            for (let i=0; i<this.tracks_order.length; i++) {
+                
+                if (this.tracks_order[i] == null) {
+                    return d
+                } else {
+                    let x = this.tracks_model.get_track_by_id(this.tracks_order[i])
+                    d += (x != undefined) ? x.stream_length : 0                        
+                }
+            }
+            return d
+        }
+        return undefined
+    }
+
+
+
 }

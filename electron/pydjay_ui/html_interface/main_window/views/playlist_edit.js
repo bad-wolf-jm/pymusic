@@ -1,4 +1,10 @@
-class QueueView extends EventDispatcher {
+const {remote} = require('electron')
+const {Menu, MenuItem} = remote
+const {BrowserWindow} = remote
+const electron = require('electron');
+
+
+class PlaylistEditView extends EventDispatcher {
     constructor(dom_ids) {
         super()
 
@@ -12,7 +18,7 @@ class QueueView extends EventDispatcher {
         this.duration_dom   = document.getElementById(dom_ids.duration);
 
         this.view_list_order = []
-        let queue_list = document.getElementById("queue-list-area")
+        let queue_list = document.getElementById("playlist-edit-area")
         queue_list.addEventListener('dragenter', this.handle_drag_enter.bind(this), false);
         queue_list.addEventListener('dragover',  this.on_drag_over.bind(this), false);
         queue_list.addEventListener('dragend',   this.handle_drag_end.bind(this), false);
@@ -82,14 +88,11 @@ class QueueView extends EventDispatcher {
         this.controller = controller
         this.controller.addView(this)
         this.controller.on("content-changed", this.set_queue.bind(this))
-        this.controller.ready(this.set_queue.bind(this))
     }
 
-    set_queue(queue) {
+    set_queue(name, queue) {
         this.view_list_order = []
-        //this.view_id_list_order = []
         let queue_rows = []
-
         for(let i=0; i<queue.length; i++) {
             let element = (queue[i] == null) ? {id: null, stream_length:0} : {
                 id:       queue[i].id,
@@ -108,13 +111,14 @@ class QueueView extends EventDispatcher {
             queue_rows.push(element)
             this.view_list_order.push(element.id)
         }
+        document.getElementById("playlist-edit-name").innerHTML = name
         this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
         this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         jui.ready([ "grid.table" ], (table) => {
                 if (this.queue_content != undefined) {
                     this.queue_content.reset()
                 }
-                this.queue_content = table("#queue-list-elements", {
+                this.queue_content = table("#playlist-edit-elements", {
                     data: queue_rows,
                     scroll: false,
                     resize: false
@@ -135,16 +139,17 @@ class QueueView extends EventDispatcher {
 
     delete_selection() {
         let selected = this.selected_element()
-
         if (selected != undefined) {
             let position = this.view_list_order.indexOf(selected.id)
             this.controller.remove(this.selected_element())
             this._select_row(this.view_elements[this.view_list_order[position]])
         }
+
     }
 
+
     add_element(e) {
-        this.controller.append(e)
+        this.controller.add(e)
     }
 
     move_down() {
@@ -191,7 +196,6 @@ class QueueView extends EventDispatcher {
     selected_element() {
         if (this.current_selection != undefined) {
             let track_id = parseInt(this.current_selection.attributes["data-track-id"].value)
-            // console.log(track_id)
             if (!isNaN(track_id)) {
                 return this.controller.get_id(track_id)
             } else {
@@ -204,7 +208,6 @@ class QueueView extends EventDispatcher {
     move_last() {
 
     }
-
 
     move_first() {
 
@@ -239,7 +242,7 @@ class QueueView extends EventDispatcher {
     }
 
     ensure_row_visible(row) {
-        let scroller = document.getElementById("queue-list-area")
+        let scroller = document.getElementById("playlist-edit-area")
         let scrollerRect = scroller.getBoundingClientRect()
 
         if (row == undefined) {
@@ -258,56 +261,15 @@ class QueueView extends EventDispatcher {
     }
 
     move_selection_up() {
-        let selected = this.selected_element()
-        let selected_id;
-        if (selected !== undefined) {
-            selected_id = (selected != null) ? selected.id : selected
-            let position = this.view_list_order.indexOf(selected_id)
-            if (position > 0) {
-                let x = this.view_list_order[position - 1]
-                this.view_list_order[position - 1] = selected_id
-                this.view_list_order[position] = x
-                this.dispatch("reorder", this.view_list_order)
-                this.sortable.sort(this.view_list_order)
-                this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-            }
-        }
+
     }
 
     move_selection_down() {
-        let selected = this.selected_element()
-        let selected_id;
-        if (selected !== undefined) {
-            selected_id = (selected != null) ? selected.id : selected
-            let position = this.view_list_order.indexOf(selected_id)
 
-            if (position + 1 < this.view_list_order.length) {
-                let x = this.view_list_order[position + 1]
-                this.view_list_order[position + 1] = selected_id
-                this.view_list_order[position] = x
-                this.dispatch("reorder", this.view_list_order)
-                this.sortable.sort(this.view_list_order)
-                this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-            }
-        }
     }
 
     move_selection_to_top() {
-        let selected = this.selected_element()
-        let selected_id;
-        if (selected !== undefined) {
-            selected_id = (selected != null) ? selected.id : selected
-            let position = this.view_list_order.indexOf(selected_id)
 
-            this.view_list_order.splice(position, 1)
-            this.view_list_order.splice(0, 0, selected_id)
-            this.dispatch("reorder", this.view_list_order)
-            this.sortable.sort(this.view_list_order)
-            this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-            this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-        }
     }
 
 
@@ -340,7 +302,7 @@ class QueueView extends EventDispatcher {
         let d = evt.dataTransfer.getData("text/plain")
         try {
             let track = JSON.parse(d)
-            this.controller.append(track)
+            this.controller.add(track)
         } catch (error) {
             console.log(error)
         }
@@ -354,6 +316,7 @@ class QueueView extends EventDispatcher {
         x.classList.add("selected")
         this.current_selection = x
         this.ensure_row_visible(x)
+        //console.log(this.current_selection)
     }
 
     select_row(e) {
@@ -363,7 +326,7 @@ class QueueView extends EventDispatcher {
     }
 
     connect_events() {
-        let elements = document.querySelectorAll('.queued-track');
+        let elements = document.querySelectorAll('.playlist-track');
         this.view_elements = {};
         [].forEach.call(elements, (e) => {
             let track_id = parseInt(e.attributes["data-track-id"].value)
@@ -375,7 +338,7 @@ class QueueView extends EventDispatcher {
             e.addEventListener("click", this.select_row.bind(this))
             e.addEventListener('contextmenu', (e) => {
                 e.preventDefault()
-                let x = e.target.closest(".queued-track")
+                let x = e.target.closest('.playlist-track')
                 let track_id = parseInt(x.attributes["data-track-id"].value)
                 let track_element = this.controller.get_id(track_id)
                 this.context_menu_element = track_element
