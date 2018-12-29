@@ -8,6 +8,10 @@ class QueueAreaView extends EventDispatcher {
 
         this.displayed = undefined
 
+        this.element.addEventListener("click", () => {
+            focusWindow(this)
+        })
+
 
         // document.getElementById("edit-playlist-save").addEventListener("click", () => {
         //     this.controller.save_playlist_tracks(this.view_list_order, () => {
