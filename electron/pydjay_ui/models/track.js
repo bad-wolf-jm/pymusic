@@ -2,7 +2,6 @@ class TrackListModel extends BaseObjectListModel {
     constructor() {
         super()
         this.initialize()
-
     }
 
     refresh(k) {

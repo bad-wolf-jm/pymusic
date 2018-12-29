@@ -1,97 +1,60 @@
-class CurrentSessionModel extends BaseListModel {
-    constructor(tracks_model) {
-        super()
-        this.tracks_model = tracks_model
-        this.tracks_model.on('metadata-changed', (x) => {
-            this.dispatch("metadata-changed", x)
-        })
+class CurrentSessionModel extends BaseOrderedObjectSubsetModel {
 
-        this.refresh(() => {
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i]()
-            }                                                            
-        })
+
+    constructor(tracks_model) {
+        super(tracks_model)
+        this.initialize()
     }
 
     refresh(k) {
         DB.get_current_session_elements( (tracks) => { 
-            this.tracks_order = []
+            this.objects = {}
+            this.ordering = []
             tracks.forEach((t) => {
-                this.tracks_order.push(t)
+                this.ordering.push(t.track_id)
+                this.objects[t.track_id] = t
             })
-            k()
-            this.dispatch("content-changed", this.queue)
+            super.refresh(k)
         })            
     }
 
-    ready(func) {
-        if (this.tracks_order != undefined) {
-            func(this.get_all_tracks())
-        } else {
-            this.ready_wait_queue.push(func)
-        }
+    get_all_tracks() {
+        return this.get_all_objects()
     }
 
-    get_all_tracks() {
-        let Q = []
-        this.tracks_order.forEach((x) => {Q.push(this.tracks_model.get_track_by_id(x.track_id))})
-        return Q
+    get_track_by_id(id) {
+        return this.get_object_by_id(id)
     }
 
     check_membership(element) {
-        if (this.tracks_order != undefined) {
-            for (let i=0; i < this.tracks_order.length; i++) {
-                if (element.id == this.tracks_order[i].track_id) {
-                    return true
-                }
-            }
+        if (this.is_ready()) {
+            return (this.objects[element.id] != undefined)
         }
         return false
     }
 
     add(element) {
-        this.tracks_order.push(element)
-        this.save()
-        this.dispatch("content-changed", this.get_all_tracks())
-    }
-
-    get_track_by_id(id) {
-        return this.tracks_model.get_track_by_id(id)
+        if (this.is_ready())  {
+            this.ordering.push(element.track_id)
+            this.objects[element.track_id] = element
+            this.dispatch("content-changed", this.get_all_objects())
+            this.save()
+        }
     }
 
     save() {
         $QUERY("TRUNCATE current_played_tracks", () => {
             let queue_tuples = []
-            for (let i=0; i < this.tracks_order.length; i++) {
-                T = this.tracks_order[i]
-                queue_tuples.push(`(${T.track_id}, ${DATE(T.start_time)}, ${DATE(T.end_time)}, ${i+1}, '${T.status}')`)
-            }
-            $QUERY(`INSERT INTO current_played_tracks (track_id, start_time, end_time, position, status) VALUES ${queue_tuples.join(",")}`, () => {})
-        })
-    }
+            let position = 0
 
-    length() {
-        if (this.tracks_order != undefined) {
-            return this.tracks_order.length
-        }
-        return undefined
-    }
-
-    duration() {
-        if (this.tracks_order != undefined) {
-            let d = 0
-            this.tracks_order.forEach((i) => {
-                let x = this.tracks_model.get_track_by_id(i.track_id)
-                d += x.stream_length
+            this.ordering.forEach((i) => {
+                position += 1;
+                let session_track = this.objects[i]
+                queue_tuples.push(`(${session_track.track_id}, ${DATE(session_track.start_time)}, ${DATE(session_track.end_time)}, ${position}, '${session_track.status}')`)
             })
-            return d
-        }
-        return undefined
-    }
-
-
-    set_metadata(track, metadata) {
-        this.tracks_model.set_metadata(track, metadata)
+            $QUERY(`INSERT INTO current_played_tracks (track_id, start_time, end_time, position, status) 
+                    VALUES ${queue_tuples.join(",")}`, () => {})
+        })
     }
 
     discard_session(k) {

@@ -1,20 +1,16 @@
-class SuggestedModel extends BaseListModel {
+class SuggestedModel extends BaseObjectSubsetModel {
     constructor(tracks_model) {
-        super()
-        this.tracks_model = tracks_model
+        super(tracks_model)
+        this.initialize() 
+    }
 
-        this.tracks_model.on('metadata-changed', (x) => {
-            this.dispatch("metadata-changed", x)
-        })
-
+    refresh(k) {
         DB.get_suggested_tracks( (tracks) => { 
-            this.track_list = {}
+            this.objects = {}
             tracks.forEach((t) => {
-                this.track_list[t.id] = this.tracks_model.get_track_by_id(t.id)
+                this.objects[t.id] = t
             })
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i]()
-            }                                                            
+            super.refresh(k)
         })            
     }
 
@@ -27,17 +23,10 @@ class SuggestedModel extends BaseListModel {
     }
 
     get_all_tracks() {
-        let Q = []
-        Object.keys(this.track_list).forEach((x) => {Q.push(this.track_list[x])})
-        Q.sort(this.compare_tracks)
-        return Q
+        return this.get_all_objects()
     }
 
     get_track_by_id(id) {
-        return this.track_list[id]
-    }
-
-    set_metadata(track, metadata) {
-        this.tracks_model.set_metadata(track, metadata)
+        return this.get_object_by_id(id)
     }
 }

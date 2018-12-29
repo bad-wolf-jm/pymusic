@@ -10,7 +10,7 @@ class BaseOrderedObjectSubsetModel extends BaseObjectSubsetModel {
 
     reorder(new_order) {
         if (new_order.length == this.ordering.length) {
-            if (new_order.every((x) => {this.objects[x] != undefined})) {
+            if (new_order.every((x) => {return (this.objects[x] != undefined)})) {
                 this.ordering = new_order
                 this.dispatch("reorder", this.get_all_objects())
             }
@@ -19,12 +19,17 @@ class BaseOrderedObjectSubsetModel extends BaseObjectSubsetModel {
 
     insert(element, index) {
         this.ordering.splice(index, 0, element.id)
-        this.add(element)
+        super.add(element)
     }
 
     append(element) {
-        this.ordering.push(element.id)
         this.add(element)
+    }
+
+    add(element) {
+        // console.log(element)
+        this.ordering.push(element.id)
+        super.add(element)        
     }
 
     remove(element) {

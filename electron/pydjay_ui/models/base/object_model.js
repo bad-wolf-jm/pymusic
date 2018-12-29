@@ -68,6 +68,7 @@ class BaseObjectListModel extends EventDispatcher {
     }
 
     get_objects(idxs, cmp) {
+        console.log(idxs)
         if (!(this.is_ready())) {
             return undefined
         }
