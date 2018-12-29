@@ -1,59 +1,59 @@
-class QueueModel extends BaseListModel {
+class QueueModel extends BaseOrderedObjectSubsetModel {
     constructor(tracks_model, current_session_model) {
-        super()
+        super(tracks_model)
         this.current_session_model = current_session_model
-        this.tracks_model = tracks_model
-        this.tracks_order = []
+        this.initialize()  
+    }
 
-        this.tracks_model.on('metadata-changed', (x) => {
-            this.dispatch("metadata-changed", x)
-        })
-
+    refresh(k) {
         DB.get_queue_elements_ids( (tracks) => { 
-            this.tracks_order = []
+            console.log(tracks)
+            this.ordering = []
+            this.objects = {}
             if (tracks.length == 0) {
-                this.tracks_order.push(null)
+                this.ordering.push(null)
                 this.save()
             } else {
                 tracks.forEach((t) => {
-                    this.tracks_order.push(t.id)
+                    this.ordering.push(t.id)
+                    this.objects[t.id] = t
                 })
             }
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i]()
-            }     
+            super.refresh(k)
         })            
     }
 
     get_all_tracks() {
         let Q = []
-        this.tracks_order.forEach((x) => {Q.push((x != null) ? this.tracks_model.get_track_by_id(x) : null)})
+        this.ordering.forEach((x) => {
+            Q.push((x != null) ? this.get_object_by_id(x) : null)})
         return Q
     }
 
     get_track_by_id(id) {
-        return this.tracks_model.get_track_by_id(id) 
+        return this.get_object_by_id(id)
     }
 
     reorder_queue(new_order) {
-        this.tracks_order = new_order
+        this.reorder(new_order)
         this.save()
     }
 
     is_empty() {
-        return (this.tracks_order == undefined) || (this.tracks_order.length == 0) || (this.tracks_order[0] == null)
+        return (super.is_empty()) || (this.ordering[0] == null)
     }
 
     pop() {
-        if (this.tracks_order != undefined) {
-            if (this.tracks_order.length > 0) {
-                if (this.tracks_order[0] == null) {
+        if (this.is_ready()) {
+            if (this.ordering.length > 0) {
+                if (this.ordering[0] == null) {
                     return undefined
                 }
-                let element = this.tracks_order.shift()
-                this.save() 
+                let element = this.ordering.shift()
+                this.objects[element] = undefined
+                this.save()
                 this.dispatch("content-changed", this.get_all_tracks())
-                return this.tracks_model.get_track_by_id(element)
+                return this.get_track_by_id(element)
             } else {
                 return undefined
             }
@@ -64,9 +64,9 @@ class QueueModel extends BaseListModel {
     save() {
         $QUERY("TRUNCATE current_queue", () => {
             let queue_tuples = []
-            if (this.tracks_order.length > 0) {
-                for (let i=0; i < this.tracks_order.length; i++) {
-                    queue_tuples.push(`(${i+1}, ${this.tracks_order[i]})`)
+            if (this.ordering.length > 0) {
+                for (let i=0; i < this.ordering.length; i++) {
+                    queue_tuples.push(`(${i+1}, ${this.ordering[i]})`)
                 }
                 $QUERY(`INSERT INTO current_queue (position, track_id) VALUES ${queue_tuples.join(",")}`, () => {})    
             }
@@ -74,65 +74,54 @@ class QueueModel extends BaseListModel {
     }
 
     _check_availability(element, do_insert) {
-        if ((this.tracks_order.indexOf(element.id) == -1) && 
+        if ((this.ordering.indexOf(element.id) == -1) && 
                 !(this.current_session_model.check_membership(element))) {
             do_insert(element)
         }
     }
 
     insert(element, index) {
-        if (this.tracks_order != undefined) {
+        if (this.is_ready()) {
             this._check_availability(element, (e) => {
-                this.tracks_order.splice(index, 0, e.id)
+                super.insert(element, index)
                 this.save()
-                this.dispatch("content-changed", this.get_all_tracks())    
             })
         }
     }
 
     append(element) {
-        if (this.tracks_order != undefined) {
+        if (this.is_ready()) {
             this._check_availability(element, (e) => {
-                this.tracks_order.push(e.id)
+                super.append(element)
                 this.save()
-                this.dispatch("content-changed", this.get_all_tracks())    
             })
         }
     }
 
     remove(index) {
-        if (this.tracks_order != undefined) {
-            let I = this.tracks_order.indexOf(index.id)
-            if (I != -1) {
-                this.tracks_order.splice(I, 1)
-                this.save()
-                this.dispatch("content-changed", this.get_all_tracks())
-            }
+        if (this.is_ready()) {
+            super.remove(index)
+            this.save()
         }
     }
 
-
-    set_metadata(track, metadata) {
-        this.tracks_model.set_metadata(track, metadata)
-    }
-
     length() {
-        if (this.tracks_order != undefined) {
-            let i = this.tracks_order.indexOf(null)
-            return (i == -1) ? this.tracks_order.length : i 
+        if (this.is_ready()) {
+            let i = this.ordering.indexOf(null)
+            return (i == -1) ? this.ordering.length : i 
         }
         return undefined
     }
 
     duration() {
-        if (this.tracks_order != undefined) {
+        if (this.is_ready()) {
             let d = 0
-            for (let i=0; i<this.tracks_order.length; i++) {
+            for (let i=0; i<this.ordering.length; i++) {
                 
-                if (this.tracks_order[i] == null) {
+                if (this.ordering[i] == null) {
                     return d
                 } else {
-                    let x = this.tracks_model.get_track_by_id(this.tracks_order[i])
+                    let x = this.get_track_by_id(this.ordering[i])
                     d += (x != undefined) ? x.stream_length : 0                        
                 }
             }

@@ -25,7 +25,7 @@ class BaseObjectSubsetModel extends BaseObjectListModel {
     }
 
     is_empty() {
-        return (this.objects == undefined) || (Objects.keys(this.objects).length == 0)
+        return (this.objects == undefined) || (Object.keys(this.objects).length == 0)
     }
 
     duration() {

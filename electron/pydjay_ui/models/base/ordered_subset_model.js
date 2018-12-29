@@ -35,7 +35,7 @@ class BaseOrderedObjectSubsetModel extends BaseObjectSubsetModel {
     remove(element) {
         let index = this.ordering.indexOf(element.id)
         if (index != -1) {
-            this.ordering.splice(I, 1)
+            this.ordering.splice(index, 1)
             super.remove(element)
         }
     }
