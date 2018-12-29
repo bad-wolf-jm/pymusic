@@ -1,27 +1,17 @@
-class UnavailableModel extends BaseListModel {
+class UnavailableModel extends BaseObjectSubsetModel {
+
     constructor(tracks_model) {
-        super()
-        this.tracks_model = tracks_model
-
-        this.tracks_model.on('metadata-changed', (x) => {
-            this.dispatch("metadata-changed", x)
-        })
-
-        this.refresh(() => {
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i]()
-            }
-        })
+        super(tracks_model)
+        this.initialize()
     }
 
     refresh(k) {
         DB.get_unavailable_tracks( (tracks) => {
-            this.tracks_order = []
+            this.objects = {}
             tracks.forEach((t) => {
-                this.tracks_order.push(t.id)
+                this.objects[t.id] = t
             })
-            k()
-            this.dispatch("content-changed", this.queue)
+            super.refresh(k)
         })
     }
 
@@ -34,84 +24,39 @@ class UnavailableModel extends BaseListModel {
         return 0;
     }
 
-    ready(func) {
-        if (this.tracks_order != undefined) {
-            func(this.get_all_tracks())
-        } else {
-            this.ready_wait_queue.push(func)
-        }
-    }
-
     get_all_tracks() {
-        let Q = []
-        this.tracks_order.forEach((x) => {
-            Q.push(this.tracks_model.get_track_by_id(x))})
-        Q.sort(this.compare_tracks)
-        return Q
+        return this.get_all_objects()
     }
 
     get_track_by_id(id) {
-        return this.tracks_model.get_track_by_id(id)
+        return this.get_object_by_id(id)
+    }
+
+    _check_availability(element, do_insert) {
+        return (this.objects[element.id] == undefined)
     }
 
     add(element) {
-        //console.log(element)
-        this.tracks_order.push(element.id)
-        this.save()
-        this.dispatch("content-changed", this.get_all_tracks())
+        if (this.is_ready() && this._check_availability(element))  {
+            super.add(element)
+            this.save()
+        }
     }
-
-
-    remove(element) {
-        if (this.tracks_order != undefined) {
-            let I = this.tracks_order.indexOf(element.id)
-            if (I != -1) {
-                this.tracks_order.splice(I, 1)
-                this.save()
-                this.dispatch("content-changed", this.get_all_tracks())
-            }
+    
+    remove(index) {
+        if (this.is_ready()) {
+            super.remove(index)
+            this.save()
         }
     }
 
     save() {
         $QUERY("TRUNCATE unavailable_tracks", () => {
             let queue_tuples = []
-            for (let i=0; i < this.tracks_order.length; i++) {
-                T = this.tracks_order[i]
-                queue_tuples.push(`(${T})`)
-            }
+            Object.keys(this.objects).forEach((k) => {
+                queue_tuples.push(`(${k})`)
+            })
             $QUERY(`INSERT INTO unavailable_tracks (track_id) VALUES ${queue_tuples.join(",")}`, () => {})
         })
-    }
-
-    length() {
-        if (this.tracks_order != undefined) {
-            return this.tracks_order.length
-        }
-        return undefined
-    }
-
-    duration() {
-        if (this.tracks_order != undefined) {
-            let d = 0
-            this.tracks_order.forEach((i) => {
-                let x = this.tracks_model.get_track_by_id(i)
-                d += x.stream_length
-            })
-            return d
-        }
-        return undefined
-    }
-
-    set_metadata(track, metadata) {
-        this.tracks_model.set_metadata(track, metadata)
-        // X = this.track_list[track.id]
-        // metadata_keys = Object.keys(metadata)
-        // Object.keys(metadata).forEach((x) => {
-        //     X[x] = metadata[x]
-        // })
-        // DB.update_track_data(id, metadata, () => {
-        //     this.dispatch("metadata-changed", this.track_list[id])
-        // })
     }
 }

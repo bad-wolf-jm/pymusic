@@ -68,7 +68,6 @@ class BaseObjectListModel extends EventDispatcher {
     }
 
     get_objects(idxs, cmp) {
-        console.log(idxs)
         if (!(this.is_ready())) {
             return undefined
         }
@@ -119,13 +118,11 @@ class BaseObjectListModel extends EventDispatcher {
         if (idxs == undefined) {
             idxs = Object.keys(this.objects).map((i) => {return parseInt(i)})
         }
-//        console.log(idxs)
         if (this.objects != undefined) {
             let d = 0
             idxs.forEach((id) => {
                 d += (this.objects[id] != undefined) ? this.objects[id].stream_length : 0
             })
-            //console.log(d)
             return d
         }
         return undefined
