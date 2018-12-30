@@ -201,13 +201,13 @@ class TrackListView extends EventDispatcher {
                 <button id='track-color-${track.id}' class="main-list color-chooser show-color-picker" style="background-color:${track.color}" data-track-id=${track.id}></button>
             </${element}>
             <${element} id='track-loved-${track.id}' style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
-            <${element} style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
-            <${element} style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
-            <${element} style="max-width:40px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
+            <${element} id='track-title-${track.id}' style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
+            <${element} id='track-artist-${track.id}' style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
+            <${element} id='track-genre-${track.id}' style="max-width:40px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
             <${element} style="text-align:right; width:25px; padding-right:9px">${track.play_count}</${element}>
             <${element} style="width:75px">${track.last_played}</${element}>
             <${element} id='track-rating-${track.id}' style="width:25px">${track.rating}</${element}>
-            <${element} style="width:30px; text-align:right; padding-right:5px">${track.bpm}</${element}>
+            <${element} id='track-bpm-${track.id}' style="width:30px; text-align:right; padding-right:5px">${track.bpm}</${element}>
             <${element} style="width:45px; text-align:right">${track.duration}</${element}>
             <${element} style="width:15px"></${element}>
         </tr>`
@@ -242,6 +242,7 @@ class TrackListView extends EventDispatcher {
         this.controller.on("content-changed", this.set_list.bind(this))
         this.controller.on("selection-changed", this.update_selection.bind(this))
         this.controller.on("element-updated", this.update_element.bind(this))
+        this.controller.on("metadata-changed", this.update_element.bind(this))
         this.controller.on("track-unavailable", (tr) => {
             if (tr != undefined) {
                 if (this.table_rows[tr.id] != undefined) {
@@ -460,7 +461,6 @@ class TrackListView extends EventDispatcher {
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]
             Q.add_element(r)
-            // this.queue_controller.append(r)
         }
     }
 
@@ -490,6 +490,13 @@ class TrackListView extends EventDispatcher {
         color_cell.style.backgroundColor = x.color
         let row_dom = document.getElementById(`track-row-${x.id}`)
         row_dom.style.color = x.color
+
+        document.getElementById(`track-title-${x.id}`).innerHTML = x.title
+        document.getElementById(`track-artist-${x.id}`).innerHTML = x.artist
+        document.getElementById(`track-genre-${x.id}`).innerHTML = x.genre
+        document.getElementById(`track-bpm-${x.id}`).innerHTML = x.bpm
+
+
     }
 
 

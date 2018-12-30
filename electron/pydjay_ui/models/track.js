@@ -28,17 +28,26 @@ class TrackListModel extends BaseObjectListModel {
         return this.get_object_by_id(id)
     }
 
+    // _update_internal(id) {
+    //     DB.get_track_by_id(id, (result) => {
+    //         let track = result[0]
+    //         this.objects[id] = track
+    //     })
+    // }
+
     update(id) {
         DB.get_track_by_id(id, (result) => {
             let track = result[0]
             this.objects[id] = track
+            this.dispatch("metadata-changed", this.objects[id])
         })
     }
 
     set_metadata(track, metadata) {
-        super.set_metadata(track, metadata)
+        
         DB.update_track_data(track.id, metadata, () => {
-            this.update(track.id)
+            super.set_metadata(track, metadata)
+            //this._update_internal(track.id)
         })
     }
 }
