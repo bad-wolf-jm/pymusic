@@ -27,7 +27,6 @@ class BaseOrderedObjectSubsetModel extends BaseObjectSubsetModel {
     }
 
     add(element) {
-        // console.log(element)
         this.ordering.push(element.id)
         super.add(element)        
     }

@@ -12,7 +12,6 @@ class BPM {
     
         let ret = {};
     
-        // ignore the first tap
         if (this.old_ts) {
             let ms = this.ts - this.old_ts;
         
@@ -24,7 +23,6 @@ class BPM {
     
         ret.count = ++this.count;
     
-        // Store the old timestamp
         this.old_ts = this.ts;
         return ret;
     }
