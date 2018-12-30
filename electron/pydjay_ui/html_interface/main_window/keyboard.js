@@ -242,21 +242,21 @@ Mousetrap.bind(": alt+t", (e) => {
 })
 
 
-Mousetrap.bind(": alt+f", () => {
+Mousetrap.bind(": alt+f", (e) => {
     let window = electron.remote.getCurrentWindow();
     window.setFullScreen(!(window.isFullScreen()));
     e.preventDefault()
 })
 
 
-Mousetrap.bind(": alt+r", () => {
+Mousetrap.bind(": alt+r", (e) => {
     let window = electron.remote.getCurrentWindow();
     window.reload();
     e.preventDefault()
 })
 
 
-Mousetrap.bind(": alt+q", () => {
+Mousetrap.bind(": alt+q", (e) => {
     let window = electron.remote.getCurrentWindow();
     e.preventDefault()
 })
