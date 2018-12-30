@@ -78,6 +78,21 @@ Mousetrap.bind('S', (e) => {
     }
 });
 
+Mousetrap.bind(': e', (e) => {
+    if (focus_list != undefined) {
+        focus_list.begin_edit()
+        e.preventDefault()
+    }
+});
+
+Mousetrap.bind(': w', (e) => {
+    if (focus_list != undefined) {
+        focus_list.save_edit()
+        e.preventDefault()
+    }
+});
+
+
 
 Mousetrap.bind(': + u', (e) => {
     if (focus_list != undefined) {
@@ -101,7 +116,7 @@ Mousetrap.bind('ctrl+f', (e) => {
 });
 
 
-Mousetrap.bind('left', (e) => {
+Mousetrap.bind('shift+tab', (e) => {
     index = lists.indexOf(focus_list)
     if (index != -1) {
         if (index - 1 < 0) {
@@ -118,7 +133,7 @@ Mousetrap.bind('left', (e) => {
 });
 
 
-Mousetrap.bind('right', (e) => {
+Mousetrap.bind('tab', (e) => {
     index = lists.indexOf(focus_list)
     if (index != -1) {
         if (index + 1 >= lists.length) {

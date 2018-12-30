@@ -143,6 +143,14 @@ class QueueView extends EventDispatcher {
         }
     }
 
+    begin_edit() {
+        
+    }
+
+    save_edit() {
+        
+    }
+
     add_element(e) {
         this.controller.append(e)
     }

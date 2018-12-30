@@ -382,6 +382,87 @@ class TrackListView extends EventDispatcher {
 
     }
 
+    _make_edit_input_field(name, id, old_value) {
+        return `<input id="main-track-list-edit-${name}-${id}" type="text" class="new-playlist" value="${old_value}">`
+    }
+
+    cancel_edit() {
+        this.edit_mode = false
+        let r = this.edit_row
+        document.getElementById(`track-title-${r.id}`).innerHTML = this.edit_row.title
+        document.getElementById(`track-artist-${r.id}`).innerHTML = this.edit_row.artist 
+        document.getElementById(`track-genre-${r.id}`).innerHTML = this.edit_row.genre
+        document.getElementById(`track-bpm-${r.id}`).innerHTML = this.edit_row.bpm
+        this.edit_row = undefined
+    }
+
+    _keypress (e) {
+        if (e.key == "Escape") {
+            this.cancel_edit()
+        } else if (e.key == "Enter") {
+            this.save_edit()
+        } else if (e.key == "Alt") {
+            if (this.edit_bpm != undefined) {
+                let t = this.edit_bpm.tap()
+                let bpm = Math.round(t.avg)
+                if (!isNaN(bpm)) {
+                    document.getElementById(`main-track-list-edit-bpm-${this.edit_row.id}`).value = bpm
+                }
+            }
+        } else {
+
+        }
+    }
+
+    begin_edit() {
+        if (this._selected_row != undefined) {
+            this.edit_mode = true
+            let r = this._selected_row[0]
+            this.edit_row = r
+            this.edit_bpm = new BPM()
+            document.getElementById(`track-title-${r.id}`).innerHTML = this._make_edit_input_field("title", r.id, r.title)
+            document.getElementById(`main-track-list-edit-title-${r.id}`).addEventListener("keyup", (e) => {
+                this._keypress(e)
+            })
+
+            document.getElementById(`track-artist-${r.id}`).innerHTML = this._make_edit_input_field("artist", r.id, r.artist)
+            document.getElementById(`main-track-list-edit-artist-${r.id}`).addEventListener("keyup", (e) => {
+                this._keypress(e)
+            })
+
+            document.getElementById(`track-genre-${r.id}`).innerHTML = this._make_edit_input_field("genre", r.id, r.genre)
+            document.getElementById(`main-track-list-edit-genre-${r.id}`).addEventListener("keyup", (e) => {
+                this._keypress(e)
+            })
+
+            document.getElementById(`track-bpm-${r.id}`).innerHTML = this._make_edit_input_field("bpm", r.id, r.bpm)
+            document.getElementById(`main-track-list-edit-bpm-${r.id}`).addEventListener("keyup", (e) => {
+                this._keypress(e)
+            })
+
+            document.getElementById(`main-track-list-edit-title-${r.id}`).focus()
+        } 
+    }
+
+    save_edit() {
+        if (this._selected_row != undefined) {
+            if (this.edit_mode) {
+                this.edit_mode = false
+                let r = this._selected_row[0]
+                let title = document.getElementById(`main-track-list-edit-title-${r.id}`).value
+                let artist = document.getElementById(`main-track-list-edit-artist-${r.id}`).value
+                let genre = document.getElementById(`main-track-list-edit-genre-${r.id}`).value
+                let bpm = document.getElementById(`main-track-list-edit-bpm-${r.id}`).value
+                this.controller.set_metadata(r, {
+                    title:title,
+                    artist:artist,
+                    genre:genre,
+                    bpm:bpm
+                })
+            }
+        }         
+    }
+
 
     move_down() {
         this.d = 1
