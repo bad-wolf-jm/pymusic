@@ -275,3 +275,47 @@ Mousetrap.bind(": alt+q", (e) => {
     let window = electron.remote.getCurrentWindow();
     e.preventDefault()
 })
+
+
+Mousetrap.bind(": l", (e) => {
+    if (focus_list != undefined) {
+        focus_list.toggle_selected_loved()
+    }
+})
+
+
+Mousetrap.bind(": r 0", (e) => {
+    if (focus_list != undefined) {
+        focus_list.set_selected_rating(0)
+    }
+})
+
+Mousetrap.bind(": r 1", (e) => {
+    if (focus_list != undefined) {
+        focus_list.set_selected_rating(1)
+    }
+})
+
+Mousetrap.bind(": r 2", (e) => {
+    if (focus_list != undefined) {
+        focus_list.set_selected_rating(2)
+    }
+})
+
+Mousetrap.bind(": r 3", (e) => {
+    if (focus_list != undefined) {
+        focus_list.set_selected_rating(3)
+    }
+})
+
+Mousetrap.bind(": r 4", (e) => {
+    if (focus_list != undefined) {
+        focus_list.set_selected_rating(4)
+    }
+})
+
+Mousetrap.bind(": r 5", (e) => {
+    if (focus_list != undefined) {
+        focus_list.set_selected_rating(5)
+    }
+})

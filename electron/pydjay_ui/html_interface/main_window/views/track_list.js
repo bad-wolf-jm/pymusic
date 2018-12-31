@@ -533,6 +533,20 @@ class TrackListView extends EventDispatcher {
         this.controller.select_element(e)
     }
 
+    set_selected_rating(rating) {
+        if (this._selected_row != undefined) {
+            let r = this._selected_row[0]
+            this.controller.set_metadata(r, {rating:rating})
+        }
+    }
+
+    toggle_selected_loved() {
+        if (this._selected_row != undefined) {
+            let r = this._selected_row[0]
+            this.controller.set_metadata(r, {favorite: !(r.favorite)})
+        }
+    }
+
 
     move_selection_up() {
 

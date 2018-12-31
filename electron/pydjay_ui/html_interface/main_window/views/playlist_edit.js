@@ -205,6 +205,16 @@ class PlaylistEditView extends EventDispatcher {
         return undefined
     }
 
+    set_selected_rating(rating) {
+
+    }
+
+    
+    toggle_selected_loved() {
+
+    }
+
+
     move_last() {
 
     }

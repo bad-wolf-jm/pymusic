@@ -155,6 +155,15 @@ class QueueView extends EventDispatcher {
         this.controller.append(e)
     }
 
+    set_selected_rating(rating) {
+
+    }
+
+    toggle_selected_loved() {
+
+    }
+
+
     move_down() {
         if (this.current_selection != undefined) {
             let track_id = parseInt(this.current_selection.attributes["data-track-id"].value)
