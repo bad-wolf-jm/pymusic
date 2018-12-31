@@ -437,7 +437,7 @@ class TrackListView extends EventDispatcher {
                 this._keypress(e)
             })
 
-            document.getElementById(`track-album-${r.id}`).innerHTML = this._make_edit_input_field("album", r.id, r.artist)
+            document.getElementById(`track-album-${r.id}`).innerHTML = this._make_edit_input_field("album", r.id, r.album)
             document.getElementById(`main-track-list-edit-album-${r.id}`).addEventListener("keyup", (e) => {
                 this._keypress(e)
             })
