@@ -24,7 +24,7 @@
     "jui-core": "^2.0.4",
     "jui-grid": "^2.0.2",
     "mediainfo.js": "0.0.2",
-    "mp3.js":"^0.2.0",
+    "mp3.js": "^0.2.0",
     "mysql": "^2.15.0",
     "wavesurfer.js": "^2.0.6",
     "webix": "^5.3.0"

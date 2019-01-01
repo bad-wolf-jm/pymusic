@@ -245,6 +245,10 @@ document.getElementById("settings-button").addEventListener('click', () => {
 })
 
 document.getElementById("main-menu-add-track").addEventListener('click', () => {
+    remote.dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] }, (files) => {
+        console.log(files)
+        let x = new TrackAdder(files)
+    })
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
