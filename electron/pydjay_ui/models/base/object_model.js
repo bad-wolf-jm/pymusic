@@ -33,7 +33,10 @@ class BaseObjectListModel extends EventDispatcher {
     }
 
     refresh(k) {
-        return k()
+        this.dispatch("content-changed", this.get_all_tracks())    
+        if (k != undefined) {
+            return k()
+        }
     }
 
     initialize() {

@@ -17,7 +17,7 @@ class TrackAdder extends EventDispatcher {
         this._progress = 0
         this.track_info_array = []
         this.track_info_editor = undefined
-
+        document.getElementById('track-add-progress-dialog').showModal()
         this.add_all_tracks()
     }
 
@@ -26,9 +26,56 @@ class TrackAdder extends EventDispatcher {
     }
 
 
-    _perform_add(data, continuation) {
+    _perform_add(settings, image, data, continuation) {
         console.log(data)
-        continuation()
+        fs.copy(data.filename, data.mp3_path).then( () => {
+            if (image != null) {
+                image.write(`${path.join(settings.image_root, data.original_image_file)}`);
+                image.resize(320,320).write(`${path.join(settings.image_root, data.large_image_file)}`)
+                image.resize(160,160).write(`${path.join(settings.image_root, data.medium_image_file)}`)
+                image.resize(100,100).write(`${path.join(settings.image_root, data.small_image_file)}`)      
+            }
+            let NOW = new Date()
+            let track_info = {
+                'id':     data.id,
+                'title':  STRING(addslashes(data.title)),
+                'artist': STRING(addslashes(data.artist)),
+                'album':  STRING(addslashes(data.album)),
+                'year':   STRING(none_to_null(data.year)),
+                'genre':  STRING(addslashes(data.genre)),
+                'bpm':    STRING(none_to_null(data.bpm)),
+                'rating': data.rating,
+                'disabled': 0,
+                'favorite': data.favorite,
+                'comments': STRING(addslashes(null)),
+                'waveform': "NULL", 
+                'cover_medium': STRING(none_to_null(addslashes(data.medium_image_file))),
+                'cover_small':  STRING(none_to_null(addslashes(data.small_image_file))),
+                'cover_large':  STRING(none_to_null(addslashes(data.large_image_file))),
+                'cover_original': STRING(none_to_null(addslashes(data.original_image_file))),
+                'track_length':  data.duration,
+                'stream_start':  0,
+                'stream_end':    data.duration,
+                'stream_length': data.duration,
+                'color': (data.color == undefined || data.color == "") ? "NULL" : STRING(data.color),
+                'date_added':   DATE(NOW),
+                'date_modified': DATE(NOW),
+                'bitrate':    data.bit_rate,    
+                'samplerate': data.samplerate, 
+                'file_name':   STRING(addslashes(data.mp3_file)),
+                'original_file_name': STRING(addslashes(data.filename)),
+                'file_size': data.file_size, 
+                'hash':        'NULL',
+                'grouping':    STRING(none_to_null(addslashes(data.grouping))),
+                'category':    'NULL', 
+                'description': 'NULL', 
+            }
+            DB.add_track(track_info, () => {
+                document.getElementById("track-add-progress").innerHTML = `Added track ${this._progress} of ${this._num}`
+                document.getElementById("track-add-info").innerHTML = `${data.title} - ${data.artist}`
+                continuation()
+            })
+        })
     }
 
 
@@ -40,8 +87,9 @@ class TrackAdder extends EventDispatcher {
                     let t = this.parse_tag(filename, tag)
 
                     let data = t //this.track_list.pop();
-                    let mp3_file = `track_${settings.next_id}.${this.getFileExtension(data.filename)}`
-                    let mp3_path = `${settings.music_root}/${mp3_file}`
+                    data.id = settings.next_id
+                    data.mp3_file = `track_${settings.next_id}.${this.getFileExtension(data.filename)}`
+                    data.mp3_path = path.join(settings.music_root, data.mp3_file)
                     var original_image_file = null;
                     var large_image_file = null;
                     var medium_image_file = null;
@@ -64,32 +112,24 @@ class TrackAdder extends EventDispatcher {
                                     data.large_image_file    = `cover_large_${settings.next_id}.${ext}`
                                     data.medium_image_file   = `cover_medium_${settings.next_id}.${ext}`
                                     data.small_image_file    = `cover_small_${settings.next_id}.${ext}`
-                                    //console.log(data.original_image_file, data.picture.data.length)
-                                    this._perform_add(data, continuation)
-                                    // image.write(`${image_root}/${original_image_file}`);
-                                    // image.resize(320,320).write(`${image_root}/${large_image_file}`)
-                                    // image.resize(160,160).write(`${image_root}/${medium_image_file}`)
-                                    // image.resize(100,100).write(`${image_root}/${small_image_file}`)                
+                                    this._perform_add(settings, image, data, continuation)
                                 }
                             )
                         } else {
-                            data.original_image_file = `NULL`
-                            data.large_image_file    = `NULL`
-                            data.medium_image_file   = `NULL`
-                            data.small_image_file    = `NULL`
-
-                            //console.log(`${settings.next_id} - ${this._progress} - ${t.title} - ${t.album}`)
-                            this._perform_add(data, continuation)
+                            data.original_image_file = null
+                            data.large_image_file    = null
+                            data.medium_image_file   = null
+                            data.small_image_file    = null
+                            this._perform_add(settings, null, data, continuation)
         
                         }                            
                     } else {
-                        data.original_image_file = `NULL`
-                        data.large_image_file    = `NULL`
-                        data.medium_image_file   = `NULL`
-                        data.small_image_file    = `NULL`
-                    //console.log(`${settings.next_id} - ${this._progress} - ${t.title} - ${t.album}`)
-                    this._perform_add(data, continuation)
-                }  
+                        data.original_image_file = null
+                        data.large_image_file    = null
+                        data.medium_image_file   = null
+                        data.small_image_file    = null
+                        this._perform_add(settings, null, data, continuation)
+                    }  
                 },
                 onError: (error) => {
                     this._progress++;
@@ -103,6 +143,10 @@ class TrackAdder extends EventDispatcher {
             this.add_single_track(this.filenames.pop(), () => {
                 this.add_all_tracks()
             })
+        } else {
+            tracks_model.refresh()
+            document.getElementById('track-add-progress-dialog').close()
+
         }
     }
 
@@ -132,308 +176,308 @@ class TrackAdder extends EventDispatcher {
         return p_tag;
     }
 
-    display_track_info () {
-        for (let i=0; i<this.filenames.length; i++) {
-            jsmediatags.read(this.filenames[i], {
-                    onSuccess: (tag) => {
-                        this._num --;
-                        let t = this.parse_tag(this.filenames[i], tag)
-                        console.log(`${this._num} - ${t.title} - ${t.album}`)
-                        this.track_info_array.push(t) //this.parse_tag(this.filenames[i], tag));
-                            if (this._num == 0) {
-                                this.show_track_info_editor()
-                            }
-                    },
-                    onError: (error) => {
-                        this.num --;
-                        if (this.num == 0) {
-                            this.show_track_info_editor()
-                        }
-                    }
-                }
-            );
-        }
-    }
+    // display_track_info () {
+    //     for (let i=0; i<this.filenames.length; i++) {
+    //         jsmediatags.read(this.filenames[i], {
+    //                 onSuccess: (tag) => {
+    //                     this._num --;
+    //                     let t = this.parse_tag(this.filenames[i], tag)
+    //                     console.log(`${this._num} - ${t.title} - ${t.album}`)
+    //                     this.track_info_array.push(t) //this.parse_tag(this.filenames[i], tag));
+    //                         if (this._num == 0) {
+    //                             this.show_track_info_editor()
+    //                         }
+    //                 },
+    //                 onError: (error) => {
+    //                     this.num --;
+    //                     if (this.num == 0) {
+    //                         this.show_track_info_editor()
+    //                     }
+    //                 }
+    //             }
+    //         );
+    //     }
+    // }
 
-    show_track_info_editor() {
-        this.track_info_array.forEach((e) => {
-            //console.log(e)
-        })
-    }
+    // show_track_info_editor() {
+    //     this.track_info_array.forEach((e) => {
+    //         //console.log(e)
+    //     })
+    // }
 
-    color(e) {
-        console.log(e.color)
-        if ((e.color != undefined) && (e.color != "")) {
-            return `<span style='background-color:${e.color}; border-radius:4px; padding-right:10px;'>&nbsp&nbsp&nbsp</span> ${e.color}`
-        } else {
-            return `<span style='background-color:#ffffff; border-radius:4px; padding-right:10px;'>&nbsp&nbsp&nbsp</span> Default`
-        }
-    }
+    // color(e) {
+    //     console.log(e.color)
+    //     if ((e.color != undefined) && (e.color != "")) {
+    //         return `<span style='background-color:${e.color}; border-radius:4px; padding-right:10px;'>&nbsp&nbsp&nbsp</span> ${e.color}`
+    //     } else {
+    //         return `<span style='background-color:#ffffff; border-radius:4px; padding-right:10px;'>&nbsp&nbsp&nbsp</span> Default`
+    //     }
+    // }
 
-    rating(obj, common, value) {
-        var html = "";
-        for (var i=1; i<6; i++) {
-            html+="<div rating='"+i+"' class='rating_star fa " + ( i <= obj.rating ? "fa-star" : "fa-star-o") +"' style='font-size: 14px'></div>";
-        }
-        return html
-    }
+    // rating(obj, common, value) {
+    //     var html = "";
+    //     for (var i=1; i<6; i++) {
+    //         html+="<div rating='"+i+"' class='rating_star fa " + ( i <= obj.rating ? "fa-star" : "fa-star-o") +"' style='font-size: 14px'></div>";
+    //     }
+    //     return html
+    // }
 
-    custom_checkbox(obj, common, value){
-        return `<label class="favorite">
-                    <input type="checkbox" ${obj.favorite == 0 ? "unckecked" : "checked"}>
-                    <i class="fa fa-heart-o unchecked"></i>
-                    <i class="fa fa-heart checked"></i>
-                </label>`;
-    }
+    // custom_checkbox(obj, common, value){
+    //     return `<label class="favorite">
+    //                 <input type="checkbox" ${obj.favorite == 0 ? "unckecked" : "checked"}>
+    //                 <i class="fa fa-heart-o unchecked"></i>
+    //                 <i class="fa fa-heart checked"></i>
+    //             </label>`;
+    // }
 
-    show_track_info_editor_rrr() {
-        this.editor_window = webix.ui({
-            view:"window",
-            modal:true,
-            position:"center",
-            width:1600,
-            height:950,
-            head: "ADD TRACKS",
-            body:{
-                rows:[
-                    {height:10},
-                    {
-                        view:"datatable",
-                        id:this.add_file_list_id,
-                        select:"row",
-                        editaction:'dblclick',
-                        editable: true,
-                        resizeColumn:{headerOnly:true},
-                        css:{
-                            'background-color':'#303030',
-                            border: '0px solid #5c5c5c'
-                         },
-                        data: this.track_info_array,
-                        columns:[
-                            { 
-                                id:"id",            
-                                header:"",  
-                                width:30, 
-                                hidden:true
-                            },
-                            { 
-                                id:"color",      
-                                header:"<b>Color</b>",  
-                                width:100, 
-                                sort:'string', 
-                                template: this.color , 
-                                editor: 'color'
-                            },
-                            { 
-                                id:"title",         
-                                header:"<b>Title</b>",  
-                                fillspace:true, 
-                                sort:'string', 
-                                editor: 'text'
-                            },
-                            { 
-                                id:"artist",        
-                                header:"<b>Artist</b>", 
-                                fillspace:true, 
-                                sort:'string', 
-                                editor: 'text'
-                            },
-                            { 
-                                id:"album",         
-                                header:"<b>Album</b>",  
-                                fillspace:true, 
-                                sort:'string', 
-                                editor: 'text'
-                            },
-                            { 
-                                id:"year",          
-                                header: {
-                                    text:"<b>Year</b>", 
-                                    css:{"text-align":'right'}
-                                }, 
-                                width:55, 
-                                sort:'string', 
-                                editor: 'text',
-                                css: { 
-                                    "text-align":'right'
-                                }, 
-                            },
-                            { 
-                                id:"genre",         
-                                header:"<b>Genre</b>",  
-                                width:110, 
-                                sort:'string', 
-                                editor: 'text'
-                            },
-                            { 
-                                id:"grouping",      
-                                header:"<b>Grouping</b>", 
-                                width:135, 
-                                sort:'string', 
-                                editor: 'text'
-                            },
-                            { 
-                                id:"bit_rate",      
-                                header: {
-                                    text: "<b>Kb/s</b>", 
-                                    css:{"text-align":'right'},
-                                    height:25
-                                },  
-                                width:55,
-                                sort:'int', 
-                                css: { 
-                                    "text-align":'right'
-                                }, 
-                            },
-                            { 
-                                id:"samplerate",      
-                                header: {
-                                    text: "<b>Freq.</b>", 
-                                    css:{"text-align":'right'},
-                                    height:25
-                                },  
-                                width:75,
-                                sort:'int',                                 
-                                css: { 
-                                    "text-align":'right'
-                                }, 
+    // show_track_info_editor_rrr() {
+    //     this.editor_window = webix.ui({
+    //         view:"window",
+    //         modal:true,
+    //         position:"center",
+    //         width:1600,
+    //         height:950,
+    //         head: "ADD TRACKS",
+    //         body:{
+    //             rows:[
+    //                 {height:10},
+    //                 {
+    //                     view:"datatable",
+    //                     id:this.add_file_list_id,
+    //                     select:"row",
+    //                     editaction:'dblclick',
+    //                     editable: true,
+    //                     resizeColumn:{headerOnly:true},
+    //                     css:{
+    //                         'background-color':'#303030',
+    //                         border: '0px solid #5c5c5c'
+    //                      },
+    //                     data: this.track_info_array,
+    //                     columns:[
+    //                         { 
+    //                             id:"id",            
+    //                             header:"",  
+    //                             width:30, 
+    //                             hidden:true
+    //                         },
+    //                         { 
+    //                             id:"color",      
+    //                             header:"<b>Color</b>",  
+    //                             width:100, 
+    //                             sort:'string', 
+    //                             template: this.color , 
+    //                             editor: 'color'
+    //                         },
+    //                         { 
+    //                             id:"title",         
+    //                             header:"<b>Title</b>",  
+    //                             fillspace:true, 
+    //                             sort:'string', 
+    //                             editor: 'text'
+    //                         },
+    //                         { 
+    //                             id:"artist",        
+    //                             header:"<b>Artist</b>", 
+    //                             fillspace:true, 
+    //                             sort:'string', 
+    //                             editor: 'text'
+    //                         },
+    //                         { 
+    //                             id:"album",         
+    //                             header:"<b>Album</b>",  
+    //                             fillspace:true, 
+    //                             sort:'string', 
+    //                             editor: 'text'
+    //                         },
+    //                         { 
+    //                             id:"year",          
+    //                             header: {
+    //                                 text:"<b>Year</b>", 
+    //                                 css:{"text-align":'right'}
+    //                             }, 
+    //                             width:55, 
+    //                             sort:'string', 
+    //                             editor: 'text',
+    //                             css: { 
+    //                                 "text-align":'right'
+    //                             }, 
+    //                         },
+    //                         { 
+    //                             id:"genre",         
+    //                             header:"<b>Genre</b>",  
+    //                             width:110, 
+    //                             sort:'string', 
+    //                             editor: 'text'
+    //                         },
+    //                         { 
+    //                             id:"grouping",      
+    //                             header:"<b>Grouping</b>", 
+    //                             width:135, 
+    //                             sort:'string', 
+    //                             editor: 'text'
+    //                         },
+    //                         { 
+    //                             id:"bit_rate",      
+    //                             header: {
+    //                                 text: "<b>Kb/s</b>", 
+    //                                 css:{"text-align":'right'},
+    //                                 height:25
+    //                             },  
+    //                             width:55,
+    //                             sort:'int', 
+    //                             css: { 
+    //                                 "text-align":'right'
+    //                             }, 
+    //                         },
+    //                         { 
+    //                             id:"samplerate",      
+    //                             header: {
+    //                                 text: "<b>Freq.</b>", 
+    //                                 css:{"text-align":'right'},
+    //                                 height:25
+    //                             },  
+    //                             width:75,
+    //                             sort:'int',                                 
+    //                             css: { 
+    //                                 "text-align":'right'
+    //                             }, 
 
-                            },
-                            { 
-                                id:"file_size",      
-                                header: {
-                                    text: "<b>Size</b>", 
-                                    css:{"text-align":'right'},
-                                    height:25
-                                },  
-                                width:75,
-                                template: (o) => {
-                                    return humanFileSize(o.file_size)
-                                },
-                                css: { 
-                                    "text-align":'right'
-                                }, 
-                                sort:'int', 
-                            },
-                            { 
-                                id:"bpm", 
-                                header: {
-                                    text:"<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>", 
-                                    css:{"text-align":'right'}
-                                }, 
-                                width:50, 
-                                css: { 
-                                    "text-align":'right'
-                                }, 
-                                sort:'int', 
-                            },
-                            { 
-                                id:"rating",        
-                                header: {
-                                    text:"<b>Rating</b>", 
-                                    css:{"text-align":'right'}
-                                }, 
-                                width:80, 
-                                sort:'string',                                 
-                                css: { 
-                                    "text-align":'right'
-                                }, 
+    //                         },
+    //                         { 
+    //                             id:"file_size",      
+    //                             header: {
+    //                                 text: "<b>Size</b>", 
+    //                                 css:{"text-align":'right'},
+    //                                 height:25
+    //                             },  
+    //                             width:75,
+    //                             template: (o) => {
+    //                                 return humanFileSize(o.file_size)
+    //                             },
+    //                             css: { 
+    //                                 "text-align":'right'
+    //                             }, 
+    //                             sort:'int', 
+    //                         },
+    //                         { 
+    //                             id:"bpm", 
+    //                             header: {
+    //                                 text:"<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>", 
+    //                                 css:{"text-align":'right'}
+    //                             }, 
+    //                             width:50, 
+    //                             css: { 
+    //                                 "text-align":'right'
+    //                             }, 
+    //                             sort:'int', 
+    //                         },
+    //                         { 
+    //                             id:"rating",        
+    //                             header: {
+    //                                 text:"<b>Rating</b>", 
+    //                                 css:{"text-align":'right'}
+    //                             }, 
+    //                             width:80, 
+    //                             sort:'string',                                 
+    //                             css: { 
+    //                                 "text-align":'right'
+    //                             }, 
 
-                                template: (x, y, z) => this.rating(x, y, z),
-                            },
-                            { 
-                                id:"favorite",      
-                                header: {
-                                    text: "<b><span class='fa fa-heart' style='font-size: 12px'/></b>", 
-                                    css:{"text-align":'right'},
-                                    height:25
-                                },  
-                                width:30, 
-                                checkValue:1, 
-                                uncheckValue:0,
-                                template: (x, y, z) => this.custom_checkbox(x, y, z),
-                                sort:'int', 
-                                css: { 
-                                    "text-align":'center'
-                                }, 
-                            },
-                            { 
-                                id:"length",        
-                                header:"<b>Time</b>", 
-                                header: {
-                                    text: "<b>Time</b>", 
-                                    css:{"text-align":'right'},
-                                    height:25
-                                },  
-                                width:65, 
-                                sort:'int',
-                                template: (o) => {
-                                    return `${format_nanoseconds(o.duration)}`
-                                },
-                                css: { 
-                                    "text-align":'right'
-                                }, 
+    //                             template: (x, y, z) => this.rating(x, y, z),
+    //                         },
+    //                         { 
+    //                             id:"favorite",      
+    //                             header: {
+    //                                 text: "<b><span class='fa fa-heart' style='font-size: 12px'/></b>", 
+    //                                 css:{"text-align":'right'},
+    //                                 height:25
+    //                             },  
+    //                             width:30, 
+    //                             checkValue:1, 
+    //                             uncheckValue:0,
+    //                             template: (x, y, z) => this.custom_checkbox(x, y, z),
+    //                             sort:'int', 
+    //                             css: { 
+    //                                 "text-align":'center'
+    //                             }, 
+    //                         },
+    //                         { 
+    //                             id:"length",        
+    //                             header:"<b>Time</b>", 
+    //                             header: {
+    //                                 text: "<b>Time</b>", 
+    //                                 css:{"text-align":'right'},
+    //                                 height:25
+    //                             },  
+    //                             width:65, 
+    //                             sort:'int',
+    //                             template: (o) => {
+    //                                 return `${format_nanoseconds(o.duration)}`
+    //                             },
+    //                             css: { 
+    //                                 "text-align":'right'
+    //                             }, 
     
-                            },
-                        ],
-                        onClick:{
-                            favorite: (e, id)=> {
-                                var item = $$(this.add_file_list_id).getItem(id.row);
-                                if (item.favorite == 1) {
-                                    item.favorite = 0
-                                } else {
-                                    item.favorite = 1
-                                }
-                                $$(this.add_file_list_id).updateItem(id.row, item)
-                            },
-                            rating_star: (e, id) => {
-                                var item = $$(this.add_file_list_id).getItem(id.row);
-                                item.rating = e.target.getAttribute('rating')
-                                $$(this.add_file_list_id).updateItem(id.row, item)
-                            }
-                        },
-                    },
-                    {height:30},
-                    {
-                        cols:[
-                            {},
-                            {
-                                view: 'button',
-                                label: 'ADD',
-                                click: () => {
-                                    this.editor_window.hide();
-                                    this.perform_add_to_database();
-                                }
-                            },
-                            {},
-                            {
-                                view: 'button',
-                                label: 'CANCEL',
-                                click: () => {this.editor_window.hide();}
-                            },
-                            {}
-                        ]
-                    },
-                    {height:10}
-                ]
-            }
-        })
-        this.editor_window.show();
-    }
+    //                         },
+    //                     ],
+    //                     onClick:{
+    //                         favorite: (e, id)=> {
+    //                             var item = $$(this.add_file_list_id).getItem(id.row);
+    //                             if (item.favorite == 1) {
+    //                                 item.favorite = 0
+    //                             } else {
+    //                                 item.favorite = 1
+    //                             }
+    //                             $$(this.add_file_list_id).updateItem(id.row, item)
+    //                         },
+    //                         rating_star: (e, id) => {
+    //                             var item = $$(this.add_file_list_id).getItem(id.row);
+    //                             item.rating = e.target.getAttribute('rating')
+    //                             $$(this.add_file_list_id).updateItem(id.row, item)
+    //                         }
+    //                     },
+    //                 },
+    //                 {height:30},
+    //                 {
+    //                     cols:[
+    //                         {},
+    //                         {
+    //                             view: 'button',
+    //                             label: 'ADD',
+    //                             click: () => {
+    //                                 this.editor_window.hide();
+    //                                 this.perform_add_to_database();
+    //                             }
+    //                         },
+    //                         {},
+    //                         {
+    //                             view: 'button',
+    //                             label: 'CANCEL',
+    //                             click: () => {this.editor_window.hide();}
+    //                         },
+    //                         {}
+    //                     ]
+    //                 },
+    //                 {height:10}
+    //             ]
+    //         }
+    //     })
+    //     this.editor_window.show();
+    // }
 
-    perform_add_to_database() {
-        DB.get_settings(
-            (settings) => {
-                let items_to_add = []
-                $$(this.add_file_list_id).eachRow(
-                    (row) => {
-                        items_to_add.push($$(this.add_file_list_id).getItem(row))
-                    }
-                )
-                var x = new TrackAddProgressDialog(settings, settings.next_id, items_to_add)
-            }
-        )
-    }    
+    // perform_add_to_database() {
+    //     DB.get_settings(
+    //         (settings) => {
+    //             let items_to_add = []
+    //             $$(this.add_file_list_id).eachRow(
+    //                 (row) => {
+    //                     items_to_add.push($$(this.add_file_list_id).getItem(row))
+    //                 }
+    //             )
+    //             var x = new TrackAddProgressDialog(settings, settings.next_id, items_to_add)
+    //         }
+    //     )
+    // }    
 }
 
 

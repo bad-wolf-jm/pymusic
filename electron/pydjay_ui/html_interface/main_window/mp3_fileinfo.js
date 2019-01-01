@@ -1,6 +1,6 @@
 //'use strict';
 
-var fs = require('fs')
+//var fs = require('fs')
   //, Promise = require('bluebird')
   //, co = require('bluebird-co').co
 
