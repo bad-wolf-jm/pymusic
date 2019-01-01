@@ -1,6 +1,4 @@
 
-// Huebee = require("huebee")
-
 class PrecuePlayerView extends EventDispatcher {
     constructor (track_list_model) {
         super()
@@ -31,30 +29,6 @@ class PrecuePlayerView extends EventDispatcher {
                                         (this.controller.track.stream_length * ratio))
             }
         })
-
-        // this.hueb = new Huebee(document.getElementById("track-color-value"), {
-        //     notation: "hex",
-        //     saturations: 1
-        // })
-
-        // this.hueb.on( 'change', ( color, hue, sat, lum ) => {
-        //     this.track_list_model.set_metadata(this._track, {color: color})
-        //     this.hueb.close()
-        // })
-
-        // document.getElementById("precue-player-color").addEventListener("click", () => {
-        //     //this.hueb.open()
-        //     //let track_id = this._track.id //parseInt(e.attributes['data-track-id'].value)
-        //     let cp = document.getElementById("precue-color-chooser")
-        //     let button_rect = document.getElementById("precue-player-color").getBoundingClientRect()
-        //     let scroller = document.getElementById("preview-player-surface")
-        //     let scroller_rect = scroller.getBoundingClientRect()
-        //     let button_offset = (button_rect.top - scroller_rect.top)
-        //     cp.style.top = (button_offset)+"px"
-        //     cp.style.left = (button_rect.left)+"px"
-        //     cp.classList.toggle("show")
-        //     console.log(button_rect)
-        // })
 
         this.track_list_model.on("metadata-changed", (track) => {
             if (this._track != undefined) {

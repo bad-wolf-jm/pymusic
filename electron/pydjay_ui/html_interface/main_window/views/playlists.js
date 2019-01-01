@@ -11,15 +11,8 @@ class PlaylistsView extends EventDispatcher {
             let T = this.context_menu_element
             this.controller.get_playlist_by_id(T, (p) => {
                 let L = new PlaylistModel(p, tracks_model)
-                //T_controller.set_model(info.name, L)
                 PE_controller.set_model(p, L)
                 Q.show_playlist_editor()
-                // document.getElementById("playlist-edit-display").style.display = "block"
-                // document.getElementById("queue-list-display").style.display = null
-
-                //let dialog = document.getElementById("delete-playlist-dialog")
-                //document.getElementById("delete-playlist-name").innerHTML = p.name
-                //dialog.showModal()    
             })
 
         }}))

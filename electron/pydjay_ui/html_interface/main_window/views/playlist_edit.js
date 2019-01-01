@@ -78,7 +78,6 @@ class PlaylistEditView extends EventDispatcher {
                     this.view_list_order = new_order
                     this.dispatch("reorder", this.view_list_order)
                     this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks - ${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
-                    //this.duration_dom.innerHTML = ""//`${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
                 },
             }
         )

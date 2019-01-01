@@ -6,7 +6,6 @@ class TrackListController extends EventDispatcher {
         this.views            = []
         this.selection        = undefined
         this.model            = undefined
-        // this.ready_wait_queue = []
 
         this.unavailable.on("track-unavailable", (t) => {
             this.dispatch("track-unavailable", t)
@@ -26,15 +25,6 @@ class TrackListController extends EventDispatcher {
             this.dispatch("element-updated", q)
         }
     }
-    
-    // ready(func) {
-    //     if (this.queue != undefined) {
-    //         func(this.queue)
-    //     } else {
-    //         this.ready_wait_queue.push(func)
-    //     }
-    // }
-
 
     set_model(name, model) {
         if (this.model != undefined) {
