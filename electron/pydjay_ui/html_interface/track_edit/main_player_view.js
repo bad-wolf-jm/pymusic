@@ -5,6 +5,10 @@
 // pl_channel_config2 = {headphones:{left:0, right:1}}
 // mpl_channel_config2 = {master:{left:0, right:1}}
 
+//const {remote} = require('electron')
+const {Menu, MenuItem} = require('electron').remote
+
+
 function rgb2hex(rgb) {
     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
     function hex(x) {
@@ -39,6 +43,16 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         // } else {
         //     this.audio_player.connectOutputs(pl_channel_config2)    
         // }
+
+        this.menu = new Menu()
+        this.menu.append(new MenuItem({label: 'Change', click: () => {
+
+        }}))
+
+
+        document.getElementById("main-player-track-cover").addEventListener("contextmenu", (e) => {
+            this.menu.popup({window: remote.getCurrentWindow()})
+        })
 
         document.getElementById("color-swatch-list").addEventListener("click", (e) => {
             let cp = document.getElementById("track-edit-color-chooser")

@@ -64,6 +64,7 @@ class TrackListView extends EventDispatcher {
                     [].forEach.call(elements, (e) => {
                         let track_id = parseInt(e.attributes["data-track-id"].value)
                         this.table_rows[track_id] = e
+                        //console.log(track_id, e)
                         if (unavailable[track_id] != undefined) {
                             if (!this.ignore_unavailable) {                            
                                 e.classList.add("unavailable")
@@ -250,7 +251,6 @@ class TrackListView extends EventDispatcher {
         this.controller.on("element-updated", this.update_element.bind(this))
         this.controller.on("metadata-changed", this.update_element.bind(this))
         this.controller.on("track-unavailable", (tr) => {
-            console.log(this.ignore_unavailable)
             if (this.ignore_unavailable) {
                 return null
             }
@@ -285,7 +285,7 @@ class TrackListView extends EventDispatcher {
         this.view_list_order = []
         this.view_list_id_order = []
         this.queue_rows = []
-        this.table_rows = {}
+        //this.table_rows = {}
         if (queue == undefined) {
             queue = []
         }
@@ -372,6 +372,7 @@ class TrackListView extends EventDispatcher {
     select_row(e) {
         let x = e.target.closest("tr")
         let id = parseInt(x.attributes["data-track-id"].value)
+        //console.log(x)
         this.controller.select_element(id)
     }
 
