@@ -125,6 +125,7 @@ class TrackListView extends EventDispatcher {
             loved:       "<b><i class='fa fa-heart' style='font-size: 12px'/></b>",
             title:       "Title",
             artist:      "Artist",
+            album:       "Album",
             genre:       "Genre",
             last_played: "<b><span class='fa fa-calendar' style='font-size: 15px'/></b>",
             play_count:  "<b><span class='fa fa-play'/></b>",
@@ -201,8 +202,9 @@ class TrackListView extends EventDispatcher {
                 <button id='track-color-${track.id}' class="main-list color-chooser show-color-picker" style="background-color:${track.color}" data-track-id=${track.id}></button>
             </${element}>
             <${element} id='track-loved-${track.id}' style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
-            <${element} id='track-title-${track.id}' style="max-width:125px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
-            <${element} id='track-artist-${track.id}' style="max-width:115px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
+            <${element} id='track-title-${track.id}' style="max-width:110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
+            <${element} id='track-artist-${track.id}' style="max-width:90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
+            <${element} id='track-album-${track.id}'style="max-width:90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.album}</${element}>
             <${element} id='track-genre-${track.id}' style="max-width:40px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
             <${element} style="text-align:right; width:25px; padding-right:9px">${track.play_count}</${element}>
             <${element} style="width:75px">${track.last_played}</${element}>
@@ -287,6 +289,7 @@ class TrackListView extends EventDispatcher {
                 loved:       this._get_loved(queue[i]), 
                 title:       queue[i].title,
                 artist:      queue[i].artist,
+                album:      queue[i].album,
                 genre:       queue[i].genre,
                 last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
                 play_count:  queue[i].play_count,
@@ -370,6 +373,9 @@ class TrackListView extends EventDispatcher {
     }
 
     blur() {
+        if (this.edit_mode) {
+            this.cancel_edit()
+        }
         this.element.classList.remove("focus")
     }
 
@@ -382,8 +388,101 @@ class TrackListView extends EventDispatcher {
 
     }
 
+    _make_edit_input_field(name, id, old_value) {
+        return `<input id="main-track-list-edit-${name}-${id}" type="text" class="new-playlist" value="${old_value}">`
+    }
+
+    cancel_edit() {
+        this.edit_mode = false
+        let r = this.edit_row
+        document.getElementById(`track-title-${r.id}`).innerHTML = this.edit_row.title
+        document.getElementById(`track-artist-${r.id}`).innerHTML = this.edit_row.artist 
+        document.getElementById(`track-album-${r.id}`).innerHTML = this.edit_row.album 
+        document.getElementById(`track-genre-${r.id}`).innerHTML = this.edit_row.genre
+        document.getElementById(`track-bpm-${r.id}`).innerHTML = this.edit_row.bpm
+        this.edit_row = undefined
+    }
+
+    _keypress (e) {
+        if (e.key == "Escape") {
+            this.cancel_edit()
+        } else if (e.key == "Enter") {
+            this.save_edit()
+        } else if (e.key == "Alt") {
+            if (this.edit_bpm != undefined) {
+                let t = this.edit_bpm.tap()
+                let bpm = Math.round(t.avg)
+                if (!isNaN(bpm)) {
+                    document.getElementById(`main-track-list-edit-bpm-${this.edit_row.id}`).value = bpm
+                }
+            }
+        } else {
+
+        }
+    }
+
+    begin_edit() {
+        if (this._selected_row != undefined) {
+            this.edit_mode = true
+            let r = this._selected_row[0]
+            this.edit_row = r
+            this.edit_bpm = new BPM()
+            document.getElementById(`track-title-${r.id}`).innerHTML = this._make_edit_input_field("title", r.id, r.title)
+            document.getElementById(`main-track-list-edit-title-${r.id}`).addEventListener("keyup", (e) => {
+                this._keypress(e)
+            })
+
+            document.getElementById(`track-artist-${r.id}`).innerHTML = this._make_edit_input_field("artist", r.id, r.artist)
+            document.getElementById(`main-track-list-edit-artist-${r.id}`).addEventListener("keyup", (e) => {
+                this._keypress(e)
+            })
+
+            document.getElementById(`track-album-${r.id}`).innerHTML = this._make_edit_input_field("album", r.id, r.album)
+            document.getElementById(`main-track-list-edit-album-${r.id}`).addEventListener("keyup", (e) => {
+                this._keypress(e)
+            })
+
+
+            document.getElementById(`track-genre-${r.id}`).innerHTML = this._make_edit_input_field("genre", r.id, r.genre)
+            document.getElementById(`main-track-list-edit-genre-${r.id}`).addEventListener("keyup", (e) => {
+                this._keypress(e)
+            })
+
+            document.getElementById(`track-bpm-${r.id}`).innerHTML = this._make_edit_input_field("bpm", r.id, r.bpm)
+            document.getElementById(`main-track-list-edit-bpm-${r.id}`).addEventListener("keyup", (e) => {
+                this._keypress(e)
+            })
+
+            document.getElementById(`main-track-list-edit-title-${r.id}`).focus()
+        } 
+    }
+
+    save_edit() {
+        if (this._selected_row != undefined) {
+            if (this.edit_mode) {
+                this.edit_mode = false
+                let r = this._selected_row[0]
+                let title = document.getElementById(`main-track-list-edit-title-${r.id}`).value
+                let artist = document.getElementById(`main-track-list-edit-artist-${r.id}`).value
+                let album = document.getElementById(`main-track-list-edit-album-${r.id}`).value
+                let genre = document.getElementById(`main-track-list-edit-genre-${r.id}`).value
+                let bpm = document.getElementById(`main-track-list-edit-bpm-${r.id}`).value
+                this.controller.set_metadata(r, {
+                    title:title,
+                    artist:artist,
+                    album:album,
+                    genre:genre,
+                    bpm:bpm
+                })
+            }
+        }         
+    }
+
 
     move_down() {
+        if (this.edit_mode) {
+            this.cancel_edit()
+        }
         this.d = 1
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]
@@ -401,6 +500,9 @@ class TrackListView extends EventDispatcher {
     }
 
     move_up() {
+        if (this.edit_mode) {
+            this.cancel_edit()
+        }
         this.d = -1
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]
@@ -429,6 +531,20 @@ class TrackListView extends EventDispatcher {
         let e = this.view_list_id_order[0]
         this.ensure_row_visible(e)
         this.controller.select_element(e)
+    }
+
+    set_selected_rating(rating) {
+        if (this._selected_row != undefined) {
+            let r = this._selected_row[0]
+            this.controller.set_metadata(r, {rating:rating})
+        }
+    }
+
+    toggle_selected_loved() {
+        if (this._selected_row != undefined) {
+            let r = this._selected_row[0]
+            this.controller.set_metadata(r, {favorite: !(r.favorite)})
+        }
     }
 
 

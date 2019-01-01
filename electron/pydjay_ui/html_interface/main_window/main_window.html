@@ -391,8 +391,8 @@
                         ALL SONGS
                     </div>
                     <div class="count" style="margin-top:4px">
-                        <div class="count" style="margin-top:4px">
-                            <div id="main-track-list-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="main-track-list-duration" style="display:inline-block">57 minutes 37 seconds</div>
+                        <div class="count" style="margin-top:4px; display:inline-block; text-overflow: ellipsis;">
+                            <div id="main-track-list-number-of-tracks" style="display:inline-block; white-space:nowrap; text-overflow: ellipsis;">15 tracks</div> - <div id="main-track-list-duration" style="display:inline-block; text-overflow: ellipsis;">57 minutes 37 seconds</div>
                         </div>
                     </div>
                 </div>
@@ -422,33 +422,35 @@
         <div id="queue-list" class="queue_list">
             <div id="playlist-edit-display" class="playlist-edit-overlay">
                 <div class="main-list-header">
-                    <div class="title">
+                    <div class="title" style="width:100%">
                         <div id="playlist-edit-name" class="name">
                             PLAYLIST
                         </div>
-                        <div class="count" style="margin-top:4px">
-                            <div id="playlist-edit-number-of-tracks" style="display:inline-block">15 tracks</div> - <div id="playlist-edit-duration" style="display:inline-block">57 minutes 37 seconds</div>
+                        <div class="count" style="position: relative; margin-top:4px; width:100%;">
+                            <div id="playlist-edit-number-of-tracks" style="position: relative; display:inline-block; overflow:hidden; text-overflow:ellipsis; ; white-space:nowrap; width:calc(100% - 15px)">15 tracks</div>
                         </div>
                     </div>
                 </div>
                 <div id="playlist-edit-area" class="playlist-edit-list">
-                    <table id="playlist-edit-elements" style="width:100%">
+                    <table id="playlist-edit-elements" style="width:400px !important">
                         <thead style="width:100%">
                         <tr style="width:100%"></tr></thead>
                         <tbody id="playlist-edit-elements-body" class="list-group" style="width:100%;"></tbody>
                     </table>
                     <script data-jui="#playlist-edit-elements" data-tpl="row" type="text/template">
-                        <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                        <tr class="list-group-item" style="margin:0; padding:0; height:50px" data-track-id=<!= id !>>
                             <td style="width:100%; margin:0; padding:0">
                                 <div class="playlist-track element" contextmenu="mymenu" data-track-id=<!= id !>>
                                     <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
-                                    <div style="margin:0px; padding:0px; float:left; width:275px">
+                                    <div style="margin:0px; padding:0px; float:left;  width:calc(100% - 170px)">
                                         <div class="queue_element_title"><b><!= title !></b></div>
                                         <div class="queue_element_artist"><i><!= artist !></i></div>
                                     </div>
-                                    <div class="queue_element_bpm"><!= bpm !> BPM</div>
-                                    <div class="queue_element_duration">
-                                        <b><!= duration !></b>
+                                    <div style="float:right; width:65px; margin-right:10px; transform: translateY(30%);">
+                                        <div class="queue_element_bpm"><!= bpm !> BPM</div>
+                                        <div class="queue_element_duration">
+                                            <b><!= duration !></b>
+                                        </div>        
                                     </div>
                                 </div>
                             </td>
@@ -483,13 +485,15 @@
                                 <td style="width:100%; margin:0; padding:0">
                                     <div class="queued-track element" contextmenu="mymenu" data-track-id=<!= id !>>
                                         <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
-                                        <div style="margin:0px; padding:0px; float:left; width:275px">
+                                        <div style="margin:0px; padding:0px; float:left; width:225px;">
                                             <div class="queue_element_title"><b><!= title !></b></div>
                                             <div class="queue_element_artist"><i><!= artist !></i></div>
                                         </div>
-                                        <div class="queue_element_bpm"><!= bpm !> BPM</div>
-                                        <div class="queue_element_duration">
-                                            <b><!= duration !></b>
+                                        <div style="float:right; width:65px; margin-right:10px; transform: translateY(30%);">
+                                            <div class="queue_element_bpm"><!= bpm !> BPM</div>
+                                            <div class="queue_element_duration">
+                                                <b><!= duration !></b>
+                                            </div>        
                                         </div>
                                     </div>
                                 </td>
@@ -519,4 +523,5 @@
 <script src="drag_and_drop.js"></script>
 <script src="main_window.js"></script>
 <script src="keyboard.js"></script>
+<script src="bpm.js"></script>
 </body>

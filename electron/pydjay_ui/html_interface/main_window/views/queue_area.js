@@ -133,4 +133,16 @@ class QueueAreaView extends EventDispatcher {
             this.displayed.move_selection_to_top()
         }
     }
+
+    set_selected_rating(rating) {
+        if (this.displayed != undefined) {
+            this.displayed.set_selected_rating(rating) 
+        }
+    }
+
+    toggle_selected_loved() {
+
+    }
+
+
 }

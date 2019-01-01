@@ -13,7 +13,7 @@ class NeverPlayedTracksModel extends BaseObjectSubsetModel {
         })            
     }
 
-    compare_tracks(a, b) {
+    compare_objects(a, b) {
         let x = a.title.toLowerCase();
         let y = b.title.toLowerCase();
         if (x < y) {return -1;}

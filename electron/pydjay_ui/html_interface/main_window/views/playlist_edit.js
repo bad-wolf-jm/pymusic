@@ -77,8 +77,8 @@ class PlaylistEditView extends EventDispatcher {
                     }
                     this.view_list_order = new_order
                     this.dispatch("reorder", this.view_list_order)
-                    this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-                    this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
+                    this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks - ${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
+                    //this.duration_dom.innerHTML = ""//`${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
                 },
             }
         )
@@ -112,8 +112,8 @@ class PlaylistEditView extends EventDispatcher {
             this.view_list_order.push(element.id)
         }
         document.getElementById("playlist-edit-name").innerHTML = name
-        this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-        this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
+        this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks - ${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
+        //this.duration_dom.innerHTML = "" //`${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         jui.ready([ "grid.table" ], (table) => {
                 if (this.queue_content != undefined) {
                     this.queue_content.reset()
@@ -204,6 +204,16 @@ class PlaylistEditView extends EventDispatcher {
         }
         return undefined
     }
+
+    set_selected_rating(rating) {
+
+    }
+
+    
+    toggle_selected_loved() {
+
+    }
+
 
     move_last() {
 
