@@ -342,30 +342,37 @@ function refresh_sessions(x) {
 }
 
 function display_all_songs() {
+    T.ignore_unavailable = false
     T_controller.set_model("All Songs", tracks_model)
 }
 
 function display_current_session() {
+    T.ignore_unavailable = true
     T_controller.set_model("Current Session", current_session_model)
 }
 
 function display_suggestions() {
+    T.ignore_unavailable = false
     T_controller.set_model("Suggested tracks", suggested_model)
 }
 
 function display_short_list() {
+    T.ignore_unavailable = false
     T_controller.set_model("Short list", shortlist_model)
 }
 
 function display_unavailable() {
+    T.ignore_unavailable = true
     T_controller.set_model("Unavailable tracks", unavailable_model)
 }
 
 function display_played_tracks() {
+    T.ignore_unavailable = false
     T_controller.set_model("Played songs", played_tracks_model)
 }
 
 function display_never_played_tracks() {
+    T.ignore_unavailable = false
     T_controller.set_model("Never Played songs", never_played_tracks_model)
 }
 
@@ -373,6 +380,7 @@ function display_session(id) {
     DB.get_session_info(id,
         (info) => {
             let L = new SessionModel(info, tracks_model)
+            T.ignore_unavailable = false
             T_controller.set_model(info.name, L)
         }
     )
@@ -382,6 +390,7 @@ function display_playlist(id) {
     DB.get_group_info(id,
         (info) => {
             let L = new PlaylistModel(info, tracks_model)
+            T.ignore_unavailable = false
             T_controller.set_model(info.name, L)
             // PE_controller.set_model(info.name, L)
         }

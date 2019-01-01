@@ -19,6 +19,8 @@ class TrackListView extends EventDispatcher {
         this.table      = undefined
         this.queue_rows = undefined
 
+        this.ignore_unavailable = false
+
         this.prevWidth = [];
 
         document.getElementById("color-swatch-list").addEventListener("click", (e) => {
@@ -63,7 +65,9 @@ class TrackListView extends EventDispatcher {
                         let track_id = parseInt(e.attributes["data-track-id"].value)
                         this.table_rows[track_id] = e
                         if (unavailable[track_id] != undefined) {
-                            e.classList.add("unavailable")
+                            if (!this.ignore_unavailable) {                            
+                                e.classList.add("unavailable")
+                            }
                         }
                     });
                     this.fitHeaderColumns()
@@ -246,6 +250,10 @@ class TrackListView extends EventDispatcher {
         this.controller.on("element-updated", this.update_element.bind(this))
         this.controller.on("metadata-changed", this.update_element.bind(this))
         this.controller.on("track-unavailable", (tr) => {
+            console.log(this.ignore_unavailable)
+            if (this.ignore_unavailable) {
+                return null
+            }
             if (tr != undefined) {
                 if (this.table_rows[tr.id] != undefined) {
                     this.table_rows[tr.id].classList.add("unavailable")
