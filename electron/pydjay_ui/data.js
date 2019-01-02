@@ -91,6 +91,7 @@ function DataProvider() {
                     tracks.bpm                    AS bpm, 
                     tracks.stream_length          AS stream_length, 
                     foo.play_count                AS play_count, 
+                    tracks.cover_original         AS cover_original, 
                     tracks.cover_small            AS cover, 
                     settings.db_image_cache       AS image_root, 
                     settings.db_music_cache       AS music_root, 
@@ -276,15 +277,15 @@ function DataProvider() {
         sql += fields.indexOf("album")          != -1 ? `album=${STRING(addslashes(track_info.album))},\n` : '';
         sql += fields.indexOf("year")           != -1 ? `year=${(track_info.year != null) ? track_info.year : 'NULL'},\n` : '' 
         sql += fields.indexOf("genre")          != -1 ? `genre=${STRING(addslashes(track_info.genre))},\n` : '' 
-        sql += fields.indexOf("bpm")            != -1 ? `bpm=${track_info.bpm},\n` : '' 
+        sql += fields.indexOf("bpm")            != -1 ? `bpm=${track_info.bpm != null ? track_info.bpm : 'NULL'},\n` : '' 
         sql += fields.indexOf("rating")         != -1 ? `rating=${track_info.rating},\n` : '' 
         sql += fields.indexOf("favorite")       != -1 ? `favorite=${track_info.favorite},\n` : '' 
         sql += fields.indexOf("color")          != -1 ? `color=${STRING(track_info.color)},\n` : '' 
         sql += fields.indexOf("comments")       != -1 ? `comments=${STRING(addslashes(track_info.comments))},\n` : '' 
-        sql += fields.indexOf("cover_medium")   != -1 ? `cover_medium=${STRING(addslashes(track_info.cover_medium))},\n` : ''
-        sql += fields.indexOf("cover_small")    != -1 ? `cover_small=${STRING(addslashes(track_info.cover_small))},\n` : '' 
-        sql += fields.indexOf("cover_large")    != -1 ? `cover_large=${STRING(addslashes(track_info.cover_large))},\n` : '' 
-        sql += fields.indexOf("cover_original") != -1 ? `cover_original=${STRING(addslashes(track_info.cover_original))},\n` : '' 
+        sql += fields.indexOf("cover_medium")   != -1 ? `cover_medium=${STRING(none_to_null(addslashes(track_info.cover_medium)))},\n` : ''
+        sql += fields.indexOf("cover_small")    != -1 ? `cover_small=${STRING(none_to_null(addslashes(track_info.cover_small)))},\n` : '' 
+        sql += fields.indexOf("cover_large")    != -1 ? `cover_large=${STRING(none_to_null(addslashes(track_info.cover_large)))},\n` : '' 
+        sql += fields.indexOf("cover_original") != -1 ? `cover_original=${STRING(none_to_null(addslashes(track_info.cover_original)))},\n` : '' 
         sql += fields.indexOf("stream_start")   != -1 ? `stream_start=${track_info.stream_start},\n` : '' 
         sql += fields.indexOf("stream_end")     != -1 ? `stream_end=${track_info.stream_end},\n` : '' 
         sql += fields.indexOf("stream_length")  != -1 ? `stream_length=${track_info.stream_length},\n` : ''
@@ -292,6 +293,8 @@ function DataProvider() {
         sql += fields.indexOf("grouping")       != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
         sql += `date_modified=${DATE(new Date())}\n` 
         sql += `WHERE id=${id}`
+
+        console.log(sql)
         $QUERY(sql, k)
     }
 

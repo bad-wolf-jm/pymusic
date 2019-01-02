@@ -72,9 +72,29 @@ function saveme() {
     var window = remote.getCurrentWindow();
     view.audio_player.stop()
     
+    DB.get_settings((settings) => {
+        let new_values = view.getValues()
+        let image_root = `${settings.image_root}`
+        //console.log(new_values)
+        if (new_values.cover != null) {
+            new_values.cover_original = `cover_original_${track_id}`
+            new_values.cover_large    = `cover_large_${track_id}`
+            new_values.cover_medium   = `cover_medium_${track_id}`
+            new_values.cover_small    = `cover_small_${track_id}`
+            new_values.cover.write(`${path.join(settings.image_root, new_values.cover_original)}`);
+            new_values.cover.resize(320,320).write(`${path.join(settings.image_root, new_values.cover_large)}`)
+            new_values.cover.resize(160,160).write(`${path.join(settings.image_root, new_values.cover_medium)}`)
+            new_values.cover.resize(100,100).write(`${path.join(settings.image_root, new_values.cover_small)}`)      
+        } else if (new_values.cover !== undefined) {
+            new_values.cover_original = null;
+            new_values.cover_large    = null;
+            new_values.cover_medium   = null;
+            new_values.cover_small    = null;
+        }
 
-    DB.update_track_data(track_id, view.getValues(), () => {
-        ipcRenderer.send("track-modified", track_id)
-        window.close();
+        DB.update_track_data(track_id, new_values, () => {
+            ipcRenderer.send("track-modified", track_id)
+            closeme()
+        })    
     })
 }
