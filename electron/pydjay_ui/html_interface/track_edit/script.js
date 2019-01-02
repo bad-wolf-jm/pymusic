@@ -94,6 +94,7 @@ function saveme() {
 
         DB.update_track_data(track_id, new_values, () => {
             ipcRenderer.send("track-modified", track_id)
+            closeme()
         })    
     })
 }
