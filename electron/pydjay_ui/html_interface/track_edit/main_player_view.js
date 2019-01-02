@@ -7,6 +7,7 @@
 
 //const {remote} = require('electron')
 const {Menu, MenuItem} = require('electron').remote
+var Jimp = require("jimp");
 
 
 function rgb2hex(rgb) {
@@ -26,6 +27,8 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.favorite = undefined
         this.rating = undefined
         this.current_stream_position = null
+        this.cover_image = undefined
+        this.original_cover_image = null
 
         this.audio_player = new PydjayAudioBufferPlayer()
         this.audio_player.connectOutputs({headphones:{left:0, right:1}})    
@@ -46,8 +49,49 @@ class MainPlayerView extends PydjayAudioFilePlayer {
 
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Change', click: () => {
-
+            remote.dialog.showOpenDialog({ properties: ['openFile']}, (files) => {
+                if ((files != undefined)) {
+                    let new_cover = files[0]
+                    Jimp.read(new_cover, (error, image) => {
+                        if (!error) {
+                            document.getElementById('main-player-track-cover').src = new_cover
+                            this.cover_image = image    
+                        }
+                    })
+                }
+            })
         }}))
+        // this.menu = new Menu()
+        this.menu.append(new MenuItem({label: 'Revert to original', click: () => {
+            // remote.dialog.showOpenDialog({ properties: ['openFile']}, (files) => {
+            //     if ((files != undefined)) {
+            //         let new_cover = files[0]
+            let cover_source;
+            if (this.original_cover_image == null) {
+                cover_source = "../../resources/images/default_album_cover.png"
+                this.cover_image = null
+            } else {
+                cover_source = this.original_cover_image;
+                this.cover_image = null
+            }
+                //Jimp.read(this.original_cover_image, (error, image) => {
+                //if (!error) {
+            document.getElementById('main-player-track-cover').src = cover_source
+            //        this.cover_image = null
+            //    }
+            //})
+            //     }
+            // })
+        }}))
+
+
+        this.menu.append(new MenuItem({label: 'Remove cover art', click: () => {
+            let cover_source;
+            cover_source = "../../resources/images/default_album_cover.png"
+            this.cover_image = null
+            document.getElementById('main-player-track-cover').src = cover_source
+        }}))
+
 
 
         document.getElementById("main-player-track-cover").addEventListener("contextmenu", (e) => {
@@ -146,7 +190,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
                     this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end)
                 }
             }
-       })
+        })
 
         document.getElementById("main-player-loved").addEventListener("click", () => {
             this.setLoved(!(this.loved))
@@ -161,9 +205,13 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.setLoved(track.favorite)
         let cover_source = undefined
         if (track.cover == null) {
-            cover_source = "../../../resources/images/default_album_cover.png"
+            cover_source = "../../resources/images/default_album_cover.png"
+            this.original_cover_image = null
+            this.cover_image = null
         } else {
-            cover_source = `file://${track.image_root}/${track.cover}`;
+            cover_source = `file://${track.image_root}/${track.cover_original}`;
+            this.original_cover_image = cover_source
+            this.cover_image = undefined
         }
         document.getElementById("main-player-track-cover").src = cover_source
         this._track = track
@@ -268,7 +316,9 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             favorite:     this.loved,
             rating:       this.rating
         }
+        v.cover = this.cover_image
         v.year = (v.year != "") ? v.year : null
+        v.bpm = (v.bpm != "") ? v.bpm : null
         return v
     }
 }

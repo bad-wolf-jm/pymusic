@@ -620,8 +620,6 @@ class TrackListView extends EventDispatcher {
         document.getElementById(`track-artist-${x.id}`).innerHTML = x.artist
         document.getElementById(`track-genre-${x.id}`).innerHTML = x.genre
         document.getElementById(`track-bpm-${x.id}`).innerHTML = x.bpm
-
-
     }
 
 
