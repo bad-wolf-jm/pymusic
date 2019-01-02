@@ -49,7 +49,7 @@
                 <td><div class="color-swatch" style="background-color:#a83731"></div></td>
                 <td><div class="color-swatch" style="background-color:#af6e4d"></div></td>
                 <td><div class="color-swatch" style="background-color:#1b1b1b"></div></td>
-                <td><div class="color-swatch" style="background-color:#bfafb2"></div></td>    
+                <td><div class="color-swatch" style="background-color:#bfafb2"></div></td>
             </tr>
             <tr style="height:15px">
                 <td><div class="color-swatch" style="background-color:#ff5470"></div></td>
@@ -59,66 +59,66 @@
                 <td><div class="color-swatch" style="background-color:#87ff2a"></div></td>
                 <td><div class="color-swatch" style="background-color:#0048ba"></div></td>
                 <td><div class="color-swatch" style="background-color:#ff007c"></div></td>
-                <td><div class="color-swatch" style="background-color:#e936a7"></div></td>    
+                <td><div class="color-swatch" style="background-color:#e936a7"></div></td>
             </tr>
         </table>
         <button id="remove-color" style="width:300px; height:30px; color:#101010">Remove color</button>
     </div>
-    
+
 
 
     <div class="main_player" style="width:calc(100% - 30px)">
-            <img id="main-player-track-cover" class="cover" src="test_cover.png" height="200" width="200"></img>
+            <img id="track-editor-track-cover" class="cover" src="test_cover.png" height="200" width="200"></img>
         <div style="float:left; display:block; width:calc(100% - 200px)">
             <div style="display:inline-block; width:100%;">
-                <input type="text" class="title" id="main-player-track-title" /> 
-                <input type="text" class="artist" id="main-player-track-album" />
-                <input type="text" class="artist" id="main-player-track-artist">
+                <input type="text" class="title" id="track-editor-track-title" />
+                <input type="text" class="artist" id="track-editor-track-album" />
+                <input type="text" class="artist" id="track-editor-track-artist">
             </div>
             <div class="rating">
-                    <div id="main-player-rating" class="value"></div>
+                    <div id="track-editor-rating" class="value"></div>
             </div>
             <div class="rating">
-                <div id="main-player-loved" class="value"><i class="fa fa-heart"></i> </div>
+                <div id="track-editor-loved" class="value"><i class="fa fa-heart"></i> </div>
             </div>
 
-            <div class="track-info"> 
+            <div class="track-info">
                 <div class="info">
-                    <div class="title">start</div> <div id="main-player-track-start" class="value">3:12.345</div>
+                    <div class="title">start</div> <div id="track-editor-track-start" class="value">3:12.345</div>
                 </div>
                 <div class="info" style="width:75px !important">
                     <div class="title">end</div>
-                    <div id="main-player-track-end" class="value">3:12.345</div>
+                    <div id="track-editor-track-end" class="value">3:12.345</div>
                 </div>
                 <div class="info" style="width:100px !important">
                     <div class="title">GENRE</div>
-                    <input id="main-player-track-genre" class="input"/>
+                    <input id="track-editor-track-genre" class="input"/>
                 </div>
 
                 <div class="info" style="width:75px !important">
                     <div class="title">YEAR</div>
-                    <input  id="main-player-track-year" class="input"/> 
+                    <input  id="track-editor-track-year" class="input"/>
                 </div>
 
                 <div class="info" style="width:50px !important">
                     <div class="title">BPM</div>
-                    <input id="main-player-track-bpm" class="input"/>
+                    <input id="track-editor-track-bpm" class="input"/>
                 </div>
                 <div class="info" style="width:75px !important">
                     <div class="title">DURATION</div>
-                    <div id="main-player-track-duration" class="value">3:12</div>
+                    <div id="track-editor-track-duration" class="value">3:12</div>
                 </div>
                 <div class="info">
                     <div class="title">COLOR</div>
-                    <div id="main-player-track-color" class="value">  
-                        <button id="main-player-color" class="color-chooser"></button>
+                    <div id="track-editor-track-color" class="value">
+                        <button id="track-editor-color" class="color-chooser"></button>
                     </div>
                 </div>
 
             </div>
         </div>
     </div>
-    <div id="main-player-waveform" class="waveform" style="width:calc(100%) !important;"></div>
+    <div id="track-editor-waveform" class="waveform" style="width:calc(100%) !important;"></div>
     <div style="height:50px; width:100%; display:inline-block; position:relative">
         <button id="play-button" style="float:left; width:50px; height:50px; border-radius:25px; border:1px solid gray; background-color:rgb(35,35,35)"><i class="fa fa-play" style="text-align:center; font-size:12pt"></i></button>
         <div style="float:left; width:50px"><i class="fa fa-search-minus" style="width:50px; text-align:center; line-height:50px; vertical-align:middle; font-size:12pt"></i></div>
@@ -138,7 +138,7 @@
                         <td><!= event_name !></td>
                         <td style="text-align:right"><!= moment(start_time).fromNow()!></td>
                     </tr>
-                </script>            
+                </script>
             </div>
         </div>
         <div style="float:left; width:50px; height:100%">&nbsp;</div>
@@ -173,7 +173,7 @@
                         <td style="width:25px"><!= rating !></td>
                         <td style="width:30px; text-align:right; padding-right:5px"><!= bpm !></td>
                         <td style="width:45px; text-align:right"><!= duration !></td>
-                        <td style="width:15px"></td>            
+                        <td style="width:15px"></td>
                     </tr>
                 </script>
             </div>

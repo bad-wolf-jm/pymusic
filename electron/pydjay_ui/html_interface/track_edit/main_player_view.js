@@ -16,7 +16,7 @@ function rgb2hex(rgb) {
         return ("0" + parseInt(x).toString(16)).slice(-2);
     }
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-} 
+}
 class MainPlayerView extends PydjayAudioFilePlayer {
     constructor () {
         super()
@@ -31,20 +31,20 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.original_cover_image = null
 
         this.audio_player = new PydjayAudioBufferPlayer()
-        this.audio_player.connectOutputs({headphones:{left:0, right:1}})    
+        this.audio_player.connectOutputs({headphones:{left:0, right:1}})
 
 
         // this.audio_player = new PydjayAudioBufferPlayer()
         // if (this.audio_player.audio_context.audio_ctx.destination.maxChannelCount == 6) {
-        //     this.audio_player.connectOutputs(pl_channel_config)    
+        //     this.audio_player.connectOutputs(pl_channel_config)
         // } else {
-        //     this.audio_player.connectOutputs(pl_channel_config2)    
+        //     this.audio_player.connectOutputs(pl_channel_config2)
         // }
 
 
         // if (this.audio_player.audio_context.audio_ctx.destination.maxChannelCount >= 6) {
         // } else {
-        //     this.audio_player.connectOutputs(pl_channel_config2)    
+        //     this.audio_player.connectOutputs(pl_channel_config2)
         // }
 
         this.menu = new Menu()
@@ -54,8 +54,8 @@ class MainPlayerView extends PydjayAudioFilePlayer {
                     let new_cover = files[0]
                     Jimp.read(new_cover, (error, image) => {
                         if (!error) {
-                            document.getElementById('main-player-track-cover').src = new_cover
-                            this.cover_image = image    
+                            document.getElementById('track-editor-track-cover').src = new_cover
+                            this.cover_image = image
                         }
                     })
                 }
@@ -76,7 +76,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             }
                 //Jimp.read(this.original_cover_image, (error, image) => {
                 //if (!error) {
-            document.getElementById('main-player-track-cover').src = cover_source
+            document.getElementById('track-editor-track-cover').src = cover_source
             //        this.cover_image = null
             //    }
             //})
@@ -89,12 +89,12 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             let cover_source;
             cover_source = "../../resources/images/default_album_cover.png"
             this.cover_image = null
-            document.getElementById('main-player-track-cover').src = cover_source
+            document.getElementById('track-editor-track-cover').src = cover_source
         }}))
 
 
 
-        document.getElementById("main-player-track-cover").addEventListener("contextmenu", (e) => {
+        document.getElementById("track-editor-track-cover").addEventListener("contextmenu", (e) => {
             this.menu.popup({window: remote.getCurrentWindow()})
         })
 
@@ -103,7 +103,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             //let track = this.controller.get_id(this.color_picker_track_id)
             //let x = e.target
             this.color = rgb2hex(e.target.style.backgroundColor)
-            let x = document.getElementById("main-player-color")
+            let x = document.getElementById("track-editor-color")
             x.style.backgroundColor = this.color
             //this.controller.set_metadata(track, {color: rgb2hex(color)})
             cp.classList.remove("show")
@@ -112,16 +112,16 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         document.getElementById("remove-color").addEventListener("click", (e) => {
             let cp = document.getElementById("track-edit-color-chooser")
             this.color = null
-            let x = document.getElementById("main-player-color")
+            let x = document.getElementById("track-editor-color")
             x.style.backgroundColor = this.color
             //let track = this.controller.get_id(this.color_picker_track_id)
             //this.controller.set_metadata(track, {color: null})
             cp.classList.remove("show")
         })
- 
 
-        document.getElementById("main-player-color").addEventListener("click", (ev) => {
-            let e = document.getElementById("main-player-color")
+
+        document.getElementById("track-editor-color").addEventListener("click", (ev) => {
+            let e = document.getElementById("track-editor-color")
             //let track_id = parseInt(e.attributes['data-track-id'].value)
             let cp = document.getElementById("track-edit-color-chooser")
             let button_rect = e.getBoundingClientRect()
@@ -131,7 +131,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
 
             //if (button_offset + 100 > scroller_rect.height) {
             // cp.className = "overlay-color-picker-bottom" + (cp.classList.contains("show") ? " show" : "")
-            let button_offset = (button_rect.bottom - 200 + 25) 
+            let button_offset = (button_rect.bottom - 200 + 25)
             cp.style.top = (button_offset)+"px"
             //} else {
             //    let button_offset_to_frame = (button_rect.top - 100 +5) // + 53 + 25 - 100)
@@ -154,7 +154,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         this.audio_player.on("playback-paused", () => {
             ipcRenderer.send("playback-stopped")
         })
-        
+
         this.audio_player.on("playback-stopped", () => {
             ipcRenderer.send("playback-stopped")
         })
@@ -163,16 +163,16 @@ class MainPlayerView extends PydjayAudioFilePlayer {
     set_track(track) {
         let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
-        document.getElementById("main-player-track-title").value = track.title
-        document.getElementById("main-player-track-album").value = track.album
-        document.getElementById("main-player-track-artist").value = track.artist
-        document.getElementById("main-player-track-bpm").value = track.bpm
-        document.getElementById("main-player-track-genre").value = track.genre
-        document.getElementById("main-player-track-year").value = track.year
-        document.getElementById("main-player-track-start").innerHTML = `${format_nanoseconds(track.stream_start)}`
-        document.getElementById("main-player-track-end").innerHTML = `${format_nanoseconds(track.stream_end)}`
-        document.getElementById("main-player-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
-        document.getElementById("main-player-color").style.backgroundColor = track.color
+        document.getElementById("track-editor-track-title").value = track.title
+        document.getElementById("track-editor-track-album").value = track.album
+        document.getElementById("track-editor-track-artist").value = track.artist
+        document.getElementById("track-editor-track-bpm").value = track.bpm
+        document.getElementById("track-editor-track-genre").value = track.genre
+        document.getElementById("track-editor-track-year").value = track.year
+        document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(track.stream_start)}`
+        document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(track.stream_end)}`
+        document.getElementById("track-editor-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
+        document.getElementById("track-editor-color").style.backgroundColor = track.color
         document.getElementById("play-button").addEventListener("click", () => {
             let start;
             if (this.audio_player.state == "PLAYING") {
@@ -180,7 +180,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
                 this.current_stream_position = null
             } else {
                 if (this.current_stream_position != null) {
-                    start = this.current_stream_position * this._track.track_length  / 1000000               
+                    start = this.current_stream_position * this._track.track_length  / 1000000
                 } else {
                     start = this.stream_start / 1000000
                 }
@@ -192,7 +192,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             }
         })
 
-        document.getElementById("main-player-loved").addEventListener("click", () => {
+        document.getElementById("track-editor-loved").addEventListener("click", () => {
             this.setLoved(!(this.loved))
         })
 
@@ -213,7 +213,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             this.original_cover_image = cover_source
             this.cover_image = undefined
         }
-        document.getElementById("main-player-track-cover").src = cover_source
+        document.getElementById("track-editor-track-cover").src = cover_source
         this._track = track
         this._waveform.load(file_name)
         this.stream_start = this._track.stream_start
@@ -227,34 +227,34 @@ class MainPlayerView extends PydjayAudioFilePlayer {
 
     init() {
         this._waveform = WaveSurfer.create({
-            container:     `#main-player-waveform`,
+            container:     `#track-editor-waveform`,
             waveColor:     'violet',
             progressColor: 'purple',
             height:        150,
             barHeight:     1.25,
             plugins: [
                 WaveSurferRegions.create({
-                    container: `#main-player-waveform`,
+                    container: `#track-editor-waveform`,
                     deferInit: false,
                 })
             ]
-        });       
+        });
         this._waveform.on(
             "ready", () => {
                 this._waveform.zoom(0)
                 this._region = this._waveform.addRegion({
-                    start: this._track.stream_start / 1000000000, 
+                    start: this._track.stream_start / 1000000000,
                     end:   this._track.stream_end / 1000000000,
                     color: "rgba(25,100,0,0.5)"
                 })
-                this._region.on("update", 
+                this._region.on("update",
                     () => {
                         this.stream_start = Math.round(this._region.start * 1000000000)
                         this.stream_end = Math.round(this._region.end * 1000000000)
                         this.stream_length = this.stream_end - this.stream_start
-                        document.getElementById("main-player-track-start").innerHTML = `${format_nanoseconds(this.stream_start)}`
-                        document.getElementById("main-player-track-end").innerHTML = `${format_nanoseconds(this.stream_end)}`
-                        document.getElementById("main-player-track-duration").innerHTML = `${format_nanoseconds(this.stream_length)}`
+                        document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(this.stream_start)}`
+                        document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(this.stream_end)}`
+                        document.getElementById("track-editor-track-duration").innerHTML = `${format_nanoseconds(this.stream_length)}`
                     }
                 )
             }
@@ -282,7 +282,7 @@ class MainPlayerView extends PydjayAudioFilePlayer {
         for (let i=1; i<6; i++) {
             html+=`<i id='rating-star-${i}' class='fa ${( i <= num ? "fa-star" : "fa-star-o")}' style='margin-left:3px'></i>`;
         }
-        document.getElementById("main-player-rating").innerHTML = html
+        document.getElementById("track-editor-rating").innerHTML = html
         for (let i=1; i<6; i++) {
             document.getElementById(`rating-star-${i}`).addEventListener('click', () => {
                 if (i == 1 && this.rating == 1) {
@@ -293,24 +293,24 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             })
         }
     }
-    
+
     setLoved (value) {
         var html = "";
         this.loved = value
         html+="<i title='"+value+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
-        document.getElementById("main-player-loved").innerHTML = html
+        document.getElementById("track-editor-loved").innerHTML = html
     }
 
     getValues() {
         let F = (x) => document.getElementById(x)
         let v = {
-            title:  F("main-player-track-title").value, 
-            album:  F("main-player-track-album").value, 
-            artist: F("main-player-track-artist").value,
-            bpm:    F("main-player-track-bpm").value,
-            genre:  F("main-player-track-genre").value,
-            year:   F("main-player-track-year").value,
-            color:  this.color, //F("main-player-color").style.backgroundColor,
+            title:  F("track-editor-track-title").value,
+            album:  F("track-editor-track-album").value,
+            artist: F("track-editor-track-artist").value,
+            bpm:    F("track-editor-track-bpm").value,
+            genre:  F("track-editor-track-genre").value,
+            year:   F("track-editor-track-year").value,
+            color:  this.color, //F("track-editor-color").style.backgroundColor,
             stream_start: this.stream_start,
             stream_end:   this.stream_end,
             favorite:     this.loved,
