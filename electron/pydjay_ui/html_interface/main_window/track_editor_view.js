@@ -6,7 +6,7 @@
 // mpl_channel_config2 = {master:{left:0, right:1}}
 
 //const {remote} = require('electron')
-const {Menu, MenuItem} = require('electron').remote
+//const {Menu, MenuItem} = require('electron').remote
 var Jimp = require("jimp");
 
 

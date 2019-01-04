@@ -1,12 +1,12 @@
-WaveSurfer            = require("wavesurfer.js")
-var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
+//#WaveSurfer            = require("wavesurfer.js")
+//#var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
-const { ipcRenderer } = require('electron');
-const remote = require('electron').remote;
+//const { ipcRenderer } = require('electron');
+//const remote = require('electron').remote;
 
 var track_id = null
 
-DB = new DataProvider()
+//DB = new DataProvider()
 
 view = new TrackEditorView()
 view.init()
@@ -63,9 +63,10 @@ function setTrack(id) {
 ipcRenderer.on('track-id', (event, arg) => {setTrack(arg.id)});
 
 function closeme() {
-    var window = remote.getCurrentWindow();
-    view.audio_player.stop()
-    window.close();
+    document.getElementById("track-edit-dialog").close()
+    // var window = remote.getCurrentWindow();
+    // view.audio_player.stop()
+    // window.close();
 }
 
 function saveme() {
