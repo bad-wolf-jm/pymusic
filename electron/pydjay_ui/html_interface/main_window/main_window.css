@@ -29,6 +29,16 @@ body {
     user-select: none;
 }
 
+dialog {
+    font-family: Helvetica, sans-serif;
+    font-size:   10pt;
+    font-weight: 200;
+    color:     rgb(200, 200, 200);
+    user-select: none;
+}
+
+
+
 button {
     /* font-family: Arial, Helvetica, sans-serif; */
     font-size: 10pt;
@@ -1134,10 +1144,10 @@ input.new-playlist[type=text] {
     padding:0px;
     width:100%;
     height:200px;
-    display:inline-block
+    display:inline-block;
     /* position:fixed;  */
     /* top:30px; */
-    /* background-color:blue;  */
+    /* background-color:blue; */
     /* background-image: linear-gradient(to top, #1E1E1E, #3C3C3C) */
 
 }
@@ -1249,4 +1259,77 @@ input.new-playlist[type=text] {
     text-align:center;
     text-transform:uppercase;
     font-size:10pt;
+}
+
+
+.track-metadata-editor-list-area {
+    overflow-y:auto;
+    height: calc(100% - 50px);
+    padding-right:10px;
+    margin:0;
+    padding:0;
+    border: 0px solid transparent;
+}
+
+.track-metadata-editor-list-area .main-track-list-table {
+    width:100%;
+    /* height:100%; */
+    overflow-y:auto;
+    margin:0;
+    padding:0;
+    -webkit-border-vertical-spacing:0;
+    border: 0px solid transparent;
+}
+
+.track-metadata-editor-list-area .main-track-list-table .header-row{
+    width:100%;
+    /* height:100%; */
+    margin:0;
+    padding:0;
+    height:25px;
+    text-transform:uppercase;
+    background-color: rgb(143, 142, 142);
+    border: 0px solid transparent;
+
+}
+
+.track-metadata-editor-list-area .main-track-list-table .row {
+    width:100%;
+    height:20px;
+    /* text-transform:uppercase; */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-metadata-editor-list-area .main-track-list-table .row:hover {
+    background-color: rgb(40, 40, 40);
+}
+
+.track-metadata-editor-list-area .main-track-list-table tr:nth-child(even) {
+    background: rgb(30,30,30)
+}
+
+.track-metadata-editor-list-area .main-track-list-table tr:nth-child(odd) {
+    background: rgb(35, 35, 35)
+}
+
+
+.form-button {
+    padding: 6px 10px;
+    margin: 8px;
+
+    background: rgb(30, 130, 30);
+    font-size: 10pt;
+    border: none;
+    cursor: pointer;
+    height:32px;
+    outline:none !important;
+    height:50px;
+    width:300px;
+}
+
+.form-button:hover {
+    background: #ccc;
+    background: rgb(80, 80, 80);
 }
