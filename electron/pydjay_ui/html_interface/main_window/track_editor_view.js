@@ -216,8 +216,8 @@ class TrackEditorView extends PydjayAudioFilePlayer {
     init() {
         this._waveform = WaveSurfer.create({
             container:     `#track-editor-waveform`,
-            waveColor:     'violet',
-            progressColor: 'purple',
+            waveColor:     'grey',
+            progressColor: 'black',
             height:        100,
             barHeight:     1.25,
             plugins: [
@@ -236,7 +236,7 @@ class TrackEditorView extends PydjayAudioFilePlayer {
                 this._region = this._waveform.addRegion({
                     start: this._track.stream_start / 1000000000,
                     end:   this._track.stream_end / 1000000000,
-                    color: "rgba(25,50,0,0.5)"
+                    color: "rgba(25,25,25,0.35)"
                 })
                 this._region.on("update",
                     () => {
