@@ -159,7 +159,7 @@ class TrackListView extends EventDispatcher {
             //     window.webContents.send("track-id", this.context_menu_element)
             // })
             pc.stop()
-            setTrack(this.context_menu_element.id)
+            view.set_track(this.context_menu_element)
             document.getElementById("track-edit-dialog").showModal()
             // document.getElementById("track-edit-dialog").showModal()
             // window.loadURL('file://' + __dirname + '/../track_edit/layout.html')

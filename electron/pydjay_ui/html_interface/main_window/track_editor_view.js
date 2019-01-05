@@ -144,7 +144,39 @@ class TrackEditorView extends PydjayAudioFilePlayer {
             // this.color_picker_track_id = track_id
             // ev.preventDefault()
         })
+
+        document.getElementById("play-button").addEventListener("click", () => {
+            let start;
+            if (this.audio_player.state == "PLAYING") {
+                this.audio_player.stop()
+                this.current_stream_position = null
+            } else {
+                if (this.current_stream_position != null) {
+                    start = this.current_stream_position * this._track.track_length  / 1000000
+                } else {
+                    start = this.stream_start / 1000000
+                }
+                if (this.stream_end == Infinity) {
+                    this.audio_player.play(this._waveform.backend.buffer, start, this._track.stream_end)
+                } else {
+                    this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end)
+                }
+            }
+        })
+
+        document.getElementById("track-editor-loved").addEventListener("click", () => {
+            this.setLoved(!(this.loved))
+        })
+
     //})})
+
+        document.getElementById("track-editor-save").addEventListener("click", (ev) => {
+            this.save()
+        })
+
+        document.getElementById("track-editor-cancel").addEventListener("click", (ev) => {
+            this.close()
+        })
 
 
         this.audio_player.on("playback-started", () => {
@@ -173,28 +205,6 @@ class TrackEditorView extends PydjayAudioFilePlayer {
         document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(track.stream_end)}`
         document.getElementById("track-editor-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
         document.getElementById("track-editor-color").style.backgroundColor = track.color
-        document.getElementById("play-button").addEventListener("click", () => {
-            let start;
-            if (this.audio_player.state == "PLAYING") {
-                this.audio_player.stop()
-                this.current_stream_position = null
-            } else {
-                if (this.current_stream_position != null) {
-                    start = this.current_stream_position * this._track.track_length  / 1000000
-                } else {
-                    start = this.stream_start / 1000000
-                }
-                if (this.stream_end == Infinity) {
-                    this.audio_player.play(this._waveform.backend.buffer, start, this._track.stream_end)
-                } else {
-                    this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end)
-                }
-            }
-        })
-
-        document.getElementById("track-editor-loved").addEventListener("click", () => {
-            this.setLoved(!(this.loved))
-        })
 
         var slider = document.querySelector('#slider');
         slider.oninput =  () => {
@@ -222,6 +232,41 @@ class TrackEditorView extends PydjayAudioFilePlayer {
             this.current_stream_position = pos*1000000
             this._waveform.seekAndCenter(pos*1000000 / this._track.track_length)
         })
+
+        DB.get_related_tracks(track.id, (queue) => {
+            DB.get_playback_history(track.id, (history) => {
+                let queue_rows = []
+                for(let i=0; i<queue.length; i++) {
+                    let element = {
+                        id:          queue[i].id,
+                        available:   queue[i].available,
+                        color:       queue[i].color,
+                        loved:       "<i title='"+i+"' class='fa " + (queue[i].favorite ? "fa-heart" : "fa-heart-o") +"'></i>",
+                        title:       queue[i].title,
+                        artist:      queue[i].artist,
+                        genre:       queue[i].genre,
+                        last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
+                        play_count:  queue[i].play_count,
+                        rating:      this._get_rating(queue[i]),
+                        bpm:         queue[i].bpm,
+                        duration:    format_nanoseconds(queue[i].stream_length),
+                    }
+                    queue_rows.push(element)
+                }
+                jui.ready([ "grid.table" ], (table) => {
+                    var queue_content = table("#related-elements", {
+                        data:   queue_rows,
+                        scroll: false,
+                        resize: false
+                    });
+                    var history_content = table("#playback-history", {
+                        data:   history,
+                        scroll: false,
+                        resize: false
+                    })
+                })
+            })
+        })
     }
 
 
@@ -230,7 +275,7 @@ class TrackEditorView extends PydjayAudioFilePlayer {
             container:     `#track-editor-waveform`,
             waveColor:     'violet',
             progressColor: 'purple',
-            height:        150,
+            height:        100,
             barHeight:     1.25,
             plugins: [
                 WaveSurferRegions.create({
@@ -245,7 +290,7 @@ class TrackEditorView extends PydjayAudioFilePlayer {
                 this._region = this._waveform.addRegion({
                     start: this._track.stream_start / 1000000000,
                     end:   this._track.stream_end / 1000000000,
-                    color: "rgba(25,100,0,0.5)"
+                    color: "rgba(25,50,0,0.5)"
                 })
                 this._region.on("update",
                     () => {
@@ -275,6 +320,17 @@ class TrackEditorView extends PydjayAudioFilePlayer {
 
 
     }
+
+
+    _get_rating(track_object) {
+        let html = "";
+        for (let j=1; j<6; j++) {
+            html+="<i class='fa " + ( j <= track_object.rating ? "fa-star" : "fa-star-o") +"' style='font-size:8pt; margin-left:3px'></i>";
+        }
+        return html
+    }
+    
+
 
     setRating (num) {
         this.rating = num
@@ -321,4 +377,45 @@ class TrackEditorView extends PydjayAudioFilePlayer {
         v.bpm = (v.bpm != "") ? v.bpm : null
         return v
     }
+
+
+    close() {
+        this.audio_player.stop()
+        document.getElementById("track-edit-dialog").close()
+        // var window = remote.getCurrentWindow();
+        // view.audio_player.stop()
+        // window.close();
+    }
+    
+    save() {
+        // var window = remote.getCurrentWindow();
+    
+        DB.get_settings((settings) => {
+            let new_values = this.getValues()
+            let image_root = `${settings.image_root}`
+            //console.log(new_values)
+            if (new_values.cover != null) {
+                new_values.cover_original = `cover_original_${track_id}`
+                new_values.cover_large    = `cover_large_${track_id}`
+                new_values.cover_medium   = `cover_medium_${track_id}`
+                new_values.cover_small    = `cover_small_${track_id}`
+                new_values.cover.write(`${path.join(settings.image_root, new_values.cover_original)}`);
+                new_values.cover.resize(320,320).write(`${path.join(settings.image_root, new_values.cover_large)}`)
+                new_values.cover.resize(160,160).write(`${path.join(settings.image_root, new_values.cover_medium)}`)
+                new_values.cover.resize(100,100).write(`${path.join(settings.image_root, new_values.cover_small)}`)
+            } else if (new_values.cover !== undefined) {
+                new_values.cover_original = null;
+                new_values.cover_large    = null;
+                new_values.cover_medium   = null;
+                new_values.cover_small    = null;
+            }
+    
+            tracks_model.set_metadata(track_id, new_values)
+            // DB.update_track_data(track_id, new_values, () => {
+            //     ipcRenderer.send("track-modified", track_id)
+            this.close()
+            // })
+        })
+    }
+    
 }

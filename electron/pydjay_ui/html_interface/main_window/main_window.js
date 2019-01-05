@@ -22,6 +22,10 @@ SV.on("add-playlist", () => {
 
 DB = new DataProvider()
 
+view = new TrackEditorView()
+view.init()
+
+
 tracks_model              = new TrackListModel()
 unavailable_model         = new UnavailableModel(tracks_model)
 shortlist_model           = new ShortlistModel(tracks_model)
