@@ -288,6 +288,10 @@ class TrackListView extends EventDispatcher {
         this.view_list_order = []
         this.view_list_id_order = []
         this.queue_rows = []
+
+        let scroller = document.getElementById("main-track-list-scroller")
+        scroller.scrollTop = 0
+    
         //this.table_rows = {}
         if (queue == undefined) {
             queue = []
@@ -624,8 +628,6 @@ class TrackListView extends EventDispatcher {
         document.getElementById(`track-genre-${x.id}`).innerHTML = x.genre
         document.getElementById(`track-bpm-${x.id}`).innerHTML = x.bpm
     }
-
-
     ensure_row_visible(x, direction) {
         let row = this.table_rows[x.id]
         let scroller = document.getElementById("main-track-list-scroller")
