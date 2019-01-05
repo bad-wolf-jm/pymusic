@@ -45,11 +45,8 @@ class PrecuePlayerView extends EventDispatcher {
 
     set_controller(controller) {
         this.controller = controller
-        this.controller.on("stream-position", (pos_data) => {
-            let pos = pos_data.position
-            let duration = pos_data.duration
-            let remaining = Math.abs(duration*1000 - pos)
-            let percent = (pos*100 / (duration*1000))
+        this.controller.on("stream-position", (pos) => {
+            let percent = (pos*100 / (this.controller.source.duration*1000))
             if (isFinite(percent)) {
                 document.getElementById("precue-player-track-progress").value = percent;
             }

@@ -145,23 +145,23 @@ mpc.on("track-finished",
 )
 
 
-ipcRenderer.on("headphone-playback-stopped", () => {
-    pc.dispatch("playback-stopped")
-})
+// ipcRenderer.on("headphone-playback-stopped", () => {
+//     pc.dispatch("playback-stopped")
+// })
 
 
-ipcRenderer.on("headphone-playback-paused", () => {
-    pc.dispatch("playback-paused")
-})
+// ipcRenderer.on("headphone-playback-paused", () => {
+//     pc.dispatch("playback-paused")
+// })
 
-ipcRenderer.on("headphone-playback-started", () => {
-    pc.dispatch("playback-started")
-})
+// ipcRenderer.on("headphone-playback-started", () => {
+//     pc.dispatch("playback-started")
+// })
 
 
-ipcRenderer.on("headphone-stream-position", (event, pos) => {
-    pc.dispatch("stream-position", pos)
-})
+// ipcRenderer.on("headphone-stream-position", (event, pos) => {
+//     pc.dispatch("stream-position", pos)
+// })
 
 
 ipcRenderer.on("master-end-of-stream", () => {
