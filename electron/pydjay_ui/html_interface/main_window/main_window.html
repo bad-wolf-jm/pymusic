@@ -69,7 +69,7 @@
 
 <body class="jui" style="margin: 0px; padding:0px; height:100%">
 
-    <dialog id="track-edit-dialog" style="width:75%; height:75%; z-index:1000; padding:0; background-color:rgb(100,100,100); border:2px solid grey">
+    <dialog id="track-edit-dialog" style="width:75%; height:75%; z-index:1000; padding:0; background-color:rgb(200,200,200); border:2px solid grey">
         <h1 style="background-color:rgb(30,30,30); text-align:center; font-size:11pt; margin:0px; color:rgb(200,200,200); height:30px; line-height:30px">Edit track info</h1>
 
         <div id="track-edit-color-chooser" class="overlay-color-picker">
@@ -109,53 +109,64 @@
         </div>
 
 
-        <div class="track-metadata-editor" style="padding:20px; width:calc(100% - 30px)">
-                <img id="track-editor-track-cover" class="cover" src="test_cover.png" height="200" width="200"></img>
-            <div style="float:left; display:block; width:calc(100% - 200px)">
-                <div style="display:inline-block; width:100%;">
-                    <input type="text" class="title" id="track-editor-track-title" />
-                    <input type="text" class="artist" id="track-editor-track-album" />
-                    <input type="text" class="artist" id="track-editor-track-artist">
-                </div>
-                <div class="rating">
-                        <div id="track-editor-rating" class="value"></div>
-                </div>
-                <div class="rating">
-                    <div id="track-editor-loved" class="value"><i class="fa fa-heart"></i> </div>
+        <div class="track-metadata-editor" style="padding:20px; width:calc(100% - 40px)">
+            <img id="track-editor-track-cover" class="cover" src="test_cover.png" height="125" width="125"></img>
+            <div style="float:left; display:block; width:calc(100% - 125px); height:100%">
+                <div style="width:calc(100% - 25px); margin-left:15px; height:100%">
+                    <div style="height:35px; width:100%; margin:0; padding:0;">
+                        <input type="text" class="title" id="track-editor-track-title" style="height:100%; width:calc(100% - 256px)"/>
+                        <div style="width:245px !important; float:right; height: 35px; background-color: rgb(46, 45, 45); margin:0; padding:0">
+                            <div class="rating" style="transform:translateY(10px);">
+                                <div id="track-editor-rating" class="value"></div>
+                            </div>
+                            <div class="rating" style="width:45px !important;transform:translateY(10px);">
+                                <div id="track-editor-loved" class="value"><i class="fa fa-heart"></i> </div>
+                            </div>       
+                            <div class="rating" id="track-editor-track-color"  style="width:45px !important;transform:translateY(10px);">
+                                    <div class="value"><button id="track-editor-color" class="color-chooser"></button></div>
+                            </div>
+     
+                        </div>
+                    </div>
+                    <div style="width:100%; height:100%; display:inline-block;">
+                        <div style="width:calc(100% - 550px); display:inline-block">
+                            <input type="text" class="artist" id="track-editor-track-album" />
+                            <input type="text" class="artist" id="track-editor-track-artist">        
+                        </div>
+                        <div style="width:550px !important; float:right; height: 44px; background-color: rgb(46, 45, 45)">
+                            <div class="info" style="width:75px !important; float:right">
+                                <div class="title">DURATION</div>
+                                <div id="track-editor-track-duration" class="value">3:12</div>
+                            </div>
+                            <div class="info" style="width:75px !important; float:right; height:37px; background-color: rgb(46, 45, 45)">
+                                <div class="title">end</div>
+                                <div id="track-editor-track-end" class="value">3:12.345</div>
+                            </div>            
+                            <div class="info" style="width:75px !important; float:right;  height:37px; background-color: rgb(46, 45, 45)">
+                                <div class="title">start</div> 
+                                <div id="track-editor-track-start" class="value">3:12.345</div>
+                            </div>
+
+                            <div class="info" style="width:125px !important">
+                                <div class="title">GENRE</div>
+                                <input id="track-editor-track-genre" class="input"/>
+                            </div>
+        
+                            <div class="info" style="width:50px !important">
+                                <div class="title">YEAR</div>
+                                <input  id="track-editor-track-year" class="input"/>
+                            </div>
+        
+                            <div class="info" style="width:50px !important; float:right">
+                                <div class="title">BPM</div>
+                                <input id="track-editor-track-bpm" class="input"/>
+                            </div>
+                        </div>
+                
+                    </div>
                 </div>
 
                 <div class="track-info">
-                    <div class="info">
-                        <div class="title">start</div> <div id="track-editor-track-start" class="value">3:12.345</div>
-                    </div>
-                    <div class="info" style="width:75px !important">
-                        <div class="title">end</div>
-                        <div id="track-editor-track-end" class="value">3:12.345</div>
-                    </div>
-                    <div class="info" style="width:100px !important">
-                        <div class="title">GENRE</div>
-                        <input id="track-editor-track-genre" class="input"/>
-                    </div>
-
-                    <div class="info" style="width:75px !important">
-                        <div class="title">YEAR</div>
-                        <input  id="track-editor-track-year" class="input"/>
-                    </div>
-
-                    <div class="info" style="width:50px !important">
-                        <div class="title">BPM</div>
-                        <input id="track-editor-track-bpm" class="input"/>
-                    </div>
-                    <div class="info" style="width:75px !important">
-                        <div class="title">DURATION</div>
-                        <div id="track-editor-track-duration" class="value">3:12</div>
-                    </div>
-                    <div class="info">
-                        <div class="title">COLOR</div>
-                        <div id="track-editor-track-color" class="value">
-                            <button id="track-editor-color" class="color-chooser"></button>
-                        </div>
-                    </div>
 
                 </div>
             </div>
@@ -322,7 +333,7 @@
                     <p></p>
                     <a id="main-menu-reset-audio"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Reset audio system</a>
                     <a id="main-menu-settings"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a>
-                    <a id="main-menu-mixer"><i class="fa fa-cog"></i>&nbsp;&nbsp;Show mixer</a>
+                    <!-- <a id="main-menu-mixer"><i class="fa fa-cog"></i>&nbsp;&nbsp;Show mixer</a> -->
                     <p></p>
                     <a id="main-menu-quit"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Quit</a>
                 </div>

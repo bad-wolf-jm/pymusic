@@ -230,6 +230,9 @@ class TrackEditorView extends PydjayAudioFilePlayer {
         this._waveform.on(
             "ready", () => {
                 this._waveform.zoom(0)
+                if (this._region != undefined) {
+                    this._waveform.clearRegions()
+                }
                 this._region = this._waveform.addRegion({
                     start: this._track.stream_start / 1000000000,
                     end:   this._track.stream_end / 1000000000,
@@ -258,7 +261,7 @@ class TrackEditorView extends PydjayAudioFilePlayer {
     _get_rating(track_object) {
         let html = "";
         for (let j=1; j<6; j++) {
-            html+="<i class='fa " + ( j <= track_object.rating ? "fa-star" : "fa-star-o") +"' style='font-size:8pt; margin-left:3px'></i>";
+            html+="<i class='fa " + ( j <= track_object.rating ? "fa-star" : "fa-star-o") +"' style='font-size:8pt; margin-left:3px; color: rgb(200,200,200);'></i>";
         }
         return html
     }
@@ -267,7 +270,7 @@ class TrackEditorView extends PydjayAudioFilePlayer {
         this.rating = num
         var html = "";
         for (let i=1; i<6; i++) {
-            html+=`<i id='rating-star-${i}' class='fa ${( i <= num ? "fa-star" : "fa-star-o")}' style='margin-left:3px'></i>`;
+            html+=`<i id='rating-star-${i}' class='fa ${( i <= num ? "fa-star" : "fa-star-o")}' style='margin-left:3px; color:rgb(200,200,200);'></i>`;
         }
         document.getElementById("track-editor-rating").innerHTML = html
         for (let i=1; i<6; i++) {
@@ -284,7 +287,7 @@ class TrackEditorView extends PydjayAudioFilePlayer {
     setLoved (value) {
         var html = "";
         this.loved = value
-        html+="<i title='"+value+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
+        html+="<i title='"+value+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"', style='color:rgb(200,200,200);'></i>";
         document.getElementById("track-editor-loved").innerHTML = html
     }
 

@@ -1143,7 +1143,7 @@ input.new-playlist[type=text] {
     margin: 0px;
     padding:0px;
     width:100%;
-    height:200px;
+    height:125px;
     display:inline-block;
     /* position:fixed;  */
     /* top:30px; */
@@ -1155,6 +1155,7 @@ input.new-playlist[type=text] {
 .track-metadata-editor .cover {
     padding:0px;
     float:left;
+    display:block;
 }
 
 
@@ -1198,10 +1199,11 @@ input.new-playlist[type=text] {
 }
 
 .track-metadata-editor .info {
-    /* display: inline-block; */
-    float:left;
+    display: inline-block;
+    /* float:left; */
     height:100%;
-    margin:5px !important;
+    /* margin:5px !important; */
+    /* position:absolute; */
     padding:0px !important;
     width:125px !important;;
 
@@ -1213,7 +1215,7 @@ input.new-playlist[type=text] {
     text-transform:uppercase;
     font-weight:normal;
     color:rgb(120,120,120);
-    font-size:8pt;
+    font-size:9pt;
     margin:0px;
     padding:0px;
     height:13px;
@@ -1223,22 +1225,27 @@ input.new-playlist[type=text] {
     text-align:center;
     text-transform:uppercase;
     font-weight:medium;
-    font-size:10pt;
-    margin:0px !important;
+    font-size:11pt;
+    height:22px;
+    margin-top:3px !important;
     padding:0px !important ;
     width:100%;
     background-color:inherit;
+    color:rgb(200,200,200);
+    background-color: rgb(46, 45, 45);
+
     /* rgb(27, 27, 27) */
     /* display:inline-block;
     width:200px; */
 }
 
-.track-metadata-editor .info  .input {
+.track-metadata-editor .info .input {
     text-align:center;
-    text-transform:uppercase;
+    /* text-transform:uppercase; */
     font-weight:medium;
-    font-size:10pt;
-    margin:0px !important;
+    font-size:11pt;
+    height:20px;
+    margin-top:3px !important;
     padding:0px !important ;
     width:100%;
     color:rgb(182, 182, 182);
@@ -1250,15 +1257,17 @@ input.new-playlist[type=text] {
 
 .track-metadata-editor .rating {
     display: inline-block;
-    margin:10px !important;
+    margin:0px !important;
     padding:0px !important;
     width:125px !important;
+    color:rgb(182, 182, 182);
 }
 
 .track-metadata-editor .rating .value{
     text-align:center;
     text-transform:uppercase;
     font-size:10pt;
+    color:rgb(182, 182, 182);
 }
 
 
@@ -1312,6 +1321,42 @@ input.new-playlist[type=text] {
 
 .track-metadata-editor-list-area .main-track-list-table tr:nth-child(odd) {
     background: rgb(35, 35, 35)
+}
+
+
+input.title[type=text] {
+
+    /* padding: 6px; */
+    /* margin-top: 8px; */
+    background: rgb(46, 45, 45);
+    /* margin-top: 0px; */
+    margin:0;
+    padding-left:10px;
+    color: rgb(200,200,200);
+    font-size: 10pt;
+    border: none;
+    outline:none;
+    /* float:right; */
+    height:30px;
+    width:calc(100% - 0px)
+}
+
+input.artist[type=text] {
+    margin:0;
+    /* padding:0; */
+    padding-left:10px;
+    /* padding: 6px; */
+    /* margin-top: 8px; */
+    background: rgb(46, 45, 45);
+    /* margin-top: 8px; */
+    /* padding-left:15px; */
+    color: rgb(200,200,200);
+    font-size: 10pt;
+    border: none;
+    /* float:right; */
+    outline:none;
+    height:20px;
+    width:calc(100% - 0px)
 }
 
 

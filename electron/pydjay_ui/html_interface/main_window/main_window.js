@@ -323,10 +323,10 @@ document.getElementById("main-menu-settings").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("main-menu-mixer").addEventListener('click', () => {
-    ipcRenderer.send("show-mixer-window")
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
-})
+// document.getElementById("main-menu-mixer").addEventListener('click', () => {
+//     ipcRenderer.send("show-mixer-window")
+//     document.getElementById("main-menu-dropdown").classList.toggle("show");
+// })
 
 
 document.getElementById("main-menu-quit").addEventListener('click', () => {
