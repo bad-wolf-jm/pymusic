@@ -1,15 +1,3 @@
-
-// pl_channel_config = {headphones:{left:4, right:5}}
-// mpl_channel_config = {master:{left:0, right:1}, headphones:{left:4, right:5}}
-
-// pl_channel_config2 = {headphones:{left:0, right:1}}
-// mpl_channel_config2 = {master:{left:0, right:1}}
-
-//const {remote} = require('electron')
-//const {Menu, MenuItem} = require('electron').remote
-var Jimp = require("jimp");
-
-
 function rgb2hex(rgb) {
     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
     function hex(x) {
@@ -33,20 +21,6 @@ class TrackEditorView extends PydjayAudioFilePlayer {
         this.audio_player = new PydjayAudioBufferPlayer()
         this.audio_player.connectOutputs({headphones:{left:0, right:1}})
 
-
-        // this.audio_player = new PydjayAudioBufferPlayer()
-        // if (this.audio_player.audio_context.audio_ctx.destination.maxChannelCount == 6) {
-        //     this.audio_player.connectOutputs(pl_channel_config)
-        // } else {
-        //     this.audio_player.connectOutputs(pl_channel_config2)
-        // }
-
-
-        // if (this.audio_player.audio_context.audio_ctx.destination.maxChannelCount >= 6) {
-        // } else {
-        //     this.audio_player.connectOutputs(pl_channel_config2)
-        // }
-
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Change', click: () => {
             remote.dialog.showOpenDialog({ properties: ['openFile']}, (files) => {
@@ -61,11 +35,7 @@ class TrackEditorView extends PydjayAudioFilePlayer {
                 }
             })
         }}))
-        // this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Revert to original', click: () => {
-            // remote.dialog.showOpenDialog({ properties: ['openFile']}, (files) => {
-            //     if ((files != undefined)) {
-            //         let new_cover = files[0]
             let cover_source;
             if (this.original_cover_image == null) {
                 cover_source = "../../resources/images/default_album_cover.png"
@@ -74,14 +44,7 @@ class TrackEditorView extends PydjayAudioFilePlayer {
                 cover_source = this.original_cover_image;
                 this.cover_image = null
             }
-                //Jimp.read(this.original_cover_image, (error, image) => {
-                //if (!error) {
             document.getElementById('track-editor-track-cover').src = cover_source
-            //        this.cover_image = null
-            //    }
-            //})
-            //     }
-            // })
         }}))
 
 
@@ -100,12 +63,9 @@ class TrackEditorView extends PydjayAudioFilePlayer {
 
         document.getElementById("color-swatch-list").addEventListener("click", (e) => {
             let cp = document.getElementById("track-edit-color-chooser")
-            //let track = this.controller.get_id(this.color_picker_track_id)
-            //let x = e.target
             this.color = rgb2hex(e.target.style.backgroundColor)
             let x = document.getElementById("track-editor-color")
             x.style.backgroundColor = this.color
-            //this.controller.set_metadata(track, {color: rgb2hex(color)})
             cp.classList.remove("show")
         })
 
@@ -114,35 +74,19 @@ class TrackEditorView extends PydjayAudioFilePlayer {
             this.color = null
             let x = document.getElementById("track-editor-color")
             x.style.backgroundColor = this.color
-            //let track = this.controller.get_id(this.color_picker_track_id)
-            //this.controller.set_metadata(track, {color: null})
             cp.classList.remove("show")
         })
 
 
         document.getElementById("track-editor-color").addEventListener("click", (ev) => {
             let e = document.getElementById("track-editor-color")
-            //let track_id = parseInt(e.attributes['data-track-id'].value)
             let cp = document.getElementById("track-edit-color-chooser")
             let button_rect = e.getBoundingClientRect()
-            //let scroller = document.getElementById("main-track-list-scroller")
-            //let scroller_rect = scroller.getBoundingClientRect()
-            //let button_offset = (button_rect.top - scroller_rect.top)
-
-            //if (button_offset + 100 > scroller_rect.height) {
-            // cp.className = "overlay-color-picker-bottom" + (cp.classList.contains("show") ? " show" : "")
             let button_offset = (button_rect.bottom - 200 + 25)
             cp.style.top = (button_offset)+"px"
-            //} else {
-            //    let button_offset_to_frame = (button_rect.top - 100 +5) // + 53 + 25 - 100)
-            //    cp.className = "overlay-color-picker-middle" + (cp.classList.contains("show") ? " show" : "")
-            //    cp.style.top = (button_offset_to_frame)+"px"
-           // }
             cp.style.left = (button_rect.left - 150)+"px"
             cp.style.top = button_rect.bottom + 17+"px"
             cp.classList.toggle("show")
-            // this.color_picker_track_id = track_id
-            // ev.preventDefault()
         })
 
         document.getElementById("play-button").addEventListener("click", () => {
@@ -168,8 +112,6 @@ class TrackEditorView extends PydjayAudioFilePlayer {
             this.setLoved(!(this.loved))
         })
 
-    //})})
-
         document.getElementById("track-editor-save").addEventListener("click", (ev) => {
             this.save()
         })
@@ -193,6 +135,7 @@ class TrackEditorView extends PydjayAudioFilePlayer {
     }
 
     set_track(track) {
+        this.track = track
         let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
         document.getElementById("track-editor-track-title").value = track.title
@@ -306,19 +249,9 @@ class TrackEditorView extends PydjayAudioFilePlayer {
         )
         this._waveform.on(
             "seek", (p) => {
-                //console.log(p)
                 this.current_stream_position = p
-                // let s = (p * this._track.track_length)
-                // this.current_stream_position = s
-                // if (this.audio_player.state == "PLAYING") {
-                //     this.audio_player.play(this._track, s, this._track.stream_end)
-                // }
             }
         )
-        //     }
-        // )
-
-
     }
 
 
@@ -330,8 +263,6 @@ class TrackEditorView extends PydjayAudioFilePlayer {
         return html
     }
     
-
-
     setRating (num) {
         this.rating = num
         var html = "";
@@ -366,7 +297,7 @@ class TrackEditorView extends PydjayAudioFilePlayer {
             bpm:    F("track-editor-track-bpm").value,
             genre:  F("track-editor-track-genre").value,
             year:   F("track-editor-track-year").value,
-            color:  this.color, //F("track-editor-color").style.backgroundColor,
+            color:  this.color, 
             stream_start: this.stream_start,
             stream_end:   this.stream_end,
             favorite:     this.loved,
@@ -382,18 +313,12 @@ class TrackEditorView extends PydjayAudioFilePlayer {
     close() {
         this.audio_player.stop()
         document.getElementById("track-edit-dialog").close()
-        // var window = remote.getCurrentWindow();
-        // view.audio_player.stop()
-        // window.close();
     }
     
     save() {
-        // var window = remote.getCurrentWindow();
-    
         DB.get_settings((settings) => {
             let new_values = this.getValues()
             let image_root = `${settings.image_root}`
-            //console.log(new_values)
             if (new_values.cover != null) {
                 new_values.cover_original = `cover_original_${track_id}`
                 new_values.cover_large    = `cover_large_${track_id}`
@@ -410,11 +335,8 @@ class TrackEditorView extends PydjayAudioFilePlayer {
                 new_values.cover_small    = null;
             }
     
-            tracks_model.set_metadata(track_id, new_values)
-            // DB.update_track_data(track_id, new_values, () => {
-            //     ipcRenderer.send("track-modified", track_id)
+            tracks_model.set_metadata(this.track, new_values)
             this.close()
-            // })
         })
     }
     
