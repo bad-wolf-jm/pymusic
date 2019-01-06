@@ -1,3 +1,5 @@
+const {ColorPicker} = require("ui/popup/colorpicker.js")
+
 function rgb2hex(rgb) {
     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
     function hex(x) {
@@ -61,32 +63,52 @@ class TrackEditorView extends PydjayAudioFilePlayer {
             this.menu.popup({window: remote.getCurrentWindow()})
         })
 
-        document.getElementById("color-swatch-list").addEventListener("click", (e) => {
-            let cp = document.getElementById("track-edit-color-chooser")
-            this.color = rgb2hex(e.target.style.backgroundColor)
-            let x = document.getElementById("track-editor-color")
-            x.style.backgroundColor = this.color
-            cp.classList.remove("show")
-        })
+        // document.getElementById("color-swatch-list").addEventListener("click", (e) => {
+        //     let cp = document.getElementById("track-edit-color-chooser")
+        //     this.color = rgb2hex(e.target.style.backgroundColor)
+        //     let x = document.getElementById("track-editor-color")
+        //     x.style.backgroundColor = this.color
+        //     cp.classList.remove("show")
+        // })
 
-        document.getElementById("remove-color").addEventListener("click", (e) => {
-            let cp = document.getElementById("track-edit-color-chooser")
-            this.color = null
-            let x = document.getElementById("track-editor-color")
-            x.style.backgroundColor = this.color
-            cp.classList.remove("show")
-        })
+        // document.getElementById("remove-color").addEventListener("click", (e) => {
+        //     let cp = document.getElementById("track-edit-color-chooser")
+        //     this.color = null
+        //     let x = document.getElementById("track-editor-color")
+        //     x.style.backgroundColor = this.color
+        //     cp.classList.remove("show")
+        // })
 
 
         document.getElementById("track-editor-color").addEventListener("click", (ev) => {
             let e = document.getElementById("track-editor-color")
-            let cp = document.getElementById("track-edit-color-chooser")
-            let button_rect = e.getBoundingClientRect()
-            let button_offset = (button_rect.bottom - 200 + 25)
-            cp.style.top = (button_offset)+"px"
-            cp.style.left = (button_rect.left - 150)+"px"
-            cp.style.top = button_rect.bottom + 17+"px"
-            cp.classList.toggle("show")
+            //let cp = document.getElementById("track-edit-color-chooser")
+            // let button_rect = e.getBoundingClientRect()
+            // let button_offset = (button_rect.bottom - 200 + 25)
+            // cp.style.top = (button_offset)+"px"
+            // cp.style.left = (button_rect.left - 150)+"px"
+            // cp.style.top = button_rect.bottom + 17+"px"
+            // cp.classList.toggle("show")
+            if (this.color_chooser != undefined) {
+                this.color_chooser.close()
+                this.color_chooser = undefined
+            } else {
+                this.color_chooser = new ColorPicker(document.getElementById("track-edit-dialog"), {
+                    cancel: () => {
+                        this.color_chooser.close()
+                        this.color_chooser = undefined
+                    },
+                    chooseColor: (color) => {
+                        this.color = color
+                        let x = document.getElementById("track-editor-color")
+                        x.style.backgroundColor = this.color
+                        this.color_chooser.close()
+                        this.color_chooser = undefined
+                    }                    
+                })
+                this.color_chooser.open(e)
+            }
+
         })
 
         document.getElementById("play-button").addEventListener("click", () => {
