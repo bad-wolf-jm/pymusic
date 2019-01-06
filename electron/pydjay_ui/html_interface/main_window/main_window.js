@@ -3,6 +3,8 @@ WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
 
+const {Question} = require("ui/dialog/question.js")
+
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
@@ -299,20 +301,36 @@ document.getElementById("session-save-cancel").addEventListener('click', () => {
 
 
 document.getElementById("main-menu-discard-session").addEventListener('click', () => {
-    document.getElementById("discard-session-dialog").showModal();
+    let q = new Question({
+        title: "Discard current session",
+        question: "Discard the current session? this operation cannot be undone",
+        confirmText: "yes",
+        dismissText: 'no',
+        confirmAction: () => {
+            current_session_model.discard_session(() => {
+                SE_controller.refresh(() => {})
+            })
+            q.close()
+        },
+        dismissAction: () => {
+            q.close()
+        },
+    })
+    q.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("session-discard").addEventListener('click', () => {
-    current_session_model.discard_session(() => {
-        SE_controller.refresh(() => {})
-    })
-    document.getElementById("discard-session-dialog").close();
-})
+//document.getElementById("discard-session-dialog").showModal();
+// document.getElementById("session-discard").addEventListener('click', () => {
+//     current_session_model.discard_session(() => {
+//         SE_controller.refresh(() => {})
+//     })
+//     document.getElementById("discard-session-dialog").close();
+// })
 
-document.getElementById("session-discard-cancel").addEventListener('click', () => {
-    document.getElementById("discard-session-dialog").close();
-})
+// document.getElementById("session-discard-cancel").addEventListener('click', () => {
+//     document.getElementById("discard-session-dialog").close();
+// })
 
 
 
