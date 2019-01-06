@@ -23,29 +23,11 @@ class TrackListView extends EventDispatcher {
 
         this.prevWidth = [];
 
-        // document.getElementById("color-swatch-list").addEventListener("click", (e) => {
-        //     let cp = document.getElementById("main-track-list-color-chooser")
-        //     let track = this.controller.get_id(this.color_picker_track_id)
-        //     let x = e.target
-        //     let color = x.style.backgroundColor
-        //     this.controller.set_metadata(track, {color: rgb2hex(color)})
-        //     cp.classList.remove("show")
-        // })
-
-        // document.getElementById("remove-color").addEventListener("click", (e) => {
-        //     let cp = document.getElementById("main-track-list-color-chooser")
-        //     let track = this.controller.get_id(this.color_picker_track_id)
-        //     this.controller.set_metadata(track, {color: null})
-        //     cp.classList.remove("show")
-        // })
-
         document.getElementById("main-track-list-scroller").addEventListener("scroll", (e) => {
             if (this.color_chooser != undefined) {
                 this.color_chooser.close()
                 this.color_chooser = undefined
             }
-            // let cp = document.getElementById("main-track-list-color-chooser")
-            // cp.classList.remove("show")
         })
 
 
@@ -166,18 +148,9 @@ class TrackListView extends EventDispatcher {
 
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Track info', click: () => {
-            // let window = new BrowserWindow({width: 1250, height: 750})
-            // window.on('closed', () => {
-            //     window = null
-            // })
-            // window.webContents.once("did-finish-load", () => {
-            //     window.webContents.send("track-id", this.context_menu_element)
-            // })
             pc.stop()
             view.set_track(this.context_menu_element)
             document.getElementById("track-edit-dialog").showModal()
-            // document.getElementById("track-edit-dialog").showModal()
-            // window.loadURL('file://' + __dirname + '/../track_edit/layout.html')
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Shortlist', click: () => {
