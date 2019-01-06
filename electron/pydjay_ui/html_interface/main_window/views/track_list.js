@@ -97,19 +97,10 @@ class TrackListView extends EventDispatcher {
                                         this.color_chooser = undefined
                                     },
                                     chooseColor: (color) => {
-                                        // if (color == null) {
                                         let track = this.controller.get_id(track_id)
                                         this.controller.set_metadata(track, {color: color})                                
-                                        // } else {
-                                        // }
-                                        // this.color = color
-                                        // let x = document.getElementById("track-editor-color")
-                                        // x.style.backgroundColor = this.color
                                         this.color_chooser.close()
                                         this.color_chooser = undefined
-                                   
-                                   
-                                   
                                     }
                                 })
 
@@ -403,7 +394,6 @@ class TrackListView extends EventDispatcher {
     select_row(e) {
         let x = e.target.closest("tr")
         let id = parseInt(x.attributes["data-track-id"].value)
-        //console.log(x)
         this.controller.select_element(id)
     }
 
