@@ -23,25 +23,29 @@ class TrackListView extends EventDispatcher {
 
         this.prevWidth = [];
 
-        document.getElementById("color-swatch-list").addEventListener("click", (e) => {
-            let cp = document.getElementById("main-track-list-color-chooser")
-            let track = this.controller.get_id(this.color_picker_track_id)
-            let x = e.target
-            let color = x.style.backgroundColor
-            this.controller.set_metadata(track, {color: rgb2hex(color)})
-            cp.classList.remove("show")
-        })
+        // document.getElementById("color-swatch-list").addEventListener("click", (e) => {
+        //     let cp = document.getElementById("main-track-list-color-chooser")
+        //     let track = this.controller.get_id(this.color_picker_track_id)
+        //     let x = e.target
+        //     let color = x.style.backgroundColor
+        //     this.controller.set_metadata(track, {color: rgb2hex(color)})
+        //     cp.classList.remove("show")
+        // })
 
-        document.getElementById("remove-color").addEventListener("click", (e) => {
-            let cp = document.getElementById("main-track-list-color-chooser")
-            let track = this.controller.get_id(this.color_picker_track_id)
-            this.controller.set_metadata(track, {color: null})
-            cp.classList.remove("show")
-        })
+        // document.getElementById("remove-color").addEventListener("click", (e) => {
+        //     let cp = document.getElementById("main-track-list-color-chooser")
+        //     let track = this.controller.get_id(this.color_picker_track_id)
+        //     this.controller.set_metadata(track, {color: null})
+        //     cp.classList.remove("show")
+        // })
 
         document.getElementById("main-track-list-scroller").addEventListener("scroll", (e) => {
-            let cp = document.getElementById("main-track-list-color-chooser")
-            cp.classList.remove("show")
+            if (this.color_chooser != undefined) {
+                this.color_chooser.close()
+                this.color_chooser = undefined
+            }
+            // let cp = document.getElementById("main-track-list-color-chooser")
+            // cp.classList.remove("show")
         })
 
 
@@ -62,12 +66,13 @@ class TrackListView extends EventDispatcher {
                         unavailable = {}
                     }
                     [].forEach.call(elements, (e) => {
-                        let track_id = parseInt(e.attributes["data-track-id"].value)
-                        this.table_rows[track_id] = e
-                        //console.log(track_id, e)
-                        if (unavailable[track_id] != undefined) {
-                            if (!this.ignore_unavailable) {
-                                e.classList.add("unavailable")
+                        if (e.attributes["data-track-id"] != undefined) {
+                            let track_id = parseInt(e.attributes["data-track-id"].value)
+                            this.table_rows[track_id] = e
+                            if (unavailable[track_id] != undefined) {
+                                if (!this.ignore_unavailable) {
+                                    e.classList.add("unavailable")
+                                }
                             }
                         }
                     });
@@ -77,27 +82,46 @@ class TrackListView extends EventDispatcher {
                     [].forEach.call(elements, (e) => {
                         e.addEventListener("click", (ev) => {
                             let track_id = parseInt(e.attributes['data-track-id'].value)
-                            let cp = document.getElementById("main-track-list-color-chooser")
                             let button_rect = e.getBoundingClientRect()
                             let scroller = document.getElementById("main-track-list-scroller")
                             let scroller_rect = scroller.getBoundingClientRect()
                             let button_offset = (button_rect.top - scroller_rect.top)
 
-                            if (button_offset + 100 > scroller_rect.height) {
-                                cp.className = "overlay-color-picker-bottom" + (cp.classList.contains("show") ? " show" : "")
-                                button_offset = (button_rect.bottom - 200 + 25)
-                                cp.style.top = (button_offset)+"px"
+                            if (this.color_chooser != undefined) {
+                                this.color_chooser.close()
+                                this.color_chooser = undefined
                             } else {
-                                let button_offset_to_frame = (button_rect.top - 100 +5) // + 53 + 25 - 100)
-                                cp.className = "overlay-color-picker-middle" + (cp.classList.contains("show") ? " show" : "")
-                                cp.style.top = (button_offset_to_frame)+"px"
-                            }
-                            cp.style.left = (button_rect.right+17)+"px"
-                            cp.classList.toggle("show")
-                            this.color_picker_track_id = track_id
-                            ev.preventDefault()
+                                this.color_chooser = new ColorPicker(document.getElementsByTagName("body")[0], {
+                                    cancel: () => {
+                                        this.color_chooser.close()
+                                        this.color_chooser = undefined
+                                    },
+                                    chooseColor: (color) => {
+                                        // if (color == null) {
+                                        let track = this.controller.get_id(track_id)
+                                        this.controller.set_metadata(track, {color: color})                                
+                                        // } else {
+                                        // }
+                                        // this.color = color
+                                        // let x = document.getElementById("track-editor-color")
+                                        // x.style.backgroundColor = this.color
+                                        this.color_chooser.close()
+                                        this.color_chooser = undefined
+                                   
+                                   
+                                   
+                                    }
+                                })
 
-                    })})
+                                if (button_offset + 150 > scroller_rect.height) {
+                                    this.color_chooser.open(e, "above")
+                                } else {
+                                    this.color_chooser.open(e)
+                                }
+                                ev.preventDefault()
+                            }
+                        })
+                    })
                 },
                 scrollingProgress: (progress) => {}
             }
@@ -304,7 +328,7 @@ class TrackListView extends EventDispatcher {
                 loved:       this._get_loved(queue[i]),
                 title:       queue[i].title,
                 artist:      queue[i].artist,
-                album:      queue[i].album,
+                album:       queue[i].album,
                 genre:       queue[i].genre,
                 last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
                 play_count:  queue[i].play_count,
