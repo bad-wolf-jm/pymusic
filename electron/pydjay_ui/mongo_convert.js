@@ -1,54 +1,87 @@
 var mysql = require('mysql');
 var path = require('path');
-const MongoClient = require('mongodb').MongoClient;
+const Datastore = require("nedb-async-await").Datastore;
+// const MongoClient = require('mongodb').MongoClient;
 
-const connectionString = 'mongodb://localhost:27017';
 
-class Database {
-    constructor( config ) {
-        this.connection = mysql.createConnection( config );
-    }
-    query( sql, args ) {
-        return new Promise( ( resolve, reject ) => {
-            this.connection.query( sql, args, ( err, rows ) => {
-                if ( err )
-                    return reject( err );
-                resolve( rows );
-            } );
-        } );
-    }
-    close() {
-        return new Promise( ( resolve, reject ) => {
-            this.connection.end( err => {
-                if ( err )
-                    return reject( err );
-                resolve();
-            } );
-        } );
+// const connectionString = 'mongodb://localhost:27017';
+
+// class Database {
+//     constructor( config ) {
+//         this.connection = mysql.createConnection( config );
+//     }
+//     query( sql, args ) {
+//         return new Promise( ( resolve, reject ) => {
+//             this.connection.query( sql, args, ( err, rows ) => {
+//                 if ( err )
+//                     return reject( err );
+//                 resolve( rows );
+//             } );
+//         } );
+//     }
+//     close() {
+//         return new Promise( ( resolve, reject ) => {
+//             this.connection.end( err => {
+//                 if ( err )
+//                     return reject( err );
+//                 resolve();
+//             } );
+//         } );
+//     }
+// }
+
+
+
+class MusicDatabase {
+    constructor(name) {
+
+        this.tracks = Datastore({
+            filename: path.join(".ds", name, "tracks.json"),
+            autoload:true,
+            timestampData:true})
+
+        this.sessions = Datastore({
+            filename: path.join(".ds", name, "sessions.json"),
+            autoload:true, timestampData:true})
+
+        this.playlists = Datastore({
+            filename: path.join(".ds", name, "playlists.json"),
+            autoload:true,
+            timestampData:true})
+
+        this.logistics = Datastore({
+            filename: path.join(".ds", name, "logistics.json"),
+            autoload:true,
+            timestampData:true})
+        }
+
+    getAllTracks() {
+        return this.tracks.find({})
     }
 }
 
+
 function trackBSON(tr) {
     let track_object = {
-        title:  tr.title,
+        title: tr.title,
         artist: tr.artist,
-        album:  tr.album, 
-        genre:  tr.genre,
-        year:   tr.year,
+        album: tr.album,
+        genre: tr.genre,
+        year: tr.year,
         color:  tr.color,
         duration: tr.track_length,
         favorite: tr.loved,
-        rating:   tr.rating,
+        rating: tr.rating,
         bpm: tr.bpm,
-        date_added: tr.date_added,
-        date_modified: tr.date_modified,
+        createdAt: tr.date_added,
+        updatedAt: tr.date_modified,
         bounds: {
             start: tr.stream_start,
             end: tr.stream_end
         },
         bitrate: tr.bitrate,
         samplerate: tr.samplerate,
-        size: tr.file_size, 
+        size: tr.file_size,
         path: path.join(tr.music_root, tr.file_name)
     }
     if (tr.cover_original != null) {
@@ -61,27 +94,39 @@ function trackBSON(tr) {
     }
     return track_object
 }
-async function mongo_insert(collection, record) {
-    let client = await MongoClient.connect(connectionString, { useNewUrlParser: true });
-    let db = client.db('pymusic');
-    try {
-        const res = await db.collection(collection).insert(record);
-        return res.insertedIds["0"]
-     } catch {
-        console.log(record)
-     } finally {
-         client.close();
-     }
+
+const db = new MusicDatabase("pymusic")
+
+
+// async function mongo_insert(collection, record) {
+//     //#let client = await MongoClient.connect(connectionString, { useNewUrlParser: true });
+//     //#let db = client.db('pymusic');
+//     try {
+//         const res = await db.insert(record);
+
+//         return res["_id"]
+//      } catch (e) {
+//         console.log(e) //record)
+//      }
+//     //  } finally {
+//     //      client.close();
+//     //  }
+// }
+main = async () => {
+    let x = await db.getAllTracks()
+    x.forEach((e) => {
+        console.log(e)
+    })
+
 }
 
-
-main = async () => {
+main2 = async () => {
     let mysql = require('async-mysql'),
         connection,
         track_objects = {},
         rows;
 
- 
+
     try {
         connection = await mysql.connect({host: 'localhost', user:"root", password:"root", database:'pymusic'});
         settings = await connection.query('SELECT * FROM settings');
@@ -106,19 +151,17 @@ main = async () => {
             if (t_relations.length > 0) {
                 track.relations = t_relations
             }
-            new_id = await mongo_insert("tracks", track)
-            track_objects[tr.id] = new_id
+            new_id = await db.tracks.insert(track)
+            track_objects[tr.id] = new_id["_id"]
 
         }
 
-        // await rows.forEach(async (tr) => {
-        // })
-    
         let sessions = await connection.query('SELECT * FROM sessions');
         sessions.forEach(async (s) => {
             let session_data = {
                     event: s.event_name,
                     location: s.address,
+                    createdAt:s.start_date,
                     date: {
                         begin: s.start_date,
                         end:  s.end_date
@@ -130,12 +173,11 @@ main = async () => {
                     track_id:track_objects[t.track_id],
                     status:t.status,
                     time: {
-                        begin: t.start_time, 
+                        begin: t.start_time,
                         end:   t.end_time}
                 }
             })
-            await mongo_insert("sessions", session_data)
-            //console.log(session_data)
+            await db.sessions.insert(session_data)
         })
 
         let playlists = await connection.query('SELECT * FROM playlists');
@@ -143,7 +185,7 @@ main = async () => {
             let playlist_data = {
                     name: s.name,
                     description: s.description,
-                    created: s.created
+                    createdAt: s.created
                 }
             let playlist_tracks = await connection.query(`SELECT * FROM playlist_tracks WHERE playlist_id=${s.id}`);
             playlist_data.tracks = playlist_tracks.map((t) => {
@@ -151,25 +193,18 @@ main = async () => {
                 obj[track_objects[t.track_id]] = true
                 return obj
             })
-            await mongo_insert("playlists", playlist_data)
-            //console.log(playlist_data)
+            await db.playlists.insert(playlist_data)
         })
-
+        console.log("done")
 
     } catch (e) {
         console.log(e)
     }
-    // [{'1': 1}]
- 
-    // try {
-    //     await connection.query('INVALID_QUERY');
-    // } catch (e) {
-    //     e;
-    //     // [Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'INVALID_QUERY' at line 1]
-    // }
 };
- 
+
 main();
+
+
 
 
 
@@ -246,62 +281,62 @@ main();
 //     var self = this
 
 //     self.base_track_view_sql = function () {
-//         return `SELECT availability.track_id IS NULL AS available, 
-//                     tracks.id                     AS id, 
-//                     tracks.id                     AS track_id, 
-//                     tracks.favorite               AS favorite, 
-//                     tracks.disabled               AS enabled, 
-//                     tracks.title                  AS title, 
-//                     tracks.artist                 AS artist, 
-//                     tracks.file_name               AS file_name, 
-//                     tracks.stream_start           AS stream_start, 
-//                     tracks.stream_end             AS stream_end, 
-//                     tracks.track_length           AS track_length, 
-//                     tracks.grouping               AS grouping, 
-//                     tracks.year                   AS year, 
-//                     tracks.color                  AS color, 
-//                     tracks.album                  AS album, 
-//                     tracks.genre                  AS genre, 
-//                     tracks.rating                 AS rating, 
-//                     tracks.bpm                    AS bpm, 
+//         return `SELECT availability.track_id IS NULL AS available,
+//                     tracks.id                     AS id,
+//                     tracks.id                     AS track_id,
+//                     tracks.favorite               AS favorite,
+//                     tracks.disabled               AS enabled,
+//                     tracks.title                  AS title,
+//                     tracks.artist                 AS artist,
+//                     tracks.file_name               AS file_name,
+//                     tracks.stream_start           AS stream_start,
+//                     tracks.stream_end             AS stream_end,
+//                     tracks.track_length           AS track_length,
+//                     tracks.grouping               AS grouping,
+//                     tracks.year                   AS year,
+//                     tracks.color                  AS color,
+//                     tracks.album                  AS album,
+//                     tracks.genre                  AS genre,
+//                     tracks.rating                 AS rating,
+//                     tracks.bpm                    AS bpm,
 //                     tracks.bitrate                AS bitrate,
 //                     tracks.samplerate             AS samplerate,
-//                     tracks.file_size               AS file_size, 
+//                     tracks.file_size               AS file_size,
 //                     tracks.date_added             AS date_added,
 //                     tracks.date_modified           AS date_modified,
-//                     tracks.stream_length          AS stream_length, 
-//                     foo.play_count                AS play_count, 
-//                     tracks.cover_original         AS cover_original, 
-//                     tracks.cover_small            AS cover_small, 
-//                     tracks.cover_medium           AS cover_medium, 
-//                     tracks.cover_large            AS cover_large, 
-//                     settings.db_image_cache       AS image_root, 
-//                     settings.db_music_cache       AS music_root, 
-//                     max_play_times.time           AS last_played 
-//             FROM    tracks 
-//                     JOIN (SELECT * 
-//                         FROM   tracks 
-//                                 JOIN (SELECT id                            AS id_2, 
-//                                             COUNT(session_tracks.track_id) AS play_count 
-//                                     FROM   tracks 
-//                                             LEFT JOIN session_tracks 
-//                                                     ON tracks.id = session_tracks.track_id 
-//                                     GROUP  BY id) play_counts 
-//                                 ON tracks.id = play_counts.id_2) foo 
-//                     ON tracks.id = foo.id 
-//                     LEFT JOIN ((SELECT track_id FROM   unavailable_tracks) 
-//                                 UNION 
-//                                 (SELECT track_id FROM   session_queue)) availability 
-//                     ON availability.track_id = tracks.id 
-//                     LEFT JOIN (SELECT track_id, 
-//                                     MAX(start_time) AS time 
-//                             FROM   session_tracks 
-//                             GROUP  BY track_id) max_play_times 
-//                         ON tracks.id = max_play_times.track_id 
-//                     LEFT JOIN settings 
+//                     tracks.stream_length          AS stream_length,
+//                     foo.play_count                AS play_count,
+//                     tracks.cover_original         AS cover_original,
+//                     tracks.cover_small            AS cover_small,
+//                     tracks.cover_medium           AS cover_medium,
+//                     tracks.cover_large            AS cover_large,
+//                     settings.db_image_cache       AS image_root,
+//                     settings.db_music_cache       AS music_root,
+//                     max_play_times.time           AS last_played
+//             FROM    tracks
+//                     JOIN (SELECT *
+//                         FROM   tracks
+//                                 JOIN (SELECT id                            AS id_2,
+//                                             COUNT(session_tracks.track_id) AS play_count
+//                                     FROM   tracks
+//                                             LEFT JOIN session_tracks
+//                                                     ON tracks.id = session_tracks.track_id
+//                                     GROUP  BY id) play_counts
+//                                 ON tracks.id = play_counts.id_2) foo
+//                     ON tracks.id = foo.id
+//                     LEFT JOIN ((SELECT track_id FROM   unavailable_tracks)
+//                                 UNION
+//                                 (SELECT track_id FROM   session_queue)) availability
+//                     ON availability.track_id = tracks.id
+//                     LEFT JOIN (SELECT track_id,
+//                                     MAX(start_time) AS time
+//                             FROM   session_tracks
+//                             GROUP  BY track_id) max_play_times
+//                         ON tracks.id = max_play_times.track_id
+//                     LEFT JOIN settings
 //                         ON 1 `
 //     }
-    
+
 //     self.get_track_by_id = function (id, k) {
 //         sql = self.base_track_view_sql()
 //         sql += ` WHERE tracks.id=${id}`
@@ -316,19 +351,19 @@ main();
 
 //     self.get_related_tracks = function (id, k) {
 //         let sql = `(${self.base_track_view_sql()}) tracks_view`
-//         sql = `SELECT tracks_view.* FROM track_relations JOIN ${sql} ON 
+//         sql = `SELECT tracks_view.* FROM track_relations JOIN ${sql} ON
 //                 track_relations.related_track_id = tracks_view.id WHERE track_relations.track_id = ${id}`
 //         $QUERY(sql, k)
 //     }
 
 //     self.get_playlist_tracks = function (id, k) {
 //         let sql = `SELECT track_id as id, position FROM playlist_tracks WHERE playlist_id = ${id} ORDER BY position`
-//         $QUERY(sql, k)        
+//         $QUERY(sql, k)
 //     }
 
 //     self.get_playback_history = function(id, k) {
-//         sql = `SELECT sessions.event_name, session_tracks.start_time, 
-//         session_tracks.end_time, session_tracks.position from session_tracks JOIN sessions 
+//         sql = `SELECT sessions.event_name, session_tracks.start_time,
+//         session_tracks.end_time, session_tracks.position from session_tracks JOIN sessions
 //         ON sessions.id=session_tracks.session_id WHERE track_id=${id} ORDER BY start_time DESC`
 //         $QUERY(sql, k)
 //     }
@@ -359,24 +394,24 @@ main();
 //     }
 
 //     self.get_session_info = function (id, k) {
-//         $QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions 
-//         JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts 
-//         ON sessions.id=counts.session_id WHERE sessions.id=${id}`, 
+//         $QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions
+//         JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts
+//         ON sessions.id=counts.session_id WHERE sessions.id=${id}`,
 //         (list) => {
 //             return k(list[0])
 //         })
 //     }
 
 //     self.get_sessions_list = function (k) {
-//         $QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions 
-//         JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts 
+//         $QUERY(`SELECT id, event_name as name, date(start_date) as date, counts.count as count FROM sessions
+//         JOIN (select session_id, count(track_id) as count FROM session_tracks GROUP BY session_id) counts
 //         ON sessions.id=counts.session_id ORDER BY date ASC`, k)
 //     }
 
 //     self.get_group_info = function (id, k) {
 //         $QUERY(`SELECT playlists.id as id , playlists.name, IFNULL(counts.count, 0) as count FROM
 //         playlists LEFT JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
-//         ON playlists.id=counts.playlist_id WHERE playlists.id=${id}`, 
+//         ON playlists.id=counts.playlist_id WHERE playlists.id=${id}`,
 //         (list) => {
 //             return k(list[0])
 //         })
@@ -387,14 +422,14 @@ main();
 //         playlists LEFT JOIN (SELECT playlist_id, count(track_id) as count FROM playlist_tracks GROUP BY playlist_id) counts
 //         ON playlists.id=counts.playlist_id ORDER BY name`, k)
 //     }
- 
+
 //     self.get_queue_elements = function (k) {
 //         var tracks_sql = `(${self.base_track_view_sql()}) tracks_view`
-//         var sql = `SELECT session_queue.position AS position, \`tracks_view\`.* 
-//                     FROM session_queue 
-//                     JOIN ${tracks_sql} 
-//                     ON tracks_view.id = session_queue.track_id 
-//                     WHERE session_queue.status='pending' 
+//         var sql = `SELECT session_queue.position AS position, \`tracks_view\`.*
+//                     FROM session_queue
+//                     JOIN ${tracks_sql}
+//                     ON tracks_view.id = session_queue.track_id
+//                     WHERE session_queue.status='pending'
 //                     ORDER BY session_queue.position`
 //         $QUERY(sql, k)
 //     }
@@ -411,8 +446,8 @@ main();
 
 //     self.get_suggested_tracks = function (k) {
 //         let sql = `SELECT DISTINCT related_track_id as id
-//                         FROM track_relations 
-//                         WHERE track_relations.track_id IN 
+//                         FROM track_relations
+//                         WHERE track_relations.track_id IN
 //                             (SELECT track_id FROM session_queue WHERE status='pending')`
 //         $QUERY(sql, k)
 //     }
@@ -454,26 +489,26 @@ main();
 //     self.update_track_data = function (id, track_info, k) {
 //         let sql = "UPDATE tracks SET "
 //         let fields = Object.keys(track_info);
-//         sql += fields.indexOf("title")          != -1 ? `title=${STRING(addslashes(track_info.title))},\n` : '' 
-//         sql += fields.indexOf("artist")         != -1 ? `artist=${STRING(addslashes(track_info.artist))},\n` : '' 
+//         sql += fields.indexOf("title")          != -1 ? `title=${STRING(addslashes(track_info.title))},\n` : ''
+//         sql += fields.indexOf("artist")         != -1 ? `artist=${STRING(addslashes(track_info.artist))},\n` : ''
 //         sql += fields.indexOf("album")          != -1 ? `album=${STRING(addslashes(track_info.album))},\n` : '';
-//         sql += fields.indexOf("year")           != -1 ? `year=${(track_info.year != null) ? track_info.year : 'NULL'},\n` : '' 
-//         sql += fields.indexOf("genre")          != -1 ? `genre=${STRING(addslashes(track_info.genre))},\n` : '' 
-//         sql += fields.indexOf("bpm")            != -1 ? `bpm=${track_info.bpm != null ? track_info.bpm : 'NULL'},\n` : '' 
-//         sql += fields.indexOf("rating")         != -1 ? `rating=${track_info.rating},\n` : '' 
-//         sql += fields.indexOf("favorite")       != -1 ? `favorite=${track_info.favorite},\n` : '' 
-//         sql += fields.indexOf("color")          != -1 ? `color=${STRING(track_info.color)},\n` : '' 
-//         sql += fields.indexOf("comments")       != -1 ? `comments=${STRING(addslashes(track_info.comments))},\n` : '' 
+//         sql += fields.indexOf("year")           != -1 ? `year=${(track_info.year != null) ? track_info.year : 'NULL'},\n` : ''
+//         sql += fields.indexOf("genre")          != -1 ? `genre=${STRING(addslashes(track_info.genre))},\n` : ''
+//         sql += fields.indexOf("bpm")            != -1 ? `bpm=${track_info.bpm != null ? track_info.bpm : 'NULL'},\n` : ''
+//         sql += fields.indexOf("rating")         != -1 ? `rating=${track_info.rating},\n` : ''
+//         sql += fields.indexOf("favorite")       != -1 ? `favorite=${track_info.favorite},\n` : ''
+//         sql += fields.indexOf("color")          != -1 ? `color=${STRING(track_info.color)},\n` : ''
+//         sql += fields.indexOf("comments")       != -1 ? `comments=${STRING(addslashes(track_info.comments))},\n` : ''
 //         sql += fields.indexOf("cover_medium")   != -1 ? `cover_medium=${STRING(none_to_null(addslashes(track_info.cover_medium)))},\n` : ''
-//         sql += fields.indexOf("cover_small")    != -1 ? `cover_small=${STRING(none_to_null(addslashes(track_info.cover_small)))},\n` : '' 
-//         sql += fields.indexOf("cover_large")    != -1 ? `cover_large=${STRING(none_to_null(addslashes(track_info.cover_large)))},\n` : '' 
-//         sql += fields.indexOf("cover_original") != -1 ? `cover_original=${STRING(none_to_null(addslashes(track_info.cover_original)))},\n` : '' 
-//         sql += fields.indexOf("stream_start")   != -1 ? `stream_start=${track_info.stream_start},\n` : '' 
-//         sql += fields.indexOf("stream_end")     != -1 ? `stream_end=${track_info.stream_end},\n` : '' 
+//         sql += fields.indexOf("cover_small")    != -1 ? `cover_small=${STRING(none_to_null(addslashes(track_info.cover_small)))},\n` : ''
+//         sql += fields.indexOf("cover_large")    != -1 ? `cover_large=${STRING(none_to_null(addslashes(track_info.cover_large)))},\n` : ''
+//         sql += fields.indexOf("cover_original") != -1 ? `cover_original=${STRING(none_to_null(addslashes(track_info.cover_original)))},\n` : ''
+//         sql += fields.indexOf("stream_start")   != -1 ? `stream_start=${track_info.stream_start},\n` : ''
+//         sql += fields.indexOf("stream_end")     != -1 ? `stream_end=${track_info.stream_end},\n` : ''
 //         sql += fields.indexOf("stream_length")  != -1 ? `stream_length=${track_info.stream_length},\n` : ''
-//         sql += fields.indexOf("disabled")       != -1 ? `disabled=${track_info.disabled},\n` : '' 
+//         sql += fields.indexOf("disabled")       != -1 ? `disabled=${track_info.disabled},\n` : ''
 //         sql += fields.indexOf("grouping")       != -1 ? `grouping=${STRING(addslashes(track_info.grouping))}\n` : ''
-//         sql += `date_modified=${DATE(new Date())}\n` 
+//         sql += `date_modified=${DATE(new Date())}\n`
 //         sql += `WHERE id=${id}`
 
 //         console.log(sql)
@@ -486,7 +521,7 @@ main();
 //             return cont(result[0].min, result[0].max)
 //         })
 //     }
-    
+
 
 //     self.add_id_to_short_list = function (id, k) {
 //         sql = `SELECT 1 FROM short_listed_tracks WHERE track_id=${id} LIMIT 1`;
@@ -558,7 +593,7 @@ main();
 //                     done(x)
 //                 })
 //             } else {
-//                 done()    
+//                 done()
 //             }
 //         })
 //     }
@@ -569,7 +604,7 @@ main();
 //                 current_time = DATE(new Date());
 //                 $QUERY(`UPDATE playlists SET name='${addslashes(name)}' WHERE id=${id}`, done)
 //             } else {
-//                 done()    
+//                 done()
 //             }
 //         })
 //     }
@@ -593,7 +628,7 @@ main();
 //                 let name = n[0].name
 //                 let l = name_list.map((x) => {x.name})
 //                 let i = 1
-//                 let new_name = name + `.${i}` 
+//                 let new_name = name + `.${i}`
 
 //                 while (l.indexOf(new_name) != -1) {
 //                      i += 1
@@ -610,7 +645,7 @@ main();
 //                                     for (i=0; i<list.length; i++) {
 //                                         playlist_data.push(`(${new_id}, ${list[i].track_id})`)
 //                                     }
-//                                     $QUERY(`INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`, 
+//                                     $QUERY(`INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`,
 //                                             (x) => {
 //                                                 done()
 //                                             }
@@ -620,7 +655,7 @@ main();
 //                         )
 //                     }
 //                 })
-//             })    
+//             })
 //         })
 //     }
 
@@ -644,7 +679,7 @@ main();
 //             replace_sql = `INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`
 //             $QUERY(`DELETE FROM playlist_tracks WHERE playlist_id=${id}`,
 //                 () => {
-//                     $QUERY(`INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`, 
+//                     $QUERY(`INSERT INTO playlist_tracks (playlist_id, track_id) VALUES ${playlist_data.join(',')}`,
 //                         () => {k();})
 //                 }
 //             )
@@ -697,6 +732,6 @@ main();
 //             })
 
 //             console.log(session_data)
-//         })    
+//         })
 //     })
 // })
