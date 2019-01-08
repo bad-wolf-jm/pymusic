@@ -30,6 +30,40 @@ const Datastore = require("nedb-async-await").Datastore;
 //     }
 // }
 
+class Playlist {
+    constructor(db, object) {
+        this.db = db
+        this.object = object
+    }
+
+    getTracks() {
+        return this.db.getTracksByIds(Object.keys(this.object.tracks)) 
+    }
+
+    duration() {
+        return this.db.duration(Object.keys(this.object.tracks)) 
+    }
+}
+
+class Session {
+    constructor(db, object) {
+        this.db = db
+        this.object = object
+    }
+
+    async getTracks() {
+        let track_ids = this.object.tracks.map((t) => {return t.track_id})
+        let tracks = await this.db.getTracksByIds(track_ids)
+        let x = {}
+        tracks.forEach((t) => {x[t._id] = t})
+        return this.object.tracks.map((t) => {return x[t.track_id]})
+    }
+
+    duration() {
+        let track_ids = this.object.tracks.map((t) => {return t.track_id})
+        return this.db.duration(track_ids) 
+    }
+}
 
 
 class MusicDatabase {
@@ -42,7 +76,8 @@ class MusicDatabase {
 
         this.sessions = Datastore({
             filename: path.join(".ds", name, "sessions.json"),
-            autoload:true, timestampData:true})
+            autoload:true, 
+            timestampData:true})
 
         this.playlists = Datastore({
             filename: path.join(".ds", name, "playlists.json"),
@@ -57,6 +92,33 @@ class MusicDatabase {
 
     getAllTracks() {
         return this.tracks.find({})
+    }
+
+    getTracksByIds(id_array) {
+        if (id_array != undefined) {
+            return this.tracks.find({"_id": {"$in":id_array}})
+        } else {
+            return this.tracks.find({})
+        }
+    }
+
+    async getAllPlaylists() {
+        let sessions = await this.playlists.find({})
+        return sessions.map((s) => {return new Playlist(this, s)})
+    }
+
+    async getAllSessions() {
+        let sessions = await this.sessions.find({})
+        return sessions.map((s) => {return new Session(this, s)})
+    }
+
+    async duration(id_array) {
+        let tracks = await this.getTracksByIds(id_array)
+        let dur = 0
+        tracks.forEach((track) => {
+            dur += (track.bounds.end - track.bounds.start)
+        })
+        return dur
     }
 }
 
@@ -113,9 +175,13 @@ const db = new MusicDatabase("pymusic")
 //     //  }
 // }
 main = async () => {
-    let x = await db.getAllTracks()
-    x.forEach((e) => {
-        console.log(e)
+    // let x = await db.getAllTracks()
+    // x.forEach((e) => {
+    //     console.log(e)
+    // })
+
+    (await db.getAllSessions()).forEach(async (pl) => {
+        console.log(pl.object.event, await pl.duration())
     })
 
 }
@@ -153,7 +219,6 @@ main2 = async () => {
             }
             new_id = await db.tracks.insert(track)
             track_objects[tr.id] = new_id["_id"]
-
         }
 
         let sessions = await connection.query('SELECT * FROM sessions');
@@ -188,10 +253,11 @@ main2 = async () => {
                     createdAt: s.created
                 }
             let playlist_tracks = await connection.query(`SELECT * FROM playlist_tracks WHERE playlist_id=${s.id}`);
-            playlist_data.tracks = playlist_tracks.map((t) => {
-                let obj = {}
-                obj[track_objects[t.track_id]] = true
-                return obj
+            playlist_data.tracks = {}
+            playlist_tracks.forEach((t) => {
+                // let obj = {}
+                playlist_data.tracks[track_objects[t.track_id]] = true
+                // return obj
             })
             await db.playlists.insert(playlist_data)
         })
