@@ -104,7 +104,8 @@ SE = new SessionsView({
 SE.set_controller(SE_controller)
 
 mpc.init_audio()
-pc.init_audio()
+pc.connectOutputs({headphones:{left:0, right:1}})
+
 M = new MainPlayerView(tracks_model)
 M.set_controller(mpc)
 M.init()
@@ -264,6 +265,7 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
 
 document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
     ipcRenderer.send("reset-audio-system", {})
+    pc.reset_audio_context({headphones:{left:0, right:1}})
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 

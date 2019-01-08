@@ -83,6 +83,7 @@ class PrecuePlayerView extends EventDispatcher {
     }
 
     set_track(track) {
+        track = track.track_object
         let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
         document.getElementById("precue-player-title").innerHTML       = track.title
