@@ -5,17 +5,17 @@ var path              = require('path');
 const { ipcRenderer } = require('electron');
 
 mpc = new PlaybackController() //S_controller, Q_controller)
-pc  = new PrecueController() //S_controller, Q_controller)
-vc  = new VolumeController(mpc, pc)
+// pc  = new PrecueController() //S_controller, Q_controller)
+// vc  = new VolumeController(mpc) // , pc)
 
 mpc.init_audio()
-pc.init_audio()
+// pc.init_audio()
 
 ipcRenderer.on('play', (event, arg) => {        
     let channel = arg.channel
     let track = arg.track
     if (channel == "headphones") {
-        pc.play(track, arg.stream_start, arg.stream_end)
+        //pc.play(track, arg.stream_start, arg.stream_end)
     } else if (channel == "master") {
         mpc.play(track, arg.stream_start, arg.stream_end)
     }
@@ -25,7 +25,7 @@ ipcRenderer.on('play', (event, arg) => {
 ipcRenderer.on('pause', (event, arg) => {        
     let channel = arg.channel
     if (channel == "headphones") {
-        pc.pause()
+        //pc.pause()
     } else if (channel == "master") {
         mpc.pause() 
     }
@@ -34,7 +34,7 @@ ipcRenderer.on('pause', (event, arg) => {
 ipcRenderer.on('resume', (event, arg) => {        
     let channel = arg.channel
     if (channel == "headphones") {
-        pc.resume()
+        //pc.resume()
     } else if (channel == "master") {
         mpc.resume() 
     }
@@ -44,7 +44,7 @@ ipcRenderer.on('resume', (event, arg) => {
 ipcRenderer.on('skip', (event, arg) => {        
     let channel = arg.channel
     if (channel == "headphones") {
-        pc.skip(arg.delta)
+        //pc.skip(arg.delta)
     } else if (channel == "master") {
         mpc.skip(arg.delta)
     }
@@ -68,10 +68,29 @@ ipcRenderer.on('reset-audio-system', (event, arg) => {
 ipcRenderer.on('stop', (event, arg) => {        
     let channel = arg.channel
     if (channel == "headphones") {
-        pc.stop() 
+        //pc.stop() 
     } else if (channel == "master") {
         mpc.stop() 
     }
+});
+
+
+ipcRenderer.on('mute-monitor', (event, arg) => {        
+    // let channel = arg.channel
+    // if (channel == "headphones") {
+    //     //pc.stop() 
+    // } else if (channel == "master") {
+    mpc.mute_monitor()
+    // }
+});
+
+ipcRenderer.on('restore-monitor', (event, arg) => {        
+    // let channel = arg.channel
+    // if (channel == "headphones") {
+    //     //pc.stop() 
+    // } else if (channel == "master") {
+    mpc.restore_monitor()
+    // }
 });
 
 
@@ -80,20 +99,20 @@ ipcRenderer.on('audio-reset', (event, arg) => {
 });
 
 
-ipcRenderer.on('toggle-play-pause', (event, arg) => {        
-    let channel = arg.channel
-});
+// ipcRenderer.on('toggle-play-pause', (event, arg) => {        
+//     let channel = arg.channel
+// });
 
 
-pc.on('playback-stopped',  () => {
-    vc.restore_monitor()
-})
+// pc.on('playback-stopped',  () => {
+//     vc.restore_monitor()
+// })
 
-pc.on('playback-paused', () => {
-    vc.restore_monitor()
-})
+// pc.on('playback-paused', () => {
+//     vc.restore_monitor()
+// })
 
-pc.on('playback-started', () => {
-    vc.mute_monitor()
-})
+// pc.on('playback-started', () => {
+//     vc.mute_monitor()
+// })
 
