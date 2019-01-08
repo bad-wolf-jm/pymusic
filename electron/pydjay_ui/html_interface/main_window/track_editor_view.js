@@ -1,4 +1,6 @@
 const {ColorPicker} = require("ui/popup/colorpicker.js")
+//const {EventDispatcher} = require("notify/event_dispatcher.js")
+const {PydjayAudioBufferPlayer} = require("webaudio/audio_player_buffer.js")
 
 function rgb2hex(rgb) {
     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
@@ -7,7 +9,7 @@ function rgb2hex(rgb) {
     }
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
-class TrackEditorView extends PydjayAudioFilePlayer {
+class TrackEditorView extends EventDispatcher {
     constructor () {
         super()
         this.controller = undefined
