@@ -1,22 +1,19 @@
-pl_channel_config = {headphones:{left:0, right:1}}
-mpl_channel_config = {master:{left:4, right:5}, headphones:{left:0, right:1}}
+const {AudioTrackPlayer} = require('track_playback/track_player.js')
 
-pl_channel_config2 = {headphones:{left:0, right:1}}
+
+mpl_channel_config = {master:{left:4, right:5}, headphones:{left:0, right:1}}
 mpl_channel_config2 = {master:{left:0, right:1}}
 
 
-// pl_channel_config = {headphones:{left:4, right:5}}
-// mpl_channel_config = {master:{left:2, right:3}, headphones:{left:4, right:5}}
-
-// pl_channel_config2 = {headphones:{left:0, right:1}}
-// mpl_channel_config2 = {master:{left:0, right:1}}
-
-
-
-class PlaybackController extends PydjayAudioFilePlayer {
+class PlaybackController extends AudioTrackPlayer {
     constructor() {
         super()
         this.playing            = false
+
+        this.monitor_set_volume = 1;
+        this.monitor_volume = 1;
+        this.monitor_muted_volume = 0;
+
 
         this.on('end-of-stream', () => {
             ipcRenderer.send("master-end-of-stream", {})
@@ -55,7 +52,6 @@ class PlaybackController extends PydjayAudioFilePlayer {
     }
     
     init_audio() {
-        console.log(this.audio_context.audio_ctx.destination.maxChannelCount)
         if (this.audio_context.audio_ctx.destination.maxChannelCount >= 6) {
             this.connectOutputs(mpl_channel_config)
         } else {
@@ -63,18 +59,35 @@ class PlaybackController extends PydjayAudioFilePlayer {
         }
     }
 
-    play(track, stream_start, stream_end) {
-        this.track = track
-        let file_name = path.join(this.track.music_root, this.track.file_name);
-        if (stream_start == undefined) {
-            stream_start = this.track.stream_start
-            stream_end = this.track.stream_end
-        } else if (stream_end == undefined) {  
-            stream_end = this.track.stream_end
-            if (stream_start < 0) {
-                stream_start = stream_end + stream_start;
+    mute_monitor() {
+        var a_monitor_volume = {volume: this.monitor_volume};
+        $(a_monitor_volume).animate(
+            {volume: this.monitor_muted_volume},
+            {
+                duration:100,
+                step: (now, tween) => {
+                    this.set_monitor_volume(now);
+                },
             }
-        }
-        super.play(file_name, stream_start / 1000000, stream_end / 1000000)
+        )
+    }
+
+    set_monitor_volume(value) {
+        this.setVolume('headphones', 'left', value)
+        this.setVolume('headphones', 'right', value)
+    }
+
+        
+    restore_monitor() {
+        var a_monitor_volume = {volume: this.monitor_volume};
+        $(a_monitor_volume).animate(
+            {volume: this.monitor_set_volume},
+            {
+                duration:100,
+                step: (now, tween) => {
+                    this.set_monitor_volume(now);
+                },
+            }
+        )
     }
 }
