@@ -53,6 +53,10 @@ S_controller              = new SessionController()
 PL_controller             = new PlaylistsController()
 SE_controller             = new SessionsController()
 
+
+// var mpc = new RemoteFilePlayer()
+
+
 mpc                       = new PlaybackController(S_controller, Q_controller)
 pc                        = new PrecueController(S_controller, Q_controller)
 vc                        = new VolumeController(mpc, pc)
