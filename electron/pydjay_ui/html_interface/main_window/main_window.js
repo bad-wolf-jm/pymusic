@@ -107,7 +107,7 @@ SE = new SessionsView({
 })
 SE.set_controller(SE_controller)
 
-mpc.init_audio()
+// mpc.init_audio()
 pc.connectOutputs({headphones:{left:0, right:1}})
 
 M = new MainPlayerView(tracks_model)
