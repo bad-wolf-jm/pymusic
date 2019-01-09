@@ -1,3 +1,5 @@
+
+
 function format_nanoseconds (ts) {
     var sec_num = Math.round(ts / 1000000000);
     var hours   = Math.floor(sec_num / 3600);
