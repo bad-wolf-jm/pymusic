@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var path = require('path');
 const Datastore = require("nedb-async-await").Datastore;
+const { EventDispatcher } = require("event_dispatcher")
 // const MongoClient = require('mongodb').MongoClient;
 
 
@@ -66,9 +67,9 @@ class Session {
 }
 
 
-class MusicDatabase {
+class MusicDatabase extends EventDispatcher {
     constructor(name) {
-
+        super()
         this.tracks = Datastore({
             filename: path.join(".ds", name, "tracks.json"),
             autoload:true,
@@ -102,6 +103,10 @@ class MusicDatabase {
         }
     }
 
+    async getTrackById(id) {
+        return (await this.getTracksByIds([id]))[0]
+    }
+
     async getAllPlaylists() {
         let sessions = await this.playlists.find({})
         return sessions.map((s) => {return new Playlist(this, s)})
@@ -120,6 +125,23 @@ class MusicDatabase {
         })
         return dur
     }
+
+    async setTrackData(track, new_data) {
+        let [num, modified] = await this.tracks.update(
+            {"_id": track._id}, 
+            {$set: new_data}, 
+            {returnUpdatedDocs: true})
+        if (num > 0) {
+            this.dispatch("track-metadata-changed". modified)
+        }
+        return modified
+    }
+
+    insertTrack(track) {
+        return this.tracks.insert(track)    
+    }
+
+
 }
 
 
@@ -174,19 +196,22 @@ const db = new MusicDatabase("pymusic")
 //     //      client.close();
 //     //  }
 // }
-main = async () => {
+main2 = async () => {
     // let x = await db.getAllTracks()
     // x.forEach((e) => {
     //     console.log(e)
     // })
 
-    (await db.getAllSessions()).forEach(async (pl) => {
-        console.log(pl.object.event, await pl.duration())
-    })
+    // (await db.getAllSessions()).forEach(async (pl) => {
+    //     console.log(pl.object.event, await pl.duration())
+    // })
 
+    let x = (await db.getTracksByIds(["09lWty9X6kR6v6T8"]))[0]
+    console.log(x)
+    db.setTrackData(x, {"title": "Take Me To Church"})
 }
 
-main2 = async () => {
+main = async () => {
     let mysql = require('async-mysql'),
         connection,
         track_objects = {},
@@ -207,18 +232,25 @@ main2 = async () => {
             let relations = await connection.query(`SELECT * FROM track_relations WHERE track_id=${tr.id}`);
             let t_relations = relations.map((r) => {
                 return {
-                    track_id:r.related_track_id,
-                    reatin:r.reason,
+                    track_id: r.related_track_id,
+                    reason: r.reason,
                     count: r.count,
                     date: r.date
                 }
             })
+            track.relations = t_relations
 
-            if (t_relations.length > 0) {
-                track.relations = t_relations
-            }
+            let history = await connection.query(`SELECT * FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
+            history = history.map((x) => {return {
+                session: x.session_id,
+                time: x.start_time,
+                status: x.status
+            }})
+            track.history = history
             new_id = await db.tracks.insert(track)
             track_objects[tr.id] = new_id["_id"]
+
+            
         }
 
         let sessions = await connection.query('SELECT * FROM sessions');
