@@ -2,34 +2,37 @@ var mysql = require('mysql');
 var path = require('path');
 const Datastore = require("nedb-async-await").Datastore;
 const { EventDispatcher } = require("event_dispatcher")
+
+const { TrackListController } = require("musicdb/track_list.js")
+const { TrackSetController } = require("musicdb/track_set.js")
+const { QueueController } = require("musicdb/queue.js")
 // const MongoClient = require('mongodb').MongoClient;
 
+class Track extends EventDispatcher {
+    constructor(db, object) {
+        super()
+        this.db = db
+        this.object = object
+    }
 
-// const connectionString = 'mongodb://localhost:27017';
+    getHistory() {
 
-// class Database {
-//     constructor( config ) {
-//         this.connection = mysql.createConnection( config );
-//     }
-//     query( sql, args ) {
-//         return new Promise( ( resolve, reject ) => {
-//             this.connection.query( sql, args, ( err, rows ) => {
-//                 if ( err )
-//                     return reject( err );
-//                 resolve( rows );
-//             } );
-//         } );
-//     }
-//     close() {
-//         return new Promise( ( resolve, reject ) => {
-//             this.connection.end( err => {
-//                 if ( err )
-//                     return reject( err );
-//                 resolve();
-//             } );
-//         } );
-//     }
-// }
+    }
+
+    getRelatedTracks() {
+
+    }
+
+    setMetadata(metadata) {
+        this.object = this.db.setTrackData(this.object, metadata)
+        return this.object
+    }
+
+    getMetadata() {
+        return this.object
+    }
+}
+
 
 class Playlist {
     constructor(db, object) {
@@ -66,30 +69,239 @@ class Session {
     }
 }
 
+class Queue {
+    constructor(db, q) {
+        this.db = db
+        this.q = q.tracks
+    }
+
+    _save() {
+
+    }
+
+    pop() {
+        return this.db.popFromQueue()
+    }
+
+    append(element) {
+        this.db.appendToQueue(element)
+    }
+
+    reorder(new_order) {
+        // if (new_order.length == this.ordering.length) {
+        //     if (new_order.every((x) => {return (this.objects[x] != undefined)})) {
+        //         this.ordering = new_order
+        //         this.db.dispatch("reorder", this.get_all_objects())
+        //     }
+        // }
+        this.db.setQueueElements(new_order)
+    }
+
+    async getTracks() {
+        let tracks = await this.db.getTracksByIds(this.q)
+        let x = {}
+        tracks.forEach((t) => {x[t._id] = t})
+        return this.q.tracks.map((t) => {return x[t]})
+    }
+
+    length() {
+        let i = this.q.indexOf(null)
+        return (i == -1) ? this.q.length : i 
+    }
+
+    duration() {
+        return this.db.duration(this.q.slice(0, this.length())) 
+    }
+}
+
+
+class CurrentSession {
+    constructor(db, q) {
+        this.db = db
+        this.q = q.tracks
+    }
+
+
+    _save() {
+
+    }
+
+    discard() {
+
+    }
+
+    save(name, location, address) {
+        // save session
+        // updatae track histories
+        // update last played
+        // update track relations
+    }
+
+    store_as_playlist(name) {
+
+    }
+
+    add(element) {
+        // this.db.appendToQueue(element)
+    }
+
+    reorder(new_order) {
+        this.db.reorderQueue(new_order)
+    }
+
+    async getTracks() {
+        let tracks = await this.db.getTracksByIds(this.q)
+        let x = {}
+        tracks.forEach((t) => {x[t._id] = t})
+        return this.q.tracks.map((t) => {return x[t]})
+    }
+
+    length() {
+        let i = this.q.indexOf(null)
+        return (i == -1) ? this.q.length : i 
+    }
+
+    duration() {
+        return this.db.duration(this.q.slice(0, this.length())) 
+    }
+}
+
 
 class MusicDatabase extends EventDispatcher {
     constructor(name) {
         super()
         this.tracks = Datastore({
             filename: path.join(".ds", name, "tracks.json"),
-            autoload:true,
-            timestampData:true})
+            autoload: true,
+            timestampData: true})
 
         this.sessions = Datastore({
             filename: path.join(".ds", name, "sessions.json"),
-            autoload:true, 
-            timestampData:true})
+            autoload: true, 
+            timestampData: true})
 
         this.playlists = Datastore({
             filename: path.join(".ds", name, "playlists.json"),
-            autoload:true,
-            timestampData:true})
+            autoload: true,
+            timestampData: true})
 
-        this.logistics = Datastore({
-            filename: path.join(".ds", name, "logistics.json"),
-            autoload:true,
-            timestampData:true})
-        }
+        this.state = Datastore({
+            filename: path.join(".ds", name, "state.json"),
+            autoload: true,
+            timestampData: true})
+
+        this.queue = QueueController(this, this.state, "queue")
+        this.current_session = SessionController(this, this.state, "session")
+        this.shortlisted_tracks = PlaylistController(this, this.state, "shortlist")
+        this.unavailable_tracks = PlaylistController(this, this.state, "unavailable")
+    }
+
+
+    queueIsEmpty() {
+        let current_queue = this.getQueue().q
+        return (current_queue[0] == null)
+    }
+
+    // async popQueue() {
+    //     let current_queue = this.getQueue().q
+    //     if ((current_queue.length > 0) && (current_queue[0] != null)) {
+    //         let next_id = current_queue.shift()
+    //         await this.state.update({_id: "queue"}, {$set: {tracks: current_queue}}, {returnUpdatedDocs: true})
+    //         return this.getTrackById(next_id)
+    //     }
+    // }
+
+    // async addToQueue(track) {
+    //     let current_queue = this.getQueue().q
+    //     current_queue.push(track._id)
+    //     let new_queue = await this.state.update({_id: "queue"}, 
+    //         {$set: {tracks: current_queue}}, 
+    //         {returnUpdatedDocs: true})
+    //     this.dispatch("queue-changed", new_queue)
+    // }
+
+    // async removeFromQueue(track) {
+    //     let current_queue = this.getQueue().q
+    //     let idx = current_queue.indexOf(track._id)
+    //     if ( idx != -1 ) {
+    //         current_queue.splice(index, 1)
+    //         let new_queue = await this.state.update({_id: "queue"}, 
+    //             {$set: {tracks: current_queue}}, 
+    //             {returnUpdatedDocs: true})
+    //         this.dispatch("queue-changed", new_queue)
+    //     } 
+    // }
+
+    // async reorderQueue(new_order) {
+    //     let current_queue = this.getQueue().q
+    //     let current_queue_objects = {}
+    //     current_queue.forEach((x) => {current_queue_objects[x] = true})
+    //     if (new_order.length == current_queue.length) {
+    //         if (new_order.every((x) => {return (this.objects[x] != undefined)})) {
+    //             let new_queue = await this.state.update({_id: "queue"}, {$set: {tracks: new_order}}, {returnUpdatedDocs: true})
+    //             this.dispatch("queue-reordered", new_order)
+    //         }
+    //     }
+    // }
+
+    async createPlaylist(name, description, tracks) {
+        let new_playlist = {name: name, description: description, tracks: {}}
+        tracks.forEach((t) => {new_playlist.tracks[t._id] = true})
+        let playlist = await this.playlists.insert(new_playlist)
+        this.dispatch("playlist-created", playlist)
+    }
+
+    async renamePlaylist(playlist, name) {
+        let p = await this.playlists.update(
+            {_id: playlist._id}, 
+            {$set: {name: name}}, 
+            {returnUpdatedDocs: true})
+        this.dispatch("playlist-updated", p)
+    }
+
+    async duplicatePlaylist(playlist) {
+        this.createPlaylist(
+            playlist.name + " (duplicate)", 
+            playlist.description, 
+            playlist.tracks)
+
+    }
+
+    async deletePlaylist(playlist) {
+        await this.playlists.remove({_id: playlist._id}, {})
+        this.dispatch("playlist-deleted", playlist)
+    }
+
+    async setPlaylistTracks(playlist, tracks) {
+        playlist.tracks = {}
+        tracks.forEach((t) => {playlist.tracks[t._id] = true})
+        let p = await this.playlists.update(
+            {_id:playlist._id}, 
+            {$set: {tracks:playlist.tracks}}, 
+            {returnUpdatedDocs: true})
+        this.dispatch("playlist-updated", p)
+    }
+
+    getSettings() {
+        return this.state.find({_id: "settings"})
+    }
+
+    async getQueue() {
+        let q = await this.state.find({_id: "queue"})
+        return new Queue(this, q)
+    }
+
+    getCurrentSession() {
+        return this.state.find({_id: "current_session"})
+    }
+
+    getUnavailableTracks() {
+        return this.state.find({_id: "unavailable"})
+    }
+
+    getShortList() {
+        return this.state.find({_id: "shortlist"})
+    }
 
     getAllTracks() {
         return this.tracks.find({})
@@ -140,8 +352,6 @@ class MusicDatabase extends EventDispatcher {
     insertTrack(track) {
         return this.tracks.insert(track)    
     }
-
-
 }
 
 
