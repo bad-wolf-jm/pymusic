@@ -3,6 +3,8 @@ WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
 
+const { MusicDatabase } = require("musicdb/model.js")
+
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
@@ -19,6 +21,8 @@ SV.on("add-playlist", () => {
 
 })
 
+
+MDB = new MusicDatabase("pymusic")
 
 DB = new DataProvider()
 
