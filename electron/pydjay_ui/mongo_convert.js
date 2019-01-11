@@ -3,12 +3,14 @@ var path = require('path');
 const Datastore = require("nedb-async-await").Datastore;
 const { EventDispatcher } = require("event_dispatcher")
 
-const { CollectionController } = require("musicdb/collection.js")
-// const { TrackListController } = require("musicdb/track_list.js")
-// const { TrackSetController } = require("musicdb/track_set.js")
-const { QueueController } = require("musicdb/queue.js")
-const { SessionController } = require("musicdb/session.js")
-const { PlaylistController } = require("musicdb/playlist.js")
+// const { CollectionController } = require("musicdb/collection.js")
+// // const { TrackListController } = require("musicdb/track_list.js")
+// // const { TrackSetController } = require("musicdb/track_set.js")
+// const { QueueController } = require("musicdb/queue.js")
+// const { SessionController } = require("musicdb/session.js")
+// const { PlaylistController } = require("musicdb/playlist.js")
+
+const { MusicDatabase } = require("musicdb/model.js") 
 // const MongoClient = require('mongodb').MongoClient;
 
 class Track extends EventDispatcher {
@@ -170,197 +172,197 @@ class CurrentSession {
 }
 
 
-class MusicDatabase extends EventDispatcher {
-    constructor(name) {
-        super()
-        this.tracks = new CollectionController(path.join(".ds", name, "tracks.json"))
-        this.sessions = new CollectionController(path.join(".ds", name, "sessions.json"))
-        this.playlists = new CollectionController(path.join(".ds", name, "playlists.json"))
-        this.state = new CollectionController(path.join(".ds", name, "state.json"))
-        this.queue = new QueueController(this, this.state, "queue")
-        this.current_session = new SessionController(this, this.state, "session")
-        this.shortlisted_tracks = new PlaylistController(this, this.state, "shortlist")
-        this.unavailable_tracks = new PlaylistController(this, this.state, "unavailable")
+// class MusicDatabaseSSS extends EventDispatcher {
+//     constructor(name) {
+//         super()
+//         this.tracks = new CollectionController(path.join(".ds", name, "tracks.json"))
+//         this.sessions = new CollectionController(path.join(".ds", name, "sessions.json"))
+//         this.playlists = new CollectionController(path.join(".ds", name, "playlists.json"))
+//         this.state = new CollectionController(path.join(".ds", name, "state.json"))
+//         this.queue = new QueueController(this, this.state, "queue")
+//         this.current_session = new SessionController(this, this.state, "session")
+//         this.shortlisted_tracks = new PlaylistController(this, this.state, "shortlist")
+//         this.unavailable_tracks = new PlaylistController(this, this.state, "unavailable")
         
-        // Datastore({
-        //     filename: path.join(".ds", name, "tracks.json"),
-        //     autoload: true,
-        //     timestampData: true})
+//         // Datastore({
+//         //     filename: path.join(".ds", name, "tracks.json"),
+//         //     autoload: true,
+//         //     timestampData: true})
 
-        // Datastore({
-            //     filename: path.join(".ds", name, "sessions.json"),
-            //     autoload: true, 
-            //     timestampData: true})
+//         // Datastore({
+//             //     filename: path.join(".ds", name, "sessions.json"),
+//             //     autoload: true, 
+//             //     timestampData: true})
             
-        // Datastore({
-        //     filename: path.join(".ds", name, "playlists.json"),
-        //     autoload: true,
-        //     timestampData: true})
+//         // Datastore({
+//         //     filename: path.join(".ds", name, "playlists.json"),
+//         //     autoload: true,
+//         //     timestampData: true})
 
-        // Datastore({
-        //     filename: path.join(".ds", name, "state.json"),
-        //     autoload: true,
-        //     timestampData: true})
+//         // Datastore({
+//         //     filename: path.join(".ds", name, "state.json"),
+//         //     autoload: true,
+//         //     timestampData: true})
 
-    }
+//     }
 
 
-    queueIsEmpty() {
-        let current_queue = this.getQueue().q
-        return (current_queue[0] == null)
-    }
+//     queueIsEmpty() {
+//         let current_queue = this.getQueue().q
+//         return (current_queue[0] == null)
+//     }
 
-    // async popQueue() {
-    //     let current_queue = this.getQueue().q
-    //     if ((current_queue.length > 0) && (current_queue[0] != null)) {
-    //         let next_id = current_queue.shift()
-    //         await this.state.update({_id: "queue"}, {$set: {tracks: current_queue}}, {returnUpdatedDocs: true})
-    //         return this.getTrackById(next_id)
-    //     }
-    // }
+//     // async popQueue() {
+//     //     let current_queue = this.getQueue().q
+//     //     if ((current_queue.length > 0) && (current_queue[0] != null)) {
+//     //         let next_id = current_queue.shift()
+//     //         await this.state.update({_id: "queue"}, {$set: {tracks: current_queue}}, {returnUpdatedDocs: true})
+//     //         return this.getTrackById(next_id)
+//     //     }
+//     // }
 
-    // async addToQueue(track) {
-    //     let current_queue = this.getQueue().q
-    //     current_queue.push(track._id)
-    //     let new_queue = await this.state.update({_id: "queue"}, 
-    //         {$set: {tracks: current_queue}}, 
-    //         {returnUpdatedDocs: true})
-    //     this.dispatch("queue-changed", new_queue)
-    // }
+//     // async addToQueue(track) {
+//     //     let current_queue = this.getQueue().q
+//     //     current_queue.push(track._id)
+//     //     let new_queue = await this.state.update({_id: "queue"}, 
+//     //         {$set: {tracks: current_queue}}, 
+//     //         {returnUpdatedDocs: true})
+//     //     this.dispatch("queue-changed", new_queue)
+//     // }
 
-    // async removeFromQueue(track) {
-    //     let current_queue = this.getQueue().q
-    //     let idx = current_queue.indexOf(track._id)
-    //     if ( idx != -1 ) {
-    //         current_queue.splice(index, 1)
-    //         let new_queue = await this.state.update({_id: "queue"}, 
-    //             {$set: {tracks: current_queue}}, 
-    //             {returnUpdatedDocs: true})
-    //         this.dispatch("queue-changed", new_queue)
-    //     } 
-    // }
+//     // async removeFromQueue(track) {
+//     //     let current_queue = this.getQueue().q
+//     //     let idx = current_queue.indexOf(track._id)
+//     //     if ( idx != -1 ) {
+//     //         current_queue.splice(index, 1)
+//     //         let new_queue = await this.state.update({_id: "queue"}, 
+//     //             {$set: {tracks: current_queue}}, 
+//     //             {returnUpdatedDocs: true})
+//     //         this.dispatch("queue-changed", new_queue)
+//     //     } 
+//     // }
 
-    // async reorderQueue(new_order) {
-    //     let current_queue = this.getQueue().q
-    //     let current_queue_objects = {}
-    //     current_queue.forEach((x) => {current_queue_objects[x] = true})
-    //     if (new_order.length == current_queue.length) {
-    //         if (new_order.every((x) => {return (this.objects[x] != undefined)})) {
-    //             let new_queue = await this.state.update({_id: "queue"}, {$set: {tracks: new_order}}, {returnUpdatedDocs: true})
-    //             this.dispatch("queue-reordered", new_order)
-    //         }
-    //     }
-    // }
+//     // async reorderQueue(new_order) {
+//     //     let current_queue = this.getQueue().q
+//     //     let current_queue_objects = {}
+//     //     current_queue.forEach((x) => {current_queue_objects[x] = true})
+//     //     if (new_order.length == current_queue.length) {
+//     //         if (new_order.every((x) => {return (this.objects[x] != undefined)})) {
+//     //             let new_queue = await this.state.update({_id: "queue"}, {$set: {tracks: new_order}}, {returnUpdatedDocs: true})
+//     //             this.dispatch("queue-reordered", new_order)
+//     //         }
+//     //     }
+//     // }
 
-    async createPlaylist(name, description, tracks) {
-        let new_playlist = {name: name, description: description, tracks: {}}
-        tracks.forEach((t) => {new_playlist.tracks[t._id] = true})
-        let playlist = await this.playlists.insert(new_playlist)
-        this.dispatch("playlist-created", playlist)
-    }
+//     async createPlaylist(name, description, tracks) {
+//         let new_playlist = {name: name, description: description, tracks: {}}
+//         tracks.forEach((t) => {new_playlist.tracks[t._id] = true})
+//         let playlist = await this.playlists.insert(new_playlist)
+//         this.dispatch("playlist-created", playlist)
+//     }
 
-    async renamePlaylist(playlist, name) {
-        let p = await this.playlists.update(
-            {_id: playlist._id}, 
-            {$set: {name: name}}, 
-            {returnUpdatedDocs: true})
-        this.dispatch("playlist-updated", p)
-    }
+//     async renamePlaylist(playlist, name) {
+//         let p = await this.playlists.update(
+//             {_id: playlist._id}, 
+//             {$set: {name: name}}, 
+//             {returnUpdatedDocs: true})
+//         this.dispatch("playlist-updated", p)
+//     }
 
-    async duplicatePlaylist(playlist) {
-        this.createPlaylist(
-            playlist.name + " (duplicate)", 
-            playlist.description, 
-            playlist.tracks)
+//     async duplicatePlaylist(playlist) {
+//         this.createPlaylist(
+//             playlist.name + " (duplicate)", 
+//             playlist.description, 
+//             playlist.tracks)
 
-    }
+//     }
 
-    async deletePlaylist(playlist) {
-        await this.playlists.remove({_id: playlist._id}, {})
-        this.dispatch("playlist-deleted", playlist)
-    }
+//     async deletePlaylist(playlist) {
+//         await this.playlists.remove({_id: playlist._id}, {})
+//         this.dispatch("playlist-deleted", playlist)
+//     }
 
-    async setPlaylistTracks(playlist, tracks) {
-        playlist.tracks = {}
-        tracks.forEach((t) => {playlist.tracks[t._id] = true})
-        let p = await this.playlists.update(
-            {_id:playlist._id}, 
-            {$set: {tracks:playlist.tracks}}, 
-            {returnUpdatedDocs: true})
-        this.dispatch("playlist-updated", p)
-    }
+//     async setPlaylistTracks(playlist, tracks) {
+//         playlist.tracks = {}
+//         tracks.forEach((t) => {playlist.tracks[t._id] = true})
+//         let p = await this.playlists.update(
+//             {_id:playlist._id}, 
+//             {$set: {tracks:playlist.tracks}}, 
+//             {returnUpdatedDocs: true})
+//         this.dispatch("playlist-updated", p)
+//     }
 
-    getSettings() {
-        return this.state.find({_id: "settings"})
-    }
+//     getSettings() {
+//         return this.state.find({_id: "settings"})
+//     }
 
-    async getQueue() {
-        let q = await this.state.find({_id: "queue"})
-        return new Queue(this, q)
-    }
+//     async getQueue() {
+//         let q = await this.state.find({_id: "queue"})
+//         return new Queue(this, q)
+//     }
 
-    getCurrentSession() {
-        return this.state.find({_id: "current_session"})
-    }
+//     getCurrentSession() {
+//         return this.state.find({_id: "current_session"})
+//     }
 
-    getUnavailableTracks() {
-        return this.state.find({_id: "unavailable"})
-    }
+//     getUnavailableTracks() {
+//         return this.state.find({_id: "unavailable"})
+//     }
 
-    getShortList() {
-        return this.state.find({_id: "shortlist"})
-    }
+//     getShortList() {
+//         return this.state.find({_id: "shortlist"})
+//     }
 
-    getAllTracks() {
-        return this.tracks.find({})
-    }
+//     getAllTracks() {
+//         return this.tracks.find({})
+//     }
 
-    getTracksByIds(id_array) {
-        if (id_array != undefined) {
-            return this.tracks.find({"_id": {"$in":id_array}})
-        } else {
-            return this.tracks.find({})
-        }
-    }
+//     getTracksByIds(id_array) {
+//         if (id_array != undefined) {
+//             return this.tracks.find({"_id": {"$in":id_array}})
+//         } else {
+//             return this.tracks.find({})
+//         }
+//     }
 
-    async getTrackById(id) {
-        return (await this.getTracksByIds([id]))[0]
-    }
+//     async getTrackById(id) {
+//         return (await this.getTracksByIds([id]))[0]
+//     }
 
-    async getAllPlaylists() {
-        let sessions = await this.playlists.find({})
-        return sessions.map((s) => {return new Playlist(this, s)})
-    }
+//     async getAllPlaylists() {
+//         let sessions = await this.playlists.find({})
+//         return sessions.map((s) => {return new Playlist(this, s)})
+//     }
 
-    async getAllSessions() {
-        let sessions = await this.sessions.find({})
-        return sessions.map((s) => {return new Session(this, s)})
-    }
+//     async getAllSessions() {
+//         let sessions = await this.sessions.find({})
+//         return sessions.map((s) => {return new Session(this, s)})
+//     }
 
-    async duration(id_array) {
-        let tracks = await this.getTracksByIds(id_array)
-        let dur = 0
-        tracks.forEach((track) => {
-            dur += (track.bounds.end - track.bounds.start)
-        })
-        return dur
-    }
+//     async duration(id_array) {
+//         let tracks = await this.getTracksByIds(id_array)
+//         let dur = 0
+//         tracks.forEach((track) => {
+//             dur += (track.bounds.end - track.bounds.start)
+//         })
+//         return dur
+//     }
 
-    async setTrackData(track, new_data) {
-        let [num, modified] = await this.tracks.update(
-            {"_id": track._id}, 
-            {$set: new_data}, 
-            {returnUpdatedDocs: true})
-        if (num > 0) {
-            this.dispatch("track-metadata-changed". modified)
-        }
-        return modified
-    }
+//     async setTrackData(track, new_data) {
+//         let [num, modified] = await this.tracks.update(
+//             {"_id": track._id}, 
+//             {$set: new_data}, 
+//             {returnUpdatedDocs: true})
+//         if (num > 0) {
+//             this.dispatch("track-metadata-changed". modified)
+//         }
+//         return modified
+//     }
 
-    insertTrack(track) {
-        return this.tracks.insert(track)    
-    }
-}
+//     insertTrack(track) {
+//         return this.tracks.insert(track)    
+//     }
+// }
 
 
 function trackBSON(tr) {
