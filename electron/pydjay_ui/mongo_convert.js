@@ -3,9 +3,12 @@ var path = require('path');
 const Datastore = require("nedb-async-await").Datastore;
 const { EventDispatcher } = require("event_dispatcher")
 
-const { TrackListController } = require("musicdb/track_list.js")
-const { TrackSetController } = require("musicdb/track_set.js")
+const { CollectionController } = require("musicdb/collection.js")
+// const { TrackListController } = require("musicdb/track_list.js")
+// const { TrackSetController } = require("musicdb/track_set.js")
 const { QueueController } = require("musicdb/queue.js")
+const { SessionController } = require("musicdb/session.js")
+const { PlaylistController } = require("musicdb/playlist.js")
 // const MongoClient = require('mongodb').MongoClient;
 
 class Track extends EventDispatcher {
@@ -170,30 +173,35 @@ class CurrentSession {
 class MusicDatabase extends EventDispatcher {
     constructor(name) {
         super()
-        this.tracks = Datastore({
-            filename: path.join(".ds", name, "tracks.json"),
-            autoload: true,
-            timestampData: true})
+        this.tracks = new CollectionController(path.join(".ds", name, "tracks.json"))
+        this.sessions = new CollectionController(path.join(".ds", name, "sessions.json"))
+        this.playlists = new CollectionController(path.join(".ds", name, "playlists.json"))
+        this.state = new CollectionController(path.join(".ds", name, "state.json"))
+        this.queue = new QueueController(this, this.state, "queue")
+        this.current_session = new SessionController(this, this.state, "session")
+        this.shortlisted_tracks = new PlaylistController(this, this.state, "shortlist")
+        this.unavailable_tracks = new PlaylistController(this, this.state, "unavailable")
+        
+        // Datastore({
+        //     filename: path.join(".ds", name, "tracks.json"),
+        //     autoload: true,
+        //     timestampData: true})
 
-        this.sessions = Datastore({
-            filename: path.join(".ds", name, "sessions.json"),
-            autoload: true, 
-            timestampData: true})
+        // Datastore({
+            //     filename: path.join(".ds", name, "sessions.json"),
+            //     autoload: true, 
+            //     timestampData: true})
+            
+        // Datastore({
+        //     filename: path.join(".ds", name, "playlists.json"),
+        //     autoload: true,
+        //     timestampData: true})
 
-        this.playlists = Datastore({
-            filename: path.join(".ds", name, "playlists.json"),
-            autoload: true,
-            timestampData: true})
+        // Datastore({
+        //     filename: path.join(".ds", name, "state.json"),
+        //     autoload: true,
+        //     timestampData: true})
 
-        this.state = Datastore({
-            filename: path.join(".ds", name, "state.json"),
-            autoload: true,
-            timestampData: true})
-
-        this.queue = QueueController(this, this.state, "queue")
-        this.current_session = SessionController(this, this.state, "session")
-        this.shortlisted_tracks = PlaylistController(this, this.state, "shortlist")
-        this.unavailable_tracks = PlaylistController(this, this.state, "unavailable")
     }
 
 
@@ -406,7 +414,7 @@ const db = new MusicDatabase("pymusic")
 //     //      client.close();
 //     //  }
 // }
-main = async () => {
+main2 = async () => {
     // let x = await db.getAllTracks()
     // x.forEach((e) => {
     //     console.log(e)
@@ -421,7 +429,7 @@ main = async () => {
     // db.setTrackData(x, {"title": "Take Me To Church"})
 }
 
-main2 = async () => {
+main = async () => {
     let mysql = require('async-mysql'),
         connection,
         track_objects = {},
