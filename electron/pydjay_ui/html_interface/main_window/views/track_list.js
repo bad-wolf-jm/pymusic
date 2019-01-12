@@ -495,7 +495,7 @@ class TrackListView extends EventDispatcher {
         this.d = 1
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]
-            let i = this.view_list_id_order.indexOf(r.id)
+            let i = this.view_list_id_order.indexOf(r._id)
             let n
             if (i != -1) {
                 n = (i+1) < this.view_list_id_order.length ? i+1 : this.view_list_id_order.length - 1
@@ -515,7 +515,7 @@ class TrackListView extends EventDispatcher {
         this.d = -1
         if (this._selected_row != undefined) {
             let r = this._selected_row[0]
-            let i = this.view_list_id_order.indexOf(r.id)
+            let i = this.view_list_id_order.indexOf(r._id)
             let n
             if (i != -1) {
                 n = (i-1) >= 0 ? i-1 : 0
