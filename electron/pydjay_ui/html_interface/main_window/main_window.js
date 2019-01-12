@@ -4,6 +4,8 @@ var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.mi
 var path              = require('path');
 
 const { MusicDatabase } = require("musicdb/model.js")
+const { PlaylistController, PlaylistViewController } = require("musicdb/playlist.js")
+const { SessionController } = require("musicdb/session.js")
 const {Question} = require("ui/dialog/question.js")
 // const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
 // const {PydjayAudioBufferPlayer} = require('audio/audio_player_buffer.js')
@@ -52,9 +54,11 @@ un_model.addModel("unavailable", unavailable_model)
 T_controller              = new TrackListController(un_model)
 // PE_controller             = new PlaylistController(un_model)
 Q_controller              = new QueueController()
-S_controller              = new SessionController()
+S_controller              = undefined //new SessionController()
 PL_controller             = new PlaylistsController()
+PL_controller.setModel(MDB.playlists)
 SE_controller             = new SessionsController()
+SE_controller.setModel(MDB.sessions)
 
 
 // var mpc = new RemoteFilePlayer()
@@ -65,7 +69,7 @@ pc                        = new PrecueController(S_controller, Q_controller)
 vc                        = new VolumeController(mpc, pc)
 
 Q_controller.set_model(queue_model)
-S_controller.set_model(current_session_model)
+// S_controller.set_model(current_session_model)
 
 ipcRenderer.on("track-modified", (e, id) => {
     //console.log(e, id)
@@ -398,38 +402,49 @@ function display_short_list() {
 
 function display_unavailable() {
     T.ignore_unavailable = true
-    T_controller.set_model("Unavailable tracks", unavailable_model)
+    T_controller.set_model("Unavailable tracks", MDB.unavailable_tracks)
 }
 
 function display_played_tracks() {
     T.ignore_unavailable = false
-    T_controller.set_model("Played songs", played_tracks_model)
+    T_controller.set_model("Played songs", MDB.played_tracks)
 }
 
 function display_never_played_tracks() {
     T.ignore_unavailable = false
-    T_controller.set_model("Never Played songs", never_played_tracks_model)
+    T_controller.set_model("Never Played songs", MDB.never_played_tracks)
 }
 
-function display_session(id) {
-    DB.get_session_info(id,
-        (info) => {
-            let L = new SessionModel(info, tracks_model)
-            T.ignore_unavailable = false
-            T_controller.set_model(info.name, L)
-        }
-    )
+async function display_session(id) {
+    // let pl = MDB.playlists.getId(id)
+    let pl = await MDB.sessions.getId(id)
+    let model = new SessionController(MDB, MDB.sessions, id)
+    T.ignore_unavailable = false
+    T_controller.set_model(pl.name, model)
+
+    // DB.get_session_info(id,
+    //     (info) => {
+    //         let L = new SessionModel(info, tracks_model)
+    //         T.ignore_unavailable = false
+    //         T_controller.set_model(info.name, L)
+    //     }
+    // )
 }
 
-function display_playlist(id) {
-    DB.get_group_info(id,
-        (info) => {
-            let L = new PlaylistModel(info, tracks_model)
-            T.ignore_unavailable = false
-            T_controller.set_model(info.name, L)
-            // PE_controller.set_model(info.name, L)
-        }
-    )
+async function display_playlist(id) {
+    // console.log(id)
+    let pl = await MDB.playlists.getId(id)
+    let model = new PlaylistViewController(MDB, MDB.playlists, id)
+    T.ignore_unavailable = false
+    T_controller.set_model(pl.name, model)
+    // DB.get_group_info(id,
+    //     (info) => {
+    //         let L = new PlaylistModel(info, tracks_model)
+    //         T.ignore_unavailable = false
+    //         T_controller.set_model(info.name, L)
+    //         // PE_controller.set_model(info.name, L)
+    //     }
+    // )
 }
 
 ipcRenderer.on('playback-started', (event, arg) => {

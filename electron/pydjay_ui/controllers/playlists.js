@@ -5,24 +5,33 @@ class PlaylistsController extends EventDispatcher {
         this.queue_table = undefined
         this.ready_wait_queue = []
         this.views = []
-        this.refresh(() => {
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i](this.queue)
-            }    
-            this.dispatch("content-changed", this.queue)
-        })
+
+
+        // this.refresh(() => {
+        //     for(let i=0; i<this.ready_wait_queue.length; i++) {
+        //         this.ready_wait_queue[i](this.queue)
+        //     }    
+        //     this.dispatch("content-changed", this.queue)
+        // })
     }
 
-    refresh(k) {
-        DB.get_group_list((queue) => {
-            this.queue = queue
-            this.queue_table = {}
-            for (let i=0; i<queue.length; i++) {
-                this.queue_table[queue[i].id] = queue[i]
-            }
-            k()
-            
-        })
+    async setModel(m) {
+        this.model = m
+        this.refresh()
+    }
+
+    async refresh(k) {
+        //let ll = await this.model.getAll()
+        // DB.get_group_list((queue) => {
+        this.queue = await this.model.getAll()
+        this.queue_table = {}
+        for (let i=0; i<this.queue.length; i++) {
+            this.queue_table[this.queue[i]._id] = this.queue[i]
+        }
+        // console.log(this.queue)
+        this.dispatch("content-changed", this.queue)
+        //     k()
+        // })
     }
 
     addView(view) {

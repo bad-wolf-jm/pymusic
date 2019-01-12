@@ -126,7 +126,7 @@ class PlaylistsView extends EventDispatcher {
         }
         let playlist = evt.target.parentElement
         playlist.classList.remove("drop-here")
-        let playlist_id = parseInt(playlist.attributes["data-playlist-id"].value)
+        let playlist_id = (playlist.attributes["data-playlist-id"].value)
 
         let d = evt.dataTransfer.getData("text/plain")
         let track = JSON.parse(d)
@@ -142,11 +142,11 @@ class PlaylistsView extends EventDispatcher {
 
     set_list(list) {
         this.view_list_order = []
-        let list_rows = [{id: null}]  
+        let list_rows = [{_id: null}]  
 
         for(let i=0; i<list.length; i++) {
             let element = {
-                id:   list[i].id,
+                _id:   list[i]._id,
                 name: list[i].name,
             }
             list_rows.push(element)
@@ -178,14 +178,14 @@ class PlaylistsView extends EventDispatcher {
                     col.addEventListener('drop', this.on_drop.bind(this), false);
                     col.addEventListener('click', (e) => {
                         let x = e.target.closest(".track-drop-target")
-                        let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
+                        let playlist_id = (x.attributes["data-playlist-id"].value)
                         display_playlist(playlist_id)
                     }, false);
         
                     col.addEventListener('contextmenu', (e) => {
                         e.preventDefault()
                         let x = e.target.closest(".track-drop-target")
-                        let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
+                        let playlist_id = (x.attributes["data-playlist-id"].value)
                         this.context_menu_element = playlist_id
                         this.context_menu_cell = document.getElementById(`playlist-element-${playlist_id}`)
                         this.menu.popup({window: remote.getCurrentWindow()})

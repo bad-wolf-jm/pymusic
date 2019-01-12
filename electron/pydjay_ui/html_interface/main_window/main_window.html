@@ -23,8 +23,8 @@
 <script src="../../models/base/subset_model.js"></script>
 <script src="../../models/base/ordered_subset_model.js"></script>
 <script src="../../models/track.js"></script>
-<script src="../../models/playlist.js"></script>
-<script src="../../models/session.js"></script>
+<!-- <script src="../../models/playlist.js"></script> -->
+<!-- <script src="../../models/session.js"></script> -->
 <script src="../../models/unavailable.js"></script>
 <script src="../../models/shortlist.js"></script>
 <script src="../../models/suggested.js"></script>
@@ -35,7 +35,7 @@
 <script src="../../models/union.js"></script>
 
 <script src="../../controllers/queue.js"></script>
-<script src="../../controllers/session.js"></script>
+<!-- <script src="../../controllers/session.js"></script> -->
 <script src="../../controllers/playback.js"></script>
 <script src="../../controllers/track_list.js"></script>
 <!-- <script src="../../controllers/playlist.js"></script> -->
@@ -332,17 +332,17 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
-                        <! if(id == null) { !>
+                        <! if(_id == null) { !>
                             <tr id="new-playlist" class="choice" style="height:20px; margin-left:10px; display:none">
                                 <td style="width:30px"></td>
                                 <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
                                 <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input id="new-playlist-name" type="text" class="new-playlist"></td>
                             </tr>
                         <! } else { !>
-                            <tr class="choice track-drop-target" style="height:20px;" data-playlist-id=<!= id !>>
+                            <tr class="choice track-drop-target" style="height:20px;" data-playlist-id=<!= _id !>>
                                 <td style="width:30px"></td>
                                 <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
-                                <td id="playlist-element-<!= id !>" style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                                <td id="playlist-element-<!= _id !>" style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
                                 <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
                             </tr>
                         <! } !>
@@ -362,7 +362,7 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
-                        <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session(<!= id !>)">
+                        <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session('<!= id !>')">
                             <td style="width:30px"></td>
                             <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
                             <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
