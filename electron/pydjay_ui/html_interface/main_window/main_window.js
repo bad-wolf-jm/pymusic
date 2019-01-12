@@ -4,9 +4,9 @@ var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.mi
 var path              = require('path');
 
 const { MusicDatabase } = require("musicdb/model.js")
-const { PlaylistController, PlaylistViewController } = require("musicdb/playlist.js")
-const { SessionController } = require("musicdb/session.js")
-const {Question} = require("ui/dialog/question.js")
+const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
+const { SessionModel } = require("musicdb/session.js")
+const { Question } = require("ui/dialog/question.js")
 // const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
 // const {PydjayAudioBufferPlayer} = require('audio/audio_player_buffer.js')
 
@@ -416,35 +416,17 @@ function display_never_played_tracks() {
 }
 
 async function display_session(id) {
-    // let pl = MDB.playlists.getId(id)
-    let pl = await MDB.sessions.getId(id)
-    let model = new SessionController(MDB, MDB.sessions, id)
+    let pl = await MDB.sessions.getObjectById(id)
+    let model = new SessionModel(MDB, MDB.sessions, id)
     T.ignore_unavailable = false
-    T_controller.set_model(pl.name, model)
-
-    // DB.get_session_info(id,
-    //     (info) => {
-    //         let L = new SessionModel(info, tracks_model)
-    //         T.ignore_unavailable = false
-    //         T_controller.set_model(info.name, L)
-    //     }
-    // )
+    T_controller.set_model(pl.event, model)
 }
 
 async function display_playlist(id) {
-    // console.log(id)
-    let pl = await MDB.playlists.getId(id)
-    let model = new PlaylistViewController(MDB, MDB.playlists, id)
+    let pl = await MDB.playlists.getObjectById(id)
+    let model = new PlaylistViewModel(MDB, MDB.playlists, id)
     T.ignore_unavailable = false
     T_controller.set_model(pl.name, model)
-    // DB.get_group_info(id,
-    //     (info) => {
-    //         let L = new PlaylistModel(info, tracks_model)
-    //         T.ignore_unavailable = false
-    //         T_controller.set_model(info.name, L)
-    //         // PE_controller.set_model(info.name, L)
-    //     }
-    // )
 }
 
 ipcRenderer.on('playback-started', (event, arg) => {

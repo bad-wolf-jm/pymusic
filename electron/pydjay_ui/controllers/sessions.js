@@ -16,7 +16,7 @@ class SessionsController extends EventDispatcher {
     }
 
     async refresh(k) {
-        this.queue = await this.model.getAll()
+        this.queue = await this.model.getAllObjects()
         // DB.get_sessions_list((queue) => {
         //     this.queue = queue
         this.queue_table = {}

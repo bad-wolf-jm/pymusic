@@ -22,12 +22,6 @@ class QueueView extends EventDispatcher {
 
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Track info', click: () => {
-            // let window = new BrowserWindow({width: 1250, height: 750})
-            // window.on('closed', () => {
-            //     window = null
-            // })
-            // window.webContents.once("did-finish-load", () => {window.webContents.send("track-id", this.context_menu_element)})
-            // window.loadURL('file://' + __dirname + '/../track_edit/layout.html')
             pc.stop()
             view.set_track(this.context_menu_element)
             document.getElementById("track-edit-dialog").showModal()
@@ -91,7 +85,6 @@ class QueueView extends EventDispatcher {
 
     set_queue(queue) {
         this.view_list_order = []
-        //this.view_id_list_order = []
         let queue_rows = []
 
         for(let i=0; i<queue.length; i++) {
