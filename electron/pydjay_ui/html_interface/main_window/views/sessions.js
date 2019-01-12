@@ -20,13 +20,14 @@ class SessionsView extends EventDispatcher {
 
         for(let i=0; i<list.length; i++) {
             let element = {
-                id:   list[i].id,
-                name: list[i].name,
+                id:   list[i]._id,
+                name: list[i].event,
                 data: list[i],
                 date: moment(list[i].date).format("MM-DD-YYYY"),
             }
             list_rows.push(element)
         }
+        // console.log(list_rows)
         jui.ready([ "grid.table" ], function(table) {
                 table("#session-list-elements", {
                     data:   list_rows,

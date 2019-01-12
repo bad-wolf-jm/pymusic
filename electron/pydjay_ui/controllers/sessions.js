@@ -6,27 +6,32 @@ class SessionsController extends EventDispatcher {
         this.ready_wait_queue = []
         this.views = []
 
-        this.refresh(() => {
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i](this.queue)
-            }    
-        })
+        // this.refresh(() => {
+        //     for(let i=0; i<this.ready_wait_queue.length; i++) {
+        //         this.ready_wait_queue[i](this.queue)
+        //     }    
+        // })
 
 
     }
 
-    refresh(k) {
-        DB.get_sessions_list((queue) => {
-            this.queue = queue
-            this.queue_table = {}
-            for (let i=0; i<queue.length; i++) {
-                this.queue_table[queue[i].id] = queue[i]
-            }
-            k()
-            this.dispatch("content-changed", this.queue)
-        })
+    async refresh(k) {
+        this.queue = await this.model.getAll()
+        // DB.get_sessions_list((queue) => {
+        //     this.queue = queue
+        this.queue_table = {}
+        for (let i=0; i<this.queue.length; i++) {
+            this.queue_table[this.queue[i]._id] = this.queue[i]
+        }
+        // k()
+        this.dispatch("content-changed", this.queue)
+        // })
     }
 
+    setModel(model) {
+        this.model = model
+        this.refresh()
+    }
 
     addView(view) {
         this.views.push(view)
