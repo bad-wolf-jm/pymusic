@@ -4,6 +4,7 @@ var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.mi
 var path              = require('path');
 
 const {Question} = require("ui/dialog/question.js")
+const { AudioOutputDetector } = require("webaudio/detect.js")
 // const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
 // const {PydjayAudioBufferPlayer} = require('audio/audio_player_buffer.js')
 
