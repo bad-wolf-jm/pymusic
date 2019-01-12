@@ -617,6 +617,7 @@ class TrackListView extends EventDispatcher {
         document.getElementById(`track-bpm-${x.id}`).innerHTML = x.bpm
     }
     ensure_row_visible(x, direction) {
+        // console.log(x)
         let row = this.table_rows[x._id]
         let scroller = document.getElementById("main-track-list-scroller")
         let scrollerRect = scroller.getBoundingClientRect()
