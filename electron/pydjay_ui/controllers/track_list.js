@@ -38,7 +38,7 @@ class TrackListController extends EventDispatcher {
         this.model.on("metadata-changed", this.on_metadata_changed)
 
         let track_list = await this.model.getTracks()
-        console.log("tr", track_list)
+        // console.log("tr", track_list)
         this.set_list(name, track_list)
 
         // this.model.ready(() => {

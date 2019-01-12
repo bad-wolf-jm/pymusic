@@ -40,8 +40,8 @@ class PlaybackController extends RemoteTrackPlayer {
         this.play(track,  track.stream_start, track.stream_end)    
     }
 
-    _do_play_next_track() {
-        let track = this.queue_controller.pop()
+    async _do_play_next_track() {
+        let track = await this.queue_controller.pop()
         if (track != undefined) {
             this.queue_playing = true
             this.dispatch("track-started", track)
@@ -67,9 +67,9 @@ class PlaybackController extends RemoteTrackPlayer {
         )    
     }
 
-    start_queue() {
+    async start_queue() {
         if (!this.queue_playing) {
-            if (!(this.queue_controller.is_empty())) {
+            if (!(await this.queue_controller.is_empty())) {
                 this._do_play_next_track()
                 this.dispatch("queue-started")    
             }

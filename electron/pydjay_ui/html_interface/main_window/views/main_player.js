@@ -43,7 +43,7 @@ class MainPlayerView extends EventDispatcher {
 
     set_track_metadata(track) {
         if (this._track != undefined && track.id == this._track.id) {
-            let stream_length = (track.stream_end-track.stream_start);
+            let stream_length = (track.bounds.end-track.bounds.start);
             document.getElementById("main-player-track-title").innerHTML    = track.title
             document.getElementById("main-player-track-album").innerHTML    = track.album
             document.getElementById("main-player-track-artist").innerHTML   = track.artist
@@ -55,14 +55,14 @@ class MainPlayerView extends EventDispatcher {
             if (track.cover == null) {
                 cover_source = "../../resources/images/default_album_cover.png"
             } else {
-                cover_source = `file://${track.image_root}/${track.cover}`;
+                cover_source = `file://${track.cover.medium}`;
             }
             document.getElementById("main-player-track-cover").src = cover_source    
         }
     }
 
     set_track(track) {
-        let file_name = path.join(track.music_root, track.file_name);
+        let file_name = track.path //path.join(track.music_root, track.file_name);
         this._track = track
         this.set_track_metadata(track)
         this._waveform.load(file_name)
@@ -84,7 +84,7 @@ class MainPlayerView extends EventDispatcher {
         });
         this._position_tracker = this.controller.on("stream-position",
             (pos) => {
-                let p = pos.position*1000000 / this._track.track_length
+                let p = pos.position*1000000 / this._track.duration
                 p = Math.max(p,0.0)
                 p = Math.min(p,1.0)
                 this._waveform.seekAndCenter(p)

@@ -29,6 +29,7 @@ SV.on("add-playlist", () => {
 
 
 MDB = new MusicDatabase("pymusic")
+//MDB.queue.init()
 
 DB = new DataProvider()
 
@@ -68,7 +69,7 @@ mpc                       = new PlaybackController(S_controller, Q_controller)
 pc                        = new PrecueController(S_controller, Q_controller)
 vc                        = new VolumeController(mpc, pc)
 
-Q_controller.set_model(queue_model)
+Q_controller.set_model(MDB.queue)
 // S_controller.set_model(current_session_model)
 
 ipcRenderer.on("track-modified", (e, id) => {

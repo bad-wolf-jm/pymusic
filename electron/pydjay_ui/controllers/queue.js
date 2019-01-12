@@ -10,16 +10,13 @@ class QueueController extends EventDispatcher {
         }
     }
 
-    set_model(model) {
+    async set_model(model) {
         if (this.model != undefined) {
             this.model.un("content-changed", this.forward_content_changed) 
         }
         this.model = model
-        this.model.addController(this)
         this.model.on("content-changed", this.forward_content_changed) 
-        this.model.ready(() => {
-            this.set_list(this.model.get_all_tracks())
-        })
+        this.set_list(await this.model.getTracks())
     }
 
     set_list(list) {
@@ -32,7 +29,7 @@ class QueueController extends EventDispatcher {
     }
 
     reorder_queue(new_order) {
-        this.model.reorder_queue(new_order)
+        this.model.reorder(new_order, true)
     }
 
     ready(func) {
@@ -43,8 +40,8 @@ class QueueController extends EventDispatcher {
         }
     }
 
-    is_empty() {
-        return this.model.is_empty()
+    async is_empty() {
+        return await this.model.isEmpty()
     }
 
     get_id(id) {

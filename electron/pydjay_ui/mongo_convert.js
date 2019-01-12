@@ -503,6 +503,16 @@ main = async () => {
             await db.sessions.d.insert(session_data)
         })
 
+        let playback_logs = await connection.query(`SELECT * FROM session_tracks`);
+        playback_logs.forEach(async (log) => {
+            await db.playback_logs.d.insert({
+                track:track_objects[log.track_id],
+                start_time: log.start_time,
+                end_time: log.end_time,
+                status: log.status
+            })
+        })
+
         let playlists = await connection.query('SELECT * FROM playlists');
         playlists.forEach(async (s) => {
             let playlist_data = {
