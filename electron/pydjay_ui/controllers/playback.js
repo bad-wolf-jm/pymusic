@@ -21,7 +21,7 @@ class PlaybackController extends RemoteTrackPlayer {
         this.stop_request       = false
         this.playing            = false
         this.on('track-finished', (track) => {
-                this.session_controller.add(track)
+                //this.session_controller.add(track)
                 if (this.stop_request) {
                     this.queue_playing = false
                     this.stop_request = false
@@ -87,13 +87,13 @@ class PlaybackController extends RemoteTrackPlayer {
     stop_queue_now() {
         this.queue_playing = false;
         this.stop_request = false;
-        if (this._current_track != undefined) {
-            this._current_track.end_time = new Date()
-            this._current_track.status = "stopped"
-            this.session_controller.add(this._current_track)
-            this.stop()
-            this._current_track = undefined    
-        }
+        // if (this._current_track != undefined) {
+        //     this._current_track.end_time = new Date()
+        //     this._current_track.status = "stopped"
+        //     //this.session_controller.add(this._current_track)
+        //     this._current_track = undefined    
+        // }
+        this.stop()
         this.dispatch("queue-stopped")
     }
 
@@ -102,7 +102,7 @@ class PlaybackController extends RemoteTrackPlayer {
             if (this._current_track != undefined) {
                 this._current_track.end_time = new Date()
                 this._current_track.status = "skipped"
-                this.session_controller.add(this._current_track)
+                // this.session_controller.add(this._current_track)
                 this.dispatch("track-skipped", this._current_track)
                 this.stop()
                 this._current_track = undefined    

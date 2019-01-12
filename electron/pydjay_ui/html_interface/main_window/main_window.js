@@ -29,7 +29,8 @@ SV.on("add-playlist", () => {
 
 
 MDB = new MusicDatabase("pymusic")
-//MDB.queue.init()
+// MDB.queue.init()
+// MDB.current_session.init()
 
 DB = new DataProvider()
 
@@ -65,9 +66,9 @@ SE_controller.setModel(MDB.sessions)
 // var mpc = new RemoteFilePlayer()
 
 
-mpc                       = new PlaybackController(S_controller, Q_controller)
-pc                        = new PrecueController(S_controller, Q_controller)
-vc                        = new VolumeController(mpc, pc)
+mpc = new PlaybackController(S_controller, Q_controller)
+pc  = new PrecueController(S_controller, Q_controller)
+vc  = new VolumeController(mpc, pc)
 
 Q_controller.set_model(MDB.queue)
 // S_controller.set_model(current_session_model)
@@ -154,11 +155,42 @@ mpc.on("queue-finished",
 
 mpc.on("track-started",
     () => {
+
     }
 )
 
 mpc.on("track-finished",
-    () => {
+    (log_data) => {
+        // console.log(log_data)
+        MDB.current_session.append(log_data.track_object, {
+            time_start: log_data.start_time, 
+            time_end:log_data.end_time
+        })
+        // console.log()
+    }
+)
+
+mpc.on("track-stopped",
+    (log_data) => {
+        MDB.current_session.append(log_data.track_object, {
+            time_start: log_data.start_time, 
+            time_end:log_data.end_time
+        })
+        // console.log(log_data)
+        // MDB.current_session.append(log_data.track_object, {time_start: log_data.start_time, time_end:log_data.end_time})
+        //MPC.current_session.append(log_data.track_object, {})
+    }
+)
+
+mpc.on("track-skipped",
+    (log_data) => {
+        MDB.current_session.append(log_data.track_object, {
+            time_start: log_data.start_time, 
+            time_end:log_data.end_time
+        })
+        // console.log(log_data)
+        //MDB.current_session.append(log_data.track_object, {time_start: log_data.start_time, time_end:log_data.end_time})
+        //MPC.current_session.append(log_data.track_object, {})
     }
 )
 

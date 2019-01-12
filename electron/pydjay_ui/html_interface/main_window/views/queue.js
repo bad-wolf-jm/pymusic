@@ -88,7 +88,7 @@ class QueueView extends EventDispatcher {
         let queue_rows = []
 
         for(let i=0; i<queue.length; i++) {
-            console.log(queue[i])
+            //console.log(queue[i])
             let element = (queue[i] == null) ? {id: null, stream_length:0} : {
                 id:       queue[i]._id,
                 title:    queue[i].title,
