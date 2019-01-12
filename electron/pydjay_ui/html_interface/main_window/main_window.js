@@ -348,7 +348,7 @@ function refresh_sessions(x) {
 
 function display_all_songs() {
     T.ignore_unavailable = false
-    T_controller.set_model("All Songs", tracks_model)
+    T_controller.set_model("All Songs", MDB.tracks) //tracks_model)
 }
 
 function display_current_session() {

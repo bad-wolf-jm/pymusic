@@ -374,7 +374,7 @@ function trackBSON(tr) {
         year: tr.year,
         color:  tr.color,
         duration: tr.track_length,
-        favorite: tr.loved,
+        loved: tr.favorite,
         rating: tr.rating,
         bpm: tr.bpm,
         createdAt: tr.date_added,
@@ -467,8 +467,12 @@ main = async () => {
                 status: x.status
             }})
             track.history = history
-            new_id = await db.tracks.insert(track)
+
+            let last_played = await connection.query(`SELECT max(start_time) as last_played FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
+            track.last_played = last_played[0].last_played
+            new_id = await db.tracks.d.insert(track)
             track_objects[tr.id] = new_id["_id"]
+
 
             
         }
@@ -494,7 +498,7 @@ main = async () => {
                         end:   t.end_time}
                 }
             })
-            await db.sessions.insert(session_data)
+            await db.sessions.d.insert(session_data)
         })
 
         let playlists = await connection.query('SELECT * FROM playlists');
@@ -511,7 +515,7 @@ main = async () => {
                 playlist_data.tracks[track_objects[t.track_id]] = true
                 // return obj
             })
-            await db.playlists.insert(playlist_data)
+            await db.playlists.d.insert(playlist_data)
         })
         console.log("done")
 

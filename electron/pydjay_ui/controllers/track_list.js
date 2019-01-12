@@ -14,11 +14,11 @@ class TrackListController extends EventDispatcher {
             this.dispatch("track-available", t)
         }) 
 
-        this.on_content_changed = (q) => {
+        this.on_content_changed = async (q) => {
             this.set_list(this.name, q)
-            let U = this.unavailable.get_all_track_ids()
-            Object.keys(U).forEach((id) => {
-                this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
+            let U = await this.unavailable.getAll()
+            Object.keys(U).forEach(async (id) => {
+                this.dispatch("track-unavailable", (await this.model.getId(id)))})
         }
         this.on_metadata_changed = (q) => {
             this.list[q.id] = q
@@ -26,23 +26,27 @@ class TrackListController extends EventDispatcher {
         }
     }
 
-    set_model(name, model) {
+    async set_model(name, model) {
         if (this.model != undefined) {
-            this.model.removeController(this)
+            //this.model.removeController(this)
             this.model.un('content-changed', this.on_content_changed)
             this.model.un('metadata-changed', this.on_metadata_changed)
         }
         this.model = model
-        this.model.addController(this)
+        //this.model.addController(this)
         this.model.on("content-changed", this.on_content_changed)
         this.model.on("metadata-changed", this.on_metadata_changed)
-        this.model.ready(() => {
-            let track_list = this.model.get_all_tracks()
-            this.set_list(name, track_list)
-            let U = this.unavailable.get_all_track_ids()
-            Object.keys(U).forEach((id) => {
-                this.dispatch("track-unavailable", this.model.get_track_by_id(id))})
-        })
+
+        let track_list = await this.model.getAll()
+        this.set_list(name, track_list)
+
+        // this.model.ready(() => {
+        //     let track_list = this.model.get_all_tracks()
+        //     this.set_list(name, track_list)
+        //     let U = this.unavailable.get_all_track_ids()
+        //     Object.keys(U).forEach((id) => {
+        //         this.dispatch("track-unavailable", this.model.getId(id))})
+        // })
     }
 
     addView(view) {
@@ -50,12 +54,13 @@ class TrackListController extends EventDispatcher {
     }
 
     _do_set_list(name, queue) {
+        // console.log(queue)
         this.name = name
         this.list = queue
     }
 
     get_id(id) {
-        return this.model.get_track_by_id(id)
+        return this.model.getId(id)
     }
 
     set_list(name, queue) {
@@ -67,8 +72,9 @@ class TrackListController extends EventDispatcher {
         return this.model.length()
     }
 
-    select_element(id) {
-        this.selection = [this.model.get_track_by_id(id)]
+    async select_element(id) {
+        this.selection = [await this.model.getId(id)]
+        //console.log(this.selection)
         this.dispatch("selection-changed", this.selection)
     }
 

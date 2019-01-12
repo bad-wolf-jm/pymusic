@@ -55,14 +55,14 @@ class TrackListView extends EventDispatcher {
                 },
                 clusterChanged: () => {
                     let elements = document.querySelectorAll('.track-entry');
-                    let unavailable;
-                    if  (this.controller != undefined) {
-                        unavailable = this.controller.unavailable.get_all_track_ids();
-                    } else {
-                        unavailable = {}
-                    }
+                    let unavailable = {};
+                    // if  (this.controller != undefined) {
+                    //     unavailable = this.controller.unavailable.get_all_track_ids();
+                    // } else {
+                    //     unavailable = {}
+                    // }
                     [].forEach.call(elements, (e) => {
-                        let track_id = parseInt(e.attributes["data-track-id"].value)
+                        let track_id = e.attributes["data-track-id"].value
                         this.table_rows[track_id] = e
                         //console.log(track_id, e)
                         if (unavailable[track_id] != undefined) {
@@ -76,7 +76,7 @@ class TrackListView extends EventDispatcher {
                     elements = document.querySelectorAll('.show-color-picker');
                     [].forEach.call(elements, (e) => {
                         e.addEventListener("click", (ev) => {
-                            let track_id = parseInt(e.attributes['data-track-id'].value)
+                            let track_id = e.attributes['data-track-id'].value
                             let cp = document.getElementById("main-track-list-color-chooser")
                             let button_rect = e.getBoundingClientRect()
                             let scroller = document.getElementById("main-track-list-scroller")
@@ -270,7 +270,7 @@ class TrackListView extends EventDispatcher {
     }
 
     _get_loved(track_object) {
-        return `<i id='main-track-loved-${track_object.id}' title='${track_object.id}' class='fa ${(track_object.favorite ? "fa-heart" : "fa-heart-o")}'></i>`
+        return `<i id='main-track-loved-${track_object.id}' title='${track_object.id}' class='fa ${(track_object.loved ? "fa-heart" : "fa-heart-o")}'></i>`
     }
 
     _get_rating(track_object) {
@@ -281,7 +281,7 @@ class TrackListView extends EventDispatcher {
         return html
     }
 
-    set_list(name, queue) {
+    async set_list(name, queue) {
         this.view_list_order = []
         this.view_list_id_order = []
         this.queue_rows = []
@@ -291,27 +291,27 @@ class TrackListView extends EventDispatcher {
         }
         for(let i=0; i<queue.length; i++) {
             let element = {
-                id:          queue[i].id,
+                id:          queue[i]._id,
                 available:   queue[i].available,
                 color:       queue[i].color,
                 loved:       this._get_loved(queue[i]), 
                 title:       queue[i].title,
                 artist:      queue[i].artist,
-                album:      queue[i].album,
+                album:       queue[i].album,
                 genre:       queue[i].genre,
                 last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
-                play_count:  queue[i].play_count,
+                play_count:  (queue[i].history != undefined) ? queue[i].history.length : "",
                 rating:      this._get_rating(queue[i]),
                 bpm:         queue[i].bpm,
-                duration:    format_nanoseconds(queue[i].stream_length),
+                duration:    format_nanoseconds(queue[i].bounds.end - queue[i].bounds.start ),
             }
             this.queue_rows.push(this.render_row(element))
             this.view_list_order.push(element)
             this.view_list_id_order.push(element.id)
         }
         this.name_dom.innerHTML       = `${name}`
-        this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-        this.duration_dom.innerHTML   = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
+        this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
+        this.duration_dom.innerHTML   = `${format_seconds_long(Math.round((await this.controller.duration()) / 1000000000))}`
         this.list_cluster.update(this.queue_rows)
     }
 
@@ -371,7 +371,7 @@ class TrackListView extends EventDispatcher {
 
     select_row(e) {
         let x = e.target.closest("tr")
-        let id = parseInt(x.attributes["data-track-id"].value)
+        let id = x.attributes["data-track-id"].value
         //console.log(x)
         this.controller.select_element(id)
     }
@@ -404,11 +404,11 @@ class TrackListView extends EventDispatcher {
     cancel_edit() {
         this.edit_mode = false
         let r = this.edit_row
-        document.getElementById(`track-title-${r.id}`).innerHTML = this.edit_row.title
-        document.getElementById(`track-artist-${r.id}`).innerHTML = this.edit_row.artist 
-        document.getElementById(`track-album-${r.id}`).innerHTML = this.edit_row.album 
-        document.getElementById(`track-genre-${r.id}`).innerHTML = this.edit_row.genre
-        document.getElementById(`track-bpm-${r.id}`).innerHTML = this.edit_row.bpm
+        document.getElementById(`track-title-${r._id}`).innerHTML = this.edit_row.title
+        document.getElementById(`track-artist-${r._id}`).innerHTML = this.edit_row.artist 
+        document.getElementById(`track-album-${r._id}`).innerHTML = this.edit_row.album 
+        document.getElementById(`track-genre-${r._id}`).innerHTML = this.edit_row.genre
+        document.getElementById(`track-bpm-${r._id}`).innerHTML = this.edit_row.bpm
         this.edit_row = undefined
     }
 
@@ -436,28 +436,28 @@ class TrackListView extends EventDispatcher {
             let r = this._selected_row[0]
             this.edit_row = r
             this.edit_bpm = new BPM()
-            document.getElementById(`track-title-${r.id}`).innerHTML = this._make_edit_input_field("title", r.id, r.title)
+            document.getElementById(`track-title-${r._id}`).innerHTML = this._make_edit_input_field("title", r.id, r.title)
             document.getElementById(`main-track-list-edit-title-${r.id}`).addEventListener("keyup", (e) => {
                 this._keypress(e)
             })
 
-            document.getElementById(`track-artist-${r.id}`).innerHTML = this._make_edit_input_field("artist", r.id, r.artist)
+            document.getElementById(`track-artist-${r._id}`).innerHTML = this._make_edit_input_field("artist", r.id, r.artist)
             document.getElementById(`main-track-list-edit-artist-${r.id}`).addEventListener("keyup", (e) => {
                 this._keypress(e)
             })
 
-            document.getElementById(`track-album-${r.id}`).innerHTML = this._make_edit_input_field("album", r.id, r.album)
+            document.getElementById(`track-album-${r._id}`).innerHTML = this._make_edit_input_field("album", r.id, r.album)
             document.getElementById(`main-track-list-edit-album-${r.id}`).addEventListener("keyup", (e) => {
                 this._keypress(e)
             })
 
 
-            document.getElementById(`track-genre-${r.id}`).innerHTML = this._make_edit_input_field("genre", r.id, r.genre)
+            document.getElementById(`track-genre-${r._id}`).innerHTML = this._make_edit_input_field("genre", r.id, r.genre)
             document.getElementById(`main-track-list-edit-genre-${r.id}`).addEventListener("keyup", (e) => {
                 this._keypress(e)
             })
 
-            document.getElementById(`track-bpm-${r.id}`).innerHTML = this._make_edit_input_field("bpm", r.id, r.bpm)
+            document.getElementById(`track-bpm-${r._id}`).innerHTML = this._make_edit_input_field("bpm", r.id, r.bpm)
             document.getElementById(`main-track-list-edit-bpm-${r.id}`).addEventListener("keyup", (e) => {
                 this._keypress(e)
             })
@@ -471,11 +471,11 @@ class TrackListView extends EventDispatcher {
             if (this.edit_mode) {
                 this.edit_mode = false
                 let r = this._selected_row[0]
-                let title = document.getElementById(`main-track-list-edit-title-${r.id}`).value
-                let artist = document.getElementById(`main-track-list-edit-artist-${r.id}`).value
-                let album = document.getElementById(`main-track-list-edit-album-${r.id}`).value
-                let genre = document.getElementById(`main-track-list-edit-genre-${r.id}`).value
-                let bpm = document.getElementById(`main-track-list-edit-bpm-${r.id}`).value
+                let title = document.getElementById(`main-track-list-edit-title-${r._id}`).value
+                let artist = document.getElementById(`main-track-list-edit-artist-${r._id}`).value
+                let album = document.getElementById(`main-track-list-edit-album-${r._id}`).value
+                let genre = document.getElementById(`main-track-list-edit-genre-${r._id}`).value
+                let bpm = document.getElementById(`main-track-list-edit-bpm-${r._id}`).value
                 this.controller.set_metadata(r, {
                     title:title,
                     artist:artist,
@@ -624,7 +624,7 @@ class TrackListView extends EventDispatcher {
 
 
     ensure_row_visible(x, direction) {
-        let row = this.table_rows[x.id]
+        let row = this.table_rows[x._id]
         let scroller = document.getElementById("main-track-list-scroller")
         let scrollerRect = scroller.getBoundingClientRect()
         //console.log(row)
@@ -646,15 +646,17 @@ class TrackListView extends EventDispatcher {
     update_selection(selection) {
         if (this._selected_row != undefined) {
             this._selected_row.forEach((x) => {
-                if (this.table_rows[x.id]) {
-                    this.table_rows[x.id].classList.remove("selected")}
+                if (this.table_rows[x._id]) {
+                    this.table_rows[x._id].classList.remove("selected")}
                 })
         }
         this._selected_row = selection
         this._selected_row.forEach((x) => {
             this.ensure_row_visible(x)
-            if (this.table_rows[x.id] != undefined) {
-                this.table_rows[x.id].classList.add("selected")
+            // console.log(this.table_rows)
+            // console.log(x)
+            if (this.table_rows[x._id] != undefined) {
+                this.table_rows[x._id].classList.add("selected")
             }
         })
     }
