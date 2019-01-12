@@ -50,7 +50,7 @@ un_model.addModel("current_session", current_session_model)
 un_model.addModel("unavailable", unavailable_model)
 
 T_controller              = new TrackListController(un_model)
-PE_controller             = new PlaylistController(un_model)
+// PE_controller             = new PlaylistController(un_model)
 Q_controller              = new QueueController()
 S_controller              = new SessionController()
 PL_controller             = new PlaylistsController()
@@ -78,7 +78,7 @@ PE = new PlaylistEditView({
     num_tracks: "playlist-edit-number-of-tracks",
     duration:   "playlist-edit-duration"
 })
-PE.set_controller(PE_controller)
+// PE.set_controller(PE_controller)
 
 QL = new QueueView({
     list:       'queue-elements-body',
@@ -383,7 +383,7 @@ function display_all_songs() {
 
 function display_current_session() {
     T.ignore_unavailable = true
-    T_controller.set_model("Current Session", current_session_model)
+    T_controller.set_model("Current Session", MDB.current_session)
 }
 
 function display_suggestions() {
@@ -393,7 +393,7 @@ function display_suggestions() {
 
 function display_short_list() {
     T.ignore_unavailable = false
-    T_controller.set_model("Short list", shortlist_model)
+    T_controller.set_model("Short list", MDB.shortlisted_tracks)
 }
 
 function display_unavailable() {
