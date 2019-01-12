@@ -1,4 +1,4 @@
-class MainPlayerView extends PydjayAudioFilePlayer {
+class MainPlayerView extends EventDispatcher {
     constructor (track_list_model) {
         super()
         this.controller = undefined
@@ -28,9 +28,9 @@ class MainPlayerView extends PydjayAudioFilePlayer {
             document.getElementById("main-player-time-remaining").innerHTML = `-${format_nanoseconds(remaining*1000000)}`
         })
         this.controller.on("queue-stopped",                this.set_queue.bind(this))
-        this.controller.on("track-finished",               this.set_queue.bind(this))
+        this.controller.on("track-finished",                this.set_queue.bind(this))
         this.controller.on("track-started",                this.set_track.bind(this))
-        this.controller.on("queue-finished",               this.set_queue.bind(this))
+        this.controller.on("queue-finished",                this.set_queue.bind(this))
         this.controller.on("queue-stopped",                this.set_queue.bind(this))
         this.controller.on("queue-stop-requested",         this.set_queue.bind(this))
         this.controller.on("queue-stop-request-cancelled", this.set_queue.bind(this))

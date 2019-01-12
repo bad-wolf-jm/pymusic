@@ -54,22 +54,37 @@ class PlaylistsView extends EventDispatcher {
         this.menu.append(new MenuItem({label: 'Delete', click: () => {
             let T = this.context_menu_element
             this.controller.get_playlist_by_id(T, (p) => {
-                let dialog = document.getElementById("delete-playlist-dialog")
-                document.getElementById("delete-playlist-name").innerHTML = p.name
-                dialog.showModal()    
+                let dialog = new Question({
+                    title: "Delete playlist",
+                    question: `Delete <i><b>'${p.name}'</b></i>? This operation cannot be undone`,
+                    confirmText: "yes",
+                    dismissText: 'no',
+                    confirmAction: () => {
+                        this.controller.delete_playlist(this.context_menu_element)
+                        this.context_menu_element = undefined
+                        dialog.close()
+                    },
+                    dismissAction: () => {
+                        this.context_menu_element = undefined
+                        dialog.close()
+                    },
+                })
+                // let dialog = document.getElementById("delete-playlist-dialog")
+                // document.getElementById("delete-playlist-name").innerHTML = p.name
+                dialog.open()    
             })
         }}))
 
-        document.getElementById("delete-playlist").addEventListener('click', (e) => {
-            this.controller.delete_playlist(this.context_menu_element)
-            this.context_menu_element = undefined
-            document.getElementById("delete-playlist-dialog").close()
-        })
+        // document.getElementById("delete-playlist").addEventListener('click', (e) => {
+        //     this.controller.delete_playlist(this.context_menu_element)
+        //     this.context_menu_element = undefined
+        //     document.getElementById("delete-playlist-dialog").close()
+        // })
 
-        document.getElementById("delete-playlist-cancel").addEventListener('click', (e) => {
-            this.context_menu_element = undefined
-            document.getElementById("delete-playlist-dialog").close()
-        })
+        // document.getElementById("delete-playlist-cancel").addEventListener('click', (e) => {
+        //     this.context_menu_element = undefined
+        //     document.getElementById("delete-playlist-dialog").close()
+        // })
 
 
 
@@ -158,10 +173,10 @@ class PlaylistsView extends EventDispatcher {
                 [].forEach.call(drop_targets, (col) => {
                     col.addEventListener('dragenter', this.on_drag_enter.bind(this), false);
                     col.addEventListener('dragleave', this.on_drag_leave.bind(this), false);
-                    col.addEventListener('dragover',  this.on_drag_over.bind(this), false);
-                    col.addEventListener('dragend',   this.on_drag_end.bind(this), false);
-                    col.addEventListener('drop',      this.on_drop.bind(this), false);
-                    col.addEventListener('click',     (e) => {
+                    col.addEventListener('dragover', this.on_drag_over.bind(this), false);
+                    col.addEventListener('dragend', this.on_drag_end.bind(this), false);
+                    col.addEventListener('drop', this.on_drop.bind(this), false);
+                    col.addEventListener('click', (e) => {
                         let x = e.target.closest(".track-drop-target")
                         let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
                         display_playlist(playlist_id)

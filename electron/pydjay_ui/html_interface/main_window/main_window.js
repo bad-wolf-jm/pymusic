@@ -4,6 +4,10 @@ var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.mi
 var path              = require('path');
 
 const { MusicDatabase } = require("musicdb/model.js")
+const {Question} = require("ui/dialog/question.js")
+// const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
+// const {PydjayAudioBufferPlayer} = require('audio/audio_player_buffer.js')
+
 
 SV = new AccordionView("sidebar")
 
@@ -26,6 +30,10 @@ MDB = new MusicDatabase("pymusic")
 
 DB = new DataProvider()
 
+view = new TrackEditorView()
+view.init()
+
+
 tracks_model              = new TrackListModel()
 unavailable_model         = new UnavailableModel(tracks_model)
 shortlist_model           = new ShortlistModel(tracks_model)
@@ -47,6 +55,10 @@ Q_controller              = new QueueController()
 S_controller              = new SessionController()
 PL_controller             = new PlaylistsController()
 SE_controller             = new SessionsController()
+
+
+// var mpc = new RemoteFilePlayer()
+
 
 mpc                       = new PlaybackController(S_controller, Q_controller)
 pc                        = new PrecueController(S_controller, Q_controller)
@@ -98,8 +110,9 @@ SE = new SessionsView({
 })
 SE.set_controller(SE_controller)
 
-mpc.init_audio()
-pc.init_audio()
+// mpc.init_audio()
+pc.connectOutputs({headphones:{left:0, right:1}})
+
 M = new MainPlayerView(tracks_model)
 M.set_controller(mpc)
 M.init()
@@ -145,23 +158,23 @@ mpc.on("track-finished",
 )
 
 
-ipcRenderer.on("headphone-playback-stopped", () => {
-    pc.dispatch("playback-stopped")
-})
+// ipcRenderer.on("headphone-playback-stopped", () => {
+//     pc.dispatch("playback-stopped")
+// })
 
 
-ipcRenderer.on("headphone-playback-paused", () => {
-    pc.dispatch("playback-paused")
-})
+// ipcRenderer.on("headphone-playback-paused", () => {
+//     pc.dispatch("playback-paused")
+// })
 
-ipcRenderer.on("headphone-playback-started", () => {
-    pc.dispatch("playback-started")
-})
+// ipcRenderer.on("headphone-playback-started", () => {
+//     pc.dispatch("playback-started")
+// })
 
 
-ipcRenderer.on("headphone-stream-position", (event, pos) => {
-    pc.dispatch("stream-position", pos)
-})
+// ipcRenderer.on("headphone-stream-position", (event, pos) => {
+//     pc.dispatch("stream-position", pos)
+// })
 
 
 ipcRenderer.on("master-end-of-stream", () => {
@@ -259,6 +272,7 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
 
 document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
     ipcRenderer.send("reset-audio-system", {})
+    pc.reset_audio_context({headphones:{left:0, right:1}})
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
@@ -299,20 +313,36 @@ document.getElementById("session-save-cancel").addEventListener('click', () => {
 
 
 document.getElementById("main-menu-discard-session").addEventListener('click', () => {
-    document.getElementById("discard-session-dialog").showModal();
+    let q = new Question({
+        title: "Discard current session",
+        question: "Discard the current session? this operation cannot be undone",
+        confirmText: "yes",
+        dismissText: 'no',
+        confirmAction: () => {
+            current_session_model.discard_session(() => {
+                SE_controller.refresh(() => {})
+            })
+            q.close()
+        },
+        dismissAction: () => {
+            q.close()
+        },
+    })
+    q.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("session-discard").addEventListener('click', () => {
-    current_session_model.discard_session(() => {
-        SE_controller.refresh(() => {})
-    })
-    document.getElementById("discard-session-dialog").close();
-})
+//document.getElementById("discard-session-dialog").showModal();
+// document.getElementById("session-discard").addEventListener('click', () => {
+//     current_session_model.discard_session(() => {
+//         SE_controller.refresh(() => {})
+//     })
+//     document.getElementById("discard-session-dialog").close();
+// })
 
-document.getElementById("session-discard-cancel").addEventListener('click', () => {
-    document.getElementById("discard-session-dialog").close();
-})
+// document.getElementById("session-discard-cancel").addEventListener('click', () => {
+//     document.getElementById("discard-session-dialog").close();
+// })
 
 
 
@@ -323,10 +353,10 @@ document.getElementById("main-menu-settings").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("main-menu-mixer").addEventListener('click', () => {
-    ipcRenderer.send("show-mixer-window")
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
-})
+// document.getElementById("main-menu-mixer").addEventListener('click', () => {
+//     ipcRenderer.send("show-mixer-window")
+//     document.getElementById("main-menu-dropdown").classList.toggle("show");
+// })
 
 
 document.getElementById("main-menu-quit").addEventListener('click', () => {

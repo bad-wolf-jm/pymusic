@@ -23,10 +23,11 @@ class PrecuePlayerView extends EventDispatcher {
             let x = e.target.getBoundingClientRect()
             let mouseX = (e.clientX - x.left)
             let ratio = mouseX / x.width
-            if (this.controller.track != undefined) {
-                this.controller.play(this.controller.track,
-                                     this.controller.track.stream_start +
-                                        (this.controller.track.stream_length * ratio))
+            let t = this.controller._current_track.track_object
+            if (t != undefined) {
+                this.controller.play(t,
+                                     t.stream_start +
+                                        (t.stream_length * ratio))
             }
         })
 
@@ -45,11 +46,8 @@ class PrecuePlayerView extends EventDispatcher {
 
     set_controller(controller) {
         this.controller = controller
-        this.controller.on("stream-position", (pos_data) => {
-            let pos = pos_data.position
-            let duration = pos_data.duration
-            let remaining = Math.abs(duration*1000 - pos)
-            let percent = (pos*100 / (duration*1000))
+        this.controller.on("stream-position", (pos) => {
+            let percent = (pos*100 / (this.controller.source.duration*1000))
             if (isFinite(percent)) {
                 document.getElementById("precue-player-track-progress").value = percent;
             }
@@ -86,6 +84,7 @@ class PrecuePlayerView extends EventDispatcher {
     }
 
     set_track(track) {
+        track = track.track_object
         let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
         document.getElementById("precue-player-title").innerHTML       = track.title
