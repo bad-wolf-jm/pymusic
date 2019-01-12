@@ -23,10 +23,11 @@ class PrecuePlayerView extends EventDispatcher {
             let x = e.target.getBoundingClientRect()
             let mouseX = (e.clientX - x.left)
             let ratio = mouseX / x.width
-            if (this.controller.track != undefined) {
-                this.controller.play(this.controller.track,
-                                     this.controller.track.stream_start +
-                                        (this.controller.track.stream_length * ratio))
+            let t = this.controller._current_track.track_object
+            if (t != undefined) {
+                this.controller.play(t,
+                                     t.stream_start +
+                                        (t.stream_length * ratio))
             }
         })
 
