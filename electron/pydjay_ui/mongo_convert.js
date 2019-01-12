@@ -482,16 +482,18 @@ main = async () => {
             let session_data = {
                     event: s.event_name,
                     location: s.address,
-                    createdAt:s.start_date,
+                    createdAt: s.start_date,
                     date: {
                         begin: s.start_date,
                         end:  s.end_date
                     }
                 }
             let session_tracks = await connection.query(`SELECT * FROM session_tracks WHERE session_id=${s.id} ORDER BY position`);
-            session_data.tracks = session_tracks.map((t) => {
-                return {
-                    track_id:track_objects[t.track_id],
+            session_data.elements = {}
+            session_data.ordering = []
+            session_tracks.forEach((t) => {
+                session_data.ordering.push(track_objects[t.track_id])
+                session_data.elements[track_objects[t.track_id]]  = {
                     status:t.status,
                     time: {
                         begin: t.start_time,
@@ -509,11 +511,9 @@ main = async () => {
                     createdAt: s.created
                 }
             let playlist_tracks = await connection.query(`SELECT * FROM playlist_tracks WHERE playlist_id=${s.id}`);
-            playlist_data.tracks = {}
+            playlist_data.elements = {}
             playlist_tracks.forEach((t) => {
-                // let obj = {}
-                playlist_data.tracks[track_objects[t.track_id]] = true
-                // return obj
+                playlist_data.elements[track_objects[t.track_id]] = true
             })
             await db.playlists.d.insert(playlist_data)
         })

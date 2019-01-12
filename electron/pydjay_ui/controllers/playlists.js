@@ -23,7 +23,7 @@ class PlaylistsController extends EventDispatcher {
     async refresh(k) {
         //let ll = await this.model.getAll()
         // DB.get_group_list((queue) => {
-        this.queue = await this.model.getAllObjects()
+        this.queue = Object.values(await this.model.getAllObjects())
         this.queue_table = {}
         for (let i=0; i<this.queue.length; i++) {
             this.queue_table[this.queue[i]._id] = this.queue[i]
