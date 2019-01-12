@@ -25,9 +25,7 @@ class PrecuePlayerView extends EventDispatcher {
             let ratio = mouseX / x.width
             let t = this.controller._current_track.track_object
             if (t != undefined) {
-                this.controller.play(t,
-                                     t.stream_start +
-                                        (t.stream_length * ratio))
+                this.controller.play(t, t.bounds.start + ((t.bounds.end - t.bounds.start) * ratio))
             }
         })
 
@@ -85,7 +83,7 @@ class PrecuePlayerView extends EventDispatcher {
 
     set_track(track) {
         track = track.track_object
-        let file_name = path.join(track.music_root, track.file_name);
+        //let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
         document.getElementById("precue-player-title").innerHTML       = track.title
         document.getElementById("precue-player-album").innerHTML       = track.album
@@ -106,7 +104,7 @@ class PrecuePlayerView extends EventDispatcher {
         if (track.cover == null) {
             cover_source = "../../resources/images/default_album_cover.png"
         } else {
-            cover_source = `file://${track.image_root}/${track.cover}`;
+            cover_source = `file://${track.cover.small}`;
         }
         document.getElementById("precue-player-cover").src = cover_source
         this._track = track

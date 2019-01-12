@@ -310,17 +310,17 @@ class TrackListView extends EventDispatcher {
         this.list_cluster.update(this.queue_rows)
     }
 
-    handle_drag_start(e) {
+    async handle_drag_start(e) {
         let x = e.target.closest("tr")
-        let track_id = parseInt(x.attributes["data-track-id"].value)
-        let track_element = this.controller.get_id(track_id)
+        let track_id = x.attributes["data-track-id"].value
+        let track_element = await this.controller.getId(track_id)
         e.dataTransfer.setData("text/plain", JSON.stringify(track_element))
     }
 
-    handle_double_click(e) {
+    async handle_double_click(e) {
         let x = e.target.closest("tr")
-        let track_id = parseInt(x.attributes["data-track-id"].value)
-        let track_element = this.controller.get_id(track_id)
+        let track_id = x.attributes["data-track-id"].value
+        let track_element = await this.controller.getId(track_id)
         pc.play(track_element)
     }
 

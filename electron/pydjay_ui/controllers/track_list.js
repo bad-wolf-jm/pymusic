@@ -59,7 +59,7 @@ class TrackListController extends EventDispatcher {
         this.list = queue
     }
 
-    get_id(id) {
+    getId(id) {
         return this.model.getId(id)
     }
 
