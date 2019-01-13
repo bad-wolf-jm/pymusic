@@ -2,7 +2,7 @@ Sortable              = require("../../../lib/Sortable.js")
 WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
-
+// const { EventDispatcher } = require("event_dispatcher")
 const { MusicDatabase } = require("musicdb/model.js")
 // const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
 const { TrackSetModel } = require("musicdb/track_set.js")
@@ -33,28 +33,28 @@ MDB = new MusicDatabase("pymusic")
 // MDB.queue.init()
 // MDB.current_session.init()
 
-DB = new DataProvider()
+DB = undefined //new DataProvider()
 
 view = new TrackEditorView()
 view.init()
 
 
-tracks_model              = new TrackListModel()
-unavailable_model         = new UnavailableModel(tracks_model)
-shortlist_model           = new ShortlistModel(tracks_model)
-suggested_model           = new SuggestedModel(tracks_model)
-played_tracks_model       = new PlayedTracksModel(tracks_model)
-never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
-current_session_model     = new CurrentSessionModel(tracks_model)
-queue_model               = new QueueModel(tracks_model, current_session_model)
+// tracks_model              = new TrackListModel()
+// unavailable_model         = new UnavailableModel(tracks_model)
+// shortlist_model           = new ShortlistModel(tracks_model)
+// suggested_model           = new SuggestedModel(tracks_model)
+// played_tracks_model       = new PlayedTracksModel(tracks_model)
+// never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
+// current_session_model     = new CurrentSessionModel(tracks_model)
+// queue_model               = new QueueModel(tracks_model, current_session_model)
 
 
-un_model = new UnionModel()
-un_model.addModel("queue", queue_model)
-un_model.addModel("current_session", current_session_model)
-un_model.addModel("unavailable", unavailable_model)
+// un_model = new UnionModel()
+// un_model.addModel("queue", queue_model)
+// un_model.addModel("current_session", current_session_model)
+// un_model.addModel("unavailable", unavailable_model)
 
-T_controller              = new TrackListController(un_model)
+T_controller              = new TrackListController()
 // PE_controller             = new PlaylistController(un_model)
 Q_controller              = new QueueController()
 S_controller              = undefined //new SessionController()
@@ -74,10 +74,10 @@ vc  = new VolumeController(mpc, pc)
 Q_controller.set_model(MDB.queue)
 // S_controller.set_model(current_session_model)
 
-ipcRenderer.on("track-modified", (e, id) => {
-    //console.log(e, id)
-    tracks_model.update(id)
-})
+// ipcRenderer.on("track-modified", (e, id) => {
+//     //console.log(e, id)
+//     tracks_model.update(id)
+// })
 
 
 PE = new PlaylistEditView({
@@ -104,7 +104,7 @@ T = new TrackListView({
     num_tracks: "main-track-list-number-of-tracks",
     duration:   "main-track-list-duration",
     filter:      "filter-track-list"
-}, Q_controller, shortlist_model, unavailable_model)
+}, Q_controller, MDB.shortlisted_tracks, MDB.unavailable_tracks)
 T.set_controller(T_controller)
 
 PL = new PlaylistsView({
@@ -120,7 +120,7 @@ SE.set_controller(SE_controller)
 // mpc.init_audio()
 pc.connectOutputs({headphones:{left:0, right:1}})
 
-M = new MainPlayerView(tracks_model)
+M = new MainPlayerView(MDB.tracks)
 M.set_controller(mpc)
 M.init()
 

@@ -1,4 +1,4 @@
-
+const { EventDispatcher } = require("notify/event_dispatcher.js")
 
 function format_nanoseconds (ts) {
     var sec_num = Math.round(ts / 1000000000);

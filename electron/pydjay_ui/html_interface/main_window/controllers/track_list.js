@@ -7,12 +7,12 @@ class TrackListController extends EventDispatcher {
         this.selection        = undefined
         this.model            = undefined
 
-        this.unavailable.on("track-unavailable", (t) => {
-            this.dispatch("track-unavailable", t)
-        }) 
-        this.unavailable.on("track-available", (t) => {
-            this.dispatch("track-available", t)
-        }) 
+        // this.unavailable.on("track-unavailable", (t) => {
+        //     this.dispatch("track-unavailable", t)
+        // }) 
+        // this.unavailable.on("track-available", (t) => {
+        //     this.dispatch("track-available", t)
+        // }) 
 
         this.on_content_changed = async (q) => {
             this.set_list(this.name, q)
