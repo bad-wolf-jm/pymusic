@@ -20,18 +20,14 @@ class PlaybackController extends RemoteTrackPlayer {
         this.queue_controller   = queue_controller
         this.stop_request       = false
         this.playing            = false
-        this.on('track-finished', (track) => {
-                //this.session_controller.add(track)
+        this.on('track-finished', async (track) => {
                 if (this.stop_request) {
                     this.queue_playing = false
                     this.stop_request = false
                     this.dispatch("queue-stopped")
                 } else {
-                    DB.get_waiting_time(
-                        (wait_time) => {
-                            this.play_next_track(wait_time)
-                        }
-                    )
+                    let time = await MDB.state.d.find({_id: "playback_management"})
+                    this.play_next_track(time.wait_time || 1)
                 }
             })        
     }

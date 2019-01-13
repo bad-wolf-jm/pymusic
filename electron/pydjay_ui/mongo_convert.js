@@ -445,6 +445,7 @@ main = async () => {
         await db.state.d.insert({_id: "session", elements:{}, ordering:[]})
         await db.state.d.insert({_id: "shortlist", elements:{}})
         await db.state.d.insert({_id: "unavailable", elements:{}})
+        await db.state.d.insert({_id: "playback_management", elements:{}})
 
         connection = await mysql.connect({host: 'localhost', user:"root", password:"root", database:'pymusic'});
         settings = await connection.query('SELECT * FROM settings');
@@ -487,10 +488,6 @@ main = async () => {
             await db.tracks.d.update({_id: t._id}, {$set: {relations: t_relations}})
         })
 
-
-
-
-
         let sessions = await connection.query('SELECT * FROM sessions');
         sessions.forEach(async (s) => {
             let session_data = {
@@ -521,8 +518,8 @@ main = async () => {
         playback_logs.forEach(async (log) => {
             await db.playback_logs.d.insert({
                 track:track_objects[log.track_id],
-                start_time: log.start_time,
-                end_time: log.end_time,
+                time_start: log.start_time,
+                time_end: log.end_time,
                 status: log.status
             })
         })
