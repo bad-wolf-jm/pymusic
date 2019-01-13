@@ -113,12 +113,12 @@ class TrackListView extends EventDispatcher {
             this.handle_drag_start(e)
         }, false);
 
-        $('#main-track-list-body').on('contextmenu', (e) => {
+        $('#main-track-list-body').on('contextmenu', async (e) => {
             e.preventDefault()
             this.select_row(e)
             let x = e.target.closest(".track-entry")
-            let track_id = parseInt(x.attributes["data-track-id"].value)
-            let track_element = this.controller.getElementById(track_id)
+            let track_id = (x.attributes["data-track-id"].value)
+            let track_element = await this.controller.getElementById(track_id)
             this.context_menu_element = track_element
             this.menu.popup({window: remote.getCurrentWindow()})
         });
@@ -207,7 +207,7 @@ class TrackListView extends EventDispatcher {
             <${element} style="width:75px">${track.last_played}</${element}>
             <${element} id='track-rating-${track.id}' style="width:25px">${track.rating}</${element}>
             <${element} id='track-bpm-${track.id}' style="width:30px; text-align:right; padding-right:5px">${track.bpm}</${element}>
-            <${element} style="width:45px; text-align:right">${track.duration}</${element}>
+            <${element} id='track-duration-${track.id}'style="width:45px; text-align:right">${track.duration}</${element}>
             <${element} style="width:15px"></${element}>
         </tr>`
 
@@ -631,6 +631,7 @@ class TrackListView extends EventDispatcher {
         document.getElementById(`track-artist-${x._id}`).innerHTML = x.artist
         document.getElementById(`track-genre-${x._id}`).innerHTML = x.genre
         document.getElementById(`track-bpm-${x._id}`).innerHTML = x.bpm
+        document.getElementById(`track-duration-${x._id}`).innerHTML = `${format_nanoseconds(x.bounds.end - x.bounds.start)}`
     }
 
 

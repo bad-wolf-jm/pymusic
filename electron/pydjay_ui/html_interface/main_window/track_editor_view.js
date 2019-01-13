@@ -135,18 +135,19 @@ class TrackEditorView extends EventDispatcher {
         })
     }
 
-    set_track(track) {
+    async set_track(track) {
+        // console.log(track)
         this.track = track
-        let file_name = path.join(track.music_root, track.file_name);
-        let stream_length = (track.stream_end-track.stream_start);
+        let file_name = track.path //path.join(track.music_root, track.file_name);
+        let stream_length = (track.bounds.end-track.bounds.start);
         document.getElementById("track-editor-track-title").value = track.title
         document.getElementById("track-editor-track-album").value = track.album
         document.getElementById("track-editor-track-artist").value = track.artist
         document.getElementById("track-editor-track-bpm").value = track.bpm
         document.getElementById("track-editor-track-genre").value = track.genre
         document.getElementById("track-editor-track-year").value = track.year
-        document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(track.stream_start)}`
-        document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(track.stream_end)}`
+        document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(track.bounds.start)}`
+        document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(track.bounds.end)}`
         document.getElementById("track-editor-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
         document.getElementById("track-editor-color").style.backgroundColor = track.color
 
@@ -163,54 +164,84 @@ class TrackEditorView extends EventDispatcher {
             this.original_cover_image = null
             this.cover_image = null
         } else {
-            cover_source = `file://${track.image_root}/${track.cover_original}`;
+            cover_source = `file://${track.cover.original}`;
             this.original_cover_image = cover_source
             this.cover_image = undefined
         }
         document.getElementById("track-editor-track-cover").src = cover_source
         this._track = track
         this._waveform.load(file_name)
-        this.stream_start = this._track.stream_start
-        this.stream_end = this._track.stream_end
+        this.stream_start = this._track.bounds.start
+        this.stream_end = this._track.bounds.end
         this._position_tracker = this.audio_player.on("stream-position", (pos) => {
             this.current_stream_position = pos*1000000
-            this._waveform.seekAndCenter(pos*1000000 / this._track.track_length)
+            this._waveform.seekAndCenter(pos*1000000 / this._track.duration)
         })
 
-        DB.get_related_tracks(track.id, (queue) => {
-            DB.get_playback_history(track.id, (history) => {
-                let queue_rows = []
-                for(let i=0; i<queue.length; i++) {
-                    let element = {
-                        id:          queue[i].id,
-                        available:   queue[i].available,
-                        color:       queue[i].color,
-                        loved:       "<i title='"+i+"' class='fa " + (queue[i].favorite ? "fa-heart" : "fa-heart-o") +"'></i>",
-                        title:       queue[i].title,
-                        artist:      queue[i].artist,
-                        genre:       queue[i].genre,
-                        last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
-                        play_count:  queue[i].play_count,
-                        rating:      this._get_rating(queue[i]),
-                        bpm:         queue[i].bpm,
-                        duration:    format_nanoseconds(queue[i].stream_length),
-                    }
-                    queue_rows.push(element)
-                }
-                jui.ready([ "grid.table" ], (table) => {
-                    var queue_content = table("#related-elements", {
-                        data:   queue_rows,
-                        scroll: false,
-                        resize: false
-                    });
-                    var history_content = table("#playback-history", {
-                        data:   history,
-                        scroll: false,
-                        resize: false
-                    })
-                })
-            })
+        let related_tracks = Object.values(await MDB.tracks.getObjectsByIds(Object.keys(track.relations)))
+        let rows = related_tracks.map((track) => {
+            return {
+                id:          track._id,
+                available:   track.available,
+                color:       track.color,
+                loved:       "<i title='"+track._id+"' class='fa " + (track.loved ? "fa-heart" : "fa-heart-o") +"'></i>",
+                title:       track.title,
+                artist:      track.artist,
+                genre:       track.genre,
+                last_played: (track.last_played != null) ? moment(track.last_played).format('MM-DD-YYYY') : "",
+                play_count:  track.history.length,
+                rating:      this._get_rating(track),
+                bpm:         track.bpm,
+                duration:    format_nanoseconds(track.bounds.end - track.bounds.start),
+            }
         })
+        jui.ready([ "grid.table" ], (table) => {
+            var queue_content = table("#related-elements", {
+                data:   rows,
+                scroll: false,
+                resize: false
+            });
+            // var history_content = table("#playback-history", {
+            //     data:   history,
+            //     scroll: false,
+            //     resize: false
+            // })
+        })
+
+        // DB.get_related_tracks(track.id, (queue) => {
+        //     DB.get_playback_history(track.id, (history) => {
+        //         let queue_rows = []
+        //         for(let i=0; i<queue.length; i++) {
+        //             let element = {
+        //                 id:          queue[i].id,
+        //                 available:   queue[i].available,
+        //                 color:       queue[i].color,
+        //                 loved:       "<i title='"+i+"' class='fa " + (queue[i].favorite ? "fa-heart" : "fa-heart-o") +"'></i>",
+        //                 title:       queue[i].title,
+        //                 artist:      queue[i].artist,
+        //                 genre:       queue[i].genre,
+        //                 last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
+        //                 play_count:  queue[i].play_count,
+        //                 rating:      this._get_rating(queue[i]),
+        //                 bpm:         queue[i].bpm,
+        //                 duration:    format_nanoseconds(queue[i].stream_length),
+        //             }
+        //             queue_rows.push(element)
+        //         }
+        //         jui.ready([ "grid.table" ], (table) => {
+        //             var queue_content = table("#related-elements", {
+        //                 data:   queue_rows,
+        //                 scroll: false,
+        //                 resize: false
+        //             });
+        //             var history_content = table("#playback-history", {
+        //                 data:   history,
+        //                 scroll: false,
+        //                 resize: false
+        //             })
+        //         })
+        //     })
+        // })
     }
 
 
@@ -235,8 +266,8 @@ class TrackEditorView extends EventDispatcher {
                     this._waveform.clearRegions()
                 }
                 this._region = this._waveform.addRegion({
-                    start: this._track.stream_start / 1000000000,
-                    end:   this._track.stream_end / 1000000000,
+                    start: this._track.bounds.start / 1000000000,
+                    end:   this._track.bounds.end / 1000000000,
                     color: "rgba(25,25,25,0.35)"
                 })
                 this._region.on("update",
@@ -302,12 +333,14 @@ class TrackEditorView extends EventDispatcher {
             genre:  F("track-editor-track-genre").value,
             year:   F("track-editor-track-year").value,
             color:  this.color, 
-            stream_start: this.stream_start,
-            stream_end:   this.stream_end,
-            favorite:     this.loved,
+            bounds: {
+                start: this.stream_start,
+                end:   this.stream_end
+            },
+            loved:     this.loved,
             rating:       this.rating
         }
-        v.cover = this.cover_image
+        v.cover_image = this.cover_image
         v.year = (v.year != "") ? v.year : null
         v.bpm = (v.bpm != "") ? v.bpm : null
         return v
@@ -320,28 +353,29 @@ class TrackEditorView extends EventDispatcher {
     }
     
     save() {
-        DB.get_settings((settings) => {
-            let new_values = this.getValues()
-            let image_root = `${settings.image_root}`
-            if (new_values.cover != null) {
-                new_values.cover_original = `cover_original_${track_id}`
-                new_values.cover_large    = `cover_large_${track_id}`
-                new_values.cover_medium   = `cover_medium_${track_id}`
-                new_values.cover_small    = `cover_small_${track_id}`
-                new_values.cover.write(`${path.join(settings.image_root, new_values.cover_original)}`);
-                new_values.cover.resize(320,320).write(`${path.join(settings.image_root, new_values.cover_large)}`)
-                new_values.cover.resize(160,160).write(`${path.join(settings.image_root, new_values.cover_medium)}`)
-                new_values.cover.resize(100,100).write(`${path.join(settings.image_root, new_values.cover_small)}`)
-            } else if (new_values.cover !== undefined) {
-                new_values.cover_original = null;
-                new_values.cover_large    = null;
-                new_values.cover_medium   = null;
-                new_values.cover_small    = null;
+        let file_path = this.track.path
+        let file_dir = path.dirname(file_path)
+        let cover_dir = path.join(file_dir, ".covers")
+        let new_values = this.getValues()
+        if (new_values.cover_image != null) {
+            new_values.cover = {
+                original: path.join(cover_dir, `cover_original_${this.track._id}`),
+                large: path.join(cover_dir, `cover_large_${this.track._id}`),
+                medium: path.join(cover_dir, `cover_medium_${this.track._id}`),
+                small: path.join(cover_dir, `cover_small_${this.track._id}`)    
             }
-    
-            tracks_model.set_metadata(this.track, new_values)
-            this.close()
-        })
+            new_values.cover_image.write(new_values.cover.original);
+            new_values.cover_image.resize(320,320).write(new_values.cover.large)
+            new_values.cover_image.resize(160,160).write(new_values.cover.medium)
+            new_values.cover_image.resize(100,100).write(new_values.cover.small)
+        } else if (new_values.cover_image !== undefined) {
+            new_values.cover = undefined
+        }
+        MDB.tracks.setTrackMetadata(this.track, new_values)
+        if (new_values.cover == undefined) {
+            MDB.tracks.d.update({_id: this.track.id}, {$unset: {cover: true}})
+        }
+        this.close()
     }
     
 }

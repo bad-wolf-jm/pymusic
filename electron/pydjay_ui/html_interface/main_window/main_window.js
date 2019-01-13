@@ -373,9 +373,10 @@ document.getElementById("main-menu-discard-session").addEventListener('click', (
         confirmText: "yes",
         dismissText: 'no',
         confirmAction: () => {
-            current_session_model.discard_session(() => {
-                SE_controller.refresh(() => {})
-            })
+            MDB.discardCurrentSession()
+            // current_session_model.discard_session(() => {
+            //     SE_controller.refresh(() => {})
+            // })
             q.close()
         },
         dismissAction: () => {

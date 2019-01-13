@@ -372,7 +372,7 @@ function trackBSON(tr) {
         album: tr.album,
         genre: tr.genre,
         year: tr.year,
-        color:  tr.color,
+        color: tr.color,
         duration: tr.track_length,
         loved: tr.favorite,
         rating: tr.rating,
