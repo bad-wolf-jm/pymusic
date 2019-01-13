@@ -156,7 +156,10 @@ mpc.on("queue-finished",
 
 mpc.on("track-started",
     () => {
-
+        MDB.playback_logs.d.insert({
+            track: log_data.track_object._id,
+            message:"TRACK_STARTED"
+        })
     }
 )
 
@@ -165,12 +168,13 @@ mpc.on("track-finished",
         // console.log(log_data)
         MDB.current_session.append(log_data.track_object, {
             time_start: log_data.start_time, 
-            time_end:log_data.end_time
+            time_end: log_data.end_time
         })
         MDB.playback_logs.d.insert({
-            track: log_data.track_object.id,
+            track: log_data.track_object._id,
             time_start: log_data.start_time, 
-            time_end:log_data.end_time
+            time_end:log_data.end_time,
+            message:"TRACK_FINISHED"
         })
         // console.log()
     }
@@ -178,28 +182,30 @@ mpc.on("track-finished",
 
 mpc.on("track-stopped",
     (log_data) => {
-        // MDB.current_session.append(log_data.track_object, {
-        //     time_start: log_data.start_time, 
-        //     time_end:log_data.end_time
-        // })
-        MDB.playback_logs.d.insert({
-            track: log_data.track_object.id,
+        MDB.current_session.append(log_data.track_object, {
             time_start: log_data.start_time, 
             time_end:log_data.end_time
+        })
+        MDB.playback_logs.d.insert({
+            track: log_data.track_object._id,
+            time_start: log_data.start_time, 
+            time_end:log_data.end_time,
+            message:"TRACK_STOPPED"
         })
     }
 )
 
 mpc.on("track-skipped",
     (log_data) => {
-        // MDB.current_session.append(log_data.track_object, {
-        //     time_start: log_data.start_time, 
-        //     time_end:log_data.end_time
-        // })
+        MDB.current_session.append(log_data.track_object, {
+            time_start: log_data.start_time, 
+            time_end:log_data.end_time
+        })
         MDB.playback_logs.d.insert({
             track: log_data.track_object.id,
             time_start: log_data.start_time, 
-            time_end:log_data.end_time
+            time_end:log_data.end_time,
+            message:"TRACK_SKIPPED"
         })
     }
 )
@@ -338,15 +344,16 @@ document.getElementById("main-menu-save-session").addEventListener('click', () =
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("session-save").addEventListener('click', () => {
+document.getElementById("session-save").addEventListener('click', async () => {
     let name = document.getElementById("session-name").value
     let location = document.getElementById("session-location").value
     let address = document.getElementById("session-address").value
 
     if (name != "") {
-        current_session_model.store_session(name, location, address, () => {
-            SE_controller.refresh(() => {})
-        })
+        await MDB.saveCurrentSession(name, location, address)
+        // , () => {
+        //     SE_controller.refresh(() => {})
+        // })
     }
     document.getElementById("save-session-dialog").close();
 })
