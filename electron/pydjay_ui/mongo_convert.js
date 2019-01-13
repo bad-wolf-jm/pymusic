@@ -435,6 +435,7 @@ main = async () => {
     let mysql = require('async-mysql'),
         connection,
         track_objects = {},
+        back_track_objects = {},
         rows;
 
 
@@ -455,16 +456,6 @@ main = async () => {
             tr.image_root = settings.db_image_cache
             tr.music_root = settings.db_music_cache
             let track = trackBSON(tr)
-            let relations = await connection.query(`SELECT * FROM track_relations WHERE track_id=${tr.id}`);
-            let t_relations = relations.map((r) => {
-                return {
-                    track_id: r.related_track_id,
-                    reason: r.reason,
-                    count: r.count,
-                    date: r.date
-                }
-            })
-            track.relations = t_relations
 
             let history = await connection.query(`SELECT * FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
             history = history.map((x) => {return {
@@ -478,10 +469,27 @@ main = async () => {
             track.last_played = last_played[0].last_played
             new_id = await db.tracks.d.insert(track)
             track_objects[tr.id] = new_id["_id"]
+            back_track_objects[new_id["_id"]] = tr.id
 
-
-            
         }
+
+        let tracks = await db.tracks.d.find({})
+        tracks.forEach(async (t) => {
+            let relations = await connection.query(`SELECT * FROM track_relations WHERE track_id=${back_track_objects[t._id]}`);
+            let t_relations = {}
+            relations.forEach((r) => {
+                t_relations[track_objects[r.related_track_id]] = {
+                    reason: r.reason,
+                    count: r.count,
+                    date: r.date
+                }
+            })
+            await db.tracks.d.update({_id: t._id}, {$set: {relations: t_relations}})
+        })
+
+
+
+
 
         let sessions = await connection.query('SELECT * FROM sessions');
         sessions.forEach(async (s) => {
