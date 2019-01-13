@@ -4,8 +4,9 @@ var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.mi
 var path              = require('path');
 
 const { MusicDatabase } = require("musicdb/model.js")
-const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
-const { SessionModel } = require("musicdb/session.js")
+// const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
+const { TrackSetModel } = require("musicdb/track_set.js")
+// const { SessionModel } = require("musicdb/session.js")
 const { Question } = require("ui/dialog/question.js")
 // const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
 // const {PydjayAudioBufferPlayer} = require('audio/audio_player_buffer.js')
@@ -436,7 +437,7 @@ function display_current_session() {
 function display_suggestions() {
     T.ignore_unavailable = false
     T.model_order = false
-    T_controller.set_model("Suggested tracks", suggested_model)
+    T_controller.set_model("Suggested tracks", MDB.suggested)
 }
 
 function display_short_list() {
@@ -465,7 +466,7 @@ function display_never_played_tracks() {
 
 async function display_session(id) {
     let pl = await MDB.sessions.getObjectById(id)
-    let model = new SessionModel(MDB, MDB.sessions, id)
+    let model = new TrackSetModel(MDB, MDB.sessions, id)
     T.ignore_unavailable = false
     T.model_order = true
     T_controller.set_model(pl.event, model)
@@ -473,7 +474,7 @@ async function display_session(id) {
 
 async function display_playlist(id) {
     let pl = await MDB.playlists.getObjectById(id)
-    let model = new PlaylistViewModel(MDB, MDB.playlists, id)
+    let model = new TrackSetModel(MDB, MDB.playlists, id)
     T.ignore_unavailable = false
     T.model_order = false
     T_controller.set_model(pl.name, model)
