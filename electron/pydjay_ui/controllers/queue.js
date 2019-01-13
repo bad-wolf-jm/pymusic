@@ -8,14 +8,19 @@ class QueueController extends EventDispatcher {
         this.forward_content_changed = (q) => {
             this.dispatch("content-changed", q)
         }
+        this.forward_object_updated = (q) => {
+            this.dispatch("object-updated", q)
+        }
     }
 
     async set_model(model) {
         if (this.model != undefined) {
             this.model.un("content-changed", this.forward_content_changed) 
+            this.model.un("object-updated", this.forward_object_updated)
         }
         this.model = model
         this.model.on("content-changed", this.forward_content_changed) 
+        this.model.on("object-updated", this.forward_object_updated)
         this.set_list(await this.model.getTracks())
     }
 
@@ -29,6 +34,7 @@ class QueueController extends EventDispatcher {
     }
 
     reorder_queue(new_order) {
+        console.log("queue reordered")
         this.model.reorder(new_order, true)
     }
 
@@ -44,8 +50,8 @@ class QueueController extends EventDispatcher {
         return await this.model.isEmpty()
     }
 
-    get_id(id) {
-        return this.model.get_track_by_id(id)
+    async get_id(id) {
+        return this.model.getElementById(id)
     }
 
     pop() {

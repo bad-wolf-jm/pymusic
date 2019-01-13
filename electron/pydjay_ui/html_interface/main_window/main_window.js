@@ -123,7 +123,7 @@ M = new MainPlayerView(tracks_model)
 M.set_controller(mpc)
 M.init()
 
-P = new PrecuePlayerView(tracks_model)
+P = new PrecuePlayerView(MDB.tracks)
 P.set_controller(pc)
 
 mpc.on("queue-started",
@@ -166,31 +166,40 @@ mpc.on("track-finished",
             time_start: log_data.start_time, 
             time_end:log_data.end_time
         })
+        MDB.playback_logs.d.insert({
+            track: log_data.track_object.id,
+            time_start: log_data.start_time, 
+            time_end:log_data.end_time
+        })
         // console.log()
     }
 )
 
 mpc.on("track-stopped",
     (log_data) => {
-        MDB.current_session.append(log_data.track_object, {
+        // MDB.current_session.append(log_data.track_object, {
+        //     time_start: log_data.start_time, 
+        //     time_end:log_data.end_time
+        // })
+        MDB.playback_logs.d.insert({
+            track: log_data.track_object.id,
             time_start: log_data.start_time, 
             time_end:log_data.end_time
         })
-        // console.log(log_data)
-        // MDB.current_session.append(log_data.track_object, {time_start: log_data.start_time, time_end:log_data.end_time})
-        //MPC.current_session.append(log_data.track_object, {})
     }
 )
 
 mpc.on("track-skipped",
     (log_data) => {
-        MDB.current_session.append(log_data.track_object, {
+        // MDB.current_session.append(log_data.track_object, {
+        //     time_start: log_data.start_time, 
+        //     time_end:log_data.end_time
+        // })
+        MDB.playback_logs.d.insert({
+            track: log_data.track_object.id,
             time_start: log_data.start_time, 
             time_end:log_data.end_time
         })
-        // console.log(log_data)
-        //MDB.current_session.append(log_data.track_object, {time_start: log_data.start_time, time_end:log_data.end_time})
-        //MPC.current_session.append(log_data.track_object, {})
     }
 )
 
@@ -420,31 +429,37 @@ function display_all_songs() {
 
 function display_current_session() {
     T.ignore_unavailable = true
+    T.model_order = true
     T_controller.set_model("Current Session", MDB.current_session)
 }
 
 function display_suggestions() {
     T.ignore_unavailable = false
+    T.model_order = false
     T_controller.set_model("Suggested tracks", suggested_model)
 }
 
 function display_short_list() {
     T.ignore_unavailable = false
+    T.model_order = false
     T_controller.set_model("Short list", MDB.shortlisted_tracks)
 }
 
 function display_unavailable() {
     T.ignore_unavailable = true
+    T.model_order = false
     T_controller.set_model("Unavailable tracks", MDB.unavailable_tracks)
 }
 
 function display_played_tracks() {
     T.ignore_unavailable = false
+    T.model_order = false
     T_controller.set_model("Played songs", MDB.played_tracks)
 }
 
 function display_never_played_tracks() {
     T.ignore_unavailable = false
+    T.model_order = false
     T_controller.set_model("Never Played songs", MDB.never_played_tracks)
 }
 
@@ -452,6 +467,7 @@ async function display_session(id) {
     let pl = await MDB.sessions.getObjectById(id)
     let model = new SessionModel(MDB, MDB.sessions, id)
     T.ignore_unavailable = false
+    T.model_order = true
     T_controller.set_model(pl.event, model)
 }
 
@@ -459,6 +475,7 @@ async function display_playlist(id) {
     let pl = await MDB.playlists.getObjectById(id)
     let model = new PlaylistViewModel(MDB, MDB.playlists, id)
     T.ignore_unavailable = false
+    T.model_order = false
     T_controller.set_model(pl.name, model)
 }
 

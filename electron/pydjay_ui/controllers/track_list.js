@@ -30,12 +30,12 @@ class TrackListController extends EventDispatcher {
         if (this.model != undefined) {
             //this.model.removeController(this)
             this.model.un('content-changed', this.on_content_changed)
-            this.model.un('metadata-changed', this.on_metadata_changed)
+            this.model.un('object-updated', this.on_metadata_changed)
         }
         this.model = model
         //this.model.addController(this)
         this.model.on("content-changed", this.on_content_changed)
-        this.model.on("metadata-changed", this.on_metadata_changed)
+        this.model.on("object-updated", this.on_metadata_changed)
 
         let track_list = await this.model.getTracks()
         // console.log("tr", track_list)
@@ -88,9 +88,9 @@ class TrackListController extends EventDispatcher {
         }
     }
 
-    set_metadata(track, metadata) {
+    async setTrackMetadata(track, metadata) {
         if (this.model != undefined) {
-            this.model.set_metadata(track, metadata)
+            await this.model.setTrackMetadata(track, metadata)
         }
     }
 
@@ -100,11 +100,12 @@ class TrackListController extends EventDispatcher {
         return this.model.duration()
     }
 
-    filter_ids (func) {
+    async filter_ids (func) {
         let mapping = {}
-        let x = this.model.get_all_tracks().forEach((t) => {
-            mapping[t.id] = func(t)
+        let x = (await this.model.getTracks()).forEach((t) => {
+            mapping[t._id] = func(t)
         })
+        //console.log(mapping)
         return mapping
     }
 }

@@ -439,6 +439,12 @@ main = async () => {
 
 
     try {
+
+        await db.state.d.insert({_id: "queue", elements:{}, ordering:[null]})
+        await db.state.d.insert({_id: "session", elements:{}, ordering:[]})
+        await db.state.d.insert({_id: "shortlist", elements:{}})
+        await db.state.d.insert({_id: "unavailable", elements:{}})
+
         connection = await mysql.connect({host: 'localhost', user:"root", password:"root", database:'pymusic'});
         settings = await connection.query('SELECT * FROM settings');
         settings = settings[0]

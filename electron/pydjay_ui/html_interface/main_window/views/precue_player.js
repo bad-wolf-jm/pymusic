@@ -29,10 +29,10 @@ class PrecuePlayerView extends EventDispatcher {
             }
         })
 
-        this.track_list_model.on("metadata-changed", (track) => {
+        this.track_list_model.on("object-updated", (track) => {
             if (this._track != undefined) {
-                if (track.id == this._track.id) {
-                    this.set_track(track)
+                if (track._id == this._track._id) {
+                    this.update_track(track)
                 }    
             }
         })
@@ -72,7 +72,7 @@ class PrecuePlayerView extends EventDispatcher {
         })
         document.getElementById("precue-player-loved").addEventListener("click", () => {
             if (this._track != undefined) {
-                this.updateLoved(!this._track.favorite)
+                this.updateLoved(!this._track.loved)
             }
         })
     }
@@ -81,10 +81,12 @@ class PrecuePlayerView extends EventDispatcher {
         document.getElementById("precue-player-play-button").innerHTML = `<i class="fa fa-play"></i>`
     }
 
-    set_track(track) {
-        track = track.track_object
+    update_track(track) {
+        //console.log("FOO", track)
+        //track = track.track_object
         //let file_name = path.join(track.music_root, track.file_name);
-        let stream_length = (track.stream_end-track.stream_start);
+        let stream_length = (track.bounds.end-track.bounds.start);
+        this._track = track
         document.getElementById("precue-player-title").innerHTML       = track.title
         document.getElementById("precue-player-album").innerHTML       = track.album
         document.getElementById("precue-player-artist").innerHTML      = track.artist
@@ -99,7 +101,7 @@ class PrecuePlayerView extends EventDispatcher {
         //     document.getElementById("precue-player-color").style.background = track.color
         // }
         this.setRating(track.rating)
-        this.setLoved(track.favorite)
+        this.setLoved(track.loved)
         let cover_source = undefined
         if (track.cover == null) {
             cover_source = "../../resources/images/default_album_cover.png"
@@ -107,7 +109,6 @@ class PrecuePlayerView extends EventDispatcher {
             cover_source = `file://${track.cover.small}`;
         }
         document.getElementById("precue-player-cover").src = cover_source
-        this._track = track
         document.getElementById("no-preview-track").style.display = "none"
         document.getElementById("precue-dropdown").classList.remove("show")
     }
@@ -129,6 +130,12 @@ class PrecuePlayerView extends EventDispatcher {
         }
     }
 
+
+    set_track(tr) {
+        this.update_track(tr.track_object)
+    }
+
+
     setLoved (value){
         var html = "";
         this.loved = value
@@ -138,7 +145,7 @@ class PrecuePlayerView extends EventDispatcher {
 
     updateRating(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.set_metadata(this._track, {rating:new_value})
+            this.track_list_model.setTrackMetadata(this._track, {rating:new_value})
             // this.hueb.close()    
         }
 
@@ -150,7 +157,7 @@ class PrecuePlayerView extends EventDispatcher {
 
     updateLoved(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.set_metadata(this._track, {favorite:new_value})
+            this.track_list_model.setTrackMetadata(this._track, {loved:new_value})
             // this.hueb.close()    
         }
 

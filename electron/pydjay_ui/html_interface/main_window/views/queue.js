@@ -80,23 +80,28 @@ class QueueView extends EventDispatcher {
         this.controller = controller
         this.controller.addView(this)
         this.controller.on("content-changed", this.set_queue.bind(this))
+        this.controller.on("object-updated", this.update_queue_element.bind(this))
         this.controller.ready(this.set_queue.bind(this))
+    }
+
+    update_queue_element(q) {
+        
     }
 
     async set_queue(queue) {
         this.view_list_order = []
         let queue_rows = []
-
+        console.log("set queue")
         for(let i=0; i<queue.length; i++) {
             //console.log(queue[i])
-            let element = (queue[i] == null) ? {id: null, stream_length:0} : {
-                id:       queue[i]._id,
+            let element = (queue[i] == null) ? {_id: null, duration:0} : {
+                _id:       queue[i]._id,
                 title:    queue[i].title,
                 artist:   queue[i].artist,
                 bpm:      queue[i].bpm,
                 duration: format_nanoseconds(queue[i].bounds.end - queue[i].bounds.start),
             }
-            if (element.id != null) {
+            if (element._id != null) {
                 if (queue[i].cover == null) {
                     element.cover = "../../resources/images/default_album_cover.png"
                 } else {
@@ -104,7 +109,7 @@ class QueueView extends EventDispatcher {
                 }
             }
             queue_rows.push(element)
-            this.view_list_order.push(element.id)
+            this.view_list_order.push(element._id)
         }
         this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
         this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
@@ -131,12 +136,13 @@ class QueueView extends EventDispatcher {
         this.element.classList.remove("focus")
     }
 
-    delete_selection() {
-        let selected = this.selected_element()
+    async delete_selection() {
+        let selected = await this.selected_element()
 
         if (selected != undefined) {
-            let position = this.view_list_order.indexOf(selected.id)
-            this.controller.remove(this.selected_element())
+            // console.log(selected)
+            let position = this.view_list_order.indexOf(selected._id)
+            this.controller.remove(selected)
             this._select_row(this.view_elements[this.view_list_order[position]])
         }
     }
@@ -165,7 +171,7 @@ class QueueView extends EventDispatcher {
     move_down() {
         if (this.current_selection != undefined) {
             let track_id = (this.current_selection.attributes["data-track-id"].value)
-            if (isNaN(track_id)) {
+            if (track_id == "null") {
                 track_id = null
             }
             let position = this.view_list_order.indexOf(track_id)
@@ -175,7 +181,7 @@ class QueueView extends EventDispatcher {
             } else {
                 n = 0
             }
-
+            //console.log(n, this.view_list_order)
             this._select_row(this.view_elements[this.view_list_order[n]])
         } else {
             this._select_row(this.view_elements[this.view_list_order[0]])
@@ -186,7 +192,7 @@ class QueueView extends EventDispatcher {
     move_up() {
         if (this.current_selection != undefined) {
             let track_id = (this.current_selection.attributes["data-track-id"].value)
-            if (isNaN(track_id)) {
+            if (track_id == "null") {
                 track_id = null
             }
             let position = this.view_list_order.indexOf(track_id)
@@ -203,11 +209,11 @@ class QueueView extends EventDispatcher {
 
     }
 
-    selected_element() {
+    async selected_element() {
         if (this.current_selection != undefined) {
             let track_id = (this.current_selection.attributes["data-track-id"].value)
-            if (!isNaN(track_id)) {
-                return this.controller.get_id(track_id)
+            if (track_id != null) {
+                return await this.controller.get_id(track_id)
             } else {
                 return null
             }
@@ -271,11 +277,11 @@ class QueueView extends EventDispatcher {
         }
     }
 
-    move_selection_up() {
-        let selected = this.selected_element()
+    async move_selection_up() {
+        let selected = await this.selected_element()
         let selected_id;
         if (selected !== undefined) {
-            selected_id = (selected != null) ? selected.id : selected
+            selected_id = (selected != null) ? selected._id : selected
             let position = this.view_list_order.indexOf(selected_id)
             if (position > 0) {
                 let x = this.view_list_order[position - 1]
@@ -283,17 +289,17 @@ class QueueView extends EventDispatcher {
                 this.view_list_order[position] = x
                 this.dispatch("reorder", this.view_list_order)
                 this.sortable.sort(this.view_list_order)
-                this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
+                this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
+                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
             }
         }
     }
 
-    move_selection_down() {
-        let selected = this.selected_element()
+    async move_selection_down() {
+        let selected = await this.selected_element()
         let selected_id;
         if (selected !== undefined) {
-            selected_id = (selected != null) ? selected.id : selected
+            selected_id = (selected != null) ? selected._id : selected
             let position = this.view_list_order.indexOf(selected_id)
 
             if (position + 1 < this.view_list_order.length) {
@@ -301,34 +307,34 @@ class QueueView extends EventDispatcher {
                 this.view_list_order[position + 1] = selected_id
                 this.view_list_order[position] = x
                 this.dispatch("reorder", this.view_list_order)
+                console.log(this.current_selection)
                 this.sortable.sort(this.view_list_order)
-                this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
+                this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
+                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
             }
         }
     }
 
-    move_selection_to_top() {
-        let selected = this.selected_element()
+    async move_selection_to_top() {
+        let selected = await this.selected_element()
         let selected_id;
         if (selected !== undefined) {
-            selected_id = (selected != null) ? selected.id : selected
+            selected_id = (selected != null) ? selected._id : selected
             let position = this.view_list_order.indexOf(selected_id)
-
             this.view_list_order.splice(position, 1)
             this.view_list_order.splice(0, 0, selected_id)
             this.dispatch("reorder", this.view_list_order)
             this.sortable.sort(this.view_list_order)
-            this.num_tracks_dom.innerHTML = `${this.controller.q_length()} tracks`
-            this.duration_dom.innerHTML = `${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
+            this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
+            this.duration_dom.innerHTML = `${format_seconds_long(await Math.round(this.controller.duration() / 1000000000))}`
         }
     }
 
 
-    handle_double_click(e) {
+    async handle_double_click(e) {
         let x = e.target.closest(".queued-track")
         let track_id = (x.attributes["data-track-id"].value)
-        let track_element = this.controller.get_id(track_id)
+        let track_element = await this.controller.get_id(track_id)
         pc.play(track_element)
     }
 
@@ -368,7 +374,6 @@ class QueueView extends EventDispatcher {
     select_row(e) {
         let x = e.target.closest(".element")
         this._select_row(x)
-        //focusWindow(this)
     }
 
     connect_events() {
@@ -376,17 +381,17 @@ class QueueView extends EventDispatcher {
         this.view_elements = {};
         [].forEach.call(elements, (e) => {
             let track_id = (e.attributes["data-track-id"].value)
-            if (isNaN(track_id)) {
+            if (track_id == "null") {
                 track_id = null
             }
             this.view_elements[track_id] = e
             e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
             e.addEventListener("click", this.select_row.bind(this))
-            e.addEventListener('contextmenu', (e) => {
+            e.addEventListener('contextmenu', async (e) => {
                 e.preventDefault()
                 let x = e.target.closest(".queued-track")
                 let track_id = (x.attributes["data-track-id"].value)
-                let track_element = this.controller.get_id(track_id)
+                let track_element = await this.controller.get_id(track_id)
                 this.context_menu_element = track_element
                 this.menu.popup({window: remote.getCurrentWindow()})
               }, false)
