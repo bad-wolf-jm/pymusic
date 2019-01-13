@@ -12,11 +12,16 @@ class PlaylistController extends TrackListController {
         this.model.set_tracks(y, k)
     }
 
-    add(e) {
-        this.model.add(e)
+    append(e) {
+        this.model.append(e)
     }
 
     remove(element) {
         this.model.remove(element)
     }
+
+    async get_id(id) {
+        return this.model.getElementById(id)
+    }
+
 }

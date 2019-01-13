@@ -5,9 +5,9 @@ class MainPlayerView extends EventDispatcher {
         this.track_list_model = track_list_model
 
         if (this.track_list_model != undefined) {
-            this.track_list_model.on("metadata-changed", (track) => {
+            this.track_list_model.on("object-updated", (track) => {
                 if (this._track != undefined) {
-                    if (track.id == this._track.id) {
+                    if (track._id == this._track._id) {
                         this.set_track_metadata(track)
                     }
                 }
@@ -42,7 +42,7 @@ class MainPlayerView extends EventDispatcher {
     }
 
     set_track_metadata(track) {
-        if (this._track != undefined && track.id == this._track.id) {
+        if (this._track != undefined && track._id == this._track._id) {
             let stream_length = (track.bounds.end-track.bounds.start);
             document.getElementById("main-player-track-title").innerHTML    = track.title
             document.getElementById("main-player-track-album").innerHTML    = track.album

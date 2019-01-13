@@ -7,13 +7,13 @@ class PlaylistsView extends EventDispatcher {
         this.view_list_order = []
 
         this.menu = new Menu()
-        this.menu.append(new MenuItem({label: 'Edit...', click: () => {
+        this.menu.append(new MenuItem({label: 'Edit...', click: async () => {
             let T = this.context_menu_element
-            this.controller.get_playlist_by_id(T, (p) => {
-                let L = new PlaylistModel(p, tracks_model)
-                PE_controller.set_model(p, L)
-                Q.show_playlist_editor()
-            })
+            let p = await this.controller.get_playlist_by_id(T) //this.controller.get_playlist_by_id(T, (p) => {
+            let L = new TrackSetModel(MDB, MDB.playlists, T)
+            PE_controller.set_model(p, L)
+            Q.show_playlist_editor()
+            //})
 
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
@@ -28,7 +28,6 @@ class PlaylistsView extends EventDispatcher {
                     this.context_menu_cell.innerHTML = old_value
                 } else if (e.key == "Enter") {
                     let new_name = X.value
-                     //this.controller.rename_playlist(new_name)
                     if (await this.controller.checkNameAvailability(new_name)) {
                         this.controller.rename_playlist(T, new_name)
                     } else {

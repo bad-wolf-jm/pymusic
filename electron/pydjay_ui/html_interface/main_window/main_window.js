@@ -55,7 +55,7 @@ view.init()
 // un_model.addModel("unavailable", unavailable_model)
 
 T_controller              = new TrackListController()
-// PE_controller             = new PlaylistController(un_model)
+PE_controller             = new PlaylistController() //un_model)
 Q_controller              = new QueueController()
 S_controller              = undefined //new SessionController()
 PL_controller             = new PlaylistsController()
@@ -85,7 +85,7 @@ PE = new PlaylistEditView({
     num_tracks: "playlist-edit-number-of-tracks",
     duration:   "playlist-edit-duration"
 })
-// PE.set_controller(PE_controller)
+PE.set_controller(PE_controller)
 
 QL = new QueueView({
     list:       'queue-elements-body',
