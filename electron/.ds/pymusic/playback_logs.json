@@ -51,6 +51,7 @@
 {"track":"8TLaYvHicdnh5z9i","start_time":{"$$date":1497934408000},"end_time":{"$$date":1497934666000},"status":null,"_id":"3EiJMyg2Rtx2r7ag","createdAt":{"$$date":1547349329958},"updatedAt":{"$$date":1547349329958}}
 {"track":"hngdUO2EvNrgffyl","start_time":{"$$date":1493050695000},"end_time":{"$$date":1493050973000},"status":null,"_id":"3MgJJeujGMCvLggH","createdAt":{"$$date":1547349329941},"updatedAt":{"$$date":1547349329941}}
 {"track":"LR47lWrmjplsx3iV","start_time":{"$$date":1503931500000},"end_time":{"$$date":1503931728000},"status":null,"_id":"3N8mOqv3OJpTBzF0","createdAt":{"$$date":1547349329980},"updatedAt":{"$$date":1547349329980}}
+{"track":"uPK0GD1B3FF9k1zN","time_start":{"$$date":1547416688000},"time_end":{"$$date":1547416688727},"message":"TRACK_STOPPED","_id":"3PtwrH5DxZ1Mdbd0","createdAt":{"$$date":1547416688730},"updatedAt":{"$$date":1547416688730}}
 {"track":"LJBcGA19gnOF9yOM","start_time":{"$$date":1499056752000},"end_time":{"$$date":1499057014000},"status":null,"_id":"3SCB32rLDS9krUXr","createdAt":{"$$date":1547349330122},"updatedAt":{"$$date":1547349330122}}
 {"track":"sFYkPwSDwxRdqJS8","start_time":{"$$date":1482124460000},"end_time":{"$$date":1482124653000},"status":null,"_id":"3UgAbkBEt3S7ESx6","createdAt":{"$$date":1547349330060},"updatedAt":{"$$date":1547349330060}}
 {"track":"sp2R0JyRjZuoWWUM","start_time":{"$$date":1537665534000},"end_time":{"$$date":1537665751000},"status":"ended","_id":"3i4P4QJjkOlLskvs","createdAt":{"$$date":1547349330155},"updatedAt":{"$$date":1547349330155}}
@@ -385,6 +386,7 @@
 {"track":"nDh1cJhgNfkkOFBh","start_time":{"$$date":1537666545000},"end_time":{"$$date":1537666547000},"status":"skipped","_id":"ONRPQPshvZz1TlXx","createdAt":{"$$date":1547349330157},"updatedAt":{"$$date":1547349330157}}
 {"track":"uzA29TUab2AIYOnc","start_time":{"$$date":1497933121000},"end_time":{"$$date":1497933321000},"status":null,"_id":"OPU8a3Uc4WI3ZFsq","createdAt":{"$$date":1547349329957},"updatedAt":{"$$date":1547349329957}}
 {"track":"y4wgDlrYprtR51nW","start_time":{"$$date":1537666378000},"end_time":{"$$date":1537666477000},"status":"skipped","_id":"OXeUAd2lLK2yhfC0","createdAt":{"$$date":1547349330198},"updatedAt":{"$$date":1547349330198}}
+{"time_start":{"$$date":1547416688000},"time_end":{"$$date":1547416688727},"message":"TRACK_SKIPPED","_id":"OXkAETvBhO4TNTH5","createdAt":{"$$date":1547416688729},"updatedAt":{"$$date":1547416688729}}
 {"track":"SIxhfdXkOF7CePqe","start_time":{"$$date":1503937369000},"end_time":{"$$date":1503937509000},"status":null,"_id":"OZTBQJV6samymz5f","createdAt":{"$$date":1547349329995},"updatedAt":{"$$date":1547349329995}}
 {"track":"GKlqvhXjSjy0apDE","start_time":{"$$date":1503937789000},"end_time":{"$$date":1503938131000},"status":null,"_id":"Oa7eQk93tWt0VKRF","createdAt":{"$$date":1547349329996},"updatedAt":{"$$date":1547349329996}}
 {"track":"OgtzHQ5n60WKfMjd","start_time":{"$$date":1535926422000},"end_time":{"$$date":1535926424000},"status":null,"_id":"OdsZfwoKHKo6Cv4J","createdAt":{"$$date":1547349330146},"updatedAt":{"$$date":1547349330146}}
@@ -418,6 +420,7 @@
 {"track":"QeeA4iCH7COVPVjy","start_time":{"$$date":1486961700000},"end_time":{"$$date":1486961940000},"status":null,"_id":"Q6E6QWop2xxg7Xq6","createdAt":{"$$date":1547349330074},"updatedAt":{"$$date":1547349330074}}
 {"track":"EEStspSPqDycxejq","start_time":{"$$date":1538248559000},"end_time":{"$$date":1538248805000},"status":"ended","_id":"Q9ZWv02ygOaSqkcz","createdAt":{"$$date":1547349330178},"updatedAt":{"$$date":1547349330178}}
 {"track":"hZoyZCeBFGnFmjfL","start_time":{"$$date":1501560469000},"end_time":{"$$date":1501560597000},"status":null,"_id":"QAseFzVuBgxexIjQ","createdAt":{"$$date":1547349330126},"updatedAt":{"$$date":1547349330126}}
+{"time_start":{"$$date":1547416681940},"time_end":{"$$date":1547416686185},"message":"TRACK_SKIPPED","_id":"QEQb5oUVu3fDaGLi","createdAt":{"$$date":1547416686190},"updatedAt":{"$$date":1547416686190}}
 {"track":"Co589EYkKh7M0pbP","start_time":{"$$date":1501562573000},"end_time":{"$$date":1501562731000},"status":null,"_id":"QH4qvxnbALASYOlF","createdAt":{"$$date":1547349330128},"updatedAt":{"$$date":1547349330128}}
 {"track":"wF8fdNJBiMPGjpS2","start_time":{"$$date":1488417849000},"end_time":{"$$date":1488418126000},"status":null,"_id":"QHcgkHbUigxzl1qy","createdAt":{"$$date":1547349330026},"updatedAt":{"$$date":1547349330026}}
 {"track":"hYe4qOUbwuc50yoB","start_time":{"$$date":1537721493000},"end_time":{"$$date":1537721572000},"status":"stopped","_id":"QJRogVtSxuojrimj","createdAt":{"$$date":1547349330191},"updatedAt":{"$$date":1547349330191}}
@@ -596,6 +599,7 @@
 {"track":"sp2R0JyRjZuoWWUM","start_time":{"$$date":1537665534000},"end_time":{"$$date":1537665751000},"status":"ended","_id":"albM0I7VrMcjYJuh","createdAt":{"$$date":1547349330163},"updatedAt":{"$$date":1547349330163}}
 {"track":"u6jlKjGgd77OL2U4","start_time":{"$$date":1473745059000},"end_time":{"$$date":1473745246000},"status":null,"_id":"amUAKkHZMq3G1aPM","createdAt":{"$$date":1547349329865},"updatedAt":{"$$date":1547349329865}}
 {"track":"ovVX0zL3XknOyDnD","start_time":{"$$date":1473742533000},"end_time":{"$$date":1473742706000},"status":null,"_id":"amwvSW5yxNqureB6","createdAt":{"$$date":1547349329857},"updatedAt":{"$$date":1547349329857}}
+{"track":"5jZSIEOzYzCayxx7","time_start":{"$$date":1547416681940},"time_end":{"$$date":1547416686185},"message":"TRACK_STOPPED","_id":"b2eUIJ6cfS0dDvRF","createdAt":{"$$date":1547416686192},"updatedAt":{"$$date":1547416686192}}
 {"track":"ajMgB9ZpTNzluT6V","start_time":{"$$date":1488777830000},"end_time":{"$$date":1488778125000},"status":null,"_id":"b5iu4rNFJA4u1vUV","createdAt":{"$$date":1547349330086},"updatedAt":{"$$date":1547349330086}}
 {"track":"hYe4qOUbwuc50yoB","start_time":{"$$date":1537721493000},"end_time":{"$$date":1537721572000},"status":"stopped","_id":"bGwFiMAwQURBj9at","createdAt":{"$$date":1547349330184},"updatedAt":{"$$date":1547349330184}}
 {"track":"PgurY6M1uORFhDtH","start_time":{"$$date":1538262533000},"end_time":{"$$date":1538262690000},"status":"ended","_id":"bN1jE7mv5ilmNIOj","createdAt":{"$$date":1547349330216},"updatedAt":{"$$date":1547349330216}}
@@ -843,6 +847,7 @@
 {"track":"nSen6ANOEbKgMmiW","start_time":{"$$date":1544408496000},"end_time":{"$$date":1544408496000},"status":"ended","_id":"qENoOfe2wCqjLNk4","createdAt":{"$$date":1547349330223},"updatedAt":{"$$date":1547349330223}}
 {"track":"oTzSgwEfuRsYd2Ke","start_time":{"$$date":1537721338000},"end_time":{"$$date":1537721490000},"status":"ended","_id":"qH2EY73271CKFKnx","createdAt":{"$$date":1547349330214},"updatedAt":{"$$date":1547349330214}}
 {"track":"evur5qqgGmA6wI6e","start_time":{"$$date":1538249804000},"end_time":{"$$date":1538249960000},"status":"ended","_id":"qHW93WzXqRbnLPdF","createdAt":{"$$date":1547349330160},"updatedAt":{"$$date":1547349330160}}
+{"track":"n2fSL6bJm04erYCh","time_start":{"$$date":1547416690493},"time_end":{"$$date":1547416692675},"message":"TRACK_STOPPED","_id":"qVFSnEId2uSbai3v","createdAt":{"$$date":1547416692677},"updatedAt":{"$$date":1547416692677}}
 {"track":"wATbOmf9R5O7fQKw","start_time":{"$$date":1489470301000},"end_time":{"$$date":1489470579000},"status":null,"_id":"qkEieveg2arlIh5S","createdAt":{"$$date":1547349329892},"updatedAt":{"$$date":1547349329892}}
 {"track":"vZVf65WG5XlMKHVT","start_time":{"$$date":1537665754000},"end_time":{"$$date":1537665901000},"status":"ended","_id":"qn13qM6p4KEWxVB0","createdAt":{"$$date":1547349330151},"updatedAt":{"$$date":1547349330151}}
 {"track":"cAydTRQyUPVF68VT","start_time":{"$$date":1482128135000},"end_time":{"$$date":1482128420000},"status":null,"_id":"qnl9wyibJzMaYN4C","createdAt":{"$$date":1547349330068},"updatedAt":{"$$date":1547349330068}}

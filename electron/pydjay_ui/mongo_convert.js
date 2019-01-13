@@ -2,6 +2,7 @@ var mysql = require('mysql');
 var path = require('path');
 const Datastore = require("nedb-async-await").Datastore;
 const { EventDispatcher } = require("event_dispatcher")
+const { MusicDatabase } = require("musicdb/model.js") 
 
 // const { CollectionController } = require("musicdb/collection.js")
 // // const { TrackListController } = require("musicdb/track_list.js")
@@ -10,166 +11,350 @@ const { EventDispatcher } = require("event_dispatcher")
 // const { SessionController } = require("musicdb/session.js")
 // const { PlaylistController } = require("musicdb/playlist.js")
 
-const { MusicDatabase } = require("musicdb/model.js") 
 // const MongoClient = require('mongodb').MongoClient;
 
-class Track extends EventDispatcher {
-    constructor(db, object) {
-        super()
-        this.db = db
-        this.object = object
+
+function trackBSON(tr) {
+    let track_object = {
+        title: tr.title,
+        artist: tr.artist,
+        album: tr.album,
+        genre: tr.genre,
+        year: tr.year,
+        color: tr.color,
+        duration: tr.track_length,
+        loved: tr.favorite,
+        rating: tr.rating,
+        bpm: tr.bpm,
+        createdAt: tr.date_added,
+        updatedAt: tr.date_modified,
+        bounds: {
+            start: tr.stream_start,
+            end: tr.stream_end
+        },
+        bitrate: tr.bitrate,
+        samplerate: tr.samplerate,
+        size: tr.file_size,
+        path: path.join(tr.music_root, tr.file_name)
     }
-
-    getHistory() {
-
+    if (tr.cover_original != null) {
+        track_object.cover = {
+            original: path.join(tr.image_root, tr.cover_original),
+            small: path.join(tr.image_root, tr.cover_small),
+            medium: path.join(tr.image_root, tr.cover_medium),
+            large: path.join(tr.image_root, tr.cover_large),
+        }
     }
-
-    getRelatedTracks() {
-
-    }
-
-    setMetadata(metadata) {
-        this.object = this.db.setTrackData(this.object, metadata)
-        return this.object
-    }
-
-    getMetadata() {
-        return this.object
-    }
+    return track_object
 }
 
+const db = new MusicDatabase("pymusic")
 
-class Playlist {
-    constructor(db, object) {
-        this.db = db
-        this.object = object
-    }
 
-    getTracks() {
-        return this.db.getTracksByIds(Object.keys(this.object.tracks)) 
-    }
+// async function mongo_insert(collection, record) {
+//     //#let client = await MongoClient.connect(connectionString, { useNewUrlParser: true });
+//     //#let db = client.db('pymusic');
+//     try {
+//         const res = await db.insert(record);
 
-    duration() {
-        return this.db.duration(Object.keys(this.object.tracks)) 
-    }
+//         return res["_id"]
+//      } catch (e) {
+//         console.log(e) //record)
+//      }
+//     //  } finally {
+//     //      client.close();
+//     //  }
+// }
+main2 = async () => {
+    // let x = await db.getAllTracks()
+    // x.forEach((e) => {
+    //     console.log(e)
+    // })
+
+    // (await db.getAllSessions()).forEach(async (pl) => {
+    //     console.log(pl.object.event, await pl.duration())
+    // })
+
+    // let x = (await db.getTracksByIds(["09lWty9X6kR6v6T8"]))[0]
+    // console.log(x)
+    // db.setTrackData(x, {"title": "Take Me To Church"})
 }
 
-class Session {
-    constructor(db, object) {
-        this.db = db
-        this.object = object
+main = async () => {
+    let mysql = require('async-mysql'),
+        connection,
+        track_objects = {},
+        back_track_objects = {},
+        rows;
+
+
+    try {
+
+        await db.state.d.insert({_id: "queue", elements:{}, ordering:[null]})
+        await db.state.d.insert({_id: "session", elements:{}, ordering:[]})
+        await db.state.d.insert({_id: "shortlist", elements:{}})
+        await db.state.d.insert({_id: "unavailable", elements:{}})
+        await db.state.d.insert({_id: "playback_management", elements:{}})
+
+        connection = await mysql.connect({host: 'localhost', user:"root", password:"root", database:'pymusic'});
+        settings = await connection.query('SELECT * FROM settings');
+        settings = settings[0]
+        rows = await connection.query('SELECT * FROM tracks');
+
+        for (let i=0; i < rows.length; i++) {
+            let tr = rows[i]
+            tr.image_root = settings.db_image_cache
+            tr.music_root = settings.db_music_cache
+            let track = trackBSON(tr)
+
+            let history = await connection.query(`SELECT * FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
+            history = history.map((x) => {return {
+                session: x.session_id,
+                time: x.start_time,
+                status: x.status
+            }})
+            track.history = history
+
+            let last_played = await connection.query(`SELECT max(start_time) as last_played FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
+            track.last_played = last_played[0].last_played
+            new_id = await db.tracks.d.insert(track)
+            track_objects[tr.id] = new_id["_id"]
+            back_track_objects[new_id["_id"]] = tr.id
+
+        }
+
+        let tracks = await db.tracks.d.find({})
+        tracks.forEach(async (t) => {
+            let relations = await connection.query(`SELECT * FROM track_relations WHERE track_id=${back_track_objects[t._id]}`);
+            let t_relations = {}
+            relations.forEach((r) => {
+                t_relations[track_objects[r.related_track_id]] = {
+                    reason: r.reason,
+                    count: r.count,
+                    date: r.date
+                }
+            })
+            await db.tracks.d.update({_id: t._id}, {$set: {relations: t_relations}})
+        })
+
+        let sessions = await connection.query('SELECT * FROM sessions');
+        sessions.forEach(async (s) => {
+            let session_data = {
+                    event: s.event_name,
+                    location: s.address,
+                    createdAt: s.start_date,
+                    date: {
+                        begin: s.start_date,
+                        end:  s.end_date
+                    }
+                }
+            let session_tracks = await connection.query(`SELECT * FROM session_tracks WHERE session_id=${s.id} ORDER BY position`);
+            session_data.elements = {}
+            session_data.ordering = []
+            session_tracks.forEach((t) => {
+                session_data.ordering.push(track_objects[t.track_id])
+                session_data.elements[track_objects[t.track_id]]  = {
+                    status:t.status,
+                    time: {
+                        begin: t.start_time,
+                        end:   t.end_time}
+                }
+            })
+            await db.sessions.d.insert(session_data)
+        })
+
+        let playback_logs = await connection.query(`SELECT * FROM session_tracks`);
+        playback_logs.forEach(async (log) => {
+            await db.playback_logs.d.insert({
+                track:track_objects[log.track_id],
+                time_start: log.start_time,
+                time_end: log.end_time,
+                status: log.status
+            })
+        })
+
+        let playlists = await connection.query('SELECT * FROM playlists');
+        playlists.forEach(async (s) => {
+            let playlist_data = {
+                    name: s.name,
+                    description: s.description,
+                    createdAt: s.created
+                }
+            let playlist_tracks = await connection.query(`SELECT * FROM playlist_tracks WHERE playlist_id=${s.id}`);
+            playlist_data.elements = {}
+            playlist_tracks.forEach((t) => {
+                playlist_data.elements[track_objects[t.track_id]] = true
+            })
+            await db.playlists.d.insert(playlist_data)
+        })
+        console.log("done")
+
+    } catch (e) {
+        console.log(e)
     }
+};
 
-    async getTracks() {
-        let track_ids = this.object.tracks.map((t) => {return t.track_id})
-        let tracks = await this.db.getTracksByIds(track_ids)
-        let x = {}
-        tracks.forEach((t) => {x[t._id] = t})
-        return this.object.tracks.map((t) => {return x[t.track_id]})
-    }
-
-    duration() {
-        let track_ids = this.object.tracks.map((t) => {return t.track_id})
-        return this.db.duration(track_ids) 
-    }
-}
-
-class Queue {
-    constructor(db, q) {
-        this.db = db
-        this.q = q.tracks
-    }
-
-    _save() {
-
-    }
-
-    pop() {
-        return this.db.popFromQueue()
-    }
-
-    append(element) {
-        this.db.appendToQueue(element)
-    }
-
-    reorder(new_order) {
-        // if (new_order.length == this.ordering.length) {
-        //     if (new_order.every((x) => {return (this.objects[x] != undefined)})) {
-        //         this.ordering = new_order
-        //         this.db.dispatch("reorder", this.get_all_objects())
-        //     }
-        // }
-        this.db.setQueueElements(new_order)
-    }
-
-    async getTracks() {
-        let tracks = await this.db.getTracksByIds(this.q)
-        let x = {}
-        tracks.forEach((t) => {x[t._id] = t})
-        return this.q.tracks.map((t) => {return x[t]})
-    }
-
-    length() {
-        let i = this.q.indexOf(null)
-        return (i == -1) ? this.q.length : i 
-    }
-
-    duration() {
-        return this.db.duration(this.q.slice(0, this.length())) 
-    }
-}
+main();
 
 
-class CurrentSession {
-    constructor(db, q) {
-        this.db = db
-        this.q = q.tracks
-    }
+
+// class Track extends EventDispatcher {
+//     constructor(db, object) {
+//         super()
+//         this.db = db
+//         this.object = object
+//     }
+
+//     getHistory() {
+
+//     }
+
+//     getRelatedTracks() {
+
+//     }
+
+//     setMetadata(metadata) {
+//         this.object = this.db.setTrackData(this.object, metadata)
+//         return this.object
+//     }
+
+//     getMetadata() {
+//         return this.object
+//     }
+// }
 
 
-    _save() {
+// class Playlist {
+//     constructor(db, object) {
+//         this.db = db
+//         this.object = object
+//     }
 
-    }
+//     getTracks() {
+//         return this.db.getTracksByIds(Object.keys(this.object.tracks)) 
+//     }
 
-    discard() {
+//     duration() {
+//         return this.db.duration(Object.keys(this.object.tracks)) 
+//     }
+// }
 
-    }
+// class Session {
+//     constructor(db, object) {
+//         this.db = db
+//         this.object = object
+//     }
 
-    save(name, location, address) {
-        // save session
-        // updatae track histories
-        // update last played
-        // update track relations
-    }
+//     async getTracks() {
+//         let track_ids = this.object.tracks.map((t) => {return t.track_id})
+//         let tracks = await this.db.getTracksByIds(track_ids)
+//         let x = {}
+//         tracks.forEach((t) => {x[t._id] = t})
+//         return this.object.tracks.map((t) => {return x[t.track_id]})
+//     }
 
-    store_as_playlist(name) {
+//     duration() {
+//         let track_ids = this.object.tracks.map((t) => {return t.track_id})
+//         return this.db.duration(track_ids) 
+//     }
+// }
 
-    }
+// class Queue {
+//     constructor(db, q) {
+//         this.db = db
+//         this.q = q.tracks
+//     }
 
-    add(element) {
-        // this.db.appendToQueue(element)
-    }
+//     _save() {
 
-    reorder(new_order) {
-        this.db.reorderQueue(new_order)
-    }
+//     }
 
-    async getTracks() {
-        let tracks = await this.db.getTracksByIds(this.q)
-        let x = {}
-        tracks.forEach((t) => {x[t._id] = t})
-        return this.q.tracks.map((t) => {return x[t]})
-    }
+//     pop() {
+//         return this.db.popFromQueue()
+//     }
 
-    length() {
-        let i = this.q.indexOf(null)
-        return (i == -1) ? this.q.length : i 
-    }
+//     append(element) {
+//         this.db.appendToQueue(element)
+//     }
 
-    duration() {
-        return this.db.duration(this.q.slice(0, this.length())) 
-    }
-}
+//     reorder(new_order) {
+//         // if (new_order.length == this.ordering.length) {
+//         //     if (new_order.every((x) => {return (this.objects[x] != undefined)})) {
+//         //         this.ordering = new_order
+//         //         this.db.dispatch("reorder", this.get_all_objects())
+//         //     }
+//         // }
+//         this.db.setQueueElements(new_order)
+//     }
+
+//     async getTracks() {
+//         let tracks = await this.db.getTracksByIds(this.q)
+//         let x = {}
+//         tracks.forEach((t) => {x[t._id] = t})
+//         return this.q.tracks.map((t) => {return x[t]})
+//     }
+
+//     length() {
+//         let i = this.q.indexOf(null)
+//         return (i == -1) ? this.q.length : i 
+//     }
+
+//     duration() {
+//         return this.db.duration(this.q.slice(0, this.length())) 
+//     }
+// }
+
+
+// class CurrentSession {
+//     constructor(db, q) {
+//         this.db = db
+//         this.q = q.tracks
+//     }
+
+
+//     _save() {
+
+//     }
+
+//     discard() {
+
+//     }
+
+//     save(name, location, address) {
+//         // save session
+//         // updatae track histories
+//         // update last played
+//         // update track relations
+//     }
+
+//     store_as_playlist(name) {
+
+//     }
+
+//     add(element) {
+//         // this.db.appendToQueue(element)
+//     }
+
+//     reorder(new_order) {
+//         this.db.reorderQueue(new_order)
+//     }
+
+//     async getTracks() {
+//         let tracks = await this.db.getTracksByIds(this.q)
+//         let x = {}
+//         tracks.forEach((t) => {x[t._id] = t})
+//         return this.q.tracks.map((t) => {return x[t]})
+//     }
+
+//     length() {
+//         let i = this.q.indexOf(null)
+//         return (i == -1) ? this.q.length : i 
+//     }
+
+//     duration() {
+//         return this.db.duration(this.q.slice(0, this.length())) 
+//     }
+// }
 
 
 // class MusicDatabaseSSS extends EventDispatcher {
@@ -364,185 +549,3 @@ class CurrentSession {
 //     }
 // }
 
-
-function trackBSON(tr) {
-    let track_object = {
-        title: tr.title,
-        artist: tr.artist,
-        album: tr.album,
-        genre: tr.genre,
-        year: tr.year,
-        color: tr.color,
-        duration: tr.track_length,
-        loved: tr.favorite,
-        rating: tr.rating,
-        bpm: tr.bpm,
-        createdAt: tr.date_added,
-        updatedAt: tr.date_modified,
-        bounds: {
-            start: tr.stream_start,
-            end: tr.stream_end
-        },
-        bitrate: tr.bitrate,
-        samplerate: tr.samplerate,
-        size: tr.file_size,
-        path: path.join(tr.music_root, tr.file_name)
-    }
-    if (tr.cover_original != null) {
-        track_object.cover = {
-            original: path.join(tr.image_root, tr.cover_original),
-            small: path.join(tr.image_root, tr.cover_small),
-            medium: path.join(tr.image_root, tr.cover_medium),
-            large: path.join(tr.image_root, tr.cover_large),
-        }
-    }
-    return track_object
-}
-
-const db = new MusicDatabase("pymusic")
-
-
-// async function mongo_insert(collection, record) {
-//     //#let client = await MongoClient.connect(connectionString, { useNewUrlParser: true });
-//     //#let db = client.db('pymusic');
-//     try {
-//         const res = await db.insert(record);
-
-//         return res["_id"]
-//      } catch (e) {
-//         console.log(e) //record)
-//      }
-//     //  } finally {
-//     //      client.close();
-//     //  }
-// }
-main2 = async () => {
-    // let x = await db.getAllTracks()
-    // x.forEach((e) => {
-    //     console.log(e)
-    // })
-
-    // (await db.getAllSessions()).forEach(async (pl) => {
-    //     console.log(pl.object.event, await pl.duration())
-    // })
-
-    // let x = (await db.getTracksByIds(["09lWty9X6kR6v6T8"]))[0]
-    // console.log(x)
-    // db.setTrackData(x, {"title": "Take Me To Church"})
-}
-
-main = async () => {
-    let mysql = require('async-mysql'),
-        connection,
-        track_objects = {},
-        back_track_objects = {},
-        rows;
-
-
-    try {
-
-        await db.state.d.insert({_id: "queue", elements:{}, ordering:[null]})
-        await db.state.d.insert({_id: "session", elements:{}, ordering:[]})
-        await db.state.d.insert({_id: "shortlist", elements:{}})
-        await db.state.d.insert({_id: "unavailable", elements:{}})
-        await db.state.d.insert({_id: "playback_management", elements:{}})
-
-        connection = await mysql.connect({host: 'localhost', user:"root", password:"root", database:'pymusic'});
-        settings = await connection.query('SELECT * FROM settings');
-        settings = settings[0]
-        rows = await connection.query('SELECT * FROM tracks');
-
-        for (let i=0; i < rows.length; i++) {
-            let tr = rows[i]
-            tr.image_root = settings.db_image_cache
-            tr.music_root = settings.db_music_cache
-            let track = trackBSON(tr)
-
-            let history = await connection.query(`SELECT * FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
-            history = history.map((x) => {return {
-                session: x.session_id,
-                time: x.start_time,
-                status: x.status
-            }})
-            track.history = history
-
-            let last_played = await connection.query(`SELECT max(start_time) as last_played FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
-            track.last_played = last_played[0].last_played
-            new_id = await db.tracks.d.insert(track)
-            track_objects[tr.id] = new_id["_id"]
-            back_track_objects[new_id["_id"]] = tr.id
-
-        }
-
-        let tracks = await db.tracks.d.find({})
-        tracks.forEach(async (t) => {
-            let relations = await connection.query(`SELECT * FROM track_relations WHERE track_id=${back_track_objects[t._id]}`);
-            let t_relations = {}
-            relations.forEach((r) => {
-                t_relations[track_objects[r.related_track_id]] = {
-                    reason: r.reason,
-                    count: r.count,
-                    date: r.date
-                }
-            })
-            await db.tracks.d.update({_id: t._id}, {$set: {relations: t_relations}})
-        })
-
-        let sessions = await connection.query('SELECT * FROM sessions');
-        sessions.forEach(async (s) => {
-            let session_data = {
-                    event: s.event_name,
-                    location: s.address,
-                    createdAt: s.start_date,
-                    date: {
-                        begin: s.start_date,
-                        end:  s.end_date
-                    }
-                }
-            let session_tracks = await connection.query(`SELECT * FROM session_tracks WHERE session_id=${s.id} ORDER BY position`);
-            session_data.elements = {}
-            session_data.ordering = []
-            session_tracks.forEach((t) => {
-                session_data.ordering.push(track_objects[t.track_id])
-                session_data.elements[track_objects[t.track_id]]  = {
-                    status:t.status,
-                    time: {
-                        begin: t.start_time,
-                        end:   t.end_time}
-                }
-            })
-            await db.sessions.d.insert(session_data)
-        })
-
-        let playback_logs = await connection.query(`SELECT * FROM session_tracks`);
-        playback_logs.forEach(async (log) => {
-            await db.playback_logs.d.insert({
-                track:track_objects[log.track_id],
-                time_start: log.start_time,
-                time_end: log.end_time,
-                status: log.status
-            })
-        })
-
-        let playlists = await connection.query('SELECT * FROM playlists');
-        playlists.forEach(async (s) => {
-            let playlist_data = {
-                    name: s.name,
-                    description: s.description,
-                    createdAt: s.created
-                }
-            let playlist_tracks = await connection.query(`SELECT * FROM playlist_tracks WHERE playlist_id=${s.id}`);
-            playlist_data.elements = {}
-            playlist_tracks.forEach((t) => {
-                playlist_data.elements[track_objects[t.track_id]] = true
-            })
-            await db.playlists.d.insert(playlist_data)
-        })
-        console.log("done")
-
-    } catch (e) {
-        console.log(e)
-    }
-};
-
-main();
