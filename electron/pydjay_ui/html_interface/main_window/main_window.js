@@ -269,11 +269,11 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
-    ipcRenderer.send("reset-audio-system", {})
-    pc.reset_audio_context({headphones:{left:0, right:1}})
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
-})
+// document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
+//     ipcRenderer.send("reset-audio-system", {})
+//     pc.reset_audio_context({headphones:{left:0, right:1}})
+//     document.getElementById("main-menu-dropdown").classList.toggle("show");
+// })
 
 
 document.getElementById("main-menu-audio-setup").addEventListener('click', () => {
