@@ -21,19 +21,31 @@ class PlaybackController extends RemoteTrackPlayer {
         this.stop_request       = false
         this.playing            = false
         this.on('track-finished', (track) => {
-                this.session_controller.add(track)
-                if (this.stop_request) {
-                    this.queue_playing = false
-                    this.stop_request = false
-                    this.dispatch("queue-stopped")
-                } else {
-                    DB.get_waiting_time(
-                        (wait_time) => {
-                            this.play_next_track(wait_time)
-                        }
-                    )
-                }
-            })        
+            this.session_controller.add(track)
+            if (this.stop_request) {
+                this.queue_playing = false
+                this.stop_request = false
+                this.dispatch("queue-stopped")
+            } else {
+                DB.get_waiting_time(
+                    (wait_time) => {
+                        this.play_next_track(wait_time)
+                    }
+                )
+            }
+        }) 
+        this.addOutput("master")
+        this.addOutput("headset")
+        this.setMasterOutputDevice('null')
+        this.setHeadsetOutputDevice('null')
+    }
+
+    setMasterOutputDevice(deviceId) {
+
+    }
+
+    setHeadsetOutputDevice(deviceId) {
+        
     }
 
     _do_start_playback(track) {

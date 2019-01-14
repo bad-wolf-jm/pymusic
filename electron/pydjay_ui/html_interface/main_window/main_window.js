@@ -3,7 +3,8 @@ WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
 
-const {Question} = require("ui/dialog/question.js")
+const { Question } = require("ui/dialog/question.js")
+const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
 const { AudioOutputDetector } = require("webaudio/detect.js")
 // const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
 // const {PydjayAudioBufferPlayer} = require('audio/audio_player_buffer.js')
@@ -273,6 +274,40 @@ document.getElementById("main-menu-reset-audio").addEventListener('click', () =>
     pc.reset_audio_context({headphones:{left:0, right:1}})
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
+
+
+document.getElementById("main-menu-audio-setup").addEventListener('click', () => {
+    let d = new AudioOutputSettings({
+        masterOutputChange: (deviceId) => {
+            // if (deviceId == null) {
+            //     mpc.disableMainOutput()
+            // } else {
+            mpc.setMainOutputDevice(deviceId)
+            // }
+        },
+        masterHeadphoneChange: (deviceId) => {
+            // if (deviceId == null) {
+            //     mpc.disableHeadphoneOutput()
+            // } else {
+            mpc.setHeadphoneOutputDevice(deviceId)
+            // }
+        },
+        prelistenOutputChange: (deviceId) => {
+            // if (deviceId == null) {
+            //     mpc.disableOutput()
+            // } else {
+            pc.setOutputDevice(deviceId)
+            // }
+        }
+    })
+    d.on("set-prelisten-output", (deviceId) => {
+        pc.setOutputDevice(deviceId)
+    })
+    d.open()
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+
 
 document.getElementById("main-menu-stop-queue-now").addEventListener('click', () => {
     mpc.stop_queue_now()
