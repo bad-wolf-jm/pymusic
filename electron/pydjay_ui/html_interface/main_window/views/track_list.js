@@ -23,25 +23,11 @@ class TrackListView extends EventDispatcher {
 
         this.prevWidth = [];
 
-        document.getElementById("color-swatch-list").addEventListener("click", (e) => {
-            let cp = document.getElementById("main-track-list-color-chooser")
-            let track = this.controller.get_id(this.color_picker_track_id)
-            let x = e.target
-            let color = x.style.backgroundColor
-            this.controller.set_metadata(track, {color: rgb2hex(color)})
-            cp.classList.remove("show")
-        })
-
-        document.getElementById("remove-color").addEventListener("click", (e) => {
-            let cp = document.getElementById("main-track-list-color-chooser")
-            let track = this.controller.get_id(this.color_picker_track_id)
-            this.controller.set_metadata(track, {color: null})
-            cp.classList.remove("show")
-        })
-
         document.getElementById("main-track-list-scroller").addEventListener("scroll", (e) => {
-            let cp = document.getElementById("main-track-list-color-chooser")
-            cp.classList.remove("show")
+            if (this.color_chooser != undefined) {
+                this.color_chooser.close()
+                this.color_chooser = undefined
+            }
         })
 
 
@@ -62,12 +48,13 @@ class TrackListView extends EventDispatcher {
                         unavailable = {}
                     }
                     [].forEach.call(elements, (e) => {
-                        let track_id = parseInt(e.attributes["data-track-id"].value)
-                        this.table_rows[track_id] = e
-                        //console.log(track_id, e)
-                        if (unavailable[track_id] != undefined) {
-                            if (!this.ignore_unavailable) {                            
-                                e.classList.add("unavailable")
+                        if (e.attributes["data-track-id"] != undefined) {
+                            let track_id = parseInt(e.attributes["data-track-id"].value)
+                            this.table_rows[track_id] = e
+                            if (unavailable[track_id] != undefined) {
+                                if (!this.ignore_unavailable) {
+                                    e.classList.add("unavailable")
+                                }
                             }
                         }
                     });
@@ -77,27 +64,37 @@ class TrackListView extends EventDispatcher {
                     [].forEach.call(elements, (e) => {
                         e.addEventListener("click", (ev) => {
                             let track_id = parseInt(e.attributes['data-track-id'].value)
-                            let cp = document.getElementById("main-track-list-color-chooser")
                             let button_rect = e.getBoundingClientRect()
                             let scroller = document.getElementById("main-track-list-scroller")
                             let scroller_rect = scroller.getBoundingClientRect()
                             let button_offset = (button_rect.top - scroller_rect.top)
 
-                            if (button_offset + 100 > scroller_rect.height) {
-                                cp.className = "overlay-color-picker-bottom" + (cp.classList.contains("show") ? " show" : "")
-                                button_offset = (button_rect.bottom - 200 + 25) 
-                                cp.style.top = (button_offset)+"px"
+                            if (this.color_chooser != undefined) {
+                                this.color_chooser.close()
+                                this.color_chooser = undefined
                             } else {
-                                let button_offset_to_frame = (button_rect.top - 100 +5) // + 53 + 25 - 100)
-                                cp.className = "overlay-color-picker-middle" + (cp.classList.contains("show") ? " show" : "")
-                                cp.style.top = (button_offset_to_frame)+"px"
-                            }
-                            cp.style.left = (button_rect.right+17)+"px"
-                            cp.classList.toggle("show")
-                            this.color_picker_track_id = track_id
-                            ev.preventDefault()
+                                this.color_chooser = new ColorPicker(document.getElementsByTagName("body")[0], {
+                                    cancel: () => {
+                                        this.color_chooser.close()
+                                        this.color_chooser = undefined
+                                    },
+                                    chooseColor: (color) => {
+                                        let track = this.controller.get_id(track_id)
+                                        this.controller.set_metadata(track, {color: color})                                
+                                        this.color_chooser.close()
+                                        this.color_chooser = undefined
+                                    }
+                                })
 
-                    })})
+                                if (button_offset + 150 > scroller_rect.height) {
+                                    this.color_chooser.open(e, "above")
+                                } else {
+                                    this.color_chooser.open(e)
+                                }
+                                ev.preventDefault()
+                            }
+                        })
+                    })
                 },
                 scrollingProgress: (progress) => {}
             }
@@ -151,15 +148,9 @@ class TrackListView extends EventDispatcher {
 
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Track info', click: () => {
-            let window = new BrowserWindow({width: 1250, height: 750})
-            window.on('closed', () => {
-                window = null
-            })
-            window.webContents.once("did-finish-load", () => {
-                window.webContents.send("track-id", this.context_menu_element)
-            })
             pc.stop()
-            window.loadURL('file://' + __dirname + '/../track_edit/layout.html')
+            view.set_track(this.context_menu_element)
+            document.getElementById("track-edit-dialog").showModal()
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Shortlist', click: () => {
@@ -202,8 +193,8 @@ class TrackListView extends EventDispatcher {
 
     render_row_internal(track, element) {
         return `<tr  id='track-row-${track.id}' class="list-group-item row track-entry" style="color:${track.color}" draggable=true data-track-id=${track.id}>
-            <${element} style="width:25px; text-align:center">                         
-                <input id='track-color-value-${track.id}' type="hidden" value="" class="main-list-color-value" data-track-id=${track.id}/>                                  
+            <${element} style="width:25px; text-align:center">
+                <input id='track-color-value-${track.id}' type="hidden" value="" class="main-list-color-value" data-track-id=${track.id}/>
                 <button id='track-color-${track.id}' class="main-list color-chooser show-color-picker" style="background-color:${track.color}" data-track-id=${track.id}></button>
             </${element}>
             <${element} id='track-loved-${track.id}' style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
@@ -285,6 +276,10 @@ class TrackListView extends EventDispatcher {
         this.view_list_order = []
         this.view_list_id_order = []
         this.queue_rows = []
+
+        let scroller = document.getElementById("main-track-list-scroller")
+        scroller.scrollTop = 0
+    
         //this.table_rows = {}
         if (queue == undefined) {
             queue = []
@@ -294,10 +289,10 @@ class TrackListView extends EventDispatcher {
                 id:          queue[i].id,
                 available:   queue[i].available,
                 color:       queue[i].color,
-                loved:       this._get_loved(queue[i]), 
+                loved:       this._get_loved(queue[i]),
                 title:       queue[i].title,
                 artist:      queue[i].artist,
-                album:      queue[i].album,
+                album:       queue[i].album,
                 genre:       queue[i].genre,
                 last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
                 play_count:  queue[i].play_count,
@@ -339,7 +334,7 @@ class TrackListView extends EventDispatcher {
                 let rating_value = parseInt(matches[2])
                 this.set_rating(track_id, rating_value)
                 e.preventDefault()
-                return;                    
+                return;
             }
             let loved_regex = /main-track-loved-(\d+)/g
             matches = loved_regex.exec(id.value)
@@ -347,7 +342,7 @@ class TrackListView extends EventDispatcher {
                 let track_id = parseInt(matches[1])
                 this.toggle_loved(track_id)
                 e.preventDefault()
-                return;                    
+                return;
             }
         }
         this.select_row(e)
@@ -372,7 +367,6 @@ class TrackListView extends EventDispatcher {
     select_row(e) {
         let x = e.target.closest("tr")
         let id = parseInt(x.attributes["data-track-id"].value)
-        //console.log(x)
         this.controller.select_element(id)
     }
 
@@ -405,8 +399,8 @@ class TrackListView extends EventDispatcher {
         this.edit_mode = false
         let r = this.edit_row
         document.getElementById(`track-title-${r.id}`).innerHTML = this.edit_row.title
-        document.getElementById(`track-artist-${r.id}`).innerHTML = this.edit_row.artist 
-        document.getElementById(`track-album-${r.id}`).innerHTML = this.edit_row.album 
+        document.getElementById(`track-artist-${r.id}`).innerHTML = this.edit_row.artist
+        document.getElementById(`track-album-${r.id}`).innerHTML = this.edit_row.album
         document.getElementById(`track-genre-${r.id}`).innerHTML = this.edit_row.genre
         document.getElementById(`track-bpm-${r.id}`).innerHTML = this.edit_row.bpm
         this.edit_row = undefined
@@ -463,7 +457,7 @@ class TrackListView extends EventDispatcher {
             })
 
             document.getElementById(`main-track-list-edit-title-${r.id}`).focus()
-        } 
+        }
     }
 
     save_edit() {
@@ -484,7 +478,7 @@ class TrackListView extends EventDispatcher {
                     bpm:bpm
                 })
             }
-        }         
+        }
     }
 
 
@@ -621,8 +615,6 @@ class TrackListView extends EventDispatcher {
         document.getElementById(`track-genre-${x.id}`).innerHTML = x.genre
         document.getElementById(`track-bpm-${x.id}`).innerHTML = x.bpm
     }
-
-
     ensure_row_visible(x, direction) {
         let row = this.table_rows[x.id]
         let scroller = document.getElementById("main-track-list-scroller")

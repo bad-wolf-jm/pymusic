@@ -1,6 +1,7 @@
 /* width */
 ::-webkit-scrollbar {
     width: 7px;
+    height:7px;
 }
 
 /* Track */
@@ -28,6 +29,16 @@ body {
     color:     rgb(200, 200, 200);
     user-select: none;
 }
+
+dialog {
+    font-family: Helvetica, sans-serif;
+    font-size:   10pt;
+    font-weight: 200;
+    color:     rgb(200, 200, 200);
+    user-select: none;
+}
+
+
 
 button {
     /* font-family: Arial, Helvetica, sans-serif; */
@@ -1063,7 +1074,7 @@ input.new-playlist[type=text] {
 
 
 
-/* .overlay-color-picker {
+.overlay-color-picker {
     display: none;
     position: absolute;
     width:325px;
@@ -1073,7 +1084,7 @@ input.new-playlist[type=text] {
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 15;
 	border-radius: .4em;
-} */
+}
 
 /* .overlay-color-picker .middle:after {
 	content: '';
@@ -1126,4 +1137,260 @@ input.new-playlist[type=text] {
 
 .show {
     display: block;
+}
+
+
+.track-metadata-editor {
+    margin: 0px;
+    padding:0px;
+    width:100%;
+    height:125px;
+    display:inline-block;
+    /* position:fixed;  */
+    /* top:30px; */
+    /* background-color:blue; */
+    /* background-image: linear-gradient(to top, #1E1E1E, #3C3C3C) */
+
+}
+
+.track-metadata-editor .color-chooser {
+    float:right;
+    cursor: pointer;
+    width:20px;
+    height:20px;
+    border:1px solid grey;
+    border-radius:2px;
+    /* background-color:rgb(116, 116, 240); */
+}
+
+
+.track-metadata-editor .cover {
+    padding:0px;
+    float:left;
+    display:block;
+}
+
+
+.track-metadata-editor .title {
+    text-align:left;
+    /* text-transform:uppercase; */
+    font-weight:bold;
+    font-size:16pt;
+    /* padding-left:15px; */
+    height:35px;
+}
+
+.track-metadata-editor .artist {
+    text-align:left;
+    /* text-transform:uppercase; */
+    font-weight:normal;
+    font-size:11pt;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width:calc(100% - 55px);
+    height:25px;
+    /* padding-left:15px; */
+}
+
+.track-metadata-editor .time_remaining {
+    text-align:left;
+    text-transform:uppercase;
+    font-weight:bold;
+    font-size:25pt;
+    padding:0px;
+    margin:15px;
+}
+
+.track-metadata-editor .track-info {
+    padding-left:5px;
+    float:left;
+    width:100%;
+    display:block;
+    height:40px
+}
+
+.track-metadata-editor .info {
+    display: inline-block;
+    /* float:left; */
+    height:100%;
+    /* margin:5px !important; */
+    /* position:absolute; */
+    padding:0px !important;
+    width:125px !important;;
+
+}
+
+
+.track-metadata-editor .info .title {
+    text-align:center;
+    text-transform:uppercase;
+    font-weight:normal;
+    color:rgb(120,120,120);
+    font-size:9pt;
+    margin:0px;
+    padding:0px;
+    height:13px;
+}
+
+.track-metadata-editor .info .value{
+    text-align:center;
+    text-transform:uppercase;
+    font-weight:medium;
+    font-size:11pt;
+    height:22px;
+    margin-top:3px !important;
+    padding:0px !important ;
+    width:100%;
+    background-color:inherit;
+    color:rgb(30,30,30);
+    /* background-color: rgb(46, 45, 45); */
+
+    /* rgb(27, 27, 27) */
+    /* display:inline-block;
+    width:200px; */
+}
+
+.track-metadata-editor .info .input {
+    text-align:center;
+    /* text-transform:uppercase; */
+    font-weight:medium;
+    font-size:11pt;
+    height:20px;
+    margin-top:3px !important;
+    padding:0px !important ;
+    width:100%;
+    color:rgb(30,30,30);
+    background: rgb(200,200,200);
+
+    /* background-color:rgb(27, 27, 27); */
+    border: 0px solid transparent;
+    outline: none;
+}
+
+
+.track-metadata-editor .rating {
+    display: inline-block;
+    margin:0px !important;
+    padding:0px !important;
+    width:125px !important;
+    color:rgb(30,30,30);
+}
+
+.track-metadata-editor .rating .value{
+    text-align:center;
+    text-transform:uppercase;
+    font-size:10pt;
+    color:rgb(182, 182, 182);
+}
+
+
+.track-metadata-editor-list-area {
+    overflow-y:auto;
+    height: calc(100% - 50px);
+    padding-right:10px;
+    margin:0;
+    padding:0;
+    border: 0px solid transparent;
+}
+
+.track-metadata-editor-list-area .main-track-list-table {
+    width:100%;
+    /* height:100%; */
+    color: rgb(70,70,70);
+
+    overflow-y:auto;
+    margin:0;
+    padding:0;
+    -webkit-border-vertical-spacing:0;
+    border: 0px solid transparent;
+}
+
+.track-metadata-editor-list-area .main-track-list-table .header-row{
+    width:100%;
+    /* height:100%; */
+    margin:0;
+    padding:0;
+    height:25px;
+    text-transform:uppercase;
+    /* background-color: rgb(0,0,0); */
+    border: 0px solid transparent;
+
+}
+
+.track-metadata-editor-list-area .main-track-list-table .row {
+    width:100%;
+    height:20px;
+    /* text-transform:uppercase; */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-metadata-editor-list-area .main-track-list-table .row:hover {
+    background-color: rgb(160,169,160);
+}
+
+.track-metadata-editor-list-area .main-track-list-table tr:nth-child(even) {
+    background: rgb(180,180,180)
+}
+
+.track-metadata-editor-list-area .main-track-list-table tr:nth-child(odd) {
+    background: rgb(170,170,170)
+}
+
+
+input.title[type=text] {
+
+    /* padding: 6px; */
+    /* margin-top: 8px; */
+    /* background: rgb(46, 45, 45); */
+    /* margin-top: 0px; */
+    background: rgb(200,200,200);
+    margin:0;
+    padding-left:10px;
+    color: rgb(70,70,70);
+    font-size: 10pt;
+    border: none;
+    outline:none;
+    /* float:right; */
+    height:30px;
+    width:calc(100% - 0px)
+}
+
+input.artist[type=text] {
+    margin:0;
+    /* padding:0; */
+    padding-left:10px;
+    /* padding: 6px; */
+    /* margin-top: 8px; */
+    background: rgb(200,200,200);
+    /* margin-top: 8px; */
+    /* padding-left:15px; */
+    color: rgb(70,70,70);
+    font-size: 10pt;
+    border: none;
+    /* float:right; */
+    outline:none;
+    height:20px;
+    width:calc(100% - 0px)
+}
+
+
+.form-button {
+    padding: 6px 10px;
+    margin: 8px;
+    background: rgb(30, 130, 30);
+    font-size: 10pt;
+    border: none;
+    cursor: pointer;
+    height:32px;
+    outline:none !important;
+    height:50px;
+    width:300px;
+}
+
+.form-button:hover {
+    background: #ccc;
+    background: rgb(80, 80, 80);
 }
