@@ -28,10 +28,8 @@ function trackBSON(tr) {
         bpm: tr.bpm,
         createdAt: tr.date_added,
         updatedAt: tr.date_modified,
-        bounds: {
-            start: tr.stream_start,
-            end: tr.stream_end
-        },
+        stream_start: tr.stream_start,
+        stream_end: tr.stream_end,
         bitrate: tr.bitrate,
         samplerate: tr.samplerate,
         size: tr.file_size,
@@ -107,16 +105,13 @@ main = async () => {
             tr.music_root = settings.db_music_cache
             let track = trackBSON(tr)
 
-            let history = await connection.query(`SELECT * FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
-            history = history.map((x) => {return {
-                session: x.session_id,
-                time: x.start_time,
-                status: x.status
-            }})
-            track.history = history
+            // let history = await connection.query(`SELECT * FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
+            // history = history.map((x) => {return x.start_time})
+            // track.history = history
 
-            let last_played = await connection.query(`SELECT max(start_time) as last_played FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
+            let last_played = await connection.query(`SELECT max(start_time) as last_played, count(*) as count FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
             track.last_played = last_played[0].last_played
+            track.play_count = last_played[0].count
             new_id = await db.tracks.d.insert(track)
             track_objects[tr.id] = new_id["_id"]
             back_track_objects[new_id["_id"]] = tr.id
@@ -128,11 +123,12 @@ main = async () => {
             let relations = await connection.query(`SELECT * FROM track_relations WHERE track_id=${back_track_objects[t._id]}`);
             let t_relations = {}
             relations.forEach((r) => {
-                t_relations[track_objects[r.related_track_id]] = {
-                    reason: r.reason,
-                    count: r.count,
-                    date: r.date
-                }
+                t_relations[track_objects[r.related_track_id]] = r.count
+                // {
+                //     reason: r.reason,
+                //     count: r.count,
+                //     date: r.date
+                // }
             })
             await db.tracks.d.update({_id: t._id}, {$set: {relations: t_relations}})
         })
@@ -142,11 +138,11 @@ main = async () => {
             let session_data = {
                     event: s.event_name,
                     location: s.address,
+                    address: s.location,
                     createdAt: s.start_date,
-                    date: {
-                        begin: s.start_date,
-                        end:  s.end_date
-                    }
+                    updatedAt: s.start_date,
+                    date_start: s.start_date,
+                    date_end: s.end_date
                 }
             let session_tracks = await connection.query(`SELECT * FROM session_tracks WHERE session_id=${s.id} ORDER BY position`);
             session_data.elements = {}
@@ -154,11 +150,11 @@ main = async () => {
             session_tracks.forEach((t) => {
                 session_data.ordering.push(track_objects[t.track_id])
                 session_data.elements[track_objects[t.track_id]]  = {
-                    status:t.status,
-                    time: {
-                        begin: t.start_time,
-                        end:   t.end_time}
+                    //status:t.status,
+                    time_start: t.start_time,
+                    time_end: t.end_time
                 }
+                
             })
             await db.sessions.d.insert(session_data)
         })
@@ -528,7 +524,7 @@ main();
 //         let tracks = await this.getTracksByIds(id_array)
 //         let dur = 0
 //         tracks.forEach((track) => {
-//             dur += (track.bounds.end - track.bounds.start)
+//             dur += (track.stream_end - track.stream_start)
 //         })
 //         return dur
 //     }

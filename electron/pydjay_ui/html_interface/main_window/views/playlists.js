@@ -125,6 +125,8 @@ class PlaylistsView extends EventDispatcher {
         this.view_list_order = []
         let list_rows = [{_id: null}]  
 
+        list.sort((a, b) => {return a.name.localeCompare(b.name)})
+
         for(let i=0; i<list.length; i++) {
             let element = {
                 _id:   list[i]._id,

@@ -139,15 +139,15 @@ class TrackEditorView extends EventDispatcher {
         // console.log(track)
         this.track = track
         let file_name = track.path //path.join(track.music_root, track.file_name);
-        let stream_length = (track.bounds.end-track.bounds.start);
+        let stream_length = (track.stream_end-track.stream_start);
         document.getElementById("track-editor-track-title").value = track.title
         document.getElementById("track-editor-track-album").value = track.album
         document.getElementById("track-editor-track-artist").value = track.artist
         document.getElementById("track-editor-track-bpm").value = track.bpm
         document.getElementById("track-editor-track-genre").value = track.genre
         document.getElementById("track-editor-track-year").value = track.year
-        document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(track.bounds.start)}`
-        document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(track.bounds.end)}`
+        document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(track.stream_start)}`
+        document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(track.stream_end)}`
         document.getElementById("track-editor-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
         document.getElementById("track-editor-color").style.backgroundColor = track.color
 
@@ -171,8 +171,8 @@ class TrackEditorView extends EventDispatcher {
         document.getElementById("track-editor-track-cover").src = cover_source
         this._track = track
         this._waveform.load(file_name)
-        this.stream_start = this._track.bounds.start
-        this.stream_end = this._track.bounds.end
+        this.stream_start = this._track.stream_start
+        this.stream_end = this._track.stream_end
         this._position_tracker = this.audio_player.on("stream-position", (pos) => {
             this.current_stream_position = pos*1000000
             this._waveform.seekAndCenter(pos*1000000 / this._track.duration)
@@ -192,7 +192,7 @@ class TrackEditorView extends EventDispatcher {
                 play_count:  track.history.length,
                 rating:      this._get_rating(track),
                 bpm:         track.bpm,
-                duration:    format_nanoseconds(track.bounds.end - track.bounds.start),
+                duration:    format_nanoseconds(track.stream_end - track.stream_start),
             }
         })
         jui.ready([ "grid.table" ], (table) => {
@@ -266,8 +266,8 @@ class TrackEditorView extends EventDispatcher {
                     this._waveform.clearRegions()
                 }
                 this._region = this._waveform.addRegion({
-                    start: this._track.bounds.start / 1000000000,
-                    end:   this._track.bounds.end / 1000000000,
+                    start: this._track.stream_start / 1000000000,
+                    end:   this._track.stream_end / 1000000000,
                     color: "rgba(25,25,25,0.35)"
                 })
                 this._region.on("update",

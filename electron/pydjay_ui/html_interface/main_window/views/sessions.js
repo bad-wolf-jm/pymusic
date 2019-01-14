@@ -17,13 +17,14 @@ class SessionsView extends EventDispatcher {
     set_list(list) {
         this.view_list_order = []
         let list_rows = []
+        list.sort((a, b) => {return (a.date_start - b.date_end)})
 
         for(let i=0; i<list.length; i++) {
             let element = {
                 id:   list[i]._id,
                 name: list[i].event,
                 data: list[i],
-                date: moment(list[i].date).format("MM-DD-YYYY"),
+                date: moment(list[i].date_start).format("MM-DD-YYYY"),
             }
             list_rows.push(element)
         }

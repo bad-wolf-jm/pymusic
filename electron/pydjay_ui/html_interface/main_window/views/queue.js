@@ -99,7 +99,7 @@ class QueueView extends EventDispatcher {
                 title:    queue[i].title,
                 artist:   queue[i].artist,
                 bpm:      queue[i].bpm,
-                duration: format_nanoseconds(queue[i].bounds.end - queue[i].bounds.start),
+                duration: format_nanoseconds(queue[i].stream_end - queue[i].stream_start),
             }
             if (element._id != null) {
                 if (queue[i].cover == null) {

@@ -25,7 +25,7 @@ class PrecuePlayerView extends EventDispatcher {
             let ratio = mouseX / x.width
             let t = this.controller._current_track.track_object
             if (t != undefined) {
-                this.controller.play(t, t.bounds.start + ((t.bounds.end - t.bounds.start) * ratio))
+                this.controller.play(t, t.stream_start + ((t.stream_end - t.stream_start) * ratio))
             }
         })
 
@@ -85,7 +85,7 @@ class PrecuePlayerView extends EventDispatcher {
         //console.log("FOO", track)
         //track = track.track_object
         //let file_name = path.join(track.music_root, track.file_name);
-        let stream_length = (track.bounds.end-track.bounds.start);
+        let stream_length = (track.stream_end-track.stream_start);
         this._track = track
         document.getElementById("precue-player-title").innerHTML       = track.title
         document.getElementById("precue-player-album").innerHTML       = track.album

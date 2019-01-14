@@ -43,7 +43,7 @@ class MainPlayerView extends EventDispatcher {
 
     set_track_metadata(track) {
         if (this._track != undefined && track._id == this._track._id) {
-            let stream_length = (track.bounds.end-track.bounds.start);
+            let stream_length = (track.stream_end-track.stream_start);
             document.getElementById("main-player-track-title").innerHTML    = track.title
             document.getElementById("main-player-track-album").innerHTML    = track.album
             document.getElementById("main-player-track-artist").innerHTML   = track.artist

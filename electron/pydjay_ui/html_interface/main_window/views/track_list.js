@@ -308,10 +308,10 @@ class TrackListView extends EventDispatcher {
                 album:       queue[i].album,
                 genre:       queue[i].genre,
                 last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
-                play_count:  (queue[i].history != undefined) ? queue[i].history.length : "",
+                play_count:  (queue[i].play_count != undefined) ? queue[i].play_count : "",
                 rating:      this._get_rating(queue[i]),
                 bpm:         queue[i].bpm,
-                duration:    format_nanoseconds(queue[i].bounds.end - queue[i].bounds.start ),
+                duration:    format_nanoseconds(queue[i].stream_end - queue[i].stream_start ),
             }
             this.queue_rows.push(this.render_row(element))
             this.view_list_order.push(element)
@@ -631,7 +631,7 @@ class TrackListView extends EventDispatcher {
         document.getElementById(`track-artist-${x._id}`).innerHTML = x.artist
         document.getElementById(`track-genre-${x._id}`).innerHTML = x.genre
         document.getElementById(`track-bpm-${x._id}`).innerHTML = x.bpm
-        document.getElementById(`track-duration-${x._id}`).innerHTML = `${format_nanoseconds(x.bounds.end - x.bounds.start)}`
+        document.getElementById(`track-duration-${x._id}`).innerHTML = `${format_nanoseconds(x.stream_end - x.stream_start)}`
     }
 
 
