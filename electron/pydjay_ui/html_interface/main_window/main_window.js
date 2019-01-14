@@ -279,30 +279,18 @@ document.getElementById("main-menu-reset-audio").addEventListener('click', () =>
 document.getElementById("main-menu-audio-setup").addEventListener('click', () => {
     let d = new AudioOutputSettings({
         masterOutputChange: (deviceId) => {
-            // if (deviceId == null) {
-            //     mpc.disableMainOutput()
-            // } else {
-            mpc.setMainOutputDevice(deviceId)
-            // }
+            mpc.setMasterOutputDeviceId(deviceId)
         },
         masterHeadphoneChange: (deviceId) => {
-            // if (deviceId == null) {
-            //     mpc.disableHeadphoneOutput()
-            // } else {
-            mpc.setHeadphoneOutputDevice(deviceId)
-            // }
+            mpc.setHeadsetOutputDeviceId(deviceId)
         },
         prelistenOutputChange: (deviceId) => {
-            // if (deviceId == null) {
-            //     mpc.disableOutput()
-            // } else {
-            pc.setOutputDevice(deviceId)
-            // }
+            pc.setOutputDeviceId(deviceId)
         }
     })
-    d.on("set-prelisten-output", (deviceId) => {
-        pc.setOutputDevice(deviceId)
-    })
+    // d.on("set-prelisten-output", (deviceId) => {
+    //     pc.setOutputDevice(deviceId)
+    // })
     d.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
