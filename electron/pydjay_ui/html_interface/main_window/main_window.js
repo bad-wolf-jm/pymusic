@@ -201,9 +201,26 @@ ipcRenderer.on("master-stream-position", (event, pos) => {
 
 pc.on('playback-started', () => {
         //vc.mute_monitor()
+        mpc.muteHeadset()
         SV.open_panel(3)
     }
 )
+
+
+pc.on('playback-stopped', () => {
+    //vc.mute_monitor()
+    mpc.unmuteHeadset()
+    //SV.open_panel(3)
+}
+)
+
+pc.on('playback-paused', () => {
+    //vc.mute_monitor()
+    mpc.unmuteHeadset()
+    //SV.open_panel(3)
+}
+)
+
 
 
 mpc.on("queue-stop-requested",
