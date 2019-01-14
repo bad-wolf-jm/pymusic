@@ -6,11 +6,17 @@ function format_nanoseconds (ts) {
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
     var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
-    if (hours   < 10) {hours   = "0"+hours;}
-    if (minutes < 10) {minutes = "0"+minutes;}
-    if (seconds < 10) {seconds = "0"+seconds;}
+    if ((hours > 0) && (hours < 10)) {
+        hours   = "0"+hours;
+    }
+    if ((minutes > 0) && (minutes < 10)) {
+        minutes = "0"+minutes;
+    }
+    if ((seconds > 0) && (seconds < 10)) {
+        seconds = "0"+seconds;
+    }
 
-    if (hours == 0){
+    if (hours == 0) {
         return minutes+':'+seconds;
     }
     return hours+':'+minutes+':'+seconds;
@@ -40,7 +46,7 @@ function format_seconds(t_seconds, units, pluralize=true)
     var s_f, m_f, h_f, d_f;
 
     if (t_seconds < 60) {
-      return `${t_seconds}${units.seconds}`;
+      return `${t_seconds} ${units.seconds}`;
     }
 
     duration = parse_seconds_to_time(t_seconds);
