@@ -176,6 +176,7 @@ mpc.on("track-finished",
             time_end:log_data.end_time,
             message:"TRACK_FINISHED"
         })
+        ///// update track last played and play count here
         // console.log()
     }
 )
