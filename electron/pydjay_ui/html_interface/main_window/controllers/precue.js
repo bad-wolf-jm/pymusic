@@ -10,14 +10,6 @@ class PrecueController extends AudioTrackPlayer {
 
     setOutputDeviceId(deviceId) {
         super.setOutputDeviceId("main", deviceId)
-        // //console.log(deviceId)
-        // if (deviceId == 'null') {            
-        //     this.audio_context.outputs["main"].pause()
-        // } else {
-        //     this.audio_context.outputs["main"].setSinkId(deviceId)
-        //     this.audio_context.outputs['main'].play()
-        // }
-        //console.log(deviceId)
     }
 
     play_last_10_seconds(track) {

@@ -1,6 +1,6 @@
-const {ColorPicker} = require("ui/popup/colorpicker.js")
+const { ColorPicker } = require("ui/popup/colorpicker.js")
 //const {EventDispatcher} = require("notify/event_dispatcher.js")
-const {PydjayAudioBufferPlayer} = require("webaudio/audio_player_buffer.js")
+const { PydjayAudioBufferPlayer } = require("webaudio/audio_player_buffer.js")
 
 function rgb2hex(rgb) {
     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
@@ -23,7 +23,7 @@ class TrackEditorView extends EventDispatcher {
         this.original_cover_image = null
 
         this.audio_player = new PydjayAudioBufferPlayer()
-        this.audio_player.connectOutputs({headphones:{left:0, right:1}})
+        // this.audio_player.connectOutputs({headphones:{left:0, right:1}})
 
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Change', click: () => {

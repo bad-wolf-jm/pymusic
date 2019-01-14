@@ -67,7 +67,6 @@ Q_controller.set_model(queue_model)
 S_controller.set_model(current_session_model)
 
 ipcRenderer.on("track-modified", (e, id) => {
-    //console.log(e, id)
     tracks_model.update(id)
 })
 
@@ -110,7 +109,7 @@ SE = new SessionsView({
 SE.set_controller(SE_controller)
 
 // mpc.init_audio()
-pc.connectOutputs({headphones:{left:0, right:1}})
+// pc.connectOutputs({headphones:{left:0, right:1}})
 
 M = new MainPlayerView(tracks_model)
 M.set_controller(mpc)
