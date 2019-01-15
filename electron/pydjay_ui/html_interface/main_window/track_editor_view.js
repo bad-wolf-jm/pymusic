@@ -137,18 +137,18 @@ class TrackEditorView extends EventDispatcher {
     async set_track(track) {
         // console.log(track)
         this.track = track
-        let file_name = track.path //path.join(track.music_root, track.file_name);
-        let stream_length = (track.stream_end-track.stream_start);
-        document.getElementById("track-editor-track-title").value = track.title
-        document.getElementById("track-editor-track-album").value = track.album
-        document.getElementById("track-editor-track-artist").value = track.artist
-        document.getElementById("track-editor-track-bpm").value = track.bpm
-        document.getElementById("track-editor-track-genre").value = track.genre
-        document.getElementById("track-editor-track-year").value = track.year
-        document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(track.stream_start)}`
-        document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(track.stream_end)}`
+        let file_name = track.track.path //path.join(track.music_root, track.file_name);
+        let stream_length = (track.track.stream_end-track.track.stream_start);
+        document.getElementById("track-editor-track-title").value = track.metadata.title
+        document.getElementById("track-editor-track-album").value = track.metadata.album
+        document.getElementById("track-editor-track-artist").value = track.metadata.artist
+        document.getElementById("track-editor-track-bpm").value = track.track.bpm
+        document.getElementById("track-editor-track-genre").value = track.metadata.genre
+        document.getElementById("track-editor-track-year").value = track.metadata.year
+        document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(track.track.stream_start)}`
+        document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(track.track.stream_end)}`
         document.getElementById("track-editor-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
-        document.getElementById("track-editor-color").style.backgroundColor = track.color
+        document.getElementById("track-editor-color").style.backgroundColor = track.metadata.color
 
         var slider = document.querySelector('#slider');
         slider.oninput =  () => {
@@ -158,12 +158,12 @@ class TrackEditorView extends EventDispatcher {
         this.setRating(track.rating)
         this.setLoved(track.favorite)
         let cover_source = undefined
-        if (track.cover == null) {
+        if (track.metadata.cover == null) {
             cover_source = "../../resources/images/default_album_cover.png"
             this.original_cover_image = null
             this.cover_image = null
         } else {
-            cover_source = `file://${track.cover.original}`;
+            cover_source = `file://${track.metadata.cover.original}`;
             this.original_cover_image = cover_source
             this.cover_image = undefined
         }
@@ -177,21 +177,20 @@ class TrackEditorView extends EventDispatcher {
             this._waveform.seekAndCenter(pos*1000000 / this._track.duration)
         })
 
-        let related_tracks = Object.values(await MDB.tracks.getObjectsByIds(Object.keys(track.relations)))
+        let related_tracks = Object.values(await MDB.tracks.getObjectsByIds(Object.keys(track.stats.relations)))
         let rows = related_tracks.map((track) => {
             return {
                 id:          track._id,
-                available:   track.available,
                 color:       track.color,
-                loved:       "<i title='"+track._id+"' class='fa " + (track.loved ? "fa-heart" : "fa-heart-o") +"'></i>",
-                title:       track.title,
-                artist:      track.artist,
-                genre:       track.genre,
-                last_played: (track.last_played != null) ? moment(track.last_played).format('MM-DD-YYYY') : "",
-                play_count:  track.history.length,
+                loved:       "<i title='"+track._id+"' class='fa " + (track.stats.loved ? "fa-heart" : "fa-heart-o") +"'></i>",
+                title:       track.metadata.title,
+                artist:      track.metadata.artist,
+                genre:       track.metadata.genre,
+                last_played: (track.stats.last_played != null) ? moment(track.stats.last_played).format('MM-DD-YYYY') : "",
+                play_count:  track.stats.play_count,
                 rating:      this._get_rating(track),
-                bpm:         track.bpm,
-                duration:    format_nanoseconds(track.stream_end - track.stream_start),
+                bpm:         track.track.bpm,
+                duration:    format_nanoseconds(track.track.stream_end - track.track.stream_start),
             }
         })
         jui.ready([ "grid.table" ], (table) => {
@@ -225,8 +224,8 @@ class TrackEditorView extends EventDispatcher {
                     this._waveform.clearRegions()
                 }
                 this._region = this._waveform.addRegion({
-                    start: this._track.stream_start / 1000000000,
-                    end:   this._track.stream_end / 1000000000,
+                    start: this._track.track.stream_start / 1000000000,
+                    end:   this._track.track.stream_end / 1000000000,
                     color: "rgba(25,25,25,0.35)"
                 })
                 this._region.on("update",
@@ -252,7 +251,7 @@ class TrackEditorView extends EventDispatcher {
     _get_rating(track_object) {
         let html = "";
         for (let j=1; j<6; j++) {
-            html+="<i class='fa " + ( j <= track_object.rating ? "fa-star" : "fa-star-o") +"' style='font-size:8pt; margin-left:3px; color: rgb(70,70,70);'></i>";
+            html+="<i class='fa " + ( j <= track_object.stats.rating ? "fa-star" : "fa-star-o") +"' style='font-size:8pt; margin-left:3px; color: rgb(70,70,70);'></i>";
         }
         return html
     }
@@ -285,23 +284,21 @@ class TrackEditorView extends EventDispatcher {
     getValues() {
         let F = (x) => document.getElementById(x)
         let v = {
-            title:  F("track-editor-track-title").value,
-            album:  F("track-editor-track-album").value,
-            artist: F("track-editor-track-artist").value,
-            bpm:    F("track-editor-track-bpm").value,
-            genre:  F("track-editor-track-genre").value,
-            year:   F("track-editor-track-year").value,
-            color:  this.color, 
-            bounds: {
-                start: this.stream_start,
-                end:   this.stream_end
-            },
-            loved:     this.loved,
-            rating:       this.rating
+            "metadata.title": F("track-editor-track-title").value,
+            "metadata.album": F("track-editor-track-album").value,
+            'metadata.artist': F("track-editor-track-artist").value,
+            "track.bpm": F("track-editor-track-bpm").value,
+            "metadata.genre": F("track-editor-track-genre").value,
+            "metadata.year": F("track-editor-track-year").value,
+            "metadata.color": this.color, 
+            "track.stream_start": this.stream_start,
+            "track.stream_end": this.stream_end,
+            "stats.loved": this.loved,
+            "stats.rating": this.rating
         }
         v.cover_image = this.cover_image
-        v.year = (v.year != "") ? v.year : null
-        v.bpm = (v.bpm != "") ? v.bpm : null
+        v['metadata.year'] = (v['metadata.year'] != "") ? v['metadata.year'] : null
+        v['track.bpm'] = (v['track.bpm'] != "") ? v['track.bpm'] : null
         return v
     }
 
@@ -312,21 +309,19 @@ class TrackEditorView extends EventDispatcher {
     }
     
     save() {
-        let file_path = this.track.path
+        let file_path = this.track.track.path
         let file_dir = path.dirname(file_path)
         let cover_dir = path.join(file_dir, ".covers")
         let new_values = this.getValues()
         if (new_values.cover_image != null) {
-            new_values.cover = {
-                original: path.join(cover_dir, `cover_original_${this.track._id}`),
-                large: path.join(cover_dir, `cover_large_${this.track._id}`),
-                medium: path.join(cover_dir, `cover_medium_${this.track._id}`),
-                small: path.join(cover_dir, `cover_small_${this.track._id}`)    
-            }
-            new_values.cover_image.write(new_values.cover.original);
-            new_values.cover_image.resize(320,320).write(new_values.cover.large)
-            new_values.cover_image.resize(160,160).write(new_values.cover.medium)
-            new_values.cover_image.resize(100,100).write(new_values.cover.small)
+            new_values["metadata.album.cover.original"] = path.join(cover_dir, `cover_original_${this.track._id}`),
+            new_values["metadata.album.cover.large"] = path.join(cover_dir, `cover_large_${this.track._id}`),
+            new_values["metadata.album.cover.medium"] = path.join(cover_dir, `cover_medium_${this.track._id}`),
+            new_values["metadata.album.cover.small"] = path.join(cover_dir, `cover_small_${this.track._id}`)    
+            new_values.cover_image.write(new_values["metadata.album.cover.original"]);
+            new_values.cover_image.resize(320,320).write(new_values["metadata.album.cover.large"])
+            new_values.cover_image.resize(160,160).write(new_values["metadata.album.cover.medium"])
+            new_values.cover_image.resize(100,100).write(new_values["metadata.album.cover.small"])
         } else if (new_values.cover_image !== undefined) {
             new_values.cover = undefined
         }
