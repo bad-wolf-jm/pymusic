@@ -23,6 +23,8 @@ class TrackEditorView extends EventDispatcher {
         this.original_cover_image = null
 
         this.audio_player = new PydjayAudioBufferPlayer()
+        this.audio_player.addOutput("headphones")
+        this.setOutputDeviceId("null")
         // this.audio_player.connectOutputs({headphones:{left:0, right:1}})
 
         this.menu = new Menu()
@@ -122,18 +124,27 @@ class TrackEditorView extends EventDispatcher {
         })
 
 
-        this.audio_player.on("playback-started", () => {
-            ipcRenderer.send("playback-started")
-        })
+        // this.audio_player.on("playback-started", () => {
+        //     ipcRenderer.send("playback-started")
+        // })
 
-        this.audio_player.on("playback-paused", () => {
-            ipcRenderer.send("playback-stopped")
-        })
+        // this.audio_player.on("playback-paused", () => {
+        //     ipcRenderer.send("playback-stopped")
+        // })
 
-        this.audio_player.on("playback-stopped", () => {
-            ipcRenderer.send("playback-stopped")
-        })
+        // this.audio_player.on("playback-stopped", () => {
+        //     ipcRenderer.send("playback-stopped")
+        // })
     }
+
+    setOutputDeviceId(deviceId) {
+        this.audio_player.setOutputDeviceId("headphones", deviceId)
+    }
+
+    getOutputDeviceId() {
+        return this.audio_player.getOutputDeviceIds()["headphones"]
+    }
+
 
     set_track(track) {
         this.track = track

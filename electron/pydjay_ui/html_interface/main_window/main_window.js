@@ -5,9 +5,6 @@ var path              = require('path');
 
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
-const { AudioOutputDetector } = require("webaudio/detect.js")
-// const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
-// const {PydjayAudioBufferPlayer} = require('audio/audio_player_buffer.js')
 
 
 SV = new AccordionView("sidebar")
@@ -55,13 +52,8 @@ S_controller              = new SessionController()
 PL_controller             = new PlaylistsController()
 SE_controller             = new SessionsController()
 
-
-// var mpc = new RemoteFilePlayer()
-
-
 mpc                       = new PlaybackController(S_controller, Q_controller)
 pc                        = new PrecueController(S_controller, Q_controller)
-vc                        = new VolumeController(mpc, pc)
 
 Q_controller.set_model(queue_model)
 S_controller.set_model(current_session_model)
@@ -108,9 +100,6 @@ SE = new SessionsView({
 })
 SE.set_controller(SE_controller)
 
-// mpc.init_audio()
-// pc.connectOutputs({headphones:{left:0, right:1}})
-
 M = new MainPlayerView(tracks_model)
 M.set_controller(mpc)
 M.init()
@@ -156,50 +145,7 @@ mpc.on("track-finished",
 )
 
 
-// ipcRenderer.on("headphone-playback-stopped", () => {
-//     pc.dispatch("playback-stopped")
-// })
-
-
-// ipcRenderer.on("headphone-playback-paused", () => {
-//     pc.dispatch("playback-paused")
-// })
-
-// ipcRenderer.on("headphone-playback-started", () => {
-//     pc.dispatch("playback-started")
-// })
-
-
-// ipcRenderer.on("headphone-stream-position", (event, pos) => {
-//     pc.dispatch("stream-position", pos)
-// })
-
-
-ipcRenderer.on("master-end-of-stream", () => {
-    mpc.dispatch("end-of-stream")
-})
-
-
-ipcRenderer.on("master-playback-stopped", () => {
-    mpc.dispatch("playback-stopped")
-})
-
-ipcRenderer.on("master-playback-paused", () => {
-    mpc.dispatch("playback-paused")
-})
-
-ipcRenderer.on("master-playback-started", () => {
-    mpc.dispatch("playback-started")
-})
-
-
-ipcRenderer.on("master-stream-position", (event, pos) => {
-    mpc.dispatch("stream-position", pos)
-})
-
-
 pc.on('playback-started', () => {
-        //vc.mute_monitor()
         mpc.muteHeadset()
         SV.open_panel(3)
     }
@@ -207,18 +153,13 @@ pc.on('playback-started', () => {
 
 
 pc.on('playback-stopped', () => {
-    //vc.mute_monitor()
     mpc.unmuteHeadset()
-    //SV.open_panel(3)
 }
 )
 
 pc.on('playback-paused', () => {
-    //vc.mute_monitor()
     mpc.unmuteHeadset()
-    //SV.open_panel(3)
-}
-)
+})
 
 
 
@@ -285,13 +226,6 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-// document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
-//     ipcRenderer.send("reset-audio-system", {})
-//     pc.reset_audio_context({headphones:{left:0, right:1}})
-//     document.getElementById("main-menu-dropdown").classList.toggle("show");
-// })
-
-
 document.getElementById("main-menu-audio-setup").addEventListener('click', async () => {
     let d = new AudioOutputSettings({
         mainPlayer: mpc,
@@ -304,11 +238,9 @@ document.getElementById("main-menu-audio-setup").addEventListener('click', async
         },
         prelistenOutputChange: (deviceId) => {
             pc.setOutputDeviceId(deviceId)
+            view.setOutputDeviceId(deviceId)
         }
     })
-    // d.on("set-prelisten-output", (deviceId) => {
-    //     pc.setOutputDevice(deviceId)
-    // })
     d.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
@@ -347,10 +279,6 @@ document.getElementById("session-save-cancel").addEventListener('click', () => {
     document.getElementById("save-session-dialog").close();
 })
 
-
-
-
-
 document.getElementById("main-menu-discard-session").addEventListener('click', () => {
     let q = new Question({
         title: "Discard current session",
@@ -370,32 +298,6 @@ document.getElementById("main-menu-discard-session").addEventListener('click', (
     q.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
-//document.getElementById("discard-session-dialog").showModal();
-// document.getElementById("session-discard").addEventListener('click', () => {
-//     current_session_model.discard_session(() => {
-//         SE_controller.refresh(() => {})
-//     })
-//     document.getElementById("discard-session-dialog").close();
-// })
-
-// document.getElementById("session-discard-cancel").addEventListener('click', () => {
-//     document.getElementById("discard-session-dialog").close();
-// })
-
-
-
-
-
-
-// document.getElementById("main-menu-settings").addEventListener('click', () => {
-//     document.getElementById("main-menu-dropdown").classList.toggle("show");
-// })
-
-// document.getElementById("main-menu-mixer").addEventListener('click', () => {
-//     ipcRenderer.send("show-mixer-window")
-//     document.getElementById("main-menu-dropdown").classList.toggle("show");
-// })
 
 
 document.getElementById("main-menu-quit").addEventListener('click', () => {
@@ -466,18 +368,9 @@ function display_playlist(id) {
             let L = new PlaylistModel(info, tracks_model)
             T.ignore_unavailable = false
             T_controller.set_model(info.name, L)
-            // PE_controller.set_model(info.name, L)
         }
     )
 }
-
-ipcRenderer.on('playback-started', (event, arg) => {
-    vc.mute_monitor()});
-
-
-ipcRenderer.on('playback-stopped', (event, arg) => {
-    vc.restore_monitor()});
-
 
 function checkTime(i) {
     return (i < 10) ? "0" + i : i;
@@ -493,8 +386,6 @@ function startTime() {
     Y = today.getFullYear()
     document.getElementById("footer-date").innerHTML = `${Y}-${M}-${d}`
     document.getElementById("footer-time").innerHTML = `${h}:${m}`
-    // $$('calendar').define('label', `<span style="color:rgb(200,200,200)">${Y}-${M}-${d}</span> | <b>${h}:${m}</b>`)
-    // $$('calendar').refresh()
     t = setTimeout(function () {
         startTime()
     }, 30000);
