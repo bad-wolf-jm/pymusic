@@ -63,20 +63,20 @@ const db = new MusicDatabase("pymusic")
 //     //      client.close();
 //     //  }
 // }
-main2 = async () => {
-    // let x = await db.getAllTracks()
-    // x.forEach((e) => {
-    //     console.log(e)
-    // })
+// main2 = async () => {
+//     // let x = await db.getAllTracks()
+//     // x.forEach((e) => {
+//     //     console.log(e)
+//     // })
 
-    // (await db.getAllSessions()).forEach(async (pl) => {
-    //     console.log(pl.object.event, await pl.duration())
-    // })
+//     // (await db.getAllSessions()).forEach(async (pl) => {
+//     //     console.log(pl.object.event, await pl.duration())
+//     // })
 
-    // let x = (await db.getTracksByIds(["09lWty9X6kR6v6T8"]))[0]
-    // console.log(x)
-    // db.setTrackData(x, {"title": "Take Me To Church"})
-}
+//     // let x = (await db.getTracksByIds(["09lWty9X6kR6v6T8"]))[0]
+//     // console.log(x)
+//     // db.setTrackData(x, {"title": "Take Me To Church"})
+// }
 
 main = async () => {
     let mysql = require('async-mysql'),
@@ -137,8 +137,8 @@ main = async () => {
         sessions.forEach(async (s) => {
             let session_data = {
                     event: s.event_name,
-                    location: s.address,
-                    address: s.location,
+                    location: s.location,
+                    address: s.address,
                     createdAt: s.start_date,
                     updatedAt: s.start_date,
                     date_start: s.start_date,
@@ -150,7 +150,7 @@ main = async () => {
             session_tracks.forEach((t) => {
                 session_data.ordering.push(track_objects[t.track_id])
                 session_data.elements[track_objects[t.track_id]]  = {
-                    //status:t.status,
+                    status: t.status,
                     time_start: t.start_time,
                     time_end: t.end_time
                 }
@@ -159,15 +159,15 @@ main = async () => {
             await db.sessions.d.insert(session_data)
         })
 
-        let playback_logs = await connection.query(`SELECT * FROM session_tracks`);
-        playback_logs.forEach(async (log) => {
-            await db.playback_logs.d.insert({
-                track:track_objects[log.track_id],
-                time_start: log.start_time,
-                time_end: log.end_time,
-                status: log.status
-            })
-        })
+        // let playback_logs = await connection.query(`SELECT * FROM session_tracks`);
+        // playback_logs.forEach(async (log) => {
+        //     await db.playback_logs.d.insert({
+        //         track:track_objects[log.track_id],
+        //         time_start: log.start_time,
+        //         time_end: log.end_time,
+        //         status: log.status
+        //     })
+        // })
 
         let playlists = await connection.query('SELECT * FROM playlists');
         playlists.forEach(async (s) => {
