@@ -16,27 +16,37 @@ const { MusicDatabase } = require("musicdb/model.js")
 
 function trackBSON(tr) {
     let track_object = {
-        title: tr.title,
-        artist: tr.artist,
-        album: tr.album,
-        genre: tr.genre,
-        year: tr.year,
-        color: tr.color,
-        duration: tr.track_length,
-        loved: tr.favorite,
-        rating: tr.rating,
-        bpm: tr.bpm,
+        metadata: {
+            title: tr.title,
+            artist: tr.artist,
+            album: tr.album,
+            genre: tr.genre,
+            year: tr.year,
+            color: tr.color,
+            tags: []
+        },
+        track: {
+            duration: tr.track_length,
+            stream_start: tr.stream_start,
+            stream_end: tr.stream_end,
+            bpm: tr.bpm,
+            bitrate: tr.bitrate,
+            samplerate: tr.samplerate,
+            size: tr.file_size,
+            path: path.join(tr.music_root, tr.file_name)
+        },
+        stats: {
+            loved: tr.favorite,
+            rating: tr.rating,
+            last_played: null,
+            play_count: 0,
+            relations: {}
+        },
         createdAt: tr.date_added,
         updatedAt: tr.date_modified,
-        stream_start: tr.stream_start,
-        stream_end: tr.stream_end,
-        bitrate: tr.bitrate,
-        samplerate: tr.samplerate,
-        size: tr.file_size,
-        path: path.join(tr.music_root, tr.file_name)
     }
     if (tr.cover_original != null) {
-        track_object.cover = {
+        track_object.metadata.cover = {
             original: path.join(tr.image_root, tr.cover_original),
             small: path.join(tr.image_root, tr.cover_small),
             medium: path.join(tr.image_root, tr.cover_medium),
@@ -124,13 +134,8 @@ main = async () => {
             let t_relations = {}
             relations.forEach((r) => {
                 t_relations[track_objects[r.related_track_id]] = r.count
-                // {
-                //     reason: r.reason,
-                //     count: r.count,
-                //     date: r.date
-                // }
             })
-            await db.tracks.d.update({_id: t._id}, {$set: {relations: t_relations}})
+            await db.tracks.d.update({_id: t._id}, {$set: {"stats.relations": t_relations}})
         })
 
         let sessions = await connection.query('SELECT * FROM sessions');

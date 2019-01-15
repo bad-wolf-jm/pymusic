@@ -97,17 +97,17 @@ class QueueView extends EventDispatcher {
         for(let i=0; i<queue.length; i++) {
             //console.log(queue[i])
             let element = (queue[i] == null) ? {_id: null, duration:0} : {
-                _id:       queue[i]._id,
-                title:    queue[i].title,
-                artist:   queue[i].artist,
-                bpm:      queue[i].bpm,
-                duration: format_nanoseconds(queue[i].stream_end - queue[i].stream_start),
+                _id:      queue[i]._id,
+                title:    queue[i].metadata.title,
+                artist:   queue[i].metadata.artist,
+                bpm:      queue[i].track.bpm,
+                duration: format_nanoseconds(queue[i].track.stream_end - queue[i].track.stream_start),
             }
             if (element._id != null) {
-                if (queue[i].cover == null) {
+                if (queue[i].metadata.cover == null) {
                     element.cover = "../../resources/images/default_album_cover.png"
                 } else {
-                    element.cover = `file://${queue[i].cover.small}`;
+                    element.cover = `file://${queue[i].metadata.cover.small}`;
                 }
             }
             queue_rows.push(element)

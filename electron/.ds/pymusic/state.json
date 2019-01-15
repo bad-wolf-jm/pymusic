@@ -1,5 +1,5 @@
-{"_id":"playback_management","elements":{},"createdAt":{"$$date":1547426138075},"updatedAt":{"$$date":1547426138075}}
-{"_id":"queue","elements":{"tZXKPzXiSEgMAqxX":true,"jL1o2uH1EgdzF4z7":true,"X6D8XzLgvqNCCegf":true,"g7DSC79aQr85OkqJ":true,"uRCnjpHfH8E9mkxh":true,"xHxp5IYcWLMRS3qI":true},"ordering":[null,"tZXKPzXiSEgMAqxX","jL1o2uH1EgdzF4z7","g7DSC79aQr85OkqJ","X6D8XzLgvqNCCegf","uRCnjpHfH8E9mkxh","xHxp5IYcWLMRS3qI"],"createdAt":{"$$date":1547426138069},"updatedAt":{"$$date":1547490190202}}
-{"_id":"session","elements":{},"ordering":[],"createdAt":{"$$date":1547426138072},"updatedAt":{"$$date":1547426138072}}
-{"_id":"shortlist","elements":{},"createdAt":{"$$date":1547426138074},"updatedAt":{"$$date":1547426138074}}
-{"_id":"unavailable","elements":{},"createdAt":{"$$date":1547426138074},"updatedAt":{"$$date":1547426138074}}
+{"_id":"playback_management","elements":{},"createdAt":{"$$date":1547570463985},"updatedAt":{"$$date":1547570463985}}
+{"_id":"queue","elements":{"8h4nvpVb2lgvlkz9":true,"ohCSyL1yTh4EfBNF":true},"ordering":["8h4nvpVb2lgvlkz9",null,"ohCSyL1yTh4EfBNF"],"createdAt":{"$$date":1547570463978},"updatedAt":{"$$date":1547572969062}}
+{"_id":"session","elements":{"4nyQpKdC93lgGjPx":{"time_start":{"$$date":1547572837450},"time_end":{"$$date":1547572857536}}},"ordering":["4nyQpKdC93lgGjPx"],"createdAt":{"$$date":1547570463982},"updatedAt":{"$$date":1547572857552}}
+{"_id":"shortlist","elements":{},"createdAt":{"$$date":1547570463984},"updatedAt":{"$$date":1547570463984}}
+{"_id":"unavailable","elements":{},"createdAt":{"$$date":1547570463985},"updatedAt":{"$$date":1547570463985}}

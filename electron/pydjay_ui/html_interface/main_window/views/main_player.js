@@ -43,26 +43,26 @@ class MainPlayerView extends EventDispatcher {
 
     set_track_metadata(track) {
         if (this._track != undefined && track._id == this._track._id) {
-            let stream_length = (track.stream_end-track.stream_start);
-            document.getElementById("main-player-track-title").innerHTML    = track.title
-            document.getElementById("main-player-track-album").innerHTML    = track.album
-            document.getElementById("main-player-track-artist").innerHTML   = track.artist
-            document.getElementById("main-player-track-bpm").innerHTML      = track.bpm
+            let stream_length = (track.track.stream_end - track.track.stream_start);
+            document.getElementById("main-player-track-title").innerHTML    = track.metadata.title
+            document.getElementById("main-player-track-album").innerHTML    = track.metadata.album
+            document.getElementById("main-player-track-artist").innerHTML   = track.metadata.artist
+            document.getElementById("main-player-track-bpm").innerHTML      = track.track.bpm
             document.getElementById("main-player-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
-            this.setRating(track.rating)
-            this.setLoved(track.favorite)
+            this.setRating(track.stats.rating)
+            this.setLoved(track.stats.loved)
             let cover_source = undefined
             if (track.cover == null) {
                 cover_source = "../../resources/images/default_album_cover.png"
             } else {
-                cover_source = `file://${track.cover.medium}`;
+                cover_source = `file://${track.metadata.cover.medium}`;
             }
             document.getElementById("main-player-track-cover").src = cover_source    
         }
     }
 
     set_track(track) {
-        let file_name = track.path
+        let file_name = track.track.path
         this._track = track
         this.set_track_metadata(track)
         this._waveform.load(file_name)
@@ -84,7 +84,7 @@ class MainPlayerView extends EventDispatcher {
         });
         this._position_tracker = this.controller.on("stream-position",
             (pos) => {
-                let p = pos.position*1000000 / this._track.duration
+                let p = pos.position*1000000 / this._track.track.duration
                 p = Math.max(p,0.0)
                 p = Math.min(p,1.0)
                 this._waveform.seekAndCenter(p)
@@ -106,7 +106,7 @@ class MainPlayerView extends EventDispatcher {
         document.getElementById("main-player-rating").innerHTML = html
         for (let i=1; i<6; i++) {
             document.getElementById(`main-rating-star-${i}`).addEventListener('click', () => {
-                if (i == 1 && this._track.rating == 1) {
+                if (i == 1 && this._track.stats.rating == 1) {
                     this.updateRating(0)
                 } else {
                     this.updateRating(i)
@@ -124,13 +124,13 @@ class MainPlayerView extends EventDispatcher {
 
     updateRating(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.set_metadata(this._track, {rating:new_value})
+            this.track_list_model.set_metadata(this._track, {"stats.rating":new_value})
         }
     }
 
     updateLoved(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.set_metadata(this._track, {favorite:new_value})
+            this.track_list_model.set_metadata(this._track, {"stats.loved":new_value})
         }
     }
 

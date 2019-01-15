@@ -25,7 +25,7 @@ class PrecuePlayerView extends EventDispatcher {
             let ratio = mouseX / x.width
             let t = this.controller._current_track.track_object
             if (t != undefined) {
-                this.controller.play(t, t.stream_start + ((t.stream_end - t.stream_start) * ratio))
+                this.controller.play(t, t.track.stream_start + ((t.track.stream_end - t.track.stream_start) * ratio))
             }
         })
 
@@ -84,21 +84,21 @@ class PrecuePlayerView extends EventDispatcher {
     update_track(track) {
         let stream_length = (track.stream_end-track.stream_start);
         this._track = track
-        document.getElementById("precue-player-title").innerHTML       = track.title
-        document.getElementById("precue-player-album").innerHTML       = track.album
-        document.getElementById("precue-player-artist").innerHTML      = track.artist
-        document.getElementById("precue-player-genre").innerHTML       = track.genre
-        document.getElementById("precue-player-last-played").innerHTML = track.last_played
-        document.getElementById("precue-player-play-count").innerHTML  = track.play_count
-        document.getElementById("precue-player-bpm").innerHTML         = track.bpm
+        document.getElementById("precue-player-title").innerHTML       = track.metadata.title
+        document.getElementById("precue-player-album").innerHTML       = track.metadata.album
+        document.getElementById("precue-player-artist").innerHTML      = track.metadata.artist
+        document.getElementById("precue-player-genre").innerHTML       = track.metadata.genre
+        document.getElementById("precue-player-last-played").innerHTML = track.stats.last_played
+        document.getElementById("precue-player-play-count").innerHTML  = track.stats.play_count
+        document.getElementById("precue-player-bpm").innerHTML         = track.track.bpm
         document.getElementById("precue-player-duration").innerHTML    = `${format_nanoseconds(stream_length)}`
-        this.setRating(track.rating)
-        this.setLoved(track.loved)
+        this.setRating(track.stats.rating)
+        this.setLoved(track.stats.loved)
         let cover_source = undefined
-        if (track.cover == null) {
+        if (track.metadata.cover == null) {
             cover_source = "../../resources/images/default_album_cover.png"
         } else {
-            cover_source = `file://${track.cover.small}`;
+            cover_source = `file://${track.metadata.cover.small}`;
         }
         document.getElementById("precue-player-cover").src = cover_source
         document.getElementById("no-preview-track").style.display = "none"
@@ -113,7 +113,7 @@ class PrecuePlayerView extends EventDispatcher {
         document.getElementById("precue-player-rating").innerHTML = html
         for (let i=1; i<6; i++) {
             document.getElementById(`precue-rating-star-${i}`).addEventListener('click', () => {
-                if (i == 1 && this._track.rating == 1) {
+                if (i == 1 && this._track.stats.rating == 1) {
                     this.updateRating(0)
                 } else {
                     this.updateRating(i)
@@ -127,7 +127,6 @@ class PrecuePlayerView extends EventDispatcher {
         this.update_track(tr.track_object)
     }
 
-
     setLoved (value){
         var html = "";
         this.loved = value
@@ -137,13 +136,13 @@ class PrecuePlayerView extends EventDispatcher {
 
     updateRating(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.setTrackMetadata(this._track, {rating:new_value})
+            this.track_list_model.setTrackMetadata(this._track, {'stats.rating':new_value})
         }
     }
 
     updateLoved(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.setTrackMetadata(this._track, {loved:new_value})
+            this.track_list_model.setTrackMetadata(this._track, {'stats.loved':new_value})
         }
     }
 }

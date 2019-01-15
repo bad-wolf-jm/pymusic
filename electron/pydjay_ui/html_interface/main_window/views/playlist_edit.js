@@ -99,13 +99,13 @@ class PlaylistEditView extends EventDispatcher {
         for(let i=0; i<queue.length; i++) {
             let element = (queue[i] == null) ? {id: null, stream_length:0} : {
                 id:       queue[i]._id,
-                title:    queue[i].title,
-                artist:   queue[i].artist,
-                bpm:      queue[i].bpm,
+                title:    queue[i].metadata.title,
+                artist:   queue[i].metadata.artist,
+                bpm:      queue[i].metadata.bpm,
                 duration: format_nanoseconds(queue[i].stream_end - queue[i].stream_start),
             }
             if (element.id != null) {
-                if (queue[i].cover == null) {
+                if (queue[i].metadata.cover == null) {
                     element.cover = "../../resources/images/default_album_cover.png"
                 } else {
                     element.cover = `file://${queue[i].cover.small}`

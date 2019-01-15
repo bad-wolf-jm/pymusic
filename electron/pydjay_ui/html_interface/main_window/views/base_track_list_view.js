@@ -8,7 +8,7 @@ function rgb2hex(rgb) {
     }
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
-class TrackListView extends EventDispatcher {
+class BaseTrackListView extends EventDispatcher {
     constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
         super()
 
@@ -43,11 +43,6 @@ class TrackListView extends EventDispatcher {
                 clusterChanged: () => {
                     let elements = document.querySelectorAll('.track-entry');
                     let unavailable = {};
-                    // if  (this.controller != undefined) {
-                    //     unavailable = this.controller.unavailable.get_all_track_ids();
-                    // } else {
-                    //     unavailable = {}
-                    // }
                     [].forEach.call(elements, (e) => {
                         let track_id = e.attributes["data-track-id"].value
                         this.table_rows[track_id] = e
@@ -632,9 +627,11 @@ class TrackListView extends EventDispatcher {
 
 
     ensure_row_visible(x, direction) {
+        // console.log(x)
         let row = this.table_rows[x._id]
         let scroller = document.getElementById("main-track-list-scroller")
         let scrollerRect = scroller.getBoundingClientRect()
+        //console.log(row)
         if (row == undefined) {
             scroller.scrollTop += (this.d*30)
         } else {
@@ -660,6 +657,8 @@ class TrackListView extends EventDispatcher {
         this._selected_row = selection
         this._selected_row.forEach((x) => {
             this.ensure_row_visible(x)
+            // console.log(this.table_rows)
+            // console.log(x)
             if (this.table_rows[x._id] != undefined) {
                 this.table_rows[x._id].classList.add("selected")
             }
