@@ -292,8 +292,10 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
 // })
 
 
-document.getElementById("main-menu-audio-setup").addEventListener('click', () => {
+document.getElementById("main-menu-audio-setup").addEventListener('click', async () => {
     let d = new AudioOutputSettings({
+        mainPlayer: mpc,
+        prelistenPlayer: pc,
         masterOutputChange: (deviceId) => {
             mpc.setMasterOutputDeviceId(deviceId)
         },

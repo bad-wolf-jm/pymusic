@@ -43,6 +43,17 @@ class PlaybackController extends RemoteTrackPlayer {
         this.setOutputDeviceId("headset", deviceId)        
     }
 
+    getMasterOutputDeviceId(deviceId) {
+        return this.getOutputDeviceIds()['master']
+        // this.setOutputDeviceId("master", deviceId)
+    }
+
+    getHeadsetOutputDeviceId(deviceId) {
+        return this.getOutputDeviceIds()['headset']
+        // this.setOutputDeviceId("headset", deviceId)        
+    }
+
+
     unmuteHeadset() {
         this.unmuteOutput("headset")
     }

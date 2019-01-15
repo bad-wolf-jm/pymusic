@@ -12,6 +12,10 @@ class PrecueController extends AudioTrackPlayer {
         super.setOutputDeviceId("main", deviceId)
     }
 
+    getOutputDeviceId() {
+        return super.getOutputDeviceIds()["main"] //, deviceId)
+    }
+
     play_last_10_seconds(track) {
         this.track = track
         if (track != undefined) {
