@@ -30,11 +30,9 @@ class QueueController extends EventDispatcher {
 
     addView(view) {
         this.views.push(view)
-        //view.on("reorder", this.reorder_queue.bind(this))
     }
 
     reorder_queue(new_order) {
-        // console.log("queue reordered")
         return this.model.reorder(new_order, true)
     }
 

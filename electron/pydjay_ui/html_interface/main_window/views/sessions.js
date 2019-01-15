@@ -28,7 +28,7 @@ class SessionsView extends EventDispatcher {
             }
             list_rows.push(element)
         }
-        // console.log(list_rows)
+
         jui.ready([ "grid.table" ], function(table) {
                 table("#session-list-elements", {
                     data:   list_rows,

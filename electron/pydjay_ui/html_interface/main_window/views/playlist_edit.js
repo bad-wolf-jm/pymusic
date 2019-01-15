@@ -116,7 +116,6 @@ class PlaylistEditView extends EventDispatcher {
         }
         document.getElementById("playlist-edit-name").innerHTML = name
         this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks - ${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
-        //this.duration_dom.innerHTML = "" //`${format_seconds_long(Math.round(this.controller.duration() / 1000000000))}`
         jui.ready([ "grid.table" ], (table) => {
                 if (this.queue_content != undefined) {
                     this.queue_content.reset()

@@ -5,14 +5,6 @@ class PlaylistsController extends EventDispatcher {
         this.queue_table = undefined
         this.ready_wait_queue = []
         this.views = []
-
-
-        // this.refresh(() => {
-        //     for(let i=0; i<this.ready_wait_queue.length; i++) {
-        //         this.ready_wait_queue[i](this.queue)
-        //     }    
-        //     this.dispatch("content-changed", this.queue)
-        // })
     }
 
     async setModel(m) {

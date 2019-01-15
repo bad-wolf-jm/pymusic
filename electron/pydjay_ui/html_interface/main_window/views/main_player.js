@@ -62,7 +62,7 @@ class MainPlayerView extends EventDispatcher {
     }
 
     set_track(track) {
-        let file_name = track.path //path.join(track.music_root, track.file_name);
+        let file_name = track.path
         this._track = track
         this.set_track_metadata(track)
         this._waveform.load(file_name)

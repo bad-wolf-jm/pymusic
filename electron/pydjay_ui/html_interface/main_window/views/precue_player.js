@@ -82,9 +82,6 @@ class PrecuePlayerView extends EventDispatcher {
     }
 
     update_track(track) {
-        //console.log("FOO", track)
-        //track = track.track_object
-        //let file_name = path.join(track.music_root, track.file_name);
         let stream_length = (track.stream_end-track.stream_start);
         this._track = track
         document.getElementById("precue-player-title").innerHTML       = track.title
@@ -95,11 +92,6 @@ class PrecuePlayerView extends EventDispatcher {
         document.getElementById("precue-player-play-count").innerHTML  = track.play_count
         document.getElementById("precue-player-bpm").innerHTML         = track.bpm
         document.getElementById("precue-player-duration").innerHTML    = `${format_nanoseconds(stream_length)}`
-        // if (track.color == null) {
-        //     document.getElementById("precue-player-color").style.background = "#ffffff"
-        // } else {
-        //     document.getElementById("precue-player-color").style.background = track.color
-        // }
         this.setRating(track.rating)
         this.setLoved(track.loved)
         let cover_source = undefined
@@ -146,25 +138,12 @@ class PrecuePlayerView extends EventDispatcher {
     updateRating(new_value) {
         if (this.track_list_model != undefined) {
             this.track_list_model.setTrackMetadata(this._track, {rating:new_value})
-            // this.hueb.close()    
         }
-
-        // DB.update_track_data(this._track.id, {rating:new_value}, () => {
-        //     this._track.rating = new_value
-        //     this.setRating(new_value)
-        // })
     }
 
     updateLoved(new_value) {
         if (this.track_list_model != undefined) {
             this.track_list_model.setTrackMetadata(this._track, {loved:new_value})
-            // this.hueb.close()    
         }
-
-        // DB.update_track_data(this._track.id, {favorite:new_value}, () => {
-        //     console.log(new_value)
-        //     this._track.favorite = new_value
-        //     this.setLoved(new_value)
-        // })
     }
 }

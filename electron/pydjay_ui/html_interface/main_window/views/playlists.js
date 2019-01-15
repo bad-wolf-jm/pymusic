@@ -9,7 +9,7 @@ class PlaylistsView extends EventDispatcher {
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Edit...', click: async () => {
             let T = this.context_menu_element
-            let p = await this.controller.get_playlist_by_id(T) //this.controller.get_playlist_by_id(T, (p) => {
+            let p = await this.controller.get_playlist_by_id(T)
             let L = new TrackSetModel(MDB, MDB.playlists, T)
             PE_controller.set_model(p, L)
             Q.show_playlist_editor()
@@ -97,7 +97,7 @@ class PlaylistsView extends EventDispatcher {
     }
 
     on_drag_end(evt) {
-        //console.log(evt.target)
+
     }
 
     async on_drop(evt) {

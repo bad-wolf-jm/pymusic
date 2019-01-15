@@ -1,6 +1,5 @@
-const {ColorPicker} = require("ui/popup/colorpicker.js")
-//const {EventDispatcher} = require("notify/event_dispatcher.js")
-const {PydjayAudioBufferPlayer} = require("webaudio/audio_player_buffer.js")
+const { ColorPicker } = require("ui/popup/colorpicker.js")
+const { PydjayAudioBufferPlayer } = require("webaudio/audio_player_buffer.js")
 
 function rgb2hex(rgb) {
     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
@@ -201,47 +200,7 @@ class TrackEditorView extends EventDispatcher {
                 scroll: false,
                 resize: false
             });
-            // var history_content = table("#playback-history", {
-            //     data:   history,
-            //     scroll: false,
-            //     resize: false
-            // })
         })
-
-        // DB.get_related_tracks(track.id, (queue) => {
-        //     DB.get_playback_history(track.id, (history) => {
-        //         let queue_rows = []
-        //         for(let i=0; i<queue.length; i++) {
-        //             let element = {
-        //                 id:          queue[i].id,
-        //                 available:   queue[i].available,
-        //                 color:       queue[i].color,
-        //                 loved:       "<i title='"+i+"' class='fa " + (queue[i].favorite ? "fa-heart" : "fa-heart-o") +"'></i>",
-        //                 title:       queue[i].title,
-        //                 artist:      queue[i].artist,
-        //                 genre:       queue[i].genre,
-        //                 last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
-        //                 play_count:  queue[i].play_count,
-        //                 rating:      this._get_rating(queue[i]),
-        //                 bpm:         queue[i].bpm,
-        //                 duration:    format_nanoseconds(queue[i].stream_length),
-        //             }
-        //             queue_rows.push(element)
-        //         }
-        //         jui.ready([ "grid.table" ], (table) => {
-        //             var queue_content = table("#related-elements", {
-        //                 data:   queue_rows,
-        //                 scroll: false,
-        //                 resize: false
-        //             });
-        //             var history_content = table("#playback-history", {
-        //                 data:   history,
-        //                 scroll: false,
-        //                 resize: false
-        //             })
-        //         })
-        //     })
-        // })
     }
 
 

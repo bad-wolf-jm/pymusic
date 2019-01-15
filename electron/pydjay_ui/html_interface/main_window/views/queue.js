@@ -183,7 +183,6 @@ class QueueView extends EventDispatcher {
             } else {
                 n = 0
             }
-            //console.log(n, this.view_list_order)
             this._select_row(this.view_elements[this.view_list_order[n]])
         } else {
             this._select_row(this.view_elements[this.view_list_order[0]])
@@ -290,7 +289,6 @@ class QueueView extends EventDispatcher {
                 this.view_list_order[position - 1] = selected_id
                 this.view_list_order[position] = x
                 await this.controller.reorder_queue(this.view_list_order)
-                // this.dispatch("reorder", this.view_list_order)
                 this.sortable.sort(this.view_list_order)
                 this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
                 this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
@@ -310,8 +308,6 @@ class QueueView extends EventDispatcher {
                 this.view_list_order[position + 1] = selected_id
                 this.view_list_order[position] = x
                 await this.controller.reorder_queue(this.view_list_order)
-                // this.dispatch("reorder", this.view_list_order)
-                //console.log(this.current_selection)
                 this.sortable.sort(this.view_list_order)
                 this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
                 this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
@@ -328,7 +324,6 @@ class QueueView extends EventDispatcher {
             this.view_list_order.splice(position, 1)
             this.view_list_order.splice(0, 0, selected_id)
             await this.controller.reorder_queue(this.view_list_order)
-            // this.dispatch("reorder", this.view_list_order)
             this.sortable.sort(this.view_list_order)
             this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
             this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
@@ -367,8 +362,6 @@ class QueueView extends EventDispatcher {
         if (track) {
             this.controller.append(track)
         }
-        // this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
-        // this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
     }
 
     _select_row(x) {

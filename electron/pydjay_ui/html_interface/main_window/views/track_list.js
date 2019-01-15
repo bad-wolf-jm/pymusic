@@ -51,7 +51,6 @@ class TrackListView extends EventDispatcher {
                     [].forEach.call(elements, (e) => {
                         let track_id = e.attributes["data-track-id"].value
                         this.table_rows[track_id] = e
-                        //console.log(track_id, e)
                         if (unavailable[track_id] != undefined) {
                             if (!this.ignore_unavailable) {                            
                                 e.classList.add("unavailable")
@@ -326,8 +325,7 @@ class TrackListView extends EventDispatcher {
     handle_drag_start(e) {
         let x = e.target.closest("tr")
         let track_id = x.attributes["data-track-id"].value
-        let track_element = track_id //await this.controller.getElementById(track_id)
-        //console.log(track_element, JSON.stringify(track_element))
+        let track_element = track_id 
         e.dataTransfer.setData("text/plain", track_element)//JSON.stringify(track_element))
     }
 
@@ -343,7 +341,6 @@ class TrackListView extends EventDispatcher {
         if (id != undefined) {
             let rating_regex = /main-track-rating-([a-zA-Z0-9]+)-(\d+)/g
             let matches = rating_regex.exec(id.value)
-            //console.log(matches)
             if (matches != undefined) {
                 let track_id = matches[1]
                 let rating_value = parseInt(matches[2])
@@ -383,7 +380,6 @@ class TrackListView extends EventDispatcher {
     select_row(e) {
         let x = e.target.closest("tr")
         let id = x.attributes["data-track-id"].value
-        //console.log(x)
         this.controller.select_element(id)
     }
 
