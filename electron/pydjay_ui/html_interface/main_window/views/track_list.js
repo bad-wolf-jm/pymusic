@@ -1,26 +1,26 @@
-const { ipcRenderer } = require('electron');
-const Clusterize = require("clusterize.js")
+// const { ipcRenderer } = require('electron');
+// const Clusterize = require("clusterize.js")
 
-function rgb2hex(rgb) {
-    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    function hex(x) {
-        return ("0" + parseInt(x).toString(16)).slice(-2);
-    }
-    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-}
-class TrackListView extends EventDispatcher {
+// function rgb2hex(rgb) {
+//     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+//     function hex(x) {
+//         return ("0" + parseInt(x).toString(16)).slice(-2);
+//     }
+//     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+// }
+class TrackListView extends BaseTrackListView {
     constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
-        super()
+        super(document.getElementById("main-list"), document.getElementById("main-track-list-scroller"))
 
-        this.element = document.getElementById("main-list")
+        // this.element = document.getElementById("main-list")
 
         this.dom_id     = dom_ids.list
-        this.controller = undefined
-        this.table      = undefined
-        this.queue_rows = undefined
+        // this.controller = undefined
+        // this.table      = undefined
+        // this.queue_rows = undefined
 
-        this.ignore_unavailable = false
-        this.model_order = false
+        // this.ignore_unavailable = false
+        // this.model_order = false
 
         this.prevWidth = [];
 
@@ -234,93 +234,109 @@ class TrackListView extends EventDispatcher {
         return this.render_row_internal(track, "th")
     }
 
-    set_controller(controller) {
-        this.controller = controller
-        this.controller.addView(this)
-        this.controller.on("content-changed", this.set_list.bind(this))
-        this.controller.on("selection-changed", this.update_selection.bind(this))
-        this.controller.on("element-updated", this.update_element.bind(this))
-        this.controller.on("metadata-changed", this.update_element.bind(this))
-        this.controller.on("track-unavailable", (tr) => {
-            if (this.ignore_unavailable) {
-                return null
-            }
-            if (tr != undefined) {
-                if (this.table_rows[tr.id] != undefined) {
-                    this.table_rows[tr.id].classList.add("unavailable")
-                }
-            }
-        })
-        this.controller.on("track-available", (tr) => {
-            if (tr != undefined) {
-                if (this.table_rows[tr.id] != undefined) {
-                    this.table_rows[tr.id].classList.remove("unavailable")
-                }
-            }
-        })
-    }
+    // set_controller(controller) {
+    //     this.controller = controller
+    //     this.controller.addView(this)
+    //     this.controller.on("content-changed", this.set_list.bind(this))
+    //     this.controller.on("selection-changed", this.update_selection.bind(this))
+    //     this.controller.on("element-updated", this.update_element.bind(this))
+    //     this.controller.on("metadata-changed", this.update_element.bind(this))
+    //     this.controller.on("track-unavailable", (tr) => {
+    //         if (this.ignore_unavailable) {
+    //             return null
+    //         }
+    //         if (tr != undefined) {
+    //             if (this.table_rows[tr.id] != undefined) {
+    //                 this.table_rows[tr.id].classList.add("unavailable")
+    //             }
+    //         }
+    //     })
+    //     this.controller.on("track-available", (tr) => {
+    //         if (tr != undefined) {
+    //             if (this.table_rows[tr.id] != undefined) {
+    //                 this.table_rows[tr.id].classList.remove("unavailable")
+    //             }
+    //         }
+    //     })
+    // }
 
     _get_loved(track_object) {
-        return `<i id='main-track-loved-${track_object._id}' title='${track_object._id}' class='fa ${(track_object.stats.loved ? "fa-heart" : "fa-heart-o")}'></i>`
+        return `<i id='main-track-loved-${track_object.id}' title='${track_object.id}' class='fa ${(track_object.loved ? "fa-heart" : "fa-heart-o")}'></i>`
     }
 
     _get_rating(track_object) {
         let html = "";
         for (let j=1; j<6; j++) {
-            html += `<i id='main-track-rating-${track_object._id}-${j}' class='fa ${( j <= track_object.stats.rating ? "fa-star" : "fa-star-o")}' style='font-size:8pt; margin-left:3px'></i>`;
+            html += `<i id='main-track-rating-${track_object.id}-${j}' class='fa ${( j <= track_object.rating ? "fa-star" : "fa-star-o")}' style='font-size:8pt; margin-left:3px'></i>`;
         }
         return html
     }
 
-    compare_tracks(a, b) {
-        let x = a.metadata.title.toLowerCase();
-        let y = b.metadata.title.toLowerCase();
-        if (x < y) {return -1;}
-        if (x > y) {return 1;}
-        return 0;        
-    }    
+    // compare_tracks(a, b) {
+    //     let x = a.metadata.title.toLowerCase();
+    //     let y = b.metadata.title.toLowerCase();
+    //     if (x < y) {return -1;}
+    //     if (x > y) {return 1;}
+    //     return 0;        
+    // }    
 
+    update(name, list, length, duration) {
+        this.name_dom.innerHTML = `${name}`
+        this.num_tracks_dom.innerHTML = `${length} tracks`
+        this.duration_dom.innerHTML = `${format_seconds_long(duration / 1000000000)}`
+    }
 
-    async set_list(name, queue) {
-        this.view_list_order = []
-        this.view_list_id_order = []
-        this.queue_rows = []
-        if (!this.model_order) {
-            queue.sort(this.compare_tracks)
-        }
-
-        let scroller = document.getElementById("main-track-list-scroller")
-        scroller.scrollTop = 0
-    
-        //this.table_rows = {}
-        if (queue == undefined) {
-            queue = []
-        }
-        for(let i=0; i<queue.length; i++) {
-            let element = {
-                id:          queue[i]._id,
-                available:   queue[i].available,
-                color:       queue[i].metadata.color,
-                loved:       this._get_loved(queue[i]),
-                title:       queue[i].metadata.title,
-                artist:      queue[i].metadata.artist,
-                album:       queue[i].metadata.album,
-                genre:       queue[i].metadata.genre,
-                last_played: (queue[i].stats.last_played != null) ? moment(queue[i].stats.last_played).format('MM-DD-YYYY') : "",
-                play_count:  (queue[i].stats.play_count != undefined) ? queue[i].stats.play_count : "",
-                rating:      this._get_rating(queue[i]),
-                bpm:         queue[i].track.bpm,
-                duration:    format_nanoseconds(queue[i].track.stream_end - queue[i].track.stream_start ),
-            }
-            this.queue_rows.push(this.render_row(element))
-            this.view_list_order.push(element)
-            this.view_list_id_order.push(element.id)
-        }
-        this.name_dom.innerHTML       = `${name}`
-        this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
-        this.duration_dom.innerHTML   = `${format_seconds_long(Math.round((await this.controller.duration()) / 1000000000))}`
+    update_view(list) {
+        this.queue_rows = list.map((e) => {
+            e.rating = this._get_rating(e)
+            e.loved = this._get_loved(e)
+            e.duration = format_nanoseconds(e.duration)
+            return this.render_row(e)
+        })
         this.list_cluster.update(this.queue_rows)
     }
+
+
+    // async set_list(name, queue) {
+    //     this.view_list_order = []
+    //     this.view_list_id_order = []
+    //     this.queue_rows = []
+    //     if (!this.model_order) {
+    //         queue.sort(this.compare_tracks)
+    //     }
+
+    //     let scroller = document.getElementById("main-track-list-scroller")
+    //     scroller.scrollTop = 0
+    
+    //     //this.table_rows = {}
+    //     if (queue == undefined) {
+    //         queue = []
+    //     }
+    //     for(let i=0; i<queue.length; i++) {
+    //         let element = {
+    //             id:          queue[i]._id,
+    //             available:   queue[i].available,
+    //             color:       queue[i].metadata.color,
+    //             loved:       this._get_loved(queue[i]),
+    //             title:       queue[i].metadata.title,
+    //             artist:      queue[i].metadata.artist,
+    //             album:       queue[i].metadata.album,
+    //             genre:       queue[i].metadata.genre,
+    //             last_played: (queue[i].stats.last_played != null) ? moment(queue[i].stats.last_played).format('MM-DD-YYYY') : "",
+    //             play_count:  (queue[i].stats.play_count != undefined) ? queue[i].stats.play_count : "",
+    //             rating:      this._get_rating(queue[i]),
+    //             bpm:         queue[i].track.bpm,
+    //             duration:    format_nanoseconds(queue[i].track.stream_end - queue[i].track.stream_start ),
+    //         }
+    //         this.queue_rows.push(this.render_row(element))
+    //         this.view_list_order.push(element)
+    //         this.view_list_id_order.push(element.id)
+    //     }
+    //     this.name_dom.innerHTML       = `${name}`
+    //     this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
+    //     this.duration_dom.innerHTML   = `${format_seconds_long(Math.round((await this.controller.duration()) / 1000000000))}`
+    //     this.list_cluster.update(this.queue_rows)
+    // }
 
     handle_drag_start(e) {
         let x = e.target.closest("tr")
@@ -362,42 +378,42 @@ class TrackListView extends EventDispatcher {
     }
 
 
-    async set_rating(id, value) {
-        console.log(id)
-        let track = await this.controller.getElementById(id)
-        if (value == 1 && track.rating == 1) {
-            this.controller.setTrackMetadata(track, {"stats.rating":0})
-        } else {
-            this.controller.setTrackMetadata(track, {"stats.rating": value})
-        }
-    }
+    // async set_rating(id, value) {
+    //     console.log(id)
+    //     let track = await this.controller.getElementById(id)
+    //     if (value == 1 && track.rating == 1) {
+    //         this.controller.setTrackMetadata(track, {"stats.rating":0})
+    //     } else {
+    //         this.controller.setTrackMetadata(track, {"stats.rating": value})
+    //     }
+    // }
 
-    async toggle_loved(id) {
-        let track = await this.controller.getElementById(id)
-        this.controller.setTrackMetadata(track, {"stats.loved": !(track.stats.loved)})
-    }
+    // async toggle_loved(id) {
+    //     let track = await this.controller.getElementById(id)
+    //     this.controller.setTrackMetadata(track, {"stats.loved": !(track.stats.loved)})
+    // }
 
-    select_row(e) {
-        let x = e.target.closest("tr")
-        let id = x.attributes["data-track-id"].value
-        this.controller.select_element(id)
-    }
+    // select_row(e) {
+    //     let x = e.target.closest("tr")
+    //     let id = x.attributes["data-track-id"].value
+    //     this.controller.select_element(id)
+    // }
 
 
-    focus() {
-        this.element.classList.add("focus")
-    }
+    // focus() {
+    //     this.element.classList.add("focus")
+    // }
 
-    blur() {
-        if (this.edit_mode) {
-            this.cancel_edit()
-        }
-        this.element.classList.remove("focus")
-    }
+    // blur() {
+    //     if (this.edit_mode) {
+    //         this.cancel_edit()
+    //     }
+    //     this.element.classList.remove("focus")
+    // }
 
-    selected_element() {
-        return this.controller.selection[0]
-    }
+    // selected_element() {
+    //     return this.controller.selection[0]
+    // }
 
 
     delete_selection() {
@@ -495,59 +511,59 @@ class TrackListView extends EventDispatcher {
     }
 
 
-    move_down() {
-        if (this.edit_mode) {
-            this.cancel_edit()
-        }
-        this.d = 1
-        if (this._selected_row != undefined) {
-            let r = this._selected_row[0]
-            let i = this.view_list_id_order.indexOf(r._id)
-            let n
-            if (i != -1) {
-                n = (i+1) < this.view_list_id_order.length ? i+1 : this.view_list_id_order.length - 1
-            } else {
-                n = 0
-            }
-            this.controller.select_element(this.view_list_id_order[n])
-        } else {
-            this.controller.select_element(this.view_list_id_order[0])
-        }
-    }
+    // move_down() {
+    //     if (this.edit_mode) {
+    //         this.cancel_edit()
+    //     }
+    //     this.d = 1
+    //     if (this._selected_row != undefined) {
+    //         let r = this._selected_row[0]
+    //         let i = this.view_list_id_order.indexOf(r._id)
+    //         let n
+    //         if (i != -1) {
+    //             n = (i+1) < this.view_list_id_order.length ? i+1 : this.view_list_id_order.length - 1
+    //         } else {
+    //             n = 0
+    //         }
+    //         this.controller.select_element(this.view_list_id_order[n])
+    //     } else {
+    //         this.controller.select_element(this.view_list_id_order[0])
+    //     }
+    // }
 
-    move_up() {
-        if (this.edit_mode) {
-            this.cancel_edit()
-        }
-        this.d = -1
-        if (this._selected_row != undefined) {
-            let r = this._selected_row[0]
-            let i = this.view_list_id_order.indexOf(r._id)
-            let n
-            if (i != -1) {
-                n = (i-1) >= 0 ? i-1 : 0
-            } else {
-                n = 0
-            }
-            this.controller.select_element(this.view_list_id_order[n])
-        } else {
-            this.controller.select_element(this.view_list_id_order[this.view_list_id_order.length-1])
-        }
-    }
-
-
-    move_last() {
-        let e = this.view_list_id_order[this.view_list_id_order.length-1]
-        this.ensure_row_visible(e)
-        this.controller.select_element(e)
-    }
+    // move_up() {
+    //     if (this.edit_mode) {
+    //         this.cancel_edit()
+    //     }
+    //     this.d = -1
+    //     if (this._selected_row != undefined) {
+    //         let r = this._selected_row[0]
+    //         let i = this.view_list_id_order.indexOf(r._id)
+    //         let n
+    //         if (i != -1) {
+    //             n = (i-1) >= 0 ? i-1 : 0
+    //         } else {
+    //             n = 0
+    //         }
+    //         this.controller.select_element(this.view_list_id_order[n])
+    //     } else {
+    //         this.controller.select_element(this.view_list_id_order[this.view_list_id_order.length-1])
+    //     }
+    // }
 
 
-    move_first() {
-        let e = this.view_list_id_order[0]
-        this.ensure_row_visible(e)
-        this.controller.select_element(e)
-    }
+    // move_last() {
+    //     let e = this.view_list_id_order[this.view_list_id_order.length-1]
+    //     this.ensure_row_visible(e)
+    //     this.controller.select_element(e)
+    // }
+
+
+    // move_first() {
+    //     let e = this.view_list_id_order[0]
+    //     this.ensure_row_visible(e)
+    //     this.controller.select_element(e)
+    // }
 
     set_selected_rating(rating) {
         if (this._selected_row != undefined) {
@@ -564,30 +580,30 @@ class TrackListView extends EventDispatcher {
     }
 
 
-    move_selection_up() {
+    // move_selection_up() {
 
-    }
+    // }
 
-    move_selection_down() {
+    // move_selection_down() {
 
-    }
+    // }
 
-    move_selection_to_top() {
+    // move_selection_to_top() {
 
-    }
+    // }
 
 
-    page_up() {
-        let scroller = document.getElementById("main-track-list-scroller")
-        let y = scroller.getBoundingClientRect()
-        scroller.scrollTop -= y.height
-    }
+    // page_up() {
+    //     let scroller = document.getElementById("main-track-list-scroller")
+    //     let y = scroller.getBoundingClientRect()
+    //     scroller.scrollTop -= y.height
+    // }
 
-    page_down() {
-        let scroller = document.getElementById("main-track-list-scroller")
-        let y = scroller.getBoundingClientRect()
-        scroller.scrollTop += y.height
-    }
+    // page_down() {
+    //     let scroller = document.getElementById("main-track-list-scroller")
+    //     let y = scroller.getBoundingClientRect()
+    //     scroller.scrollTop += y.height
+    // }
 
     add_selection_to_queue() {
         if (this._selected_row != undefined) {
@@ -614,138 +630,143 @@ class TrackListView extends EventDispatcher {
 
     update_element(x) {
         let row = this.table_rows[x._id]
-        let rating_cell = document.getElementById(`track-rating-${x._id}`)
+        x = this.convert_track(x)
+        let rating_cell = document.getElementById(`track-rating-${x.id}`)
         rating_cell.innerHTML = this._get_rating(x)
-        let loved_cell = document.getElementById(`track-loved-${x._id}`)
+        let loved_cell = document.getElementById(`track-loved-${x.id}`)
         loved_cell.innerHTML = this._get_loved(x)
-        let color_cell = document.getElementById(`track-color-${x._id}`)
+        let color_cell = document.getElementById(`track-color-${x.id}`)
         color_cell.style.backgroundColor = x.color
-        let row_dom = document.getElementById(`track-row-${x._id}`)
+        let row_dom = document.getElementById(`track-row-${x.id}`)
         row_dom.style.color = x.color
 
-        document.getElementById(`track-title-${x._id}`).innerHTML = x.metadata.title
-        document.getElementById(`track-artist-${x._id}`).innerHTML = x.metadata.artist
-        document.getElementById(`track-genre-${x._id}`).innerHTML = x.metadata.genre
-        document.getElementById(`track-bpm-${x._id}`).innerHTML = x.track.bpm
-        document.getElementById(`track-duration-${x._id}`).innerHTML = `${format_nanoseconds(x.track.stream_end - x.track.stream_start)}`
+        document.getElementById(`track-title-${x.id}`).innerHTML = x.title
+        document.getElementById(`track-artist-${x.id}`).innerHTML = x.artist
+        document.getElementById(`track-genre-${x.id}`).innerHTML = x.genre
+        document.getElementById(`track-bpm-${x.id}`).innerHTML = x.bpm
+        document.getElementById(`track-duration-${x.id}`).innerHTML = `${format_nanoseconds(x.duration)}`
+    }
+
+    getTrackTableElement(track) {
+        return this.table_rows[track._id]
     }
 
 
-    ensure_row_visible(x, direction) {
-        let row = this.table_rows[x._id]
-        let scroller = document.getElementById("main-track-list-scroller")
-        let scrollerRect = scroller.getBoundingClientRect()
-        if (row == undefined) {
-            scroller.scrollTop += (this.d*30)
-        } else {
-            let rowRect = row.getBoundingClientRect()
-            let offsetTop = (rowRect.y - scrollerRect.y)
-            let offsetBottom = offsetTop + rowRect.height
-            let y = scroller.getBoundingClientRect()
-            if (offsetBottom >= y.height) {
-                scroller.scrollTop += (offsetBottom - y.height)
-            } else if (offsetTop < 0) {
-                scroller.scrollTop += (offsetTop)
-            }
-        }
-    }
+    // ensure_row_visible(x, direction) {
+    //     let row = this.table_rows[x._id]
+    //     let scroller = document.getElementById("main-track-list-scroller")
+    //     let scrollerRect = scroller.getBoundingClientRect()
+    //     if (row == undefined) {
+    //         scroller.scrollTop += (this.d*30)
+    //     } else {
+    //         let rowRect = row.getBoundingClientRect()
+    //         let offsetTop = (rowRect.y - scrollerRect.y)
+    //         let offsetBottom = offsetTop + rowRect.height
+    //         let y = scroller.getBoundingClientRect()
+    //         if (offsetBottom >= y.height) {
+    //             scroller.scrollTop += (offsetBottom - y.height)
+    //         } else if (offsetTop < 0) {
+    //             scroller.scrollTop += (offsetTop)
+    //         }
+    //     }
+    // }
 
-    update_selection(selection) {
-        if (this._selected_row != undefined) {
-            this._selected_row.forEach((x) => {
-                if (this.table_rows[x._id]) {
-                    this.table_rows[x._id].classList.remove("selected")}
-                })
-        }
-        this._selected_row = selection
-        this._selected_row.forEach((x) => {
-            this.ensure_row_visible(x)
-            if (this.table_rows[x._id] != undefined) {
-                this.table_rows[x._id].classList.add("selected")
-            }
-        })
-    }
+    // update_selection(selection) {
+    //     if (this._selected_row != undefined) {
+    //         this._selected_row.forEach((x) => {
+    //             if (this.table_rows[x._id]) {
+    //                 this.table_rows[x._id].classList.remove("selected")}
+    //             })
+    //     }
+    //     this._selected_row = selection
+    //     this._selected_row.forEach((x) => {
+    //         this.ensure_row_visible(x)
+    //         if (this.table_rows[x._id] != undefined) {
+    //             this.table_rows[x._id].classList.add("selected")
+    //         }
+    //     })
+    // }
 
 
     async filter_list (text) {
-        let i = 0;
-        let search_tokens = text.split(' ')
-        let search_f = [];
-        for (i=0; i<search_tokens.length; i++) {
-            let token = search_tokens[i].toLowerCase();
-            if (token.length > 0) {
-                if (search_tokens[i].startsWith('@bpm<')) {
-                    let x = parseInt(search_tokens[i].split('<')[1]);
-                    if (!isNaN(x)) {
-                        search_f.push(
-                            function (obj) {
-                                return obj.bpm <= x;
-                            }
-                        )
-                    } else {
-                        search_f.push( (x) => {return true} )
-                    }
-                } else if (search_tokens[i].startsWith('@bpm>')) {
-                    let x = parseInt(search_tokens[i].split('>')[1]);
-                    if (!isNaN(x)) {
-                        search_f.push(
-                            function (obj) {
-                                return (obj.stats.bpm >= x);
-                            }
-                        )
-                    } else {
-                        search_f.push( (x) => {return true} )
-                    }
-                } else if (search_tokens[i].startsWith('@bpm~')) {
-                    let x = parseInt(search_tokens[i].split('~')[1]);
-                    if (!isNaN(x)) {
-                        search_f.push(
-                            function (obj) {
-                                return (obj.stats.bpm < x*1.2) && (obj.stats.bpm > x*0.9) ;
-                            }
-                        )
-                    } else {
-                        search_f.push( (x) => {return true} )
-                    }
-                } else {
-                    search_f.push(
-                        function (x) {
-                            let fields = [x.metadata.title, x.metadata.artist, x.metadata.genre, `@rat=${x.stats.rating}`, '@bpm']
-                            if (x.favorite) {
-                                fields.push('@loved')
-                            }
-                            for (let j=0; j<fields.length; j++) {
-                                if (fields[j] != null) {
-                                    if ((fields[j].toLowerCase().search(token) != -1)) {
-                                        return true;
-                                    }
-                                }
-                            }
-                            return false;
-                        }
-                    )
-                }
-            }
-        }
-        let filter = await this.controller.filter_ids((obj) => {
-            for(i=0; i<search_f.length; i++) {
-                let x = search_f[i](obj);
-                if (!x) {
-                    return false;
-                }
-            }
-            return true;
-        })
-        let queue_rows = []
-        this.view_list_id_order = []
-        this.view_list_order.forEach((k) => {
-            if (filter[k.id]) {
-                queue_rows.push(this.render_row(k))
-                this.view_list_id_order.push(k.id)
+        // let i = 0;
+        // let search_tokens = text.split(' ')
+        // let search_f = [];
+        // for (i=0; i<search_tokens.length; i++) {
+        //     let token = search_tokens[i].toLowerCase();
+        //     if (token.length > 0) {
+        //         if (search_tokens[i].startsWith('@bpm<')) {
+        //             let x = parseInt(search_tokens[i].split('<')[1]);
+        //             if (!isNaN(x)) {
+        //                 search_f.push(
+        //                     function (obj) {
+        //                         return obj.bpm <= x;
+        //                     }
+        //                 )
+        //             } else {
+        //                 search_f.push( (x) => {return true} )
+        //             }
+        //         } else if (search_tokens[i].startsWith('@bpm>')) {
+        //             let x = parseInt(search_tokens[i].split('>')[1]);
+        //             if (!isNaN(x)) {
+        //                 search_f.push(
+        //                     function (obj) {
+        //                         return (obj.stats.bpm >= x);
+        //                     }
+        //                 )
+        //             } else {
+        //                 search_f.push( (x) => {return true} )
+        //             }
+        //         } else if (search_tokens[i].startsWith('@bpm~')) {
+        //             let x = parseInt(search_tokens[i].split('~')[1]);
+        //             if (!isNaN(x)) {
+        //                 search_f.push(
+        //                     function (obj) {
+        //                         return (obj.stats.bpm < x*1.2) && (obj.stats.bpm > x*0.9) ;
+        //                     }
+        //                 )
+        //             } else {
+        //                 search_f.push( (x) => {return true} )
+        //             }
+        //         } else {
+        //             search_f.push(
+        //                 function (x) {
+        //                     let fields = [x.metadata.title, x.metadata.artist, x.metadata.genre, `@rat=${x.stats.rating}`, '@bpm']
+        //                     if (x.favorite) {
+        //                         fields.push('@loved')
+        //                     }
+        //                     for (let j=0; j<fields.length; j++) {
+        //                         if (fields[j] != null) {
+        //                             if ((fields[j].toLowerCase().search(token) != -1)) {
+        //                                 return true;
+        //                             }
+        //                         }
+        //                     }
+        //                     return false;
+        //                 }
+        //             )
+        //         }
+        //     }
+        // }
+        // let filter = await this.controller.filter_ids((obj) => {
+        //     for(i=0; i<search_f.length; i++) {
+        //         let x = search_f[i](obj);
+        //         if (!x) {
+        //             return false;
+        //         }
+        //     }
+        //     return true;
+        // })
+        // let queue_rows = []
+        // this.view_list_id_order = []
+        // this.view_list_order.forEach((k) => {
+        //     if (filter[k.id]) {
+        //         queue_rows.push(this.render_row(k))
+        //         this.view_list_id_order.push(k.id)
 
-            }
-        })
+        //     }
+        // })
 
-        this.list_cluster.update(queue_rows)
+        this.list_cluster.update(await super.filter_list(text))
     };
 }
