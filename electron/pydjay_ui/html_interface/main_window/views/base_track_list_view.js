@@ -18,6 +18,7 @@ class BaseTrackListView extends EventDispatcher {
         this.queue_rows = undefined
         this.ignore_unavailable = false
         this.model_order = false
+        this._dimmed = {}
     }
 
     async getEventTrackElement(e) {
@@ -71,25 +72,25 @@ class BaseTrackListView extends EventDispatcher {
         this.controller.on("selection-changed", this.update_selection.bind(this))
         this.controller.on("element-updated", this.update_element.bind(this))
         this.controller.on("metadata-changed", this.update_element.bind(this))
-        this.controller.on("track-unavailable", (tr) => {
-            if (this.ignore_unavailable) {
-                return null
-            }
-            if (tr != undefined) {
-                if (this.getTrackTableElement(tr) != undefined) {
-                    this.getTrackTableElement(tr).classList.add("unavailable")
-                }
-            }
-        })
-        this.controller.on("track-available", (tr) => {
-            if (tr != undefined) {
-                if (this.getTrackTableElement(tr) != undefined) {
-                    this.getTrackTableElement(tr).classList.remove("unavailable")
-                }
-            }
-        })
     }
 
+    setDimmedRows(track_id_list) {
+        let track_set = {}
+        track_id_list.forEach((t) => {track_set[t] = true})
+        Object.keys(track_set).forEach((t) => {
+            if (this._dimmed[t] == undefined) {
+                let r = this.getTrackTableElement(t)
+                r && r.classList.add("unavailable")
+            }
+        })
+        Object.keys(this._dimmed).forEach((t) => {
+            if (track_set[t] == undefined) {
+                let r = this.getTrackTableElement(t)
+                r && r.classList.remove("unavailable")
+            }
+        })
+        this._dimmed = track_set
+    }
 
     compare_tracks(a, b) {
         let x = a.metadata.title.toLowerCase();
@@ -306,13 +307,11 @@ class BaseTrackListView extends EventDispatcher {
 
 
     page_up() {
-        //let scroller = document.getElementById("main-track-list-scroller")
         let y = this.scroller.getBoundingClientRect()
         scroller.scrollTop -= y.height
     }
 
     page_down() {
-        // let scroller = document.getElementById("main-track-list-scroller")
         let y = this.scroller.getBoundingClientRect()
         scroller.scrollTop += y.height
     }
@@ -340,28 +339,27 @@ class BaseTrackListView extends EventDispatcher {
 
     }
 
-    getTrackTableElement(track) {
+    getTrackTableElement(trackId) {
 
     }
 
 
     selectTrackTableElement(track) {
-        let e = this.getTrackTableElement(track)      
+        let e = this.getTrackTableElement(track._id)      
         if (e != undefined) {
             e.classList.add("selected")
         }
     }
 
     unselectTrackTableElement(track) {
-        let e = this.getTrackTableElement(track)      
+        let e = this.getTrackTableElement(track._id)      
         if (e != undefined) {
             e.classList.remove("selected")
         }
     }
 
-
     ensure_row_visible(x, direction) {
-        let row = this.getTrackTableElement(x)
+        let row = this.getTrackTableElement(x._id)
         let scrollerRect = this.scroller.getBoundingClientRect()
         if (row == undefined) {
             this.scroller.scrollTop += (this.d * 30)
