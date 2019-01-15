@@ -1,10 +1,4 @@
-// pl_channel_config = {headphones:{left:4, right:5}}
-// mpl_channel_config = {master:{left:0, right:1}, headphones:{left:4, right:5}}
-
-// pl_channel_config2 = {headphones:{left:0, right:1}}
-// mpl_channel_config2 = {master:{left:0, right:1}}
 const { RemoteTrackPlayer } = require("track_playback/remote_player/remote_player.js")
-
 
 class PlaybackController extends RemoteTrackPlayer {
     constructor(session_controller, queue_controller) {
