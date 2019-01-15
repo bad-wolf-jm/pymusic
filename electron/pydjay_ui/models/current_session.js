@@ -35,8 +35,14 @@ class CurrentSessionModel extends BaseOrderedObjectSubsetModel {
 
     add(element) {
         if (this.is_ready())  {
-            this.ordering.push(element.track_id)
-            this.objects[element.track_id] = element
+            let e = {
+                track_id: element.track_object.id,
+                start_time: element.start_time,
+                end_time: element.end_time,
+                status: element.status
+            }
+            this.ordering.push(e.track_id)
+            this.objects[element.track_object.id] = e
             this.dispatch("content-changed", this.get_all_objects())
             this.save()
         }

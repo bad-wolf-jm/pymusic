@@ -1,3 +1,6 @@
+const { EventDispatcher } = require("notify/event_dispatcher.js")
+
+
 class BaseObjectListModel extends EventDispatcher {
     constructor() {
         super()

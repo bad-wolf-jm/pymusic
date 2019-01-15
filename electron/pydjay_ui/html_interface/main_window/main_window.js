@@ -3,7 +3,9 @@ WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
 
-const {Question} = require("ui/dialog/question.js")
+const { Question } = require("ui/dialog/question.js")
+const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
+
 
 SV = new AccordionView("sidebar")
 
@@ -52,13 +54,11 @@ SE_controller             = new SessionsController()
 
 mpc                       = new PlaybackController(S_controller, Q_controller)
 pc                        = new PrecueController(S_controller, Q_controller)
-vc                        = new VolumeController(mpc, pc)
 
 Q_controller.set_model(queue_model)
 S_controller.set_model(current_session_model)
 
 ipcRenderer.on("track-modified", (e, id) => {
-    //console.log(e, id)
     tracks_model.update(id)
 })
 
@@ -100,8 +100,6 @@ SE = new SessionsView({
 })
 SE.set_controller(SE_controller)
 
-mpc.init_audio()
-pc.init_audio()
 M = new MainPlayerView(tracks_model)
 M.set_controller(mpc)
 M.init()
@@ -147,53 +145,22 @@ mpc.on("track-finished",
 )
 
 
-// ipcRenderer.on("headphone-playback-stopped", () => {
-//     pc.dispatch("playback-stopped")
-// })
-
-
-// ipcRenderer.on("headphone-playback-paused", () => {
-//     pc.dispatch("playback-paused")
-// })
-
-// ipcRenderer.on("headphone-playback-started", () => {
-//     pc.dispatch("playback-started")
-// })
-
-
-// ipcRenderer.on("headphone-stream-position", (event, pos) => {
-//     pc.dispatch("stream-position", pos)
-// })
-
-
-ipcRenderer.on("master-end-of-stream", () => {
-    mpc.dispatch("end-of-stream")
-})
-
-
-ipcRenderer.on("master-playback-stopped", () => {
-    mpc.dispatch("playback-stopped")
-})
-
-ipcRenderer.on("master-playback-paused", () => {
-    mpc.dispatch("playback-paused")
-})
-
-ipcRenderer.on("master-playback-started", () => {
-    mpc.dispatch("playback-started")
-})
-
-
-ipcRenderer.on("master-stream-position", (event, pos) => {
-    mpc.dispatch("stream-position", pos)
-})
-
-
 pc.on('playback-started', () => {
-        //vc.mute_monitor()
+        mpc.muteHeadset()
         SV.open_panel(3)
     }
 )
+
+
+pc.on('playback-stopped', () => {
+    mpc.unmuteHeadset()
+}
+)
+
+pc.on('playback-paused', () => {
+    mpc.unmuteHeadset()
+})
+
 
 
 mpc.on("queue-stop-requested",
@@ -259,10 +226,26 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
-    ipcRenderer.send("reset-audio-system", {})
+document.getElementById("main-menu-audio-setup").addEventListener('click', async () => {
+    let d = new AudioOutputSettings({
+        mainPlayer: mpc,
+        prelistenPlayer: pc,
+        masterOutputChange: (deviceId) => {
+            mpc.setMasterOutputDeviceId(deviceId)
+        },
+        masterHeadphoneChange: (deviceId) => {
+            mpc.setHeadsetOutputDeviceId(deviceId)
+        },
+        prelistenOutputChange: (deviceId) => {
+            pc.setOutputDeviceId(deviceId)
+            view.setOutputDeviceId(deviceId)
+        }
+    })
+    d.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
+
+
 
 document.getElementById("main-menu-stop-queue-now").addEventListener('click', () => {
     mpc.stop_queue_now()
@@ -296,10 +279,6 @@ document.getElementById("session-save-cancel").addEventListener('click', () => {
     document.getElementById("save-session-dialog").close();
 })
 
-
-
-
-
 document.getElementById("main-menu-discard-session").addEventListener('click', () => {
     let q = new Question({
         title: "Discard current session",
@@ -319,32 +298,6 @@ document.getElementById("main-menu-discard-session").addEventListener('click', (
     q.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
-//document.getElementById("discard-session-dialog").showModal();
-// document.getElementById("session-discard").addEventListener('click', () => {
-//     current_session_model.discard_session(() => {
-//         SE_controller.refresh(() => {})
-//     })
-//     document.getElementById("discard-session-dialog").close();
-// })
-
-// document.getElementById("session-discard-cancel").addEventListener('click', () => {
-//     document.getElementById("discard-session-dialog").close();
-// })
-
-
-
-
-
-
-document.getElementById("main-menu-settings").addEventListener('click', () => {
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
-})
-
-// document.getElementById("main-menu-mixer").addEventListener('click', () => {
-//     ipcRenderer.send("show-mixer-window")
-//     document.getElementById("main-menu-dropdown").classList.toggle("show");
-// })
 
 
 document.getElementById("main-menu-quit").addEventListener('click', () => {
@@ -415,18 +368,9 @@ function display_playlist(id) {
             let L = new PlaylistModel(info, tracks_model)
             T.ignore_unavailable = false
             T_controller.set_model(info.name, L)
-            // PE_controller.set_model(info.name, L)
         }
     )
 }
-
-ipcRenderer.on('playback-started', (event, arg) => {
-    vc.mute_monitor()});
-
-
-ipcRenderer.on('playback-stopped', (event, arg) => {
-    vc.restore_monitor()});
-
 
 function checkTime(i) {
     return (i < 10) ? "0" + i : i;
@@ -442,8 +386,6 @@ function startTime() {
     Y = today.getFullYear()
     document.getElementById("footer-date").innerHTML = `${Y}-${M}-${d}`
     document.getElementById("footer-time").innerHTML = `${h}:${m}`
-    // $$('calendar').define('label', `<span style="color:rgb(200,200,200)">${Y}-${M}-${d}</span> | <b>${h}:${m}</b>`)
-    // $$('calendar').refresh()
     t = setTimeout(function () {
         startTime()
     }, 30000);
