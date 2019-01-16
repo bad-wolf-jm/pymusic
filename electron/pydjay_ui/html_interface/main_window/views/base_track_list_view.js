@@ -19,6 +19,7 @@ class BaseTrackListView extends EventDispatcher {
         this.ignore_unavailable = false
         this.model_order = false
         this._dimmed = {}
+        this.rowHeight = 30
     }
 
     async getEventTrackElement(e) {
@@ -75,19 +76,18 @@ class BaseTrackListView extends EventDispatcher {
     }
 
     setDimmedRows(track_id_list) {
+        if (this.ignore_unavailable) {
+            return;
+        }
         let track_set = {}
         track_id_list.forEach((t) => {track_set[t] = true})
-        Object.keys(track_set).forEach((t) => {
-            if (this._dimmed[t] == undefined) {
-                let r = this.getTrackTableElement(t)
-                r && r.classList.add("unavailable")
-            }
-        })
         Object.keys(this._dimmed).forEach((t) => {
-            if (track_set[t] == undefined) {
-                let r = this.getTrackTableElement(t)
-                r && r.classList.remove("unavailable")
-            }
+            let r = this.getTrackTableElement(t)
+            r && r.classList.remove("unavailable")
+        })
+        Object.keys(track_set).forEach((t) => {
+            let r = this.getTrackTableElement(t)
+            r && r.classList.add("unavailable")
         })
         this._dimmed = track_set
     }
@@ -146,7 +146,6 @@ class BaseTrackListView extends EventDispatcher {
     }
 
     async toggle_loved(id) {
-        // console.log(id)
         let track = await this.controller.getElementById(id)
         this.controller.setTrackMetadata(track, {"stats.loved": !(track.stats.loved)})
     }
@@ -340,7 +339,7 @@ class BaseTrackListView extends EventDispatcher {
     }
 
     getTrackTableElement(trackId) {
-
+        console.log(trackId)
     }
 
 
@@ -362,7 +361,7 @@ class BaseTrackListView extends EventDispatcher {
         let row = this.getTrackTableElement(x._id)
         let scrollerRect = this.scroller.getBoundingClientRect()
         if (row == undefined) {
-            this.scroller.scrollTop += (this.d * 30)
+            this.scroller.scrollTop += (this.d * this.rowHeight)
         } else {
             let rowRect = row.getBoundingClientRect()
             let offsetTop = (rowRect.y - scrollerRect.y)

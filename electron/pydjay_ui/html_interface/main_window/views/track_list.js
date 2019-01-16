@@ -23,13 +23,11 @@ class TrackListView extends BaseTrackListView {
                 },
                 clusterChanged: () => {
                     let elements = document.querySelectorAll('.track-entry');
-                    // let unavailable = {};
                     [].forEach.call(elements, (e) => {
                         let track_id = e.attributes["data-track-id"].value
                         this.table_rows[track_id] = e
                     });
                     this.fitHeaderColumns()
-                    //console.log(this._dimmed)
                     this.setDimmedRows(Object.keys(this._dimmed))
 
                     elements = document.querySelectorAll('.show-color-picker');
@@ -426,6 +424,7 @@ class TrackListView extends BaseTrackListView {
     }
 
     getTrackTableElement(trackId) {
+        //console.log("TTEL:", trackId)
         return this.table_rows[trackId]
     }
 
