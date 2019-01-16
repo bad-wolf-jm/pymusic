@@ -153,6 +153,10 @@ mpc.on("track-finished",
             time_start: log_data.start_time, 
             time_end: log_data.end_time
         })
+        MDB.tracks.setTrackMetadata(log_data.track_object, {
+            "stats.last_played": log_data.start_time,
+            "stats.play_count": log_data.track_object.stats.play_count + 1
+        })
     }
 )
 
@@ -163,6 +167,10 @@ mpc.on("track-stopped",
             time_start: log_data.start_time, 
             time_end: log_data.end_time
         })
+        MDB.tracks.setTrackMetadata(log_data.track_object, {
+            "stats.last_played": log_data.start_time,
+            "stats.play_count": log_data.track_object.stats.play_count + 1
+        })
     }
 )
 
@@ -172,6 +180,10 @@ mpc.on("track-skipped",
             status: "SKIPPED",
             time_start: log_data.start_time, 
             time_end: log_data.end_time
+        })
+        MDB.tracks.setTrackMetadata(log_data.track_object, {
+            "stats.last_played": log_data.start_time,
+            "stats.play_count": log_data.track_object.stats.play_count + 1
         })
     }
 )

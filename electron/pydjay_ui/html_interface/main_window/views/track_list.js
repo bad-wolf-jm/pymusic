@@ -173,8 +173,8 @@ class TrackListView extends BaseTrackListView {
             <${element} id='track-artist-${track.id}' style="max-width:90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
             <${element} id='track-album-${track.id}'style="max-width:90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.album}</${element}>
             <${element} id='track-genre-${track.id}' style="max-width:40px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
-            <${element} style="text-align:right; width:25px; padding-right:9px">${track.play_count}</${element}>
-            <${element} style="width:75px">${track.last_played}</${element}>
+            <${element} id='track-play-count-${track.id}' style="text-align:right; width:25px; padding-right:9px">${track.play_count}</${element}>
+            <${element} id='track-last-played-${track.id}' style="width:75px">${track.last_played}</${element}>
             <${element} id='track-rating-${track.id}' style="width:25px">${track.rating}</${element}>
             <${element} id='track-bpm-${track.id}' style="width:30px; text-align:right; padding-right:5px">${track.bpm}</${element}>
             <${element} id='track-duration-${track.id}'style="width:45px; text-align:right">${track.duration}</${element}>
@@ -220,7 +220,7 @@ class TrackListView extends BaseTrackListView {
     update(name, list, length, duration) {
         this.name_dom.innerHTML = `${name}`
         this.num_tracks_dom.innerHTML = `${length} tracks`
-        this.duration_dom.innerHTML = `${format_seconds_long(duration / 1000)}`
+        this.duration_dom.innerHTML = `${format_seconds_long(duration / 1000000000)}`
     }
 
     update_view(list) {
@@ -407,27 +407,37 @@ class TrackListView extends BaseTrackListView {
         })
     }
 
+    updateCell(id, new_value) {
+        let cell = document.getElementById(id)
+        if (cell) {
+            cell.innerHTML = new_value
+        } 
+    }
+
+    updateCellStyle(id, style, new_value) {
+        let cell = document.getElementById(id)
+        if (cell) {
+            cell.style[style] = new_value
+        } 
+    }
+
     update_element(x) {
         let row = this.table_rows[x._id]
         x = this.convert_track(x)
-        let rating_cell = document.getElementById(`track-rating-${x.id}`)
-        rating_cell.innerHTML = this._get_rating(x)
-        let loved_cell = document.getElementById(`track-loved-${x.id}`)
-        loved_cell.innerHTML = this._get_loved(x)
-        let color_cell = document.getElementById(`track-color-${x.id}`)
-        color_cell.style.backgroundColor = x.color
-        let row_dom = document.getElementById(`track-row-${x.id}`)
-        row_dom.style.color = x.color
-
-        document.getElementById(`track-title-${x.id}`).innerHTML = x.title
-        document.getElementById(`track-artist-${x.id}`).innerHTML = x.artist
-        document.getElementById(`track-genre-${x.id}`).innerHTML = x.genre
-        document.getElementById(`track-bpm-${x.id}`).innerHTML = x.bpm
-        document.getElementById(`track-duration-${x.id}`).innerHTML = `${format_nanoseconds(x.duration)}`
+        this.updateCell(`track-rating-${x.id}`, this._get_rating(x))
+        this.updateCell(`track-loved-${x.id}`, this._get_loved(x))
+        this.updateCell(`track-title-${x.id}`, x.title)
+        this.updateCell(`track-artist-${x.id}`, x.artist)
+        this.updateCell(`track-genre-${x.id}`, x.genre)
+        this.updateCell(`track-bpm-${x.id}`, x.bpm)
+        this.updateCell(`track-play-count-${x.id}`, x.play_count)
+        this.updateCell(`track-last-played-${x.id}`, x.last_played)
+        this.updateCell(`track-duration-${x.id}`, `${format_nanoseconds(x.duration)}`)
+        this.updateCellStyle(`track-color-${x.id}`, 'backgroundColor', x.color)
+        this.updateCellStyle(`track-row-${x.id}`, 'backgroundColor', x.color)
     }
 
     getTrackTableElement(trackId) {
-        //console.log("TTEL:", trackId)
         return this.table_rows[trackId]
     }
 
