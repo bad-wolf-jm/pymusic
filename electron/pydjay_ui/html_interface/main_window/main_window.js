@@ -91,7 +91,6 @@ MDB.unavailable_tracks.on("content-changed", async () => {
 })
 
 
-
 PL = new PlaylistsView({
     list: 'queue-elements-body'
 })
@@ -102,7 +101,6 @@ SE = new SessionsView({
 })
 SE.set_controller(SE_controller)
 
-// mpc.init_audio()
 pc.connectOutputs({headphones:{left:0, right:1}})
 
 M = new MainPlayerView(MDB.tracks)
