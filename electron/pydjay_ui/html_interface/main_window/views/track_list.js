@@ -126,13 +126,13 @@ class TrackListView extends BaseTrackListView {
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Shortlist', click: () => {
             let T = this.context_menu_element
-            this.shortlist_controller.add(T)
+            this.shortlist_controller.append(T)
 
         }}))
 
         this.menu.append(new MenuItem({label: 'Marked as played', click: () => {
             let T = this.context_menu_element
-            this.unavailable_controller.add(T)
+            this.unavailable_controller.append(T)
         }}))
         this.menu.append(new MenuItem({label: 'Add to queue', click: () => {
             let T = this.context_menu_element
@@ -390,18 +390,20 @@ class TrackListView extends BaseTrackListView {
 
     add_selection_to_shortlist() {
         this._selected_row.forEach((x) => {
-            this.shortlist_controller.add(x)
+            this.shortlist_controller.append(x)
         })
     }
 
     add_selection_to_unavailable() {
         this._selected_row.forEach((x) => {
-            this.unavailable_controller.add(x)
+            this.unavailable_controller.append(x)
         })
     }
 
     remove_selection_from_unavailable() {
-
+        this._selected_row.forEach((x) => {
+            this.unavailable_controller.remove(x)
+        })
     }
 
     update_element(x) {

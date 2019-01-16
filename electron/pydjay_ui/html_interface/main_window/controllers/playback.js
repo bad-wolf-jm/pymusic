@@ -16,7 +16,7 @@ class PlaybackController extends RemoteTrackPlayer {
     constructor(session_controller, queue_controller) {
         super()
         this.views              = []
-        this.session_controller = session_controller
+        //this.session_controller = session_controller
         this.queue_controller   = queue_controller
         this.stop_request       = false
         this.playing            = false

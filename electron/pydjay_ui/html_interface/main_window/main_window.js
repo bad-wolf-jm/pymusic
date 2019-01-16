@@ -38,46 +38,20 @@ DB = undefined //new DataProvider()
 view = new TrackEditorView()
 view.init()
 
-
-// tracks_model              = new TrackListModel()
-// unavailable_model         = new UnavailableModel(tracks_model)
-// shortlist_model           = new ShortlistModel(tracks_model)
-// suggested_model           = new SuggestedModel(tracks_model)
-// played_tracks_model       = new PlayedTracksModel(tracks_model)
-// never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
-// current_session_model     = new CurrentSessionModel(tracks_model)
-// queue_model               = new QueueModel(tracks_model, current_session_model)
-
-
-// un_model = new UnionModel()
-// un_model.addModel("queue", queue_model)
-// un_model.addModel("current_session", current_session_model)
-// un_model.addModel("unavailable", unavailable_model)
-
-T_controller              = new TrackListController()
-PE_controller             = new PlaylistController() //un_model)
-Q_controller              = new QueueController()
-S_controller              = undefined //new SessionController()
-PL_controller             = new PlaylistsController()
+T_controller  = new TrackListController()
+PE_controller = new PlaylistController() //un_model)
+Q_controller = new QueueController()
+S_controller = undefined //new SessionController()
+PL_controller = new PlaylistsController()
 PL_controller.setModel(MDB.playlists)
-SE_controller             = new SessionsController()
+SE_controller = new SessionsController()
 SE_controller.setModel(MDB.sessions)
-
-
-// var mpc = new RemoteFilePlayer()
-
 
 mpc = new PlaybackController(S_controller, Q_controller)
 pc  = new PrecueController(S_controller, Q_controller)
 vc  = new VolumeController(mpc, pc)
 
 Q_controller.set_model(MDB.queue)
-// S_controller.set_model(current_session_model)
-
-// ipcRenderer.on("track-modified", (e, id) => {
-//     //console.log(e, id)
-//     tracks_model.update(id)
-// })
 
 
 PE = new PlaylistEditView({
@@ -110,6 +84,9 @@ MDB.queue.on("content-changed", async () => {
     T.setDimmedRows(await MDB.unavailable.getTrackIds())
 })
 MDB.current_session.on("content-changed", async () => {
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())    
+})
+MDB.unavailable_tracks.on("content-changed", async () => {
     T.setDimmedRows(await MDB.unavailable.getTrackIds())    
 })
 
@@ -173,33 +150,20 @@ mpc.on("track-started",
 
 mpc.on("track-finished",
     (log_data) => {
-        // console.log(log_data)
         MDB.current_session.append(log_data.track_object, {
+            status: "FINISHED",
             time_start: log_data.start_time, 
             time_end: log_data.end_time
         })
-        MDB.playback_logs.d.insert({ 
-            track: log_data.track_object._id,
-            time_start: log_data.start_time, 
-            time_end:log_data.end_time,
-            message:"TRACK_FINISHED"
-        })
-        ///// update track last played and play count here
-        // console.log()
     }
 )
 
 mpc.on("track-stopped",
     (log_data) => {
         MDB.current_session.append(log_data.track_object, {
+            status: "STOPPED",
             time_start: log_data.start_time, 
-            time_end:log_data.end_time
-        })
-        MDB.playback_logs.d.insert({
-            track: log_data.track_object._id,
-            time_start: log_data.start_time, 
-            time_end:log_data.end_time,
-            message:"TRACK_STOPPED"
+            time_end: log_data.end_time
         })
     }
 )
@@ -207,37 +171,12 @@ mpc.on("track-stopped",
 mpc.on("track-skipped",
     (log_data) => {
         MDB.current_session.append(log_data.track_object, {
+            status: "SKIPPED",
             time_start: log_data.start_time, 
-            time_end:log_data.end_time
-        })
-        MDB.playback_logs.d.insert({
-            track: log_data.track_object.id,
-            time_start: log_data.start_time, 
-            time_end:log_data.end_time,
-            message:"TRACK_SKIPPED"
+            time_end: log_data.end_time
         })
     }
 )
-
-
-// ipcRenderer.on("headphone-playback-stopped", () => {
-//     pc.dispatch("playback-stopped")
-// })
-
-
-// ipcRenderer.on("headphone-playback-paused", () => {
-//     pc.dispatch("playback-paused")
-// })
-
-// ipcRenderer.on("headphone-playback-started", () => {
-//     pc.dispatch("playback-started")
-// })
-
-
-// ipcRenderer.on("headphone-stream-position", (event, pos) => {
-//     pc.dispatch("stream-position", pos)
-// })
-
 
 ipcRenderer.on("master-end-of-stream", () => {
     mpc.dispatch("end-of-stream")
@@ -263,29 +202,8 @@ ipcRenderer.on("master-stream-position", (event, pos) => {
 
 
 pc.on('playback-started', () => {
-        //vc.mute_monitor()
-        SV.open_panel(3)
-    }
-)
-
-
-mpc.on("queue-stop-requested",
-    () => {
-        B = document.getElementById("queue-start-button")
-        B.innerHTML = "<i class=\"fa fa-close\"></i>"
-        B.style.backgroundColor = "#667700"
-    }
-)
-
-mpc.on("queue-stop-request-cancelled",
-    () => {
-        let M = document.getElementById("queue-stop-message")
-        M.style.display="none"
-        B = document.getElementById("queue-start-button")
-        B.innerHTML = "<i class=\"fa fa-stop\"></i>"
-        B.style.backgroundColor = "#AA0000"
-    }
-)
+    SV.open_panel(3)
+})
 
 mpc.on("next-track-countdown", (time) => {
     let M = document.getElementById("main-player-track-title")
@@ -360,9 +278,6 @@ document.getElementById("session-save").addEventListener('click', async () => {
 
     if (name != "") {
         await MDB.saveCurrentSession(name, location, address)
-        // , () => {
-        //     SE_controller.refresh(() => {})
-        // })
     }
     document.getElementById("save-session-dialog").close();
 })
@@ -383,9 +298,6 @@ document.getElementById("main-menu-discard-session").addEventListener('click', (
         dismissText: 'no',
         confirmAction: () => {
             MDB.discardCurrentSession()
-            // current_session_model.discard_session(() => {
-            //     SE_controller.refresh(() => {})
-            // })
             q.close()
         },
         dismissAction: () => {
@@ -396,31 +308,9 @@ document.getElementById("main-menu-discard-session").addEventListener('click', (
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-//document.getElementById("discard-session-dialog").showModal();
-// document.getElementById("session-discard").addEventListener('click', () => {
-//     current_session_model.discard_session(() => {
-//         SE_controller.refresh(() => {})
-//     })
-//     document.getElementById("discard-session-dialog").close();
-// })
-
-// document.getElementById("session-discard-cancel").addEventListener('click', () => {
-//     document.getElementById("discard-session-dialog").close();
-// })
-
-
-
-
-
-
 document.getElementById("main-menu-settings").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
-// document.getElementById("main-menu-mixer").addEventListener('click', () => {
-//     ipcRenderer.send("show-mixer-window")
-//     document.getElementById("main-menu-dropdown").classList.toggle("show");
-// })
 
 
 document.getElementById("main-menu-quit").addEventListener('click', () => {
@@ -443,7 +333,7 @@ function refresh_sessions(x) {
 async function display_all_songs() {
     T.ignore_unavailable = false
     T.setDimmedRows(await MDB.unavailable.getTrackIds())
-    T_controller.set_model("All Songs", MDB.tracks) //tracks_model)
+    T_controller.set_model("All Songs", MDB.tracks)
 }
 
 async function display_current_session() {
