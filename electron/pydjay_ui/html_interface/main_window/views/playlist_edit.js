@@ -314,15 +314,6 @@ class PlaylistEditView extends EventDispatcher {
         let track_id = evt.dataTransfer.getData("text/plain")
         let track = await MDB.getTrackById(track_id)
         this.controller.append(track)
-
-        // let d = evt.dataTransfer.getData("text/plain")
-        // try {
-        //     let track = JSON.parse(d)
-        //     this.controller.add(track)
-        // } catch (error) {
-        //     console.log(error)
-        // }
-
     }
 
     _select_row(x) {
@@ -332,13 +323,11 @@ class PlaylistEditView extends EventDispatcher {
         x.classList.add("selected")
         this.current_selection = x
         this.ensure_row_visible(x)
-        //console.log(this.current_selection)
     }
 
     select_row(e) {
         let x = e.target.closest(".element")
         this._select_row(x)
-        //focusWindow(this)
     }
 
     connect_events() {
@@ -352,11 +341,11 @@ class PlaylistEditView extends EventDispatcher {
             this.view_elements[track_id] = e
             e.addEventListener('dblclick', this.handle_double_click.bind(this), false);
             e.addEventListener("click", this.select_row.bind(this))
-            e.addEventListener('contextmenu', (e) => {
+            e.addEventListener('contextmenu', async (e) => {
                 e.preventDefault()
                 let x = e.target.closest('.playlist-track')
                 let track_id = (x.attributes["data-track-id"].value)
-                let track_element = this.controller.get_id(track_id)
+                let track_element = await this.controller.get_id(track_id)
                 this.context_menu_element = track_element
                 this.menu.popup({window: remote.getCurrentWindow()})
               }, false)
