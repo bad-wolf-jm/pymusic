@@ -224,14 +224,14 @@ class TrackEditorView extends EventDispatcher {
                     this._waveform.clearRegions()
                 }
                 this._region = this._waveform.addRegion({
-                    start: this._track.track.stream_start / 1000000000,
-                    end:   this._track.track.stream_end / 1000000000,
+                    start: this._track.track.stream_start / 1000,
+                    end:   this._track.track.stream_end / 1000,
                     color: "rgba(25,25,25,0.35)"
                 })
                 this._region.on("update",
                     () => {
-                        this.stream_start = Math.round(this._region.start * 1000000000)
-                        this.stream_end = Math.round(this._region.end * 1000000000)
+                        this.stream_start = Math.round(this._region.start * 1000)
+                        this.stream_end = Math.round(this._region.end * 1000)
                         this.stream_length = this.stream_end - this.stream_start
                         document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(this.stream_start)}`
                         document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(this.stream_end)}`
