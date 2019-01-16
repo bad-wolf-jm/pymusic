@@ -49,9 +49,8 @@ class TrackListView extends BaseTrackListView {
                                         this.color_chooser.close()
                                         this.color_chooser = undefined
                                     },
-                                    chooseColor: (color) => {
-                                        console.log(color)
-                                        let track = this.controller.getElementById(track_id)
+                                    chooseColor: async (color) => {
+                                        let track = await this.controller.getElementById(track_id)
                                         this.controller.setTrackMetadata(track, {'metadata.color': color})                                
                                         this.color_chooser.close()
                                         this.color_chooser = undefined
@@ -221,7 +220,7 @@ class TrackListView extends BaseTrackListView {
     update(name, list, length, duration) {
         this.name_dom.innerHTML = `${name}`
         this.num_tracks_dom.innerHTML = `${length} tracks`
-        this.duration_dom.innerHTML = `${format_seconds_long(duration / 1000000000)}`
+        this.duration_dom.innerHTML = `${format_seconds_long(duration / 1000)}`
     }
 
     update_view(list) {
