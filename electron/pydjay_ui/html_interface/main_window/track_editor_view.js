@@ -40,7 +40,6 @@ class TrackEditorView extends EventDispatcher {
                             document.getElementById('track-editor-track-cover').src = new_cover
                             this.cover_image = image
                             this.cover_image_extension = getFileExtension(new_cover)
-                            //console.log(image)
                         }
                     })
                 }
@@ -317,7 +316,6 @@ class TrackEditorView extends EventDispatcher {
     }
     
     async save() {
-        // let file_path = this.track.track.path
         let cover_dir = MDB.getCoverFolder()
         let new_values = this.getValues()
         if (new_values.cover_image != null) {

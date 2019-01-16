@@ -139,10 +139,10 @@ mpc.on("queue-finished",
 
 mpc.on("track-started",
     (log_data) => {
-        MDB.playback_logs.d.insert({
-            track: log_data.track_object._id,
-            message:"TRACK_STARTED"
-        })
+        // MDB.playback_logs.d.insert({
+        //     track: log_data.track_object._id,
+        //     message:"TRACK_STARTED"
+        // })
     }
 )
 
