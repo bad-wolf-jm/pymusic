@@ -9,224 +9,61 @@ function rgb2hex(rgb) {
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
 class BaseTrackListView extends EventDispatcher {
-    constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
+    constructor(element, list_scroller) {
         super()
-
-        this.element = document.getElementById("main-list")
-
-        this.dom_id     = dom_ids.list
+        this.element = element
+        this.scroller = list_scroller
         this.controller = undefined
-        this.table      = undefined
+        this.table = undefined
         this.queue_rows = undefined
-
         this.ignore_unavailable = false
         this.model_order = false
+        this._dimmed = {}
+        this.rowHeight = 30
+    }
 
-        this.prevWidth = [];
+    async getEventTrackElement(e) {
+        let x = e.target.closest("tr")
+        let track_id = x.attributes["data-track-id"].value
+        return await this.controller.getElementById(track_id)
+    }
 
-        document.getElementById("main-track-list-scroller").addEventListener("scroll", (e) => {
-            if (this.color_chooser != undefined) {
-                this.color_chooser.close()
-                this.color_chooser = undefined
-            }
-        })
+    getEventTrackId(e) {
+        let x = e.target.closest("tr")
+        return x.attributes["data-track-id"].value
+    }
 
-
-        this.list_cluster = new Clusterize({
-            rows: [],
-            scrollId: 'main-track-list-scroller',
-            contentId: 'main-track-list-body',
-            callbacks: {
-                clusterWillChange: () => {
-                    this.table_rows = {}
-                },
-                clusterChanged: () => {
-                    let elements = document.querySelectorAll('.track-entry');
-                    let unavailable = {};
-                    [].forEach.call(elements, (e) => {
-                        let track_id = e.attributes["data-track-id"].value
-                        this.table_rows[track_id] = e
-                        if (unavailable[track_id] != undefined) {
-                            if (!this.ignore_unavailable) {                            
-                                e.classList.add("unavailable")
-                            }
-                        }
-                    });
-                    this.fitHeaderColumns()
-
-                    elements = document.querySelectorAll('.show-color-picker');
-                    [].forEach.call(elements, (e) => {
-                        e.addEventListener("click", (ev) => {
-                            let track_id = e.attributes['data-track-id'].value
-                            let cp = document.getElementById("main-track-list-color-chooser")
-                            let button_rect = e.getBoundingClientRect()
-                            let scroller = document.getElementById("main-track-list-scroller")
-                            let scroller_rect = scroller.getBoundingClientRect()
-                            let button_offset = (button_rect.top - scroller_rect.top)
-
-                            if (this.color_chooser != undefined) {
-                                this.color_chooser.close()
-                                this.color_chooser = undefined
-                            } else {
-                                this.color_chooser = new ColorPicker(document.getElementsByTagName("body")[0], {
-                                    cancel: () => {
-                                        this.color_chooser.close()
-                                        this.color_chooser = undefined
-                                    },
-                                    chooseColor: (color) => {
-                                        let track = this.controller.getElementById(track_id)
-                                        this.controller.set_metadata(track, {'metadata.color': color})                                
-                                        this.color_chooser.close()
-                                        this.color_chooser = undefined
-                                    }
-                                })
-
-                                if (button_offset + 150 > scroller_rect.height) {
-                                    this.color_chooser.open(e, "above")
-                                } else {
-                                    this.color_chooser.open(e)
-                                }
-                                ev.preventDefault()
-                            }
-                        })
-                    })
-                },
-                scrollingProgress: (progress) => {}
-            }
-          });
-
-        $('#main-track-list-body').on('click', (e) => {
-            this.handle_click(e)
-        });
-
-        $('#main-track-list-body').on('dblclick', (e) => {
-            this.handle_double_click(e)
-        });
-
-        document.getElementById('main-track-list-body').addEventListener('dragstart', (e) => {
-            this.handle_drag_start(e)
-        }, false);
-
-        $('#main-track-list-body').on('contextmenu', async (e) => {
-            e.preventDefault()
-            this.select_row(e)
-            let x = e.target.closest(".track-entry")
-            let track_id = (x.attributes["data-track-id"].value)
-            let track_element = await this.controller.getElementById(track_id)
-            this.context_menu_element = track_element
-            this.menu.popup({window: remote.getCurrentWindow()})
-        });
-
-        document.getElementById("track-list-header").innerHTML = this.render_header({
-            id:          "NONE",
-            loved:       "<b><i class='fa fa-heart' style='font-size: 12px'/></b>",
-            title:       "Title",
-            artist:      "Artist",
-            album:       "Album",
-            genre:       "Genre",
-            last_played: "<b><span class='fa fa-calendar' style='font-size: 15px'/></b>",
-            play_count:  "<b><span class='fa fa-play'/></b>",
-            rating:      "Rating",
-            bpm:         "<b style='font-size: 13px'><span class='fa fa-heartbeat' style='font-size: 15px'/></b>",
-            duration:    "Time",
-
-        });
-
-        this.name_dom       = document.getElementById(dom_ids.name);
-        this.num_tracks_dom = document.getElementById(dom_ids.num_tracks);
-        this.duration_dom   = document.getElementById(dom_ids.duration);
-        this.filter_dom      = document.getElementById(dom_ids.filter);
-
-        this.shortlist_controller = shortlist_controller
-        this.queue_controller = queue_controller
-        this.unavailable_controller = unavailable_controller
-
-        this.menu = new Menu()
-        this.menu.append(new MenuItem({label: 'Track info', click: () => {
-            pc.stop()
-            view.set_track(this.context_menu_element)
-            document.getElementById("track-edit-dialog").showModal()
-        }}))
-        this.menu.append(new MenuItem({type: 'separator'}))
-        this.menu.append(new MenuItem({label: 'Shortlist', click: () => {
-            let T = this.context_menu_element
-            this.shortlist_controller.add(T)
-
-        }}))
-
-        this.menu.append(new MenuItem({label: 'Marked as played', click: () => {
-            let T = this.context_menu_element
-            this.unavailable_controller.add(T)
-        }}))
-        this.menu.append(new MenuItem({label: 'Add to queue', click: () => {
-            let T = this.context_menu_element
-            this.queue_controller.append(T)
-        }}))
-        this.menu.append(new MenuItem({type:  'separator'}))
-        this.menu.append(new MenuItem({label: 'Preview',
-            submenu: [
-                {label: 'Full track', click: () => {
-                    pc.play(this.context_menu_element)
-                }},
-                {label: 'Last 30 seconds', click: () => {
-                    pc.play_last_30_seconds(this.context_menu_element)
-                }},
-                {label: 'Last 10 seconds', click: () =>{
-                    pc.play_last_10_seconds(this.context_menu_element)
-                }}
-            ]}))
-
-        this.menu.append(new MenuItem({type: 'separator'}))
-
-        this.menu.on("menu-will-show", (e) => {})
-        this.menu.on("menu-will-close", (e) => {})
-
-        this.filter_dom.oninput = (e) => {
-            this.filter_list(this.filter_dom.value)
+    convert_track(track_element) {
+        let { metadata, stats, track } = track_element
+        return {
+            id: track_element._id,
+            color: metadata.color,
+            title: metadata.title,
+            artist: metadata.artist,
+            album: metadata.album,
+            genre: metadata.genre,
+            last_played: (stats.last_played != null) ? moment(stats.last_played).format('MM-DD-YYYY') : "",
+            play_count: (stats.play_count != undefined) ? stats.play_count : "",
+            duration: track.stream_end - track.stream_start,
+            bpm: track.bpm,
+            loved: stats.loved,
+            rating: stats.rating
         }
     }
 
-    render_row_internal(track, element) {
-        return `<tr  id='track-row-${track.id}' class="list-group-item row track-entry" style="color:${track.color}" draggable=true data-track-id=${track.id}>
-            <${element} style="width:25px; text-align:center">
-                <input id='track-color-value-${track.id}' type="hidden" value="" class="main-list-color-value" data-track-id=${track.id}/>
-                <button id='track-color-${track.id}' class="main-list color-chooser show-color-picker" style="background-color:${track.color}" data-track-id=${track.id}></button>
-            </${element}>
-            <${element} id='track-loved-${track.id}' style="width:25px; padding:5px 3px 5px 3px; text-align:center; font-size:8pt">${track.loved}</${element}>
-            <${element} id='track-title-${track.id}' style="max-width:110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.title}</${element}>
-            <${element} id='track-artist-${track.id}' style="max-width:90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.artist}</${element}>
-            <${element} id='track-album-${track.id}'style="max-width:90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.album}</${element}>
-            <${element} id='track-genre-${track.id}' style="max-width:40px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${track.genre}</${element}>
-            <${element} style="text-align:right; width:25px; padding-right:9px">${track.play_count}</${element}>
-            <${element} style="width:75px">${track.last_played}</${element}>
-            <${element} id='track-rating-${track.id}' style="width:25px">${track.rating}</${element}>
-            <${element} id='track-bpm-${track.id}' style="width:30px; text-align:right; padding-right:5px">${track.bpm}</${element}>
-            <${element} id='track-duration-${track.id}'style="width:45px; text-align:right">${track.duration}</${element}>
-            <${element} style="width:15px"></${element}>
-        </tr>`
+    async set_list(name, list_elements) {
+        if (list_elements == undefined) {
+            list_elements = []
+        }
 
-    }
+        if (!this.model_order) {
+            list_elements.sort(this.compare_tracks)
+        }
 
-    fitHeaderColumns() {
-        let $headers = $("#track-list-elements-header")
-        let $firstRow = $("#main-track-list-table").find('tr:not(.clusterize-extra-row):first');
-        let columnsWidth = [];
-        $firstRow.children().each(function () {
-            columnsWidth.push($(this).width());
-        });
-        if (columnsWidth.toString() == this.prevWidth.toString()) return;
-        $headers.find('tr').children().each(function(i) {
-            $(this).width(columnsWidth[i]);
-        });
-        this.prevWidth = columnsWidth;
-    }
-
-    render_row(track) {
-        return this.render_row_internal(track, "td")
-    }
-
-    render_header(track) {
-        return this.render_row_internal(track, "th")
+        this.view_list_order = list_elements.map((e) => {return this.convert_track(e)})
+        this.view_list_id_order = list_elements.map((e) => {return e._id})
+        this.update_view(this.view_list_order)
+        this.update(name, this.view_list_order, await this.controller.q_length(), await this.controller.duration())
     }
 
     set_controller(controller) {
@@ -236,35 +73,23 @@ class BaseTrackListView extends EventDispatcher {
         this.controller.on("selection-changed", this.update_selection.bind(this))
         this.controller.on("element-updated", this.update_element.bind(this))
         this.controller.on("metadata-changed", this.update_element.bind(this))
-        this.controller.on("track-unavailable", (tr) => {
-            if (this.ignore_unavailable) {
-                return null
-            }
-            if (tr != undefined) {
-                if (this.table_rows[tr.id] != undefined) {
-                    this.table_rows[tr.id].classList.add("unavailable")
-                }
-            }
-        })
-        this.controller.on("track-available", (tr) => {
-            if (tr != undefined) {
-                if (this.table_rows[tr.id] != undefined) {
-                    this.table_rows[tr.id].classList.remove("unavailable")
-                }
-            }
-        })
     }
 
-    _get_loved(track_object) {
-        return `<i id='main-track-loved-${track_object._id}' title='${track_object._id}' class='fa ${(track_object.stats.loved ? "fa-heart" : "fa-heart-o")}'></i>`
-    }
-
-    _get_rating(track_object) {
-        let html = "";
-        for (let j=1; j<6; j++) {
-            html += `<i id='main-track-rating-${track_object._id}-${j}' class='fa ${( j <= track_object.stats.rating ? "fa-star" : "fa-star-o")}' style='font-size:8pt; margin-left:3px'></i>`;
+    setDimmedRows(track_id_list) {
+        if (this.ignore_unavailable) {
+            return;
         }
-        return html
+        let track_set = {}
+        track_id_list.forEach((t) => {track_set[t] = true})
+        Object.keys(this._dimmed).forEach((t) => {
+            let r = this.getTrackTableElement(t)
+            r && r.classList.remove("unavailable")
+        })
+        Object.keys(track_set).forEach((t) => {
+            let r = this.getTrackTableElement(t)
+            r && r.classList.add("unavailable")
+        })
+        this._dimmed = track_set
     }
 
     compare_tracks(a, b) {
@@ -275,60 +100,14 @@ class BaseTrackListView extends EventDispatcher {
         return 0;        
     }    
 
-
-    async set_list(name, queue) {
-        this.view_list_order = []
-        this.view_list_id_order = []
-        this.queue_rows = []
-        if (!this.model_order) {
-            queue.sort(this.compare_tracks)
-        }
-
-        let scroller = document.getElementById("main-track-list-scroller")
-        scroller.scrollTop = 0
-    
-        //this.table_rows = {}
-        if (queue == undefined) {
-            queue = []
-        }
-        for(let i=0; i<queue.length; i++) {
-            let element = {
-                id:          queue[i]._id,
-                available:   queue[i].available,
-                color:       queue[i].metadata.color,
-                loved:       this._get_loved(queue[i]),
-                title:       queue[i].metadata.title,
-                artist:      queue[i].metadata.artist,
-                album:       queue[i].metadata.album,
-                genre:       queue[i].metadata.genre,
-                last_played: (queue[i].stats.last_played != null) ? moment(queue[i].stats.last_played).format('MM-DD-YYYY') : "",
-                play_count:  (queue[i].stats.play_count != undefined) ? queue[i].stats.play_count : "",
-                rating:      this._get_rating(queue[i]),
-                bpm:         queue[i].track.bpm,
-                duration:    format_nanoseconds(queue[i].track.stream_end - queue[i].track.stream_start ),
-            }
-            this.queue_rows.push(this.render_row(element))
-            this.view_list_order.push(element)
-            this.view_list_id_order.push(element.id)
-        }
-        this.name_dom.innerHTML       = `${name}`
-        this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
-        this.duration_dom.innerHTML   = `${format_seconds_long(Math.round((await this.controller.duration()) / 1000000000))}`
-        this.list_cluster.update(this.queue_rows)
-    }
-
     handle_drag_start(e) {
-        let x = e.target.closest("tr")
-        let track_id = x.attributes["data-track-id"].value
-        let track_element = track_id 
-        e.dataTransfer.setData("text/plain", track_element)//JSON.stringify(track_element))
+        let track_id = this.getEventTrackId(e)
+        e.dataTransfer.setData("text/plain", track_id)
     }
 
     async handle_double_click(e) {
-        let x = e.target.closest("tr")
-        let track_id = x.attributes["data-track-id"].value
-        let track_element = await this.controller.getElementById(track_id)
-        pc.play(track_element)
+        let track_element = await this.getEventTrackElement(e)
+        this.dispatch("prelisten-request", track_element)
     }
 
     handle_click(e) {
@@ -358,10 +137,9 @@ class BaseTrackListView extends EventDispatcher {
 
 
     async set_rating(id, value) {
-        console.log(id)
         let track = await this.controller.getElementById(id)
         if (value == 1 && track.rating == 1) {
-            this.controller.setTrackMetadata(track, {"stats.rating":0})
+            this.controller.setTrackMetadata(track, {"stats.rating": 0})
         } else {
             this.controller.setTrackMetadata(track, {"stats.rating": value})
         }
@@ -373,11 +151,8 @@ class BaseTrackListView extends EventDispatcher {
     }
 
     select_row(e) {
-        let x = e.target.closest("tr")
-        let id = x.attributes["data-track-id"].value
-        this.controller.select_element(id)
+        this.controller.select_element(this.getEventTrackId(e))
     }
-
 
     focus() {
         this.element.classList.add("focus")
@@ -405,12 +180,7 @@ class BaseTrackListView extends EventDispatcher {
 
     cancel_edit() {
         this.edit_mode = false
-        let r = this.edit_row
-        document.getElementById(`track-title-${r._id}`).innerHTML = this.edit_row.metadata.title
-        document.getElementById(`track-artist-${r._id}`).innerHTML = this.edit_row.metadata.artist 
-        document.getElementById(`track-album-${r._id}`).innerHTML = this.edit_row.metadata.album 
-        document.getElementById(`track-genre-${r._id}`).innerHTML = this.edit_row.metadata.genre
-        document.getElementById(`track-bpm-${r._id}`).innerHTML = this.edit_row.track.bpm
+        this.rowEditCancelRequest(r)
         this.edit_row = undefined
     }
 
@@ -437,60 +207,32 @@ class BaseTrackListView extends EventDispatcher {
             this.edit_mode = true
             let r = this._selected_row[0]
             this.edit_row = r
-            this.edit_bpm = new BPM()
-            document.getElementById(`track-title-${r._id}`).innerHTML = this._make_edit_input_field("title", r._id, r.metadata.title)
-            document.getElementById(`main-track-list-edit-title-${r._id}`).addEventListener("keyup", (e) => {
-                this._keypress(e)
-            })
-
-            document.getElementById(`track-artist-${r._id}`).innerHTML = this._make_edit_input_field("artist", r._id, r.metadata.artist)
-            document.getElementById(`main-track-list-edit-artist-${r._id}`).addEventListener("keyup", (e) => {
-                this._keypress(e)
-            })
-
-            document.getElementById(`track-album-${r._id}`).innerHTML = this._make_edit_input_field("album", r._id, r.metadata.album)
-            document.getElementById(`main-track-list-edit-album-${r._id}`).addEventListener("keyup", (e) => {
-                this._keypress(e)
-            })
-
-
-            document.getElementById(`track-genre-${r._id}`).innerHTML = this._make_edit_input_field("genre", r._id, r.metadata.genre)
-            document.getElementById(`main-track-list-edit-genre-${r._id}`).addEventListener("keyup", (e) => {
-                this._keypress(e)
-            })
-
-            document.getElementById(`track-bpm-${r._id}`).innerHTML = this._make_edit_input_field("bpm", r._id, r.track.bpm)
-            document.getElementById(`main-track-list-edit-bpm-${r._id}`).addEventListener("keyup", (e) => {
-                this._keypress(e)
-            })
-
-            document.getElementById(`main-track-list-edit-title-${r._id}`).focus()
+            this.rowEditRequest()
         }
     }
 
     save_edit() {
-        if (this._selected_row != undefined) {
-            if (this.edit_mode) {
-                this.edit_mode = false
-                let r = this._selected_row[0]
-                let title = document.getElementById(`main-track-list-edit-title-${r._id}`).value
-                let artist = document.getElementById(`main-track-list-edit-artist-${r._id}`).value
-                let album = document.getElementById(`main-track-list-edit-album-${r._id}`).value
-                let genre = document.getElementById(`main-track-list-edit-genre-${r._id}`).value
-                let bpm = document.getElementById(`main-track-list-edit-bpm-${r._id}`).value
+        if ((this._selected_row != undefined) && this.edit_mode) {
+            // if (this.edit_mode) {
+            this.edit_mode = false
+            let r = this._selected_row[0]
+            let new_values = this.rowEditGSetValues(r)
+            if (new_values != undefined) {W
                 this.controller.setTrackMetadata(r, {
-                    "metadata.title":title,
-                    "metadata.artist":artist,
-                    "metadata.album":album,
-                    "metadata.genre":genre,
-                    "stats.bpm":bpm
+                    "metadata.title": new_values.title,
+                    "metadata.artist": new_values.artist,
+                    "metadata.album": new_values.album,
+                    "metadata.genre": new_values.genre,
+                    "stats.bpm": new_values.bpm
                 })
             }
+            // }
         }
     }
 
 
-    move_down() {
+    move_selection(amount) {
+        //console.log(abount)
         if (this.edit_mode) {
             this.cancel_edit()
         }
@@ -500,7 +242,9 @@ class BaseTrackListView extends EventDispatcher {
             let i = this.view_list_id_order.indexOf(r._id)
             let n
             if (i != -1) {
-                n = (i+1) < this.view_list_id_order.length ? i+1 : this.view_list_id_order.length - 1
+                n = i + amount
+                n = Math.max(n, 0)
+                n = Math.min(n, this.view_list_id_order.length - 1)
             } else {
                 n = 0
             }
@@ -508,26 +252,15 @@ class BaseTrackListView extends EventDispatcher {
         } else {
             this.controller.select_element(this.view_list_id_order[0])
         }
+
+    }
+
+    move_down() {
+        this.move_selection(1)
     }
 
     move_up() {
-        if (this.edit_mode) {
-            this.cancel_edit()
-        }
-        this.d = -1
-        if (this._selected_row != undefined) {
-            let r = this._selected_row[0]
-            let i = this.view_list_id_order.indexOf(r._id)
-            let n
-            if (i != -1) {
-                n = (i-1) >= 0 ? i-1 : 0
-            } else {
-                n = 0
-            }
-            this.controller.select_element(this.view_list_id_order[n])
-        } else {
-            this.controller.select_element(this.view_list_id_order[this.view_list_id_order.length-1])
-        }
+        this.move_selection(-1)
     }
 
 
@@ -573,14 +306,12 @@ class BaseTrackListView extends EventDispatcher {
 
 
     page_up() {
-        let scroller = document.getElementById("main-track-list-scroller")
-        let y = scroller.getBoundingClientRect()
+        let y = this.scroller.getBoundingClientRect()
         scroller.scrollTop -= y.height
     }
 
     page_down() {
-        let scroller = document.getElementById("main-track-list-scroller")
-        let y = scroller.getBoundingClientRect()
+        let y = this.scroller.getBoundingClientRect()
         scroller.scrollTop += y.height
     }
 
@@ -607,42 +338,39 @@ class BaseTrackListView extends EventDispatcher {
 
     }
 
-    update_element(x) {
-        let row = this.table_rows[x._id]
-        let rating_cell = document.getElementById(`track-rating-${x._id}`)
-        rating_cell.innerHTML = this._get_rating(x)
-        let loved_cell = document.getElementById(`track-loved-${x._id}`)
-        loved_cell.innerHTML = this._get_loved(x)
-        let color_cell = document.getElementById(`track-color-${x._id}`)
-        color_cell.style.backgroundColor = x.color
-        let row_dom = document.getElementById(`track-row-${x._id}`)
-        row_dom.style.color = x.color
-
-        document.getElementById(`track-title-${x._id}`).innerHTML = x.metadata.title
-        document.getElementById(`track-artist-${x._id}`).innerHTML = x.metadata.artist
-        document.getElementById(`track-genre-${x._id}`).innerHTML = x.metadata.genre
-        document.getElementById(`track-bpm-${x._id}`).innerHTML = x.track.bpm
-        document.getElementById(`track-duration-${x._id}`).innerHTML = `${format_nanoseconds(x.track.stream_end - x.track.stream_start)}`
+    getTrackTableElement(trackId) {
+        console.log(trackId)
     }
 
 
+    selectTrackTableElement(track) {
+        let e = this.getTrackTableElement(track._id)      
+        if (e != undefined) {
+            e.classList.add("selected")
+        }
+    }
+
+    unselectTrackTableElement(track) {
+        let e = this.getTrackTableElement(track._id)      
+        if (e != undefined) {
+            e.classList.remove("selected")
+        }
+    }
+
     ensure_row_visible(x, direction) {
-        // console.log(x)
-        let row = this.table_rows[x._id]
-        let scroller = document.getElementById("main-track-list-scroller")
-        let scrollerRect = scroller.getBoundingClientRect()
-        //console.log(row)
+        let row = this.getTrackTableElement(x._id)
+        let scrollerRect = this.scroller.getBoundingClientRect()
         if (row == undefined) {
-            scroller.scrollTop += (this.d*30)
+            this.scroller.scrollTop += (this.d * this.rowHeight)
         } else {
             let rowRect = row.getBoundingClientRect()
             let offsetTop = (rowRect.y - scrollerRect.y)
             let offsetBottom = offsetTop + rowRect.height
-            let y = scroller.getBoundingClientRect()
+            let y = this.scroller.getBoundingClientRect()
             if (offsetBottom >= y.height) {
-                scroller.scrollTop += (offsetBottom - y.height)
+                this.scroller.scrollTop += (offsetBottom - y.height)
             } else if (offsetTop < 0) {
-                scroller.scrollTop += (offsetTop)
+                this.scroller.scrollTop += (offsetTop)
             }
         }
     }
@@ -650,18 +378,13 @@ class BaseTrackListView extends EventDispatcher {
     update_selection(selection) {
         if (this._selected_row != undefined) {
             this._selected_row.forEach((x) => {
-                if (this.table_rows[x._id]) {
-                    this.table_rows[x._id].classList.remove("selected")}
-                })
+                this.unselectTrackTableElement(x)
+            })
         }
         this._selected_row = selection
         this._selected_row.forEach((x) => {
             this.ensure_row_visible(x)
-            // console.log(this.table_rows)
-            // console.log(x)
-            if (this.table_rows[x._id] != undefined) {
-                this.table_rows[x._id].classList.add("selected")
-            }
+            this.selectTrackTableElement(x)
         })
     }
 
@@ -745,6 +468,8 @@ class BaseTrackListView extends EventDispatcher {
             }
         })
 
-        this.list_cluster.update(queue_rows)
+        return queue_rows
+
+        //this.list_cluster.update(queue_rows)
     };
 }

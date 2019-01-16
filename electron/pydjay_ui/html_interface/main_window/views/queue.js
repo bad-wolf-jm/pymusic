@@ -1,6 +1,6 @@
-class QueueView extends EventDispatcher {
+class QueueView extends BaseTrackListView {
     constructor(dom_ids) {
-        super()
+        super(document.getElementById("queue-list-area"), document.getElementById("queue-list-area"))
 
         this.element = document.getElementById("queue-list")
 
@@ -70,7 +70,6 @@ class QueueView extends EventDispatcher {
                     this.view_list_order = new_order
                     await this.controller.reorder_queue(this.view_list_order)
 
-                    // this.dispatch("reorder", this.view_list_order)
                     this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
                     this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
                 },

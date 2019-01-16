@@ -101,14 +101,14 @@ class PlaylistEditView extends EventDispatcher {
                 id:       queue[i]._id,
                 title:    queue[i].metadata.title,
                 artist:   queue[i].metadata.artist,
-                bpm:      queue[i].metadata.bpm,
-                duration: format_nanoseconds(queue[i].stream_end - queue[i].stream_start),
+                bpm:      queue[i].track.bpm,
+                duration: format_nanoseconds(queue[i].track.stream_end - queue[i].track.stream_start),
             }
             if (element.id != null) {
                 if (queue[i].metadata.cover == null) {
                     element.cover = "../../resources/images/default_album_cover.png"
                 } else {
-                    element.cover = `file://${queue[i].cover.small}`
+                    element.cover = `file://${queue[i].metadata.cover.small}`
                 }
             }
             queue_rows.push(element)
