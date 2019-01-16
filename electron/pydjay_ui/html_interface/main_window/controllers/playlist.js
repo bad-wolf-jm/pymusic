@@ -17,6 +17,7 @@ class PlaylistController extends TrackListController {
     }
 
     remove(element) {
+        //console.log(element)
         this.model.remove(element)
     }
 
