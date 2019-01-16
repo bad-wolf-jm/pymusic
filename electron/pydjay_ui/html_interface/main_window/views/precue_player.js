@@ -82,7 +82,7 @@ class PrecuePlayerView extends EventDispatcher {
     }
 
     update_track(track) {
-        let stream_length = (track.stream_end-track.stream_start);
+        let stream_length = (track.track.stream_end - track.track.stream_start);
         this._track = track
         document.getElementById("precue-player-title").innerHTML       = track.metadata.title
         document.getElementById("precue-player-album").innerHTML       = track.metadata.album
@@ -124,6 +124,7 @@ class PrecuePlayerView extends EventDispatcher {
 
 
     set_track(tr) {
+        console.log(tr)
         this.update_track(tr.track_object)
     }
 
