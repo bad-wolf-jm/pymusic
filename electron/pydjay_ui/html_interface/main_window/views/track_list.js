@@ -50,8 +50,9 @@ class TrackListView extends BaseTrackListView {
                                         this.color_chooser = undefined
                                     },
                                     chooseColor: (color) => {
+                                        console.log(color)
                                         let track = this.controller.getElementById(track_id)
-                                        this.controller.set_metadata(track, {'metadata.color': color})                                
+                                        this.controller.setTrackMetadata(track, {'metadata.color': color})                                
                                         this.color_chooser.close()
                                         this.color_chooser = undefined
                                     }
@@ -244,6 +245,7 @@ class TrackListView extends BaseTrackListView {
         let x = e.target.closest("tr")
         let track_id = x.attributes["data-track-id"].value
         let track_element = await this.controller.getElementById(track_id)
+        // console.log(track_element)
         pc.play(track_element)
     }
 

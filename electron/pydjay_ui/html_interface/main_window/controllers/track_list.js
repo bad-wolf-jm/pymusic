@@ -67,6 +67,7 @@ class TrackListController extends EventDispatcher {
 
     async setTrackMetadata(track, metadata) {
         if (this.model != undefined) {
+            // console.log(metadata)
             await this.model.setTrackMetadata(track, metadata)
         }
     }

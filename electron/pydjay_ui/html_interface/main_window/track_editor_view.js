@@ -8,6 +8,12 @@ function rgb2hex(rgb) {
     }
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
+
+function getFileExtension(f_name) {
+    return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
+}
+
+
 class TrackEditorView extends EventDispatcher {
     constructor () {
         super()
@@ -33,6 +39,8 @@ class TrackEditorView extends EventDispatcher {
                         if (!error) {
                             document.getElementById('track-editor-track-cover').src = new_cover
                             this.cover_image = image
+                            this.cover_image_extension = getFileExtension(new_cover)
+                            //console.log(image)
                         }
                     })
                 }
@@ -112,8 +120,8 @@ class TrackEditorView extends EventDispatcher {
             this.setLoved(!(this.loved))
         })
 
-        document.getElementById("track-editor-save").addEventListener("click", (ev) => {
-            this.save()
+        document.getElementById("track-editor-save").addEventListener("click", async (ev) => {
+            await this.save()
         })
 
         document.getElementById("track-editor-cancel").addEventListener("click", (ev) => {
@@ -155,8 +163,8 @@ class TrackEditorView extends EventDispatcher {
             var zoomLevel = Number(slider.value);
             this._waveform.zoom(zoomLevel);
           };
-        this.setRating(track.rating)
-        this.setLoved(track.favorite)
+        this.setRating(track.stats.rating)
+        this.setLoved(track.stats.favorite)
         let cover_source = undefined
         if (track.metadata.cover == null) {
             cover_source = "../../resources/images/default_album_cover.png"
@@ -170,8 +178,8 @@ class TrackEditorView extends EventDispatcher {
         document.getElementById("track-editor-track-cover").src = cover_source
         this._track = track
         this._waveform.load(file_name)
-        this.stream_start = this._track.stream_start
-        this.stream_end = this._track.stream_end
+        this.stream_start = this._track.track.stream_start
+        this.stream_end = this._track.track.stream_end
         this._position_tracker = this.audio_player.on("stream-position", (pos) => {
             this.current_stream_position = pos*1000000
             this._waveform.seekAndCenter(pos*1000000 / this._track.duration)
@@ -291,10 +299,10 @@ class TrackEditorView extends EventDispatcher {
             "metadata.genre": F("track-editor-track-genre").value,
             "metadata.year": F("track-editor-track-year").value,
             "metadata.color": this.color, 
-            "track.stream_start": this.stream_start,
-            "track.stream_end": this.stream_end,
-            "stats.loved": this.loved,
-            "stats.rating": this.rating
+            "track.stream_start": this.stream_start || 0,
+            "track.stream_end": this.stream_end || this.track.track.duration,
+            "stats.loved": this.loved || false,
+            "stats.rating": this.rating || 0
         }
         v.cover_image = this.cover_image
         v['metadata.year'] = (v['metadata.year'] != "") ? v['metadata.year'] : null
@@ -308,29 +316,27 @@ class TrackEditorView extends EventDispatcher {
         document.getElementById("track-edit-dialog").close()
     }
     
-    save() {
-        let file_path = this.track.track.path
-        let file_dir = path.dirname(file_path)
-        let cover_dir = path.join(file_dir, ".covers")
+    async save() {
+        // let file_path = this.track.track.path
+        let cover_dir = MDB.getCoverFolder()
         let new_values = this.getValues()
         if (new_values.cover_image != null) {
-            new_values.cover_image.write(new_values["metadata.album.cover.original"]);
-            new_values["metadata.album.cover.original"] = path.join(cover_dir, `cover_original_${this.track._id}`),
-
-            new_values.cover_image.resize(320,320).write(new_values["metadata.album.cover.large"])
-            new_values["metadata.album.cover.large"] = path.join(cover_dir, `cover_large_${this.track._id}`),
-            
-            new_values.cover_image.resize(160,160).write(new_values["metadata.album.cover.medium"])
-            new_values["metadata.album.cover.medium"] = path.join(cover_dir, `cover_medium_${this.track._id}`),
-            
-            new_values.cover_image.resize(100,100).write(new_values["metadata.album.cover.small"])
-            new_values["metadata.album.cover.small"] = path.join(cover_dir, `cover_small_${this.track._id}`)    
-        } else if (new_values.cover_image !== undefined) {
-            new_values.cover = undefined
+            let image = new_values.cover_image
+            let trackId = this.track._id
+            let ext = this.cover_image_extension 
+            image.write(`${path.join(cover_dir, `${trackId}_original.${ext}`)}`);
+            image.resize(320,320).write(`${path.join(cover_dir, `${trackId}_large.${ext}`)}`)
+            image.resize(160,160).write(`${path.join(cover_dir, `${trackId}_medium.${ext}`)}`)
+            image.resize(100,100).write(`${path.join(cover_dir, `${trackId}_small.${ext}`)}`)   
+            new_values["metadata.cover.original"] =  `${trackId}_original.${ext}`
+            new_values["metadata.cover.large"] = `${trackId}_large.${ext}`
+            new_values["metadata.cover.medium"] = `${trackId}_medium.${ext}`
+            new_values["metadata.cover.small"] = `${trackId}_small.${ext}`
         }
-        MDB.tracks.setTrackMetadata(this.track, new_values)
+        
+        await MDB.tracks.setTrackMetadata(this.track, new_values)
         if (new_values.cover == undefined) {
-            MDB.tracks.d.update({_id: this.track.id}, {$unset: {cover: true}})
+            MDB.tracks.d.update({_id: this.track.id}, {$unset: {'metadata.cover': true}})
         }
         this.close()
     }

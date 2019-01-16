@@ -1,5 +1,0 @@
-{"_id":"queue","elements":{},"ordering":[null],"createdAt":{"$$date":1547611832272},"updatedAt":{"$$date":1547611832272}}
-{"_id":"session","elements":{},"ordering":[],"createdAt":{"$$date":1547611832274},"updatedAt":{"$$date":1547611832274}}
-{"_id":"settings","elements":{},"createdAt":{"$$date":1547611832275},"updatedAt":{"$$date":1547611832275}}
-{"_id":"shortlist","elements":{},"createdAt":{"$$date":1547611832274},"updatedAt":{"$$date":1547611832274}}
-{"_id":"unavailable","elements":{},"createdAt":{"$$date":1547611832275},"updatedAt":{"$$date":1547611832275}}
