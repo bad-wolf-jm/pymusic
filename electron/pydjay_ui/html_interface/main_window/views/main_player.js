@@ -16,7 +16,7 @@ class MainPlayerView extends EventDispatcher {
 
         document.getElementById("main-player-loved").addEventListener("click", () => {
             if (this._track != undefined) {
-                this.updateLoved(!this._track.favorite)
+                this.updateLoved(!(this._track.stats.loved))
             }
         })
     }
@@ -25,7 +25,7 @@ class MainPlayerView extends EventDispatcher {
         this.controller = controller
         this.controller.on("stream-position", (pos) => {
             let remaining = Math.abs(pos.duration*1000 - pos.position)
-            document.getElementById("main-player-time-remaining").innerHTML = `-${format_nanoseconds(remaining*1000000)}`
+            document.getElementById("main-player-time-remaining").innerHTML = `-${format_nanoseconds(remaining)}`
         })
         this.controller.on("queue-stopped",                this.set_queue.bind(this))
         this.controller.on("track-finished",                this.set_queue.bind(this))
@@ -84,7 +84,7 @@ class MainPlayerView extends EventDispatcher {
         });
         this._position_tracker = this.controller.on("stream-position",
             (pos) => {
-                let p = pos.position*1000000 / this._track.track.duration
+                let p = pos.position / this._track.track.duration
                 p = Math.max(p,0.0)
                 p = Math.min(p,1.0)
                 this._waveform.seekAndCenter(p)
@@ -117,20 +117,20 @@ class MainPlayerView extends EventDispatcher {
 
     setLoved (value){
         var html = "";
-        this.loved = value
+        this._track.stats.loved = value
         html+="<i title='"+value+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
         document.getElementById("main-player-loved").innerHTML = html
     }
 
     updateRating(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.set_metadata(this._track, {"stats.rating":new_value})
+            this.track_list_model.setTrackMetadata(this._track, {"stats.rating":new_value})
         }
     }
 
     updateLoved(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.set_metadata(this._track, {"stats.loved":new_value})
+            this.track_list_model.setTrackMetadata(this._track, {"stats.loved": new_value})
         }
     }
 
