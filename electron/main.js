@@ -1,6 +1,11 @@
 'use strict';
 const { ipcMain } = require('electron');
+const { existsSync } = require("fs")
+const {homedir} = require("os")
 var electron = require('electron');
+const path = require("path")
+const { MusicDatabase } = require("./pydjay_ui/node_modules/musicdb/model.js")
+
 
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
@@ -8,11 +13,18 @@ var BrowserWindow = electron.BrowserWindow;
 var mainWindow = null;
 var mixerWindow = null;
 
-app.on('ready', function() {
+app.on('ready', async () => {
     mainWindow = new BrowserWindow({
       width: 1728,
       height: 1152,
     });
+
+    if (!(existsSync(path.join(homedir(), ".pymusic-library")))) {
+      let library = new MusicDatabase("pymusic")
+      await library.initialize()
+      library = undefined
+    }
+
     // mixerWindow = new BrowserWindow({
     //   width: 600,
     //   height: 400,
@@ -54,22 +66,22 @@ ipcMain.on('quit-pymusic', (event, message) => {
 
 
 
-ipcMain.on('track-modified', (event, message) => {
-  mainWindow.webContents.send("track-modified", message)
-})
+// ipcMain.on('track-modified', (event, message) => {
+//   mainWindow.webContents.send("track-modified", message)
+// })
 
-ipcMain.on('playback-start', (event, message) => {
-  mainWindow.webContents.send("playback-start", message)
-})
+// ipcMain.on('playback-start', (event, message) => {
+//   mainWindow.webContents.send("playback-start", message)
+// })
 
-ipcMain.on('playback-stop', (event, message) => {
-  mainWindow.webContents.send("playback-stop", message)
-})
+// ipcMain.on('playback-stop', (event, message) => {
+//   mainWindow.webContents.send("playback-stop", message)
+// })
 
 
-ipcMain.on("reset-audio-system", (event, message) => {
-  mixerWindow.webContents.send("reset-audio-system", message)
-})
+// ipcMain.on("reset-audio-system", (event, message) => {
+//   mixerWindow.webContents.send("reset-audio-system", message)
+// })
 
 
 // ipcMain.on("show-mixer-window", (event, message) => {
