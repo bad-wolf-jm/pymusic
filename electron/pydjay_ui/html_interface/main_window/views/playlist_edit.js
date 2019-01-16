@@ -20,9 +20,9 @@ class PlaylistEditView extends EventDispatcher {
         this.view_list_order = []
         let queue_list = document.getElementById("playlist-edit-area")
         queue_list.addEventListener('dragenter', this.handle_drag_enter.bind(this), false);
-        queue_list.addEventListener('dragover',  this.on_drag_over.bind(this), false);
-        queue_list.addEventListener('dragend',   this.handle_drag_end.bind(this), false);
-        queue_list.addEventListener('drop',      this.handle_drop.bind(this), true);
+        queue_list.addEventListener('dragover', this.on_drag_over.bind(this), false);
+        queue_list.addEventListener('dragend', this.handle_drag_end.bind(this), false);
+        queue_list.addEventListener('drop', this.handle_drop.bind(this), true);
 
         this.queue_content = undefined
 
