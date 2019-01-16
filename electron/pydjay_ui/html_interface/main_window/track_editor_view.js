@@ -314,14 +314,17 @@ class TrackEditorView extends EventDispatcher {
         let cover_dir = path.join(file_dir, ".covers")
         let new_values = this.getValues()
         if (new_values.cover_image != null) {
-            new_values["metadata.album.cover.original"] = path.join(cover_dir, `cover_original_${this.track._id}`),
-            new_values["metadata.album.cover.large"] = path.join(cover_dir, `cover_large_${this.track._id}`),
-            new_values["metadata.album.cover.medium"] = path.join(cover_dir, `cover_medium_${this.track._id}`),
-            new_values["metadata.album.cover.small"] = path.join(cover_dir, `cover_small_${this.track._id}`)    
             new_values.cover_image.write(new_values["metadata.album.cover.original"]);
+            new_values["metadata.album.cover.original"] = path.join(cover_dir, `cover_original_${this.track._id}`),
+
             new_values.cover_image.resize(320,320).write(new_values["metadata.album.cover.large"])
+            new_values["metadata.album.cover.large"] = path.join(cover_dir, `cover_large_${this.track._id}`),
+            
             new_values.cover_image.resize(160,160).write(new_values["metadata.album.cover.medium"])
+            new_values["metadata.album.cover.medium"] = path.join(cover_dir, `cover_medium_${this.track._id}`),
+            
             new_values.cover_image.resize(100,100).write(new_values["metadata.album.cover.small"])
+            new_values["metadata.album.cover.small"] = path.join(cover_dir, `cover_small_${this.track._id}`)    
         } else if (new_values.cover_image !== undefined) {
             new_values.cover = undefined
         }

@@ -26,8 +26,8 @@ class PlaybackController extends RemoteTrackPlayer {
                     this.stop_request = false
                     this.dispatch("queue-stopped")
                 } else {
-                    let time = await MDB.state.d.find({_id: "playback_management"})
-                    this.play_next_track(time.wait_time || 1)
+                    let time = await MDB.state.d.find({_id: "settings"})
+                    this.play_next_track(time.wait_time || 2000)
                 }
             })        
     }
@@ -56,7 +56,7 @@ class PlaybackController extends RemoteTrackPlayer {
                     this._do_play_next_track();
                 } else {
                     this.dispatch('next-track-countdown', delay)
-                    delay--;
+                    delay = delay - 1000;
                 }
             }, 
             1000
@@ -83,12 +83,6 @@ class PlaybackController extends RemoteTrackPlayer {
     stop_queue_now() {
         this.queue_playing = false;
         this.stop_request = false;
-        // if (this._current_track != undefined) {
-        //     this._current_track.end_time = new Date()
-        //     this._current_track.status = "stopped"
-        //     //this.session_controller.add(this._current_track)
-        //     this._current_track = undefined    
-        // }
         this.stop()
         this.dispatch("queue-stopped")
     }
@@ -98,7 +92,6 @@ class PlaybackController extends RemoteTrackPlayer {
             if (this._current_track != undefined) {
                 this._current_track.end_time = new Date()
                 this._current_track.status = "skipped"
-                // this.session_controller.add(this._current_track)
                 this.dispatch("track-skipped", this._current_track)
                 this.stop()
                 this._current_track = undefined    

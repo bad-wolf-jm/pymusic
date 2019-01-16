@@ -26,9 +26,9 @@ function trackBSON(tr) {
             tags: []
         },
         track: {
-            duration: tr.track_length,
-            stream_start: tr.stream_start,
-            stream_end: tr.stream_end,
+            duration: tr.track_length / 1000000,
+            stream_start: tr.stream_start / 1000000,
+            stream_end: tr.stream_end / 1000000,
             bpm: tr.bpm,
             bitrate: tr.bitrate,
             samplerate: tr.samplerate,
@@ -58,36 +58,6 @@ function trackBSON(tr) {
 
 const db = new MusicDatabase("pymusic")
 
-
-// async function mongo_insert(collection, record) {
-//     //#let client = await MongoClient.connect(connectionString, { useNewUrlParser: true });
-//     //#let db = client.db('pymusic');
-//     try {
-//         const res = await db.insert(record);
-
-//         return res["_id"]
-//      } catch (e) {
-//         console.log(e) //record)
-//      }
-//     //  } finally {
-//     //      client.close();
-//     //  }
-// }
-// main2 = async () => {
-//     // let x = await db.getAllTracks()
-//     // x.forEach((e) => {
-//     //     console.log(e)
-//     // })
-
-//     // (await db.getAllSessions()).forEach(async (pl) => {
-//     //     console.log(pl.object.event, await pl.duration())
-//     // })
-
-//     // let x = (await db.getTracksByIds(["09lWty9X6kR6v6T8"]))[0]
-//     // console.log(x)
-//     // db.setTrackData(x, {"title": "Take Me To Church"})
-// }
-
 main = async () => {
     let mysql = require('async-mysql'),
         connection,
@@ -102,7 +72,9 @@ main = async () => {
         await db.state.d.insert({_id: "session", elements:{}, ordering:[]})
         await db.state.d.insert({_id: "shortlist", elements:{}})
         await db.state.d.insert({_id: "unavailable", elements:{}})
-        await db.state.d.insert({_id: "playback_management", elements:{}})
+        await db.state.d.insert({_id: "settings", elements:{
+
+        }})
 
         connection = await mysql.connect({host: 'localhost', user:"root", password:"root", database:'pymusic'});
         settings = await connection.query('SELECT * FROM settings');
@@ -114,11 +86,6 @@ main = async () => {
             tr.image_root = settings.db_image_cache
             tr.music_root = settings.db_music_cache
             let track = trackBSON(tr)
-
-            // let history = await connection.query(`SELECT * FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
-            // history = history.map((x) => {return x.start_time})
-            // track.history = history
-
             let last_played = await connection.query(`SELECT max(start_time) as last_played, count(*) as count FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
             track.last_played = last_played[0].last_played
             track.play_count = last_played[0].count
@@ -163,16 +130,6 @@ main = async () => {
             })
             await db.sessions.d.insert(session_data)
         })
-
-        // let playback_logs = await connection.query(`SELECT * FROM session_tracks`);
-        // playback_logs.forEach(async (log) => {
-        //     await db.playback_logs.d.insert({
-        //         track:track_objects[log.track_id],
-        //         time_start: log.start_time,
-        //         time_end: log.end_time,
-        //         status: log.status
-        //     })
-        // })
 
         let playlists = await connection.query('SELECT * FROM playlists');
         playlists.forEach(async (s) => {
