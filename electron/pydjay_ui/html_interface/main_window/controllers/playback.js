@@ -27,7 +27,7 @@ class PlaybackController extends RemoteTrackPlayer {
                     this.dispatch("queue-stopped")
                 } else {
                     let time = await MDB.state.d.find({_id: "settings"})
-                    this.play_next_track(time.wait_time || 2000)
+                    this.play_next_track(time.track_gap || 2000)
                 }
             })        
     }
