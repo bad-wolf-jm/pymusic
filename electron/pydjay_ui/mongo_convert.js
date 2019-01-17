@@ -93,7 +93,7 @@ main = async () => {
             tr.music_root = settings.db_music_cache
 
             let track_file = path.join(tr.music_root, tr.file_name)
-            console.log(`Adding track ${i+1} of ${rows.length} - ${tr.title}//${tr.artist}`)
+            console.log(`Adding track ${i+1} of ${rows.length} - ${tr.title} // ${tr.artist}`)
 
             new_id = await db.addFile(track_file)
             track_objects[tr.id] = new_id["_id"]

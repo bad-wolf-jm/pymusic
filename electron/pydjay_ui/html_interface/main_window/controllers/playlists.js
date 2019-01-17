@@ -10,10 +10,10 @@ class PlaylistsController extends EventDispatcher {
     async setModel(m) {
         this.model = m
         this.model.on("content-changed", (x) => {
-            console.log(x)
+            //console.log(x)
             this.dispatch("content-changed", x)
         })
-        this.refresh()
+        return this.refresh()
     }
 
     async refresh(k) {

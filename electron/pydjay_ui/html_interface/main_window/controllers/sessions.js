@@ -18,18 +18,14 @@ class SessionsController extends EventDispatcher {
 
     setModel(model) {
         this.model = model
+        this.model.on("content-changed", (x) => {
+            console.log(x)
+            this.dispatch("content-changed", x)
+        })
         this.refresh()
     }
 
     addView(view) {
         this.views.push(view)
-    }
-
-    ready(func) {
-        if (this.queue != undefined) {
-            func(this.queue)
-        } else {
-            this.ready_wait_queue.push(func)
-        }
     }
 }

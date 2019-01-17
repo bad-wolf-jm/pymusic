@@ -11,7 +11,7 @@ class SessionsView extends EventDispatcher {
         this.controller = controller
         this.controller.addView(this)
         this.controller.on("content-changed", this.set_list.bind(this))
-        this.controller.ready(this.set_list.bind(this))
+        //this.controller.ready(this.set_list.bind(this))
     }
 
     set_list(list) {
