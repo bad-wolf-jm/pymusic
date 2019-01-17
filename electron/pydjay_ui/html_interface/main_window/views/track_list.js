@@ -434,7 +434,7 @@ class TrackListView extends BaseTrackListView {
         this.updateCell(`track-last-played-${x.id}`, x.last_played)
         this.updateCell(`track-duration-${x.id}`, `${format_nanoseconds(x.duration)}`)
         this.updateCellStyle(`track-color-${x.id}`, 'backgroundColor', x.color)
-        this.updateCellStyle(`track-row-${x.id}`, 'backgroundColor', x.color)
+        this.updateCellStyle(`track-row-${x.id}`, 'color', x.color)
     }
 
     getTrackTableElement(trackId) {
