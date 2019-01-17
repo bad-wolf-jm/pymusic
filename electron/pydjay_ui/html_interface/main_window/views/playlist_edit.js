@@ -75,7 +75,7 @@ class PlaylistEditView extends EventDispatcher {
                     }
                     this.view_list_order = new_order
                     this.dispatch("reorder", this.view_list_order)
-                    this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks - ${format_seconds_long(await Math.round(this.controller.duration() / 1000000000))}`
+                    this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks - ${format_seconds_long(await Math.round(this.controller.duration() / 1000))}`
                 },
             }
         )
@@ -109,7 +109,7 @@ class PlaylistEditView extends EventDispatcher {
             this.view_list_order.push(element.id)
         }
         document.getElementById("playlist-edit-name").innerHTML = name
-        this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks - ${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
+        this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks - ${format_seconds_long(Math.round(await this.controller.duration() / 1000))}`
         jui.ready([ "grid.table" ], (table) => {
                 if (this.queue_content != undefined) {
                     this.queue_content.reset()

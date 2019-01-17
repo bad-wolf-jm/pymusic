@@ -220,7 +220,7 @@ class TrackListView extends BaseTrackListView {
     update(name, list, length, duration) {
         this.name_dom.innerHTML = `${name}`
         this.num_tracks_dom.innerHTML = `${length} tracks`
-        this.duration_dom.innerHTML = `${format_seconds_long(duration / 1000000000)}`
+        this.duration_dom.innerHTML = `${format_seconds_long(duration / 1000)}`
     }
 
     update_view(list) {

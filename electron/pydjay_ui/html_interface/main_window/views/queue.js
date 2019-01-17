@@ -71,7 +71,7 @@ class QueueView extends BaseTrackListView {
                     await this.controller.reorder_queue(this.view_list_order)
 
                     this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
-                    this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
+                    this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000))}`
                 },
             }
         )
@@ -113,7 +113,7 @@ class QueueView extends BaseTrackListView {
             this.view_list_order.push(element._id)
         }
         this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
-        this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
+        this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000))}`
         jui.ready([ "grid.table" ], (table) => {
                 if (this.queue_content != undefined) {
                     this.queue_content.reset()
@@ -290,7 +290,7 @@ class QueueView extends BaseTrackListView {
                 await this.controller.reorder_queue(this.view_list_order)
                 this.sortable.sort(this.view_list_order)
                 this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
-                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
+                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000))}`
             }
         }
     }
@@ -309,7 +309,7 @@ class QueueView extends BaseTrackListView {
                 await this.controller.reorder_queue(this.view_list_order)
                 this.sortable.sort(this.view_list_order)
                 this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
-                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
+                this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000))}`
             }
         }
     }
@@ -325,7 +325,7 @@ class QueueView extends BaseTrackListView {
             await this.controller.reorder_queue(this.view_list_order)
             this.sortable.sort(this.view_list_order)
             this.num_tracks_dom.innerHTML = `${await this.controller.q_length()} tracks`
-            this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000000000))}`
+            this.duration_dom.innerHTML = `${format_seconds_long(Math.round(await this.controller.duration() / 1000))}`
         }
     }
 
