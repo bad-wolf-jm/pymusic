@@ -139,10 +139,9 @@ mpc.on("queue-finished",
 
 mpc.on("track-started",
     (log_data) => {
-        // MDB.playback_logs.d.insert({
-        //     track: log_data.track_object._id,
-        //     message:"TRACK_STARTED"
-        // })
+        MDB.state.d.update({_id:"settings"}, {
+            "current_track._id": log_data.track_object._id
+        })
     }
 )
 
@@ -342,6 +341,7 @@ function refresh_sessions(x) {
 
 async function display_all_songs() {
     T.ignore_unavailable = false
+    T.model_order = false
     T.setDimmedRows(await MDB.unavailable.getTrackIds())
     T_controller.set_model("All Songs", MDB.tracks)
 }
