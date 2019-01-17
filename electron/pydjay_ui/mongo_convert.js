@@ -3,7 +3,8 @@ var path = require('path');
 const Datastore = require("nedb-async-await").Datastore;
 const { EventDispatcher } = require("event_dispatcher")
 const { MusicDatabase } = require("musicdb/model.js") 
-
+var fs = require('fs-extra');
+const { mp3Duration } = require("fileinfo/mp3_fileinfo")
 // const { CollectionController } = require("musicdb/collection.js")
 // // const { TrackListController } = require("musicdb/track_list.js")
 // // const { TrackSetController } = require("musicdb/track_set.js")
@@ -56,6 +57,11 @@ function trackBSON(tr) {
     return track_object
 }
 
+function getFileExtension(f_name) {
+    return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
+}
+
+
 const db = new MusicDatabase("pymusic")
 
 main = async () => {
@@ -85,13 +91,47 @@ main = async () => {
             let tr = rows[i]
             tr.image_root = settings.db_image_cache
             tr.music_root = settings.db_music_cache
-            let track = trackBSON(tr)
-            let last_played = await connection.query(`SELECT max(start_time) as last_played, count(*) as count FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
-            track.last_played = last_played[0].last_played
-            track.play_count = last_played[0].count
-            new_id = await db.tracks.d.insert(track)
+
+            let track_file = path.join(tr.music_root, tr.file_name)
+            console.log(`Adding track ${i+1} of ${rows.length} - ${tr.title}//${tr.artist}`)
+
+            new_id = await db.addFile(track_file)
             track_objects[tr.id] = new_id["_id"]
             back_track_objects[new_id["_id"]] = tr.id
+
+            let last_played = await connection.query(`SELECT max(start_time) as last_played, count(*) as count FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
+            //track.last_played = last_played[0].last_played
+            //track.play_count = last_played[0].count        
+
+            db.tracks.d.update({_id:new_id._id}, {$set: {
+                "stats.last_played": last_played[0].last_played,
+                "stats.play_count": last_played[0].count,
+                "stats.rating": tr.rating,
+                "stats.loved": tr.loved,
+                "track.bpm": tr.bpm, 
+                "track.stream_start": tr.stream_start, 
+                "track.stream_end": tr.stream_end,
+                "metadata.color": tr.color, 
+                "metadata.title": tr.title,
+                "metadata.artist": tr.artist,
+                "metadata.album": tr.album,
+                "metadata.genre": tr.genre,
+                "metadata.year": tr.year,
+            }})
+
+            if (tr.cover_original != null) {
+                await fs.copy(path.join(tr.image_root, tr.cover_original), path.join(db.getCoverFolder(), `${new_id._id}_original.${getFileExtension(tr.cover_original)}`))
+                await fs.copy(path.join(tr.image_root, tr.cover_large), path.join(db.getCoverFolder(), `${new_id._id}_large.${getFileExtension(tr.cover_large)}`))
+                await fs.copy(path.join(tr.image_root, tr.cover_medium), path.join(db.getCoverFolder(), `${new_id._id}_medium.${getFileExtension(tr.cover_medium)}`))
+                await fs.copy(path.join(tr.image_root, tr.cover_small), path.join(db.getCoverFolder(), `${new_id._id}_small.${getFileExtension(tr.cover_small)}`))
+
+                db.tracks.d.update({_id: new_id._id}, {$set: {
+                    "metadata.cover.original": `${new_id._id}_original.${getFileExtension(tr.cover_original)}`,
+                    "metadata.cover.small": `${new_id._id}_large.${getFileExtension(tr.cover_large)}`,
+                    "metadata.cover.medium":  `${new_id._id}_medium.${getFileExtension(tr.cover_medium)}`,
+                    "metadata.cover.large":  `${new_id._id}_small.${getFileExtension(tr.cover_small)}`,
+                }})
+            }
 
         }
 
@@ -152,7 +192,7 @@ main = async () => {
     }
 };
 
-main();
+main().then(console.log);
 
 
 
