@@ -100,14 +100,12 @@ main = async () => {
             back_track_objects[new_id["_id"]] = tr.id
 
             let last_played = await connection.query(`SELECT max(start_time) as last_played, count(*) as count FROM session_tracks WHERE track_id=${tr.id} ORDER BY position`);
-            //track.last_played = last_played[0].last_played
-            //track.play_count = last_played[0].count        
 
             db.tracks.d.update({_id:new_id._id}, {$set: {
                 "stats.last_played": last_played[0].last_played,
                 "stats.play_count": last_played[0].count,
                 "stats.rating": tr.rating,
-                "stats.loved": tr.loved,
+                "stats.loved": tr.favorite && true,
                 "track.bpm": tr.bpm, 
                 "track.stream_start": tr.stream_start / 1000000, 
                 "track.stream_end": tr.stream_end / 1000000,
