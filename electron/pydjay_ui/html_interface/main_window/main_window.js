@@ -5,6 +5,14 @@ var path              = require('path');
 
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
+// const { EventDispatcher } = require("event_dispatcher")
+const { MusicDatabase } = require("musicdb/model.js")
+// const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
+const { TrackSetModel } = require("musicdb/track_set.js")
+// const { SessionModel } = require("musicdb/session.js")
+// const { Question } = require("ui/dialog/question.js")
+// const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
+// const {PydjayAudioBufferPlayer} = require('audio/audio_player_buffer.js')
 
 
 SV = new AccordionView("sidebar")
@@ -24,43 +32,60 @@ SV.on("add-playlist", () => {
 })
 
 
-DB = new DataProvider()
+MDB = new MusicDatabase("pymusic")
+// MDB.queue.init()
+// MDB.current_session.init()
+
+DB = undefined //new DataProvider()
 
 view = new TrackEditorView()
 view.init()
 
+T_controller  = new TrackListController()
+PE_controller = new PlaylistController() //un_model)
+Q_controller = new QueueController()
+S_controller = undefined //new SessionController()
+PL_controller = new PlaylistsController()
+PL_controller.setModel(MDB.playlists)
+SE_controller = new SessionsController()
+SE_controller.setModel(MDB.sessions)
 
-tracks_model              = new TrackListModel()
-unavailable_model         = new UnavailableModel(tracks_model)
-shortlist_model           = new ShortlistModel(tracks_model)
-suggested_model           = new SuggestedModel(tracks_model)
-played_tracks_model       = new PlayedTracksModel(tracks_model)
-never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
-current_session_model     = new CurrentSessionModel(tracks_model)
-queue_model               = new QueueModel(tracks_model, current_session_model)
+// tracks_model              = new TrackListModel()
+// unavailable_model         = new UnavailableModel(tracks_model)
+// shortlist_model           = new ShortlistModel(tracks_model)
+// suggested_model           = new SuggestedModel(tracks_model)
+// played_tracks_model       = new PlayedTracksModel(tracks_model)
+// never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
+// current_session_model     = new CurrentSessionModel(tracks_model)
+// queue_model               = new QueueModel(tracks_model, current_session_model)
 
 
-un_model = new UnionModel()
-un_model.addModel("queue", queue_model)
-un_model.addModel("current_session", current_session_model)
-un_model.addModel("unavailable", unavailable_model)
+// un_model = new UnionModel()
+// un_model.addModel("queue", queue_model)
+// un_model.addModel("current_session", current_session_model)
+// un_model.addModel("unavailable", unavailable_model)
 
-T_controller              = new TrackListController(un_model)
-PE_controller             = new PlaylistController(un_model)
-Q_controller              = new QueueController()
-S_controller              = new SessionController()
-PL_controller             = new PlaylistsController()
-SE_controller             = new SessionsController()
+// T_controller              = new TrackListController() //un_model)
+// PE_controller             = new PlaylistController() //un_model)
+// Q_controller              = new QueueController()
+// S_controller              = new SessionController()
+// PL_controller             = new PlaylistsController()
+// SE_controller             = new SessionsController()
 
 mpc                       = new PlaybackController(S_controller, Q_controller)
 pc                        = new PrecueController(S_controller, Q_controller)
 
-Q_controller.set_model(queue_model)
-S_controller.set_model(current_session_model)
+// Q_controller.set_model(MDB.queue) //queue_model)
+// S_controller.set_model(current_session_model)
 
-ipcRenderer.on("track-modified", (e, id) => {
-    tracks_model.update(id)
-})
+// ipcRenderer.on("track-modified", (e, id) => {
+//     tracks_model.update(id)
+// })
+mpc = new PlaybackController(S_controller, Q_controller)
+pc  = new PrecueController(S_controller, Q_controller)
+// vc  = new VolumeController(mpc, pc)
+
+Q_controller.set_model(MDB.queue)
 
 
 PE = new PlaylistEditView({
@@ -87,8 +112,18 @@ T = new TrackListView({
     num_tracks: "main-track-list-number-of-tracks",
     duration:   "main-track-list-duration",
     filter:      "filter-track-list"
-}, Q_controller, shortlist_model, unavailable_model)
+}, Q_controller, MDB.shortlisted_tracks, MDB.unavailable_tracks)
 T.set_controller(T_controller)
+MDB.queue.on("content-changed", async () => {
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+})
+MDB.current_session.on("content-changed", async () => {
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())    
+})
+MDB.unavailable_tracks.on("content-changed", async () => {
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())    
+})
+
 
 PL = new PlaylistsView({
     list: 'queue-elements-body'
@@ -100,11 +135,13 @@ SE = new SessionsView({
 })
 SE.set_controller(SE_controller)
 
-M = new MainPlayerView(tracks_model)
+// pc.connectOutputs({headphones:{left:0, right:1}})
+
+M = new MainPlayerView(MDB.tracks)
 M.set_controller(mpc)
 M.init()
 
-P = new PrecuePlayerView(tracks_model)
+P = new PrecuePlayerView(MDB.tracks)
 P.set_controller(pc)
 
 mpc.on("queue-started",
@@ -135,27 +172,74 @@ mpc.on("queue-finished",
 )
 
 mpc.on("track-started",
-    () => {
+    (log_data) => {
+        MDB.state.d.update({_id:"settings"}, {
+            "current_track._id": log_data.track_object._id
+        })
     }
 )
 
 mpc.on("track-finished",
-    () => {
+    (log_data) => {
+        MDB.current_session.append(log_data.track_object, {
+            status: "FINISHED",
+            time_start: log_data.start_time, 
+            time_end: log_data.end_time
+        })
+        MDB.tracks.setTrackMetadata(log_data.track_object, {
+            "stats.last_played": log_data.start_time,
+            "stats.play_count": log_data.track_object.stats.play_count + 1
+        })
     }
 )
 
+mpc.on("track-stopped",
+    (log_data) => {
+        MDB.current_session.append(log_data.track_object, {
+            status: "STOPPED",
+            time_start: log_data.start_time, 
+            time_end: log_data.end_time
+        })
+        MDB.tracks.setTrackMetadata(log_data.track_object, {
+            "stats.last_played": log_data.start_time,
+            "stats.play_count": log_data.track_object.stats.play_count + 1
+        })
+    }
+)
 
 pc.on('playback-started', () => {
         mpc.muteHeadset()
         SV.open_panel(3)
     }
 )
-
-
-pc.on('playback-stopped', () => {
-    mpc.unmuteHeadset()
-}
+mpc.on("track-skipped",
+    (log_data) => {
+        MDB.current_session.append(log_data.track_object, {
+            status: "SKIPPED",
+            time_start: log_data.start_time, 
+            time_end: log_data.end_time
+        })
+        MDB.tracks.setTrackMetadata(log_data.track_object, {
+            "stats.last_played": log_data.start_time,
+            "stats.play_count": log_data.track_object.stats.play_count + 1
+        })
+    }
 )
+
+// ipcRenderer.on("master-end-of-stream", () => {
+//     mpc.dispatch("end-of-stream")
+// })
+
+
+// ipcRenderer.on("master-playback-stopped", () => {
+//     mpc.dispatch("playback-stopped")
+// })
+
+
+// pc.on('playback-stopped', () => {
+//     mpc.unmuteHeadset()
+// }
+// )
 
 pc.on('playback-paused', () => {
     mpc.unmuteHeadset()
@@ -220,7 +304,7 @@ document.getElementById("settings-button").addEventListener('click', () => {
 document.getElementById("main-menu-add-track").addEventListener('click', () => {
     remote.dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] }, (files) => {
         if (files != undefined) {
-            let x = new TrackAdder(files)
+            let x = new TrackAdder(files, MDB)
         }
     })
     document.getElementById("main-menu-dropdown").classList.toggle("show");
@@ -262,15 +346,13 @@ document.getElementById("main-menu-save-session").addEventListener('click', () =
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("session-save").addEventListener('click', () => {
+document.getElementById("session-save").addEventListener('click', async () => {
     let name = document.getElementById("session-name").value
     let location = document.getElementById("session-location").value
     let address = document.getElementById("session-address").value
 
     if (name != "") {
-        current_session_model.store_session(name, location, address, () => {
-            SE_controller.refresh(() => {})
-        })
+        await MDB.saveCurrentSession(name, location, address)
     }
     document.getElementById("save-session-dialog").close();
 })
@@ -286,9 +368,7 @@ document.getElementById("main-menu-discard-session").addEventListener('click', (
         confirmText: "yes",
         dismissText: 'no',
         confirmAction: () => {
-            current_session_model.discard_session(() => {
-                SE_controller.refresh(() => {})
-            })
+            MDB.discardCurrentSession()
             q.close()
         },
         dismissAction: () => {
@@ -317,59 +397,71 @@ function refresh_sessions(x) {
     console.log("refresh_sessions", x)
 }
 
-function display_all_songs() {
+async function display_all_songs() {
     T.ignore_unavailable = false
-    T_controller.set_model("All Songs", tracks_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("All Songs", MDB.tracks)
 }
 
-function display_current_session() {
+async function display_current_session() {
     T.ignore_unavailable = true
-    T_controller.set_model("Current Session", current_session_model)
+    T.model_order = true
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Current Session", MDB.current_session)
 }
 
-function display_suggestions() {
+async function display_suggestions() {
     T.ignore_unavailable = false
-    T_controller.set_model("Suggested tracks", suggested_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Suggested tracks", MDB.suggested)
 }
 
-function display_short_list() {
+async function display_short_list() {
     T.ignore_unavailable = false
-    T_controller.set_model("Short list", shortlist_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Short list", MDB.shortlisted_tracks)
 }
 
-function display_unavailable() {
+async function display_unavailable() {
     T.ignore_unavailable = true
-    T_controller.set_model("Unavailable tracks", unavailable_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Unavailable tracks", MDB.unavailable_tracks)
 }
 
-function display_played_tracks() {
+async function display_played_tracks() {
     T.ignore_unavailable = false
-    T_controller.set_model("Played songs", played_tracks_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Played songs", MDB.played_tracks)
 }
 
-function display_never_played_tracks() {
+async function display_never_played_tracks() {
     T.ignore_unavailable = false
-    T_controller.set_model("Never Played songs", never_played_tracks_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Never Played songs", MDB.never_played_tracks)
 }
 
-function display_session(id) {
-    DB.get_session_info(id,
-        (info) => {
-            let L = new SessionModel(info, tracks_model)
-            T.ignore_unavailable = false
-            T_controller.set_model(info.name, L)
-        }
-    )
+async function display_session(id) {
+    let pl = await MDB.sessions.getObjectById(id)
+    let model = new TrackSetModel(MDB, MDB.sessions, id)
+    T.ignore_unavailable = false
+    T.model_order = true
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model(pl.event, model)
 }
 
-function display_playlist(id) {
-    DB.get_group_info(id,
-        (info) => {
-            let L = new PlaylistModel(info, tracks_model)
-            T.ignore_unavailable = false
-            T_controller.set_model(info.name, L)
-        }
-    )
+async function display_playlist(id) {
+    let pl = await MDB.playlists.getObjectById(id)
+    let model = new TrackSetModel(MDB, MDB.playlists, id)
+    T.ignore_unavailable = false
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model(pl.name, model)
 }
 
 function checkTime(i) {

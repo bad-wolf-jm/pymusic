@@ -16,23 +16,23 @@
 <script src="../../../lib/clusterize.js"></script>
 
 <script src="../../utils.js"></script>
-<script src="../../data.js"></script>
+<!-- <script src="../../data.js"></script> -->
 
 
-<script src="../../models/base/object_model.js"></script>
+<!-- <script src="../../models/base/object_model.js"></script>
 <script src="../../models/base/subset_model.js"></script>
 <script src="../../models/base/ordered_subset_model.js"></script>
-<script src="../../models/track.js"></script>
-<script src="../../models/playlist.js"></script>
-<script src="../../models/session.js"></script>
-<script src="../../models/unavailable.js"></script>
+<script src="../../models/track.js"></script> -->
+<!-- <script src="../../models/playlist.js"></script> -->
+<!-- <script src="../../models/session.js"></script> -->
+<!-- <script src="../../models/unavailable.js"></script>
 <script src="../../models/shortlist.js"></script>
 <script src="../../models/suggested.js"></script>
 <script src="../../models/played_tracks.js"></script>
 <script src="../../models/never_played_tracks.js"></script>
 <script src="../../models/queue.js"></script>
 <script src="../../models/current_session.js"></script>
-<script src="../../models/union.js"></script>
+<script src="../../models/union.js"></script> -->
 
 <script src="controllers/queue.js"></script>
 <script src="controllers/session.js"></script>
@@ -44,6 +44,7 @@
 <script src="controllers/precue.js"></script>
 <script src="controllers/volume.js"></script>
 
+<script src="views/base_track_list_view.js"></script>
 <script src="views/playlist_edit.js"></script>
 <script src="views/queue.js"></script>
 <script src="views/queue_area.js"></script>
@@ -333,17 +334,17 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
-                        <! if(id == null) { !>
+                        <! if(_id == null) { !>
                             <tr id="new-playlist" class="choice" style="height:20px; margin-left:10px; display:none">
                                 <td style="width:30px"></td>
                                 <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
                                 <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input id="new-playlist-name" type="text" class="new-playlist"></td>
                             </tr>
                         <! } else { !>
-                            <tr class="choice track-drop-target" style="height:20px;" data-playlist-id=<!= id !>>
+                            <tr class="choice track-drop-target" style="height:20px;" data-playlist-id=<!= _id !>>
                                 <td style="width:30px"></td>
                                 <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
-                                <td id="playlist-element-<!= id !>" style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
+                                <td id="playlist-element-<!= _id !>" style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
                                 <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
                             </tr>
                         <! } !>
@@ -363,7 +364,7 @@
                         <tbody></tbody>
                     </table>
                     <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
-                        <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session(<!= id !>)">
+                        <tr class="choice" style="height:20px; margin-left:10px" onclick="display_session('<!= id !>')">
                             <td style="width:30px"></td>
                             <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
                             <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
@@ -542,10 +543,10 @@
                         <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
                     </table>
                     <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
-                        <! if (id != null ) { !>
-                            <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                        <! if (_id != null ) { !>
+                            <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= _id !>>
                                 <td style="width:100%; margin:0; padding:0">
-                                    <div class="queued-track element" contextmenu="mymenu" data-track-id=<!= id !>>
+                                    <div class="queued-track element" contextmenu="mymenu" data-track-id=<!= _id !>>
                                         <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
                                         <div style="margin:0px; padding:0px; float:left; width:225px;">
                                             <div class="queue_element_title"><b><!= title !></b></div>
@@ -561,9 +562,9 @@
                                 </td>
                             </tr>
                         <! } else { !>
-                            <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= id !>>
+                            <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= _id !>>
                                 <td style="width:100%; margin:0; padding:0">
-                                    <div class="queued-track element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center" data-track-id=<!= id !>>
+                                    <div class="queued-track element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center" data-track-id=<!= _id !>>
                                         <b>END OF QUEUE</b>
                                     </div>
                                 </td>

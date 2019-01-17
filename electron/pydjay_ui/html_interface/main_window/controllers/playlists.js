@@ -5,24 +5,24 @@ class PlaylistsController extends EventDispatcher {
         this.queue_table = undefined
         this.ready_wait_queue = []
         this.views = []
-        this.refresh(() => {
-            for(let i=0; i<this.ready_wait_queue.length; i++) {
-                this.ready_wait_queue[i](this.queue)
-            }    
-            this.dispatch("content-changed", this.queue)
-        })
     }
 
-    refresh(k) {
-        DB.get_group_list((queue) => {
-            this.queue = queue
-            this.queue_table = {}
-            for (let i=0; i<queue.length; i++) {
-                this.queue_table[queue[i].id] = queue[i]
-            }
-            k()
-            
+    async setModel(m) {
+        this.model = m
+        this.model.on("content-changed", (x) => {
+            console.log(x)
+            this.dispatch("content-changed", x)
         })
+        this.refresh()
+    }
+
+    async refresh(k) {
+        this.queue = Object.values(await this.model.getAllObjects())
+        this.queue_table = {}
+        for (let i=0; i<this.queue.length; i++) {
+            this.queue_table[this.queue[i]._id] = this.queue[i]
+        }
+        this.dispatch("content-changed", this.queue)
     }
 
     addView(view) {
@@ -37,48 +37,32 @@ class PlaylistsController extends EventDispatcher {
         }
     }
 
-    append_to_playlist(playlist_id, track_id) {
-        DB.add_id_to_playlist(track_id, playlist_id, (x) => {})
+    async append_to_playlist(playlist_id, track_id) {
+        return await this.model.appendToPlaylist(playlist_id, track_id)
     }
 
-    create_playlist(name) {
-        DB.create_playlist(name, () => {
-            this.refresh(() => {
-                this.dispatch("content-changed", this.queue)
-            })
-        })
+    async create_playlist(name) {
+        return await this.model.createPlaylist(name)
     }
 
-    rename_playlist(id, new_name) {
-        DB.rename_playlist(id, new_name, () => {
-            this.refresh(() => {
-                this.dispatch("content-changed", this.queue)
-            })
-        })
+    async rename_playlist(id, new_name) {
+        return await this.model.renamePlaylist(id, new_name)
     }
 
-    duplicate_playlist(id) {
-        DB.duplicate_playlist(id, () => {
-            this.refresh(() => {
-                this.dispatch("content-changed", this.queue)
-            })
-        })
+    async duplicate_playlist(id) {
+        return await this.model.duplicatePlaylist(id)
     }
 
-    delete_playlist(id) {
-        DB.delete_playlist(id, () => {
-            this.refresh(() => {
-                this.dispatch("content-changed", this.queue)
-            })
-        })
+    async delete_playlist(id) {
+        return await this.model.deletePlaylist(id)
     }
 
-    check_name_availability(name, k) {
-        DB.check_playlist_name_availability(name, k)
+    async checkNameAvailability(name, k) {
+        return await this.model.checkNameAvailability(name)
     }
 
-    get_playlist_by_id(id, k) {
-        DB.get_playlist_by_id(id, k)
+    async get_playlist_by_id(id, k) {
+        return this.model.getObjectById(id)
     }
 
 }

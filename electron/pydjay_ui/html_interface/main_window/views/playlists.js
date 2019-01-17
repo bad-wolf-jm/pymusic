@@ -7,13 +7,13 @@ class PlaylistsView extends EventDispatcher {
         this.view_list_order = []
 
         this.menu = new Menu()
-        this.menu.append(new MenuItem({label: 'Edit...', click: () => {
+        this.menu.append(new MenuItem({label: 'Edit...', click: async () => {
             let T = this.context_menu_element
-            this.controller.get_playlist_by_id(T, (p) => {
-                let L = new PlaylistModel(p, tracks_model)
-                PE_controller.set_model(p, L)
-                Q.show_playlist_editor()
-            })
+            let p = await this.controller.get_playlist_by_id(T)
+            let L = new TrackSetModel(MDB, MDB.playlists, T)
+            PE_controller.set_model(p, L)
+            Q.show_playlist_editor()
+            //})
 
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
@@ -23,26 +23,23 @@ class PlaylistsView extends EventDispatcher {
             this.context_menu_cell.innerHTML = `<input id="new-playlist-name-${T}" type="text" class="new-playlist" value="${old_value}">`
             let X = document.getElementById(`new-playlist-name-${T}`)
             X.focus()
-            X.addEventListener("keyup", (e) => {
+            X.addEventListener("keyup", async (e) => {
                 if (e.key == "Escape") {
                     this.context_menu_cell.innerHTML = old_value
                 } else if (e.key == "Enter") {
                     let new_name = X.value
-                    this.controller.check_name_availability(new_name, (a) => {
-                        if (a) {
-                            this.controller.rename_playlist(T, new_name)
-                        } else {
-                            X.style.color = "#dd0000"
-                        }
-                    })
+                    if (await this.controller.checkNameAvailability(new_name)) {
+                        this.controller.rename_playlist(T, new_name)
+                    } else {
+                        X.style.color = "#dd0000"
+                    }
                 } else {
-                    this.controller.check_name_availability(X.value, (a) => {
-                        if (a) {
-                            X.style.color = null
-                        } else {
-                            X.style.color = "#dd0000"
-                        }
-                    })
+                    let new_name = X.value
+                    if (await this.controller.checkNameAvailability(new_name)) {
+                        X.style.color = null
+                    } else {
+                        X.style.color = "#dd0000"
+                    }
                 }
             })
         }}))
@@ -51,43 +48,26 @@ class PlaylistsView extends EventDispatcher {
             this.controller.duplicate_playlist(T)
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
-        this.menu.append(new MenuItem({label: 'Delete', click: () => {
+        this.menu.append(new MenuItem({label: 'Delete', click: async () => {
             let T = this.context_menu_element
-            this.controller.get_playlist_by_id(T, (p) => {
-                let dialog = new Question({
-                    title: "Delete playlist",
-                    question: `Delete <i><b>'${p.name}'</b></i>? This operation cannot be undone`,
-                    confirmText: "yes",
-                    dismissText: 'no',
-                    confirmAction: () => {
-                        this.controller.delete_playlist(this.context_menu_element)
-                        this.context_menu_element = undefined
-                        dialog.close()
-                    },
-                    dismissAction: () => {
-                        this.context_menu_element = undefined
-                        dialog.close()
-                    },
-                })
-                // let dialog = document.getElementById("delete-playlist-dialog")
-                // document.getElementById("delete-playlist-name").innerHTML = p.name
-                dialog.open()    
+            let playlist = await this.controller.get_playlist_by_id(T)
+            let dialog = new Question({
+                title: "Delete playlist",
+                question: `Delete <i><b>'${playlist.name}'</b></i>? This operation cannot be undone`,
+                confirmText: "yes",
+                dismissText: 'no',
+                confirmAction: async () => {
+                    await this.controller.delete_playlist(this.context_menu_element)
+                    this.context_menu_element = undefined
+                    dialog.close()
+                },
+                dismissAction: () => {
+                    this.context_menu_element = undefined
+                    dialog.close()
+                },
             })
+            dialog.open()    
         }}))
-
-        // document.getElementById("delete-playlist").addEventListener('click', (e) => {
-        //     this.controller.delete_playlist(this.context_menu_element)
-        //     this.context_menu_element = undefined
-        //     document.getElementById("delete-playlist-dialog").close()
-        // })
-
-        // document.getElementById("delete-playlist-cancel").addEventListener('click', (e) => {
-        //     this.context_menu_element = undefined
-        //     document.getElementById("delete-playlist-dialog").close()
-        // })
-
-
-
     }
 
     begin_add() {
@@ -117,22 +97,23 @@ class PlaylistsView extends EventDispatcher {
     }
 
     on_drag_end(evt) {
-        //console.log(evt.target)
+
     }
 
-    on_drop(evt) {
+    async on_drop(evt) {
         if (evt.stopPropagation) {
             evt.stopPropagation();
         }
         let playlist = evt.target.parentElement
         playlist.classList.remove("drop-here")
-        let playlist_id = parseInt(playlist.attributes["data-playlist-id"].value)
+        let playlist_id = (playlist.attributes["data-playlist-id"].value)
 
         let d = evt.dataTransfer.getData("text/plain")
-        let track = JSON.parse(d)
+        playlist = await MDB.playlists.getObjectById(playlist_id)
+        let track = await MDB.tracks.getObjectById(d) 
         let confirm = new Menu()
-        confirm.append(new MenuItem({label: `Add '${track.title}' to '${playlist_id}'?`, click: () => { 
-            this.controller.append_to_playlist(playlist_id, track.id)
+        confirm.append(new MenuItem({label: `Add '${track.title}' to '${playlist.name}'?`, click: async () => { 
+            await this.controller.append_to_playlist(playlist_id, track)
         }}))
         confirm.append(new MenuItem({type:  'separator'}))
         confirm.append(new MenuItem({label: `Cancel`, click: () => {}}))
@@ -142,11 +123,13 @@ class PlaylistsView extends EventDispatcher {
 
     set_list(list) {
         this.view_list_order = []
-        let list_rows = [{id: null}]  
+        let list_rows = [{_id: null}]  
+
+        list.sort((a, b) => {return a.name.localeCompare(b.name)})
 
         for(let i=0; i<list.length; i++) {
             let element = {
-                id:   list[i].id,
+                _id:   list[i]._id,
                 name: list[i].name,
             }
             list_rows.push(element)
@@ -178,14 +161,14 @@ class PlaylistsView extends EventDispatcher {
                     col.addEventListener('drop', this.on_drop.bind(this), false);
                     col.addEventListener('click', (e) => {
                         let x = e.target.closest(".track-drop-target")
-                        let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
+                        let playlist_id = (x.attributes["data-playlist-id"].value)
                         display_playlist(playlist_id)
                     }, false);
         
                     col.addEventListener('contextmenu', (e) => {
                         e.preventDefault()
                         let x = e.target.closest(".track-drop-target")
-                        let playlist_id = parseInt(x.attributes["data-playlist-id"].value)
+                        let playlist_id = (x.attributes["data-playlist-id"].value)
                         this.context_menu_element = playlist_id
                         this.context_menu_cell = document.getElementById(`playlist-element-${playlist_id}`)
                         this.menu.popup({window: remote.getCurrentWindow()})

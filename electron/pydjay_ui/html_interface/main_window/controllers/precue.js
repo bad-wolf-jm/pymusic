@@ -19,9 +19,9 @@ class PrecueController extends AudioTrackPlayer {
     play_last_10_seconds(track) {
         this.track = track
         if (track != undefined) {
-            this.play(track, -10000000000)
+            this.play(track, -10000)
         } else if (this.track != undefined) {
-            this.play(this.track, -10000000000)
+            this.play(this.track, -10000)
         } else {
 
         }
@@ -29,9 +29,9 @@ class PrecueController extends AudioTrackPlayer {
 
     play_last_30_seconds(track) {
         if (track != undefined) {
-            this.play(track, -30000000000)
+            this.play(track, -30000)
         } else if (this.track != undefined) {
-            this.play(this.track, -30000000000)
+            this.play(this.track, -30000)
         }
     }
 
