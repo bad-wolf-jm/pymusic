@@ -9,6 +9,7 @@ const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
 const { MusicDatabase } = require("musicdb/model.js")
 // const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
 const { TrackSetModel } = require("musicdb/track_set.js")
+const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
 // const { SessionModel } = require("musicdb/session.js")
 // const { Question } = require("ui/dialog/question.js")
 // const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
@@ -174,7 +175,7 @@ mpc.on("queue-finished",
 mpc.on("track-started",
     (log_data) => {
         MDB.state.d.update({_id:"settings"}, {
-            "current_track._id": log_data.track_object._id
+            $set: {"current_track._id": log_data._id}
         })
     }
 )
@@ -342,7 +343,9 @@ document.getElementById("main-menu-skip-current-track").addEventListener('click'
 })
 
 document.getElementById("main-menu-save-session").addEventListener('click', () => {
-    document.getElementById("save-session-dialog").showModal();
+    //document.getElementById("save-session-dialog").showModal();
+    let dialog = new SessionSaveDialog()
+    dialog.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 

@@ -117,6 +117,8 @@ main = async () => {
                 "metadata.album": tr.album,
                 "metadata.genre": tr.genre,
                 "metadata.year": tr.year,
+                "createdAt": tr.date_added,
+                "updatedAt": tr.date_modified,
             }})
 
             if (tr.cover_original != null) {

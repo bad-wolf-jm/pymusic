@@ -4,7 +4,7 @@ var path = require('path');
 const {spawn} = require ('child_process');
 // var async = require('async');
 var Jimp = require("jimp");
-
+const { TrackImportProgressDialog } = require("iface/dialogs/track_add_progress")
 
 // function trackBSON(tr) {
 //     let track_object = {
@@ -97,7 +97,9 @@ class TrackAdder extends EventDispatcher {
         this._progress = 0
         this.track_info_array = []
         this.track_info_editor = undefined
-        document.getElementById('track-add-progress-dialog').showModal()
+        this.progress_dialog = new TrackImportProgressDialog()
+        this.progress_dialog.open()
+        // document.getElementById('track-add-progress-dialog').showModal()
         this.add_all_tracks()
     }
 
@@ -107,11 +109,12 @@ class TrackAdder extends EventDispatcher {
 
     async add_all_tracks() {
         for (let i=0; i<this.filenames.length; i++) {
-            //let f = this.filenames[i]
-            await this._library.addFile(this.filenames[i])
+            this.progress_dialog.setProgress(i+1, this.filenames.length)
+            let added = await this._library.addFile(this.filenames[i])
+            this.progress_dialog.setCurrent(added)
         }
 
-        document.getElementById('track-add-progress-dialog').close()
+        this.progress_dialog.close()
     }
 
 
