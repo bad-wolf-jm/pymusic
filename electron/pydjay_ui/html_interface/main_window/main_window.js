@@ -73,8 +73,8 @@ SE_controller.setModel(MDB.sessions)
 // PL_controller             = new PlaylistsController()
 // SE_controller             = new SessionsController()
 
-mpc                       = new PlaybackController(S_controller, Q_controller)
-pc                        = new PrecueController(S_controller, Q_controller)
+// mpc                       = new PlaybackController( ) //S_controller, Q_controller)
+// pc                        = new PrecueController( S_controller, Q_controller)
 
 // Q_controller.set_model(MDB.queue) //queue_model)
 // S_controller.set_model(current_session_model)
@@ -248,23 +248,23 @@ pc.on('playback-paused', () => {
 
 
 
-mpc.on("queue-stop-requested",
-    () => {
-        B = document.getElementById("queue-start-button")
-        B.innerHTML = "<i class=\"fa fa-close\"></i>"
-        B.style.backgroundColor = "#667700"
-    }
-)
+// mpc.on("queue-stop-requested",
+//     () => {
+//         B = document.getElementById("queue-start-button")
+//         B.innerHTML = "<i class=\"fa fa-close\"></i>"
+//         B.style.backgroundColor = "#667700"
+//     }
+// )
 
-mpc.on("queue-stop-request-cancelled",
-    () => {
-        let M = document.getElementById("queue-stop-message")
-        M.style.display="none"
-        B = document.getElementById("queue-start-button")
-        B.innerHTML = "<i class=\"fa fa-stop\"></i>"
-        B.style.backgroundColor = "#AA0000"
-    }
-)
+// mpc.on("queue-stop-request-cancelled",
+//     () => {
+//         let M = document.getElementById("queue-stop-message")
+//         M.style.display="none"
+//         B = document.getElementById("queue-start-button")
+//         B.innerHTML = "<i class=\"fa fa-stop\"></i>"
+//         B.style.backgroundColor = "#AA0000"
+//     }
+//)
 
 mpc.on("next-track-countdown", (time) => {
     let M = document.getElementById("main-player-track-title")
@@ -342,27 +342,41 @@ document.getElementById("main-menu-skip-current-track").addEventListener('click'
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("main-menu-save-session").addEventListener('click', () => {
-    //document.getElementById("save-session-dialog").showModal();
-    let dialog = new SessionSaveDialog()
+document.getElementById("main-menu-save-session").addEventListener('click', async () => {
+    let dialog = new SessionSaveDialog({
+        confirmAction: async () => {
+            let name = dialog.name_input.domElement.value
+            let location = dialog.location_input.domElement.value
+            let address = dialog.address_input.domElement.value
+        
+            if (name != "") {
+                await MDB.saveCurrentSession(name, location, address)
+            }
+    
+            dialog.close()
+        },
+        dismissAction: () => {
+            dialog.close()
+        }
+    })
     dialog.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("session-save").addEventListener('click', async () => {
-    let name = document.getElementById("session-name").value
-    let location = document.getElementById("session-location").value
-    let address = document.getElementById("session-address").value
+// document.getElementById("session-save").addEventListener('click', async () => {
+//     let name = document.getElementById("session-name").value
+//     let location = document.getElementById("session-location").value
+//     let address = document.getElementById("session-address").value
 
-    if (name != "") {
-        await MDB.saveCurrentSession(name, location, address)
-    }
-    document.getElementById("save-session-dialog").close();
-})
+//     if (name != "") {
+//         await MDB.saveCurrentSession(name, location, address)
+//     }
+//     document.getElementById("save-session-dialog").close();
+// })
 
-document.getElementById("session-save-cancel").addEventListener('click', () => {
-    document.getElementById("save-session-dialog").close();
-})
+// document.getElementById("session-save-cancel").addEventListener('click', () => {
+//     document.getElementById("save-session-dialog").close();
+// })
 
 document.getElementById("main-menu-discard-session").addEventListener('click', () => {
     let q = new Question({
