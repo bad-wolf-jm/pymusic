@@ -212,7 +212,7 @@ class QueueView extends BaseTrackListView {
     async selected_element() {
         if (this.current_selection != undefined) {
             let track_id = (this.current_selection.attributes["data-track-id"].value)
-            if (track_id != null) {
+            if (track_id != "null") {
                 return await this.controller.get_id(track_id)
             } else {
                 return null
