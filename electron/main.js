@@ -1,7 +1,7 @@
 'use strict';
 const { ipcMain } = require('electron');
 const { existsSync } = require("fs")
-const {homedir} = require("os")
+const { homedir } = require("os")
 var electron = require('electron');
 const path = require("path")
 const { MusicDatabase } = require("./pydjay_ui/node_modules/musicdb/model.js")
@@ -19,7 +19,7 @@ app.on('ready', async () => {
       height: 1152,
     });
 
-    if (!(existsSync(path.join(homedir(), ".pymusic-library")))) {
+    if (!(existsSync(path.join(homedir(), ".pymusic-library", "pymusic")))) {
       let library = new MusicDatabase("pymusic")
       await library.initialize()
       library = undefined

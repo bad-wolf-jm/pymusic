@@ -61,6 +61,12 @@ function getFileExtension(f_name) {
     return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
 }
 
+if (!(existsSync(path.join(homedir(), ".pymusic-library", "pymusic")))) {
+    let library = new MusicDatabase("pymusic")
+    await library.initialize()
+    library = undefined
+  }
+
 
 const db = new MusicDatabase("pymusic")
 
