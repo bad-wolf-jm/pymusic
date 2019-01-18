@@ -98,13 +98,33 @@ async function getAudioOutputDevices() {
     return output_dict
 }
 
+function setupAudioOutputs(audio_setup, available_devices) {
+    if (available_devices[audio_setup.main_master]) {
+        mpc.setMasterOutputDeviceId(audio_setup.main_master)
+    } else {
+        mpc.setMasterOutputDeviceId("null")
+    }
+
+    if (available_devices[audio_setup.main_headset]) {
+        mpc.setHeadsetOutputDeviceId(audio_setup.main_headset)
+    } else {
+        mpc.setHeadsetOutputDeviceId("null")
+    }
+
+    if (available_devices[audio_setup.prelisten]) {
+        pc.setOutputDeviceId(audio_setup.prelisten)
+        view.setOutputDeviceId(audio_setup.prelisten)
+    } else {
+        pc.setOutputDeviceId("null")
+        view.setOutputDeviceId("null")
+    }
+
+}
+
 MDB.getAudioDevices().then(async (devices) => {
     let audio_outputs = await getAudioOutputDevices()
     let audio_setup = await MDB.getAudioSetup()
-    mpc.setMasterOutputDeviceId(audio_setup.main_master || "null")
-    mpc.setHeadsetOutputDeviceId(audio_setup.main_headset || "null")
-    pc.setOutputDeviceId(audio_setup.prelisten || "null")
-    view.setOutputDeviceId(audio_setup.prelisten || "null")
+    setupAudioOutputs(audio_setup, audio_outputs)
 })
 
 var T = setInterval(async () => {
@@ -121,11 +141,8 @@ var T = setInterval(async () => {
     update && (await MDB.state.d.update({_id: "settings"}, {$set: {
         "audio_devices": saved_audio_devices
     }}))
+    setupAudioOutputs(audio_setup, audio_outputs)
 
-    mpc.setMasterOutputDeviceId(audio_setup.main_master || "null")
-    mpc.setHeadsetOutputDeviceId(audio_setup.main_headset || "null")
-    pc.setOutputDeviceId(audio_setup.prelisten || "null")
-    view.setOutputDeviceId(audio_setup.prelisten || "null")
 }, 1000)
 
 Q_controller.set_model(MDB.queue)
