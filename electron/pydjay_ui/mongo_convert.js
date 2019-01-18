@@ -4,6 +4,11 @@ const Datastore = require("nedb-async-await").Datastore;
 const { EventDispatcher } = require("event_dispatcher")
 const { MusicDatabase } = require("musicdb/model.js") 
 var fs = require('fs-extra');
+const { existsSync } = require("fs")
+const { homedir } = require("os")
+
+// const path = require("path")
+
 const { mp3Duration } = require("fileinfo/mp3_fileinfo")
 // const { CollectionController } = require("musicdb/collection.js")
 // // const { TrackListController } = require("musicdb/track_list.js")
@@ -15,62 +20,57 @@ const { mp3Duration } = require("fileinfo/mp3_fileinfo")
 // const MongoClient = require('mongodb').MongoClient;
 
 
-function trackBSON(tr) {
-    let track_object = {
-        metadata: {
-            title: tr.title,
-            artist: tr.artist,
-            album: tr.album,
-            genre: tr.genre,
-            year: tr.year,
-            color: tr.color,
-            tags: []
-        },
-        track: {
-            duration: tr.track_length / 1000000,
-            stream_start: tr.stream_start / 1000000,
-            stream_end: tr.stream_end / 1000000,
-            bpm: tr.bpm,
-            bitrate: tr.bitrate,
-            samplerate: tr.samplerate,
-            size: tr.file_size,
-            path: path.join(tr.music_root, tr.file_name)
-        },
-        stats: {
-            loved: tr.favorite,
-            rating: tr.rating,
-            last_played: null,
-            play_count: 0,
-            relations: {}
-        },
-        createdAt: tr.date_added,
-        updatedAt: tr.date_modified,
-    }
-    if (tr.cover_original != null) {
-        track_object.metadata.cover = {
-            original: path.join(tr.image_root, tr.cover_original),
-            small: path.join(tr.image_root, tr.cover_small),
-            medium: path.join(tr.image_root, tr.cover_medium),
-            large: path.join(tr.image_root, tr.cover_large),
-        }
-    }
-    return track_object
-}
+// function trackBSON(tr) {
+//     let track_object = {
+//         metadata: {
+//             title: tr.title,
+//             artist: tr.artist,
+//             album: tr.album,
+//             genre: tr.genre,
+//             year: tr.year,
+//             color: tr.color,
+//             tags: []
+//         },
+//         track: {
+//             duration: tr.track_length / 1000000,
+//             stream_start: tr.stream_start / 1000000,
+//             stream_end: tr.stream_end / 1000000,
+//             bpm: tr.bpm,
+//             bitrate: tr.bitrate,
+//             samplerate: tr.samplerate,
+//             size: tr.file_size,
+//             path: path.join(tr.music_root, tr.file_name)
+//         },
+//         stats: {
+//             loved: tr.favorite,
+//             rating: tr.rating,
+//             last_played: null,
+//             play_count: 0,
+//             relations: {}
+//         },
+//         createdAt: tr.date_added,
+//         updatedAt: tr.date_modified,
+//     }
+//     if (tr.cover_original != null) {
+//         track_object.metadata.cover = {
+//             original: path.join(tr.image_root, tr.cover_original),
+//             small: path.join(tr.image_root, tr.cover_small),
+//             medium: path.join(tr.image_root, tr.cover_medium),
+//             large: path.join(tr.image_root, tr.cover_large),
+//         }
+//     }
+//     return track_object
+// }
 
 function getFileExtension(f_name) {
     return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
 }
 
-if (!(existsSync(path.join(homedir(), ".pymusic-library", "pymusic")))) {
-    let library = new MusicDatabase("pymusic")
-    await library.initialize()
-    library = undefined
-  }
 
 
 const db = new MusicDatabase("pymusic")
 
-main = async () => {
+main = async (db) => {
     let mysql = require('async-mysql'),
         connection,
         track_objects = {},
@@ -80,13 +80,13 @@ main = async () => {
 
     try {
 
-        await db.state.d.insert({_id: "queue", elements:{}, ordering:[null]})
-        await db.state.d.insert({_id: "session", elements:{}, ordering:[]})
-        await db.state.d.insert({_id: "shortlist", elements:{}})
-        await db.state.d.insert({_id: "unavailable", elements:{}})
-        await db.state.d.insert({_id: "settings", elements:{
+        // await db.state.d.insert({_id: "queue", elements:{}, ordering:[null]})
+        // await db.state.d.insert({_id: "session", elements:{}, ordering:[]})
+        // await db.state.d.insert({_id: "shortlist", elements:{}})
+        // await db.state.d.insert({_id: "unavailable", elements:{}})
+        // await db.state.d.insert({_id: "settings", elements:{
 
-        }})
+        //}})
 
         connection = await mysql.connect({host: 'localhost', user:"root", password:"root", database:'pymusic'});
         settings = await connection.query('SELECT * FROM settings');
@@ -198,7 +198,14 @@ main = async () => {
     }
 };
 
-main().then(console.log);
+//main().then(console.log);
+if (!(existsSync(path.join(homedir(), ".pymusic-library", "pymusic")))) {
+    //let library = new MusicDatabase("pymusic")
+    db.initialize().then(() => {main(db)})
+    //library = undefined
+  } else {
+      main(db)
+  }
 
 
 
