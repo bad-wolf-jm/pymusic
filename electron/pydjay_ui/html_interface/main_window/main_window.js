@@ -5,11 +5,12 @@ var path              = require('path');
 
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
-// const { EventDispatcher } = require("event_dispatcher")
 const { MusicDatabase } = require("musicdb/model.js")
-// const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
 const { TrackSetModel } = require("musicdb/track_set.js")
 const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
+const { AudioOutputDetector } = require('webaudio/detect')
+// const { EventDispatcher } = require("event_dispatcher")
+// const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
 // const { SessionModel } = require("musicdb/session.js")
 // const { Question } = require("ui/dialog/question.js")
 // const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
@@ -34,10 +35,10 @@ SV.on("add-playlist", () => {
 
 
 MDB = new MusicDatabase("pymusic")
+
 // MDB.queue.init()
 // MDB.current_session.init()
-
-DB = undefined //new DataProvider()
+// DB = undefined //new DataProvider()
 
 view = new TrackEditorView()
 view.init()
@@ -85,6 +86,47 @@ SE_controller.setModel(MDB.sessions)
 mpc = new PlaybackController(S_controller, Q_controller)
 pc  = new PrecueController(S_controller, Q_controller)
 // vc  = new VolumeController(mpc, pc)
+
+var available_outputs = {}
+
+async function getAudioOutputDevices() {
+    let output_dict = {}
+    let audio_outputs = await (new AudioOutputDetector().detectAutioOutputs())
+    audio_outputs.forEach((o) => {
+        output_dict[o.deviceId] = o.label
+    })
+    return output_dict
+}
+
+MDB.getAudioDevices().then(async (devices) => {
+    let audio_outputs = await getAudioOutputDevices()
+    let audio_setup = await MDB.getAudioSetup()
+    mpc.setMasterOutputDeviceId(audio_setup.main_master || "null")
+    mpc.setHeadsetOutputDeviceId(audio_setup.main_headset || "null")
+    pc.setOutputDeviceId(audio_setup.prelisten || "null")
+    view.setOutputDeviceId(audio_setup.prelisten || "null")
+})
+
+var T = setInterval(async () => {
+    let audio_outputs = await getAudioOutputDevices()
+    let saved_audio_devices = await MDB.getAudioDevices()
+    let audio_setup = await MDB.getAudioSetup()
+    let update = false
+    Object.keys(audio_outputs).forEach((deviceId) => {
+        if (!(saved_audio_devices[deviceId])) {
+            saved_audio_devices[deviceId] = audio_outputs[deviceId]
+            update = true
+        }
+    })
+    update && (await MDB.state.d.update({_id: "settings"}, {$set: {
+        "audio_devices": saved_audio_devices
+    }}))
+
+    mpc.setMasterOutputDeviceId(audio_setup.main_master || "null")
+    mpc.setHeadsetOutputDeviceId(audio_setup.main_headset || "null")
+    pc.setOutputDeviceId(audio_setup.prelisten || "null")
+    view.setOutputDeviceId(audio_setup.prelisten || "null")
+}, 1000)
 
 Q_controller.set_model(MDB.queue)
 
@@ -313,17 +355,28 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
 
 document.getElementById("main-menu-audio-setup").addEventListener('click', async () => {
     let d = new AudioOutputSettings({
+        library: MDB,
         mainPlayer: mpc,
         prelistenPlayer: pc,
         masterOutputChange: (deviceId) => {
             mpc.setMasterOutputDeviceId(deviceId)
+            MDB.state.d.update({_id: "settings"}, {
+                $set: {'audio_setup.main_master': deviceId}
+            })
         },
         masterHeadphoneChange: (deviceId) => {
             mpc.setHeadsetOutputDeviceId(deviceId)
+            MDB.state.d.update({_id: "settings"}, {
+                $set: {'audio_setup.main_headset': deviceId}
+            })
         },
         prelistenOutputChange: (deviceId) => {
             pc.setOutputDeviceId(deviceId)
             view.setOutputDeviceId(deviceId)
+            MDB.state.d.update({_id: "settings"}, {
+                $set: {'audio_setup.prelisten': deviceId}
+            })
+
         }
     })
     d.open()

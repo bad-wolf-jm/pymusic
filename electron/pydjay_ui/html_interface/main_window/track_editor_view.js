@@ -144,7 +144,7 @@ class TrackEditorView extends EventDispatcher {
     }
 
     setOutputDeviceId(deviceId) {
-        this.audio_player.setOutputDeviceId("headphones", deviceId)
+        (deviceId != this.getOutputDeviceId()) &&this.audio_player.setOutputDeviceId("headphones", deviceId)
     }
 
     getOutputDeviceId() {

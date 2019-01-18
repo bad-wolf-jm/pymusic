@@ -9,7 +9,8 @@ class PrecueController extends AudioTrackPlayer {
     }
 
     setOutputDeviceId(deviceId) {
-        super.setOutputDeviceId("main", deviceId)
+        // console.log(deviceId)
+        (deviceId != this.getOutputDeviceId()) && super.setOutputDeviceId("main", deviceId)
     }
 
     getOutputDeviceId() {
