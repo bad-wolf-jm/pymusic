@@ -422,7 +422,6 @@ document.getElementById("main-menu-save-session").addEventListener('click', asyn
             if (name != "") {
                 await MDB.saveCurrentSession(name, location, address)
             }
-    
             dialog.close()
         },
         dismissAction: () => {
