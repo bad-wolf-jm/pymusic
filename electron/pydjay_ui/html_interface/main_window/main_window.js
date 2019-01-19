@@ -413,7 +413,7 @@ document.getElementById("main-menu-save-session").addEventListener('click', asyn
             //let address = dialog.address_input.domElement.value
         
             if (name != "") {
-                await MDB.saveCurrentSession(name, location, address)
+                await MDB.saveCurrentSession(name) //, location, address)
             }
     
             dialog.close()
