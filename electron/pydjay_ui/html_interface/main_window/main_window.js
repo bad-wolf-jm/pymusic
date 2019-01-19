@@ -409,8 +409,8 @@ document.getElementById("main-menu-save-session").addEventListener('click', asyn
     let dialog = new SessionSaveDialog({
         confirmAction: async () => {
             let name = dialog.name_input.domElement.value
-            let location = dialog.location_input.domElement.value
-            let address = dialog.address_input.domElement.value
+            //let location = dialog.location_input.domElement.value
+            //let address = dialog.address_input.domElement.value
         
             if (name != "") {
                 await MDB.saveCurrentSession(name, location, address)
