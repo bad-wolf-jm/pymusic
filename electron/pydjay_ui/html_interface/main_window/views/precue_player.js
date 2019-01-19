@@ -124,7 +124,7 @@ class PrecuePlayerView extends EventDispatcher {
 
 
     set_track(tr) {
-        console.log(tr)
+        // console.log(tr)
         this.update_track(tr.track_object)
     }
 
