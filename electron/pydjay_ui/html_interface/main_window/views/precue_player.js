@@ -72,7 +72,7 @@ class PrecuePlayerView extends EventDispatcher {
         })
         document.getElementById("precue-player-loved").addEventListener("click", () => {
             if (this._track != undefined) {
-                this.updateLoved(!this._track.loved)
+                this.updateLoved(!this._track.stats.loved)
             }
         })
     }
