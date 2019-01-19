@@ -231,60 +231,53 @@ mpc.on("queue-finished",
     }
 )
 
-mpc.on("track-started",
-    (log_data) => {
-        MDB.state.d.update({_id:"settings"}, {
-            $set: {"current_track._id": log_data._id}
-        })
-    }
-)
+mpc.on("track-started", async (log_data) => {
+    await MDB.state.d.update({_id:"settings"}, {
+        $set: {"current_track._id": log_data._id}
+    })
+})
 
-mpc.on("track-finished",
-    (log_data) => {
-        MDB.current_session.append(log_data.track_object, {
-            status: "FINISHED",
-            time_start: log_data.start_time, 
-            time_end: log_data.end_time
-        })
-        MDB.tracks.setTrackMetadata(log_data.track_object, {
-            "stats.last_played": log_data.start_time,
-            "stats.play_count": log_data.track_object.stats.play_count + 1
-        })
-    }
-)
+mpc.on("track-finished", async (log_data) => {
+    await MDB.current_session.append(log_data.track_object, {
+        status: "FINISHED",
+        time_start: log_data.start_time, 
+        time_end: log_data.end_time
+    })
+    await MDB.tracks.setTrackMetadata(log_data.track_object, {
+        "stats.last_played": log_data.start_time,
+        "stats.play_count": log_data.track_object.stats.play_count + 1
+    })
+})
 
-mpc.on("track-stopped",
-    (log_data) => {
-        MDB.current_session.append(log_data.track_object, {
-            status: "STOPPED",
-            time_start: log_data.start_time, 
-            time_end: log_data.end_time
-        })
-        MDB.tracks.setTrackMetadata(log_data.track_object, {
-            "stats.last_played": log_data.start_time,
-            "stats.play_count": log_data.track_object.stats.play_count + 1
-        })
-    }
-)
+mpc.on("track-stopped", async (log_data) => {
+    await MDB.current_session.append(log_data.track_object, {
+        status: "STOPPED",
+        time_start: log_data.start_time, 
+        time_end: log_data.end_time
+    })
+    await MDB.tracks.setTrackMetadata(log_data.track_object, {
+        "stats.last_played": log_data.start_time,
+        "stats.play_count": log_data.track_object.stats.play_count + 1
+    })
+})
 
 pc.on('playback-started', () => {
         mpc.muteHeadset()
         SV.open_panel(3)
     }
 )
-mpc.on("track-skipped",
-    (log_data) => {
-        MDB.current_session.append(log_data.track_object, {
-            status: "SKIPPED",
-            time_start: log_data.start_time, 
-            time_end: log_data.end_time
-        })
-        MDB.tracks.setTrackMetadata(log_data.track_object, {
-            "stats.last_played": log_data.start_time,
-            "stats.play_count": log_data.track_object.stats.play_count + 1
-        })
-    }
-)
+
+mpc.on("track-skipped", async (log_data) => {
+    await MDB.current_session.append(log_data.track_object, {
+        status: "SKIPPED",
+        time_start: log_data.start_time, 
+        time_end: log_data.end_time
+    })
+    await MDB.tracks.setTrackMetadata(log_data.track_object, {
+        "stats.last_played": log_data.start_time,
+        "stats.play_count": log_data.track_object.stats.play_count + 1
+    })
+})
 
 // ipcRenderer.on("master-end-of-stream", () => {
 //     mpc.dispatch("end-of-stream")
