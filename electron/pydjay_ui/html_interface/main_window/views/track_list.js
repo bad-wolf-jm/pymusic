@@ -1,4 +1,4 @@
-class TrackListView extends BaseTrackListView {
+class TrackListView extends ClusteredListView {
     constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
         super(document.getElementById("main-list"), document.getElementById("main-track-list-scroller"))
 
