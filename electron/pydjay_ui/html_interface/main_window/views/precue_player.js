@@ -23,16 +23,16 @@ class PrecuePlayerView extends EventDispatcher {
             let x = e.target.getBoundingClientRect()
             let mouseX = (e.clientX - x.left)
             let ratio = mouseX / x.width
-            if (this.controller._current_track != undefined) {
-                let t = this.controller._current_track.track_object
-                this.controller.play(t, t.stream_start + (t.stream_length * ratio))
+            let t = this.controller._current_track.track_object
+            if (t != undefined) {
+                this.controller.play(t, t.track.stream_start + ((t.track.stream_end - t.track.stream_start) * ratio))
             }
         })
 
-        this.track_list_model.on("metadata-changed", (track) => {
+        this.track_list_model.on("object-updated", (track) => {
             if (this._track != undefined) {
-                if (track.id == this._track.id) {
-                    this.set_track(track)
+                if (track._id == this._track._id) {
+                    this.update_track(track)
                 }    
             }
         })
@@ -72,7 +72,7 @@ class PrecuePlayerView extends EventDispatcher {
         })
         document.getElementById("precue-player-loved").addEventListener("click", () => {
             if (this._track != undefined) {
-                this.updateLoved(!this._track.favorite)
+                this.updateLoved(!this._track.stats.loved)
             }
         })
     }
@@ -81,33 +81,26 @@ class PrecuePlayerView extends EventDispatcher {
         document.getElementById("precue-player-play-button").innerHTML = `<i class="fa fa-play"></i>`
     }
 
-    set_track(track) {
-        track = track.track_object
-        let file_name = path.join(track.music_root, track.file_name);
-        let stream_length = (track.stream_end-track.stream_start);
-        document.getElementById("precue-player-title").innerHTML       = track.title
-        document.getElementById("precue-player-album").innerHTML       = track.album
-        document.getElementById("precue-player-artist").innerHTML      = track.artist
-        document.getElementById("precue-player-genre").innerHTML       = track.genre
-        document.getElementById("precue-player-last-played").innerHTML = track.last_played
-        document.getElementById("precue-player-play-count").innerHTML  = track.play_count
-        document.getElementById("precue-player-bpm").innerHTML         = track.bpm
+    update_track(track) {
+        let stream_length = (track.track.stream_end - track.track.stream_start);
+        this._track = track
+        document.getElementById("precue-player-title").innerHTML       = track.metadata.title
+        document.getElementById("precue-player-album").innerHTML       = track.metadata.album
+        document.getElementById("precue-player-artist").innerHTML      = track.metadata.artist
+        document.getElementById("precue-player-genre").innerHTML       = track.metadata.genre
+        document.getElementById("precue-player-last-played").innerHTML = track.stats.last_played
+        document.getElementById("precue-player-play-count").innerHTML  = track.stats.play_count
+        document.getElementById("precue-player-bpm").innerHTML         = track.track.bpm
         document.getElementById("precue-player-duration").innerHTML    = `${format_nanoseconds(stream_length)}`
-        // if (track.color == null) {
-        //     document.getElementById("precue-player-color").style.background = "#ffffff"
-        // } else {
-        //     document.getElementById("precue-player-color").style.background = track.color
-        // }
-        this.setRating(track.rating)
-        this.setLoved(track.favorite)
+        this.setRating(track.stats.rating)
+        this.setLoved(track.stats.loved)
         let cover_source = undefined
-        if (track.cover == null) {
+        if (track.metadata.cover == null) {
             cover_source = "../../resources/images/default_album_cover.png"
         } else {
-            cover_source = `file://${track.image_root}/${track.cover}`;
+            cover_source = `file://${track.metadata.cover.small}`;
         }
         document.getElementById("precue-player-cover").src = cover_source
-        this._track = track
         document.getElementById("no-preview-track").style.display = "none"
         document.getElementById("precue-dropdown").classList.remove("show")
     }
@@ -120,13 +113,19 @@ class PrecuePlayerView extends EventDispatcher {
         document.getElementById("precue-player-rating").innerHTML = html
         for (let i=1; i<6; i++) {
             document.getElementById(`precue-rating-star-${i}`).addEventListener('click', () => {
-                if (i == 1 && this._track.rating == 1) {
+                if (i == 1 && this._track.stats.rating == 1) {
                     this.updateRating(0)
                 } else {
                     this.updateRating(i)
                 }
             })
         }
+    }
+
+
+    set_track(tr) {
+        // console.log(tr)
+        this.update_track(tr.track_object)
     }
 
     setLoved (value){
@@ -138,26 +137,13 @@ class PrecuePlayerView extends EventDispatcher {
 
     updateRating(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.set_metadata(this._track, {rating:new_value})
-            // this.hueb.close()    
+            this.track_list_model.setTrackMetadata(this._track, {'stats.rating':new_value})
         }
-
-        // DB.update_track_data(this._track.id, {rating:new_value}, () => {
-        //     this._track.rating = new_value
-        //     this.setRating(new_value)
-        // })
     }
 
     updateLoved(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.set_metadata(this._track, {favorite:new_value})
-            // this.hueb.close()    
+            this.track_list_model.setTrackMetadata(this._track, {'stats.loved':new_value})
         }
-
-        // DB.update_track_data(this._track.id, {favorite:new_value}, () => {
-        //     console.log(new_value)
-        //     this._track.favorite = new_value
-        //     this.setLoved(new_value)
-        // })
     }
 }

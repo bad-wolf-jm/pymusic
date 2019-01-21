@@ -1,5 +1,4 @@
 const { ColorPicker } = require("ui/popup/colorpicker.js")
-//const {EventDispatcher} = require("notify/event_dispatcher.js")
 const { PydjayAudioBufferPlayer } = require("webaudio/audio_player_buffer.js")
 
 function rgb2hex(rgb) {
@@ -9,6 +8,12 @@ function rgb2hex(rgb) {
     }
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
+
+function getFileExtension(f_name) {
+    return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
+}
+
+
 class TrackEditorView extends EventDispatcher {
     constructor () {
         super()
@@ -36,6 +41,7 @@ class TrackEditorView extends EventDispatcher {
                         if (!error) {
                             document.getElementById('track-editor-track-cover').src = new_cover
                             this.cover_image = image
+                            this.cover_image_extension = getFileExtension(new_cover)
                         }
                     })
                 }
@@ -99,12 +105,12 @@ class TrackEditorView extends EventDispatcher {
                 this.current_stream_position = null
             } else {
                 if (this.current_stream_position != null) {
-                    start = this.current_stream_position * this._track.track_length  / 1000000
+                    start = this.current_stream_position * this._track.track.duration
                 } else {
-                    start = this.stream_start / 1000000
+                    start = this.stream_start
                 }
                 if (this.stream_end == Infinity) {
-                    this.audio_player.play(this._waveform.backend.buffer, start, this._track.stream_end)
+                    this.audio_player.play(this._waveform.backend.buffer, start, this._track.track.stream_end)
                 } else {
                     this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end)
                 }
@@ -115,8 +121,8 @@ class TrackEditorView extends EventDispatcher {
             this.setLoved(!(this.loved))
         })
 
-        document.getElementById("track-editor-save").addEventListener("click", (ev) => {
-            this.save()
+        document.getElementById("track-editor-save").addEventListener("click", async (ev) => {
+            await this.save()
         })
 
         document.getElementById("track-editor-cancel").addEventListener("click", (ev) => {
@@ -138,89 +144,83 @@ class TrackEditorView extends EventDispatcher {
     }
 
     setOutputDeviceId(deviceId) {
-        this.audio_player.setOutputDeviceId("headphones", deviceId)
+        (deviceId != this.getOutputDeviceId()) &&this.audio_player.setOutputDeviceId("headphones", deviceId)
     }
 
     getOutputDeviceId() {
         return this.audio_player.getOutputDeviceIds()["headphones"]
     }
 
-
-    set_track(track) {
+    async set_track(track) {
+        // console.log(track)
         this.track = track
-        let file_name = path.join(track.music_root, track.file_name);
-        let stream_length = (track.stream_end-track.stream_start);
-        document.getElementById("track-editor-track-title").value = track.title
-        document.getElementById("track-editor-track-album").value = track.album
-        document.getElementById("track-editor-track-artist").value = track.artist
-        document.getElementById("track-editor-track-bpm").value = track.bpm
-        document.getElementById("track-editor-track-genre").value = track.genre
-        document.getElementById("track-editor-track-year").value = track.year
-        document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(track.stream_start)}`
-        document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(track.stream_end)}`
+        let file_name = track.track.path //path.join(track.music_root, track.file_name);
+        let stream_length = (track.track.stream_end-track.track.stream_start);
+        document.getElementById("track-editor-track-title").value = track.metadata.title
+        document.getElementById("track-editor-track-album").value = track.metadata.album
+        document.getElementById("track-editor-track-artist").value = track.metadata.artist
+        document.getElementById("track-editor-track-bpm").value = track.track.bpm
+        document.getElementById("track-editor-track-genre").value = track.metadata.genre
+        document.getElementById("track-editor-track-year").value = track.metadata.year
+        document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(track.track.stream_start)}`
+        document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(track.track.stream_end)}`
         document.getElementById("track-editor-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
-        document.getElementById("track-editor-color").style.backgroundColor = track.color
+        document.getElementById("track-editor-color").style.backgroundColor = track.metadata.color
 
         var slider = document.querySelector('#slider');
         slider.oninput =  () => {
             var zoomLevel = Number(slider.value);
             this._waveform.zoom(zoomLevel);
           };
-        this.setRating(track.rating)
-        this.setLoved(track.favorite)
+        this.setRating(track.stats.rating)
+        this.setLoved(track.stats.favorite)
         let cover_source = undefined
-        if (track.cover == null) {
+        if (track.metadata.cover == null) {
             cover_source = "../../resources/images/default_album_cover.png"
             this.original_cover_image = null
             this.cover_image = null
         } else {
-            cover_source = `file://${track.image_root}/${track.cover_original}`;
+            cover_source = `file://${track.metadata.cover.original}`;
             this.original_cover_image = cover_source
             this.cover_image = undefined
         }
         document.getElementById("track-editor-track-cover").src = cover_source
         this._track = track
         this._waveform.load(file_name)
-        this.stream_start = this._track.stream_start
-        this.stream_end = this._track.stream_end
+        console.log(this._track.track)
+        this.stream_start = this._track.track.stream_start
+        this.stream_end = this._track.track.stream_end
         this._position_tracker = this.audio_player.on("stream-position", (pos) => {
-            this.current_stream_position = pos*1000000
-            this._waveform.seekAndCenter(pos*1000000 / this._track.track_length)
+            this.current_stream_position = pos
+            try {
+                this._waveform.seekAndCenter(pos / this._track.track.duration)
+            } catch (e) {
+
+            }
         })
 
-        DB.get_related_tracks(track.id, (queue) => {
-            DB.get_playback_history(track.id, (history) => {
-                let queue_rows = []
-                for(let i=0; i<queue.length; i++) {
-                    let element = {
-                        id:          queue[i].id,
-                        available:   queue[i].available,
-                        color:       queue[i].color,
-                        loved:       "<i title='"+i+"' class='fa " + (queue[i].favorite ? "fa-heart" : "fa-heart-o") +"'></i>",
-                        title:       queue[i].title,
-                        artist:      queue[i].artist,
-                        genre:       queue[i].genre,
-                        last_played: (queue[i].last_played != null) ? moment(queue[i].last_played).format('MM-DD-YYYY') : "",
-                        play_count:  queue[i].play_count,
-                        rating:      this._get_rating(queue[i]),
-                        bpm:         queue[i].bpm,
-                        duration:    format_nanoseconds(queue[i].stream_length),
-                    }
-                    queue_rows.push(element)
-                }
-                jui.ready([ "grid.table" ], (table) => {
-                    var queue_content = table("#related-elements", {
-                        data:   queue_rows,
-                        scroll: false,
-                        resize: false
-                    });
-                    var history_content = table("#playback-history", {
-                        data:   history,
-                        scroll: false,
-                        resize: false
-                    })
-                })
-            })
+        let related_tracks = Object.values(await MDB.tracks.getObjectsByIds(Object.keys(track.stats.relations)))
+        let rows = related_tracks.map((track) => {
+            return {
+                id:          track._id,
+                color:       track.color,
+                loved:       "<i title='"+track._id+"' class='fa " + (track.stats.loved ? "fa-heart" : "fa-heart-o") +"'></i>",
+                title:       track.metadata.title,
+                artist:      track.metadata.artist,
+                genre:       track.metadata.genre,
+                last_played: (track.stats.last_played != null) ? moment(track.stats.last_played).format('MM-DD-YYYY') : "",
+                play_count:  track.stats.play_count,
+                rating:      this._get_rating(track),
+                bpm:         track.track.bpm,
+                duration:    format_nanoseconds(track.track.stream_end - track.track.stream_start),
+            }
+        })
+        jui.ready([ "grid.table" ], (table) => {
+            var queue_content = table("#related-elements", {
+                data:   rows,
+                scroll: false,
+                resize: false
+            });
         })
     }
 
@@ -246,14 +246,14 @@ class TrackEditorView extends EventDispatcher {
                     this._waveform.clearRegions()
                 }
                 this._region = this._waveform.addRegion({
-                    start: this._track.stream_start / 1000000000,
-                    end:   this._track.stream_end / 1000000000,
+                    start: this._track.track.stream_start / 1000,
+                    end:   this._track.track.stream_end / 1000,
                     color: "rgba(25,25,25,0.35)"
                 })
                 this._region.on("update",
                     () => {
-                        this.stream_start = Math.round(this._region.start * 1000000000)
-                        this.stream_end = Math.round(this._region.end * 1000000000)
+                        this.stream_start = Math.round(this._region.start * 1000)
+                        this.stream_end = Math.round(this._region.end * 1000)
                         this.stream_length = this.stream_end - this.stream_start
                         document.getElementById("track-editor-track-start").innerHTML = `${format_nanoseconds(this.stream_start)}`
                         document.getElementById("track-editor-track-end").innerHTML = `${format_nanoseconds(this.stream_end)}`
@@ -273,7 +273,7 @@ class TrackEditorView extends EventDispatcher {
     _get_rating(track_object) {
         let html = "";
         for (let j=1; j<6; j++) {
-            html+="<i class='fa " + ( j <= track_object.rating ? "fa-star" : "fa-star-o") +"' style='font-size:8pt; margin-left:3px; color: rgb(70,70,70);'></i>";
+            html+="<i class='fa " + ( j <= track_object.stats.rating ? "fa-star" : "fa-star-o") +"' style='font-size:8pt; margin-left:3px; color: rgb(70,70,70);'></i>";
         }
         return html
     }
@@ -306,21 +306,21 @@ class TrackEditorView extends EventDispatcher {
     getValues() {
         let F = (x) => document.getElementById(x)
         let v = {
-            title:  F("track-editor-track-title").value,
-            album:  F("track-editor-track-album").value,
-            artist: F("track-editor-track-artist").value,
-            bpm:    F("track-editor-track-bpm").value,
-            genre:  F("track-editor-track-genre").value,
-            year:   F("track-editor-track-year").value,
-            color:  this.color, 
-            stream_start: this.stream_start,
-            stream_end:   this.stream_end,
-            favorite:     this.loved,
-            rating:       this.rating
+            "metadata.title": F("track-editor-track-title").value,
+            "metadata.album": F("track-editor-track-album").value,
+            'metadata.artist': F("track-editor-track-artist").value,
+            "track.bpm": F("track-editor-track-bpm").value,
+            "metadata.genre": F("track-editor-track-genre").value,
+            "metadata.year": F("track-editor-track-year").value,
+            "metadata.color": this.color, 
+            "track.stream_start": this.stream_start || 0,
+            "track.stream_end": this.stream_end || this.track.track.duration,
+            "stats.loved": this.loved || false,
+            "stats.rating": this.rating || 0
         }
-        v.cover = this.cover_image
-        v.year = (v.year != "") ? v.year : null
-        v.bpm = (v.bpm != "") ? v.bpm : null
+        v.cover_image = this.cover_image
+        v['metadata.year'] = (v['metadata.year'] != "") ? v['metadata.year'] : null
+        v['track.bpm'] = (v['track.bpm'] != "") ? v['track.bpm'] : null
         return v
     }
 
@@ -330,29 +330,28 @@ class TrackEditorView extends EventDispatcher {
         document.getElementById("track-edit-dialog").close()
     }
     
-    save() {
-        DB.get_settings((settings) => {
-            let new_values = this.getValues()
-            let image_root = `${settings.image_root}`
-            if (new_values.cover != null) {
-                new_values.cover_original = `cover_original_${track_id}`
-                new_values.cover_large    = `cover_large_${track_id}`
-                new_values.cover_medium   = `cover_medium_${track_id}`
-                new_values.cover_small    = `cover_small_${track_id}`
-                new_values.cover.write(`${path.join(settings.image_root, new_values.cover_original)}`);
-                new_values.cover.resize(320,320).write(`${path.join(settings.image_root, new_values.cover_large)}`)
-                new_values.cover.resize(160,160).write(`${path.join(settings.image_root, new_values.cover_medium)}`)
-                new_values.cover.resize(100,100).write(`${path.join(settings.image_root, new_values.cover_small)}`)
-            } else if (new_values.cover !== undefined) {
-                new_values.cover_original = null;
-                new_values.cover_large    = null;
-                new_values.cover_medium   = null;
-                new_values.cover_small    = null;
-            }
-    
-            tracks_model.set_metadata(this.track, new_values)
-            this.close()
-        })
+    async save() {
+        let cover_dir = MDB.getCoverFolder()
+        let new_values = this.getValues()
+        if (new_values.cover_image != null) {
+            let image = new_values.cover_image
+            let trackId = this.track._id
+            let ext = this.cover_image_extension 
+            image.write(`${path.join(cover_dir, `${trackId}_original.${ext}`)}`);
+            image.resize(320,320).write(`${path.join(cover_dir, `${trackId}_large.${ext}`)}`)
+            image.resize(160,160).write(`${path.join(cover_dir, `${trackId}_medium.${ext}`)}`)
+            image.resize(100,100).write(`${path.join(cover_dir, `${trackId}_small.${ext}`)}`)   
+            new_values["metadata.cover.original"] =  `${trackId}_original.${ext}`
+            new_values["metadata.cover.large"] = `${trackId}_large.${ext}`
+            new_values["metadata.cover.medium"] = `${trackId}_medium.${ext}`
+            new_values["metadata.cover.small"] = `${trackId}_small.${ext}`
+        }
+        
+        await MDB.tracks.setTrackMetadata(this.track, new_values)
+        if (new_values.cover == undefined) {
+            MDB.tracks.d.update({_id: this.track.id}, {$unset: {'metadata.cover': true}})
+        }
+        this.close()
     }
     
 }

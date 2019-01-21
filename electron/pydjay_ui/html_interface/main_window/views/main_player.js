@@ -5,9 +5,9 @@ class MainPlayerView extends EventDispatcher {
         this.track_list_model = track_list_model
 
         if (this.track_list_model != undefined) {
-            this.track_list_model.on("metadata-changed", (track) => {
+            this.track_list_model.on("object-updated", (track) => {
                 if (this._track != undefined) {
-                    if (track.id == this._track.id) {
+                    if (track._id == this._track._id) {
                         this.set_track_metadata(track)
                     }
                 }
@@ -16,7 +16,7 @@ class MainPlayerView extends EventDispatcher {
 
         document.getElementById("main-player-loved").addEventListener("click", () => {
             if (this._track != undefined) {
-                this.updateLoved(!this._track.favorite)
+                this.updateLoved(!(this._track.stats.loved))
             }
         })
     }
@@ -25,7 +25,7 @@ class MainPlayerView extends EventDispatcher {
         this.controller = controller
         this.controller.on("stream-position", (pos) => {
             let remaining = Math.abs(pos.duration*1000 - pos.position)
-            document.getElementById("main-player-time-remaining").innerHTML = `-${format_nanoseconds(remaining*1000000)}`
+            document.getElementById("main-player-time-remaining").innerHTML = `-${format_nanoseconds(remaining)}`
         })
         this.controller.on("queue-stopped",                this.set_queue.bind(this))
         this.controller.on("track-finished",                this.set_queue.bind(this))
@@ -42,27 +42,27 @@ class MainPlayerView extends EventDispatcher {
     }
 
     set_track_metadata(track) {
-        if (this._track != undefined && track.id == this._track.id) {
-            let stream_length = (track.stream_end-track.stream_start);
-            document.getElementById("main-player-track-title").innerHTML    = track.title
-            document.getElementById("main-player-track-album").innerHTML    = track.album
-            document.getElementById("main-player-track-artist").innerHTML   = track.artist
-            document.getElementById("main-player-track-bpm").innerHTML      = track.bpm
+        if (this._track != undefined && track._id == this._track._id) {
+            let stream_length = (track.track.stream_end - track.track.stream_start);
+            document.getElementById("main-player-track-title").innerHTML    = track.metadata.title
+            document.getElementById("main-player-track-album").innerHTML    = track.metadata.album
+            document.getElementById("main-player-track-artist").innerHTML   = track.metadata.artist
+            document.getElementById("main-player-track-bpm").innerHTML      = track.track.bpm
             document.getElementById("main-player-track-duration").innerHTML = `${format_nanoseconds(stream_length)}`
-            this.setRating(track.rating)
-            this.setLoved(track.favorite)
+            this.setRating(track.stats.rating)
+            this.setLoved(track.stats.loved)
             let cover_source = undefined
             if (track.cover == null) {
                 cover_source = "../../resources/images/default_album_cover.png"
             } else {
-                cover_source = `file://${track.image_root}/${track.cover}`;
+                cover_source = `file://${track.metadata.cover.medium}`;
             }
             document.getElementById("main-player-track-cover").src = cover_source    
         }
     }
 
     set_track(track) {
-        let file_name = path.join(track.music_root, track.file_name);
+        let file_name = track.track.path
         this._track = track
         this.set_track_metadata(track)
         this._waveform.load(file_name)
@@ -84,7 +84,7 @@ class MainPlayerView extends EventDispatcher {
         });
         this._position_tracker = this.controller.on("stream-position",
             (pos) => {
-                let p = pos.position*1000000 / this._track.track_length
+                let p = pos.position / this._track.track.duration
                 p = Math.max(p,0.0)
                 p = Math.min(p,1.0)
                 this._waveform.seekAndCenter(p)
@@ -106,7 +106,7 @@ class MainPlayerView extends EventDispatcher {
         document.getElementById("main-player-rating").innerHTML = html
         for (let i=1; i<6; i++) {
             document.getElementById(`main-rating-star-${i}`).addEventListener('click', () => {
-                if (i == 1 && this._track.rating == 1) {
+                if (i == 1 && this._track.stats.rating == 1) {
                     this.updateRating(0)
                 } else {
                     this.updateRating(i)
@@ -117,20 +117,20 @@ class MainPlayerView extends EventDispatcher {
 
     setLoved (value){
         var html = "";
-        this.loved = value
+        this._track.stats.loved = value
         html+="<i title='"+value+"' class='fa " + (value ? "fa-heart" : "fa-heart-o") +"'></i>";
         document.getElementById("main-player-loved").innerHTML = html
     }
 
     updateRating(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.set_metadata(this._track, {rating:new_value})
+            this.track_list_model.setTrackMetadata(this._track, {"stats.rating":new_value})
         }
     }
 
     updateLoved(new_value) {
         if (this.track_list_model != undefined) {
-            this.track_list_model.set_metadata(this._track, {favorite:new_value})
+            this.track_list_model.setTrackMetadata(this._track, {"stats.loved": new_value})
         }
     }
 
