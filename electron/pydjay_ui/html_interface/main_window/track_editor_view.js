@@ -191,7 +191,11 @@ class TrackEditorView extends EventDispatcher {
         this.stream_end = this._track.track.stream_end
         this._position_tracker = this.audio_player.on("stream-position", (pos) => {
             this.current_stream_position = pos
-            this._waveform.seekAndCenter(pos / this._track.track.duration)
+            try {
+                this._waveform.seekAndCenter(pos / this._track.track.duration)
+            } catch (e) {
+                
+            }
         })
 
         let related_tracks = Object.values(await MDB.tracks.getObjectsByIds(Object.keys(track.stats.relations)))
