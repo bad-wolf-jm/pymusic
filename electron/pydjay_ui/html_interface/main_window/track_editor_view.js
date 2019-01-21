@@ -105,9 +105,9 @@ class TrackEditorView extends EventDispatcher {
                 this.current_stream_position = null
             } else {
                 if (this.current_stream_position != null) {
-                    start = this.current_stream_position * this._track.track_length  / 1000000
+                    start = this.current_stream_position * this._track.track_length 
                 } else {
-                    start = this.stream_start / 1000000
+                    start = this.stream_start
                 }
                 if (this.stream_end == Infinity) {
                     this.audio_player.play(this._waveform.backend.buffer, start, this._track.stream_end)
