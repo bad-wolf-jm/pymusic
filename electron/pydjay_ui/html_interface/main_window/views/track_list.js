@@ -28,7 +28,7 @@ class TrackListView extends ClusteredListView {
                         this.table_rows[track_id] = e
                     });
                     this.fitHeaderColumns()
-                    this.setDimmedRows(Object.keys(this._dimmed))
+                    this.setDimmedRows(this._dimmed.getList())
 
                     elements = document.querySelectorAll('.show-color-picker');
                     [].forEach.call(elements, (e) => {

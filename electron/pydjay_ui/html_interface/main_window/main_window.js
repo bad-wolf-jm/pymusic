@@ -490,50 +490,50 @@ function refresh_sessions(x) {
 async function display_all_songs() {
     T.ignore_unavailable = false
     T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
     T_controller.set_model("All Songs", MDB.tracks)
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
 }
 
 async function display_current_session() {
     T.ignore_unavailable = true
     T.model_order = true
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
     T_controller.set_model("Current Session", MDB.current_session)
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
 }
 
 async function display_suggestions() {
     T.ignore_unavailable = false
     T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
     T_controller.set_model("Suggested tracks", MDB.suggested)
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
 }
 
 async function display_short_list() {
     T.ignore_unavailable = false
     T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
     T_controller.set_model("Short list", MDB.shortlisted_tracks)
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
 }
 
 async function display_unavailable() {
     T.ignore_unavailable = true
     T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
     T_controller.set_model("Unavailable tracks", MDB.unavailable_tracks)
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
 }
 
 async function display_played_tracks() {
     T.ignore_unavailable = false
     T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
     T_controller.set_model("Played songs", MDB.played_tracks)
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
 }
 
 async function display_never_played_tracks() {
     T.ignore_unavailable = false
     T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
     T_controller.set_model("Never Played songs", MDB.never_played_tracks)
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
 }
 
 async function display_session(id) {
@@ -541,8 +541,8 @@ async function display_session(id) {
     let model = new TrackSetModel(MDB, MDB.sessions, id)
     T.ignore_unavailable = false
     T.model_order = true
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
     T_controller.set_model(pl.event, model)
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
 }
 
 async function display_playlist(id) {
@@ -550,8 +550,8 @@ async function display_playlist(id) {
     let model = new TrackSetModel(MDB, MDB.playlists, id)
     T.ignore_unavailable = false
     T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
     T_controller.set_model(pl.name, model)
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
 }
 
 function checkTime(i) {
