@@ -46,7 +46,7 @@ MDB = new MusicDatabase("pymusic")
 view = new TrackEditorView()
 view.init()
 
-T_controller  = new TrackListController()
+// T_controller  = new TrackListController()
 PE_controller = new PlaylistController() //un_model)
 Q_controller = new QueueController()
 S_controller = undefined //new SessionController()
@@ -478,11 +478,11 @@ document.getElementById("main-menu-quit").addEventListener('click', () => {
     ipcRenderer.send("quit-pymusic")
 })
 
-document.getElementById("filter-track-list").addEventListener("keyup", (e) => {
-    if ((e.key == "Escape") || (e.key == "Enter")) {
-        document.getElementById("filter-track-list").blur()
-    }
-});
+// document.getElementById("filter-track-list").addEventListener("keyup", (e) => {
+//     if ((e.key == "Escape") || (e.key == "Enter")) {
+//         document.getElementById("filter-track-list").blur()
+//     }
+// });
 
 ///////////////////////////////////////////////
 
