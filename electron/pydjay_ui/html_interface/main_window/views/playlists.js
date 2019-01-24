@@ -162,7 +162,7 @@ class PlaylistsView extends EventDispatcher {
                     col.addEventListener('click', (e) => {
                         let x = e.target.closest(".track-drop-target")
                         let playlist_id = (x.attributes["data-playlist-id"].value)
-                        display_playlist(playlist_id)
+                        T.display_playlist(playlist_id)
                     }, false);
         
                     col.addEventListener('contextmenu', (e) => {

@@ -9,8 +9,8 @@ const { MusicDatabase } = require("musicdb/model.js")
 const { TrackSetModel } = require("musicdb/track_set.js")
 const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
+const { TrackListAreaController } = require('app/views/track_list_area')
 
-const { DetailedTrackListView } = require("app/views/detailed_track_list")
 // const { ClusteredListView } = require('ui/listview/cluster')
 // const { EventDispatcher } = require("event_dispatcher")
 // const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
@@ -170,22 +170,25 @@ Q = new QueueAreaView(QL, PE)
 Q.hide_playlist_editor()
 
 
-T = new TrackListView({
-    name:       "main-track-list-name",
-    num_tracks: "main-track-list-number-of-tracks",
-    duration:   "main-track-list-duration",
-    filter:      "filter-track-list"
-}, Q_controller, MDB.shortlisted_tracks, MDB.unavailable_tracks)
-T.set_controller(T_controller)
-MDB.queue.on("content-changed", async () => {
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-})
-MDB.current_session.on("content-changed", async () => {
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())    
-})
-MDB.unavailable_tracks.on("content-changed", async () => {
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())    
-})
+
+T = new TrackListAreaController(MDB)
+
+// T = new TrackListView({
+//     name:       "main-track-list-name",
+//     num_tracks: "main-track-list-number-of-tracks",
+//     duration:   "main-track-list-duration",
+//     filter:      "filter-track-list"
+// }, Q_controller, MDB.shortlisted_tracks, MDB.unavailable_tracks)
+// T.set_controller(T_controller)
+// MDB.queue.on("content-changed", async () => {
+//     T.setDimmedRows(await MDB.unavailable.getTrackIds())
+// })
+// MDB.current_session.on("content-changed", async () => {
+//     T.setDimmedRows(await MDB.unavailable.getTrackIds())    
+// })
+// MDB.unavailable_tracks.on("content-changed", async () => {
+//     T.setDimmedRows(await MDB.unavailable.getTrackIds())    
+// })
 
 
 PL = new PlaylistsView({
@@ -347,7 +350,7 @@ window.addEventListener("load", (event) => {
     let tl = document.getElementById("main-track-list")
     list_height = (tl.clientHeight - h.clientHeight) - 5
     ta.style.maxHeight = list_height + "px";
-    T.fitHeaderColumns()
+    T._listview.fitHeaderColumns()
 })
 
 
@@ -357,7 +360,7 @@ window.addEventListener("resize", (event) => {
     let tl = document.getElementById("main-track-list")
     list_height = (tl.clientHeight - h.clientHeight) - 5
     ta.style.maxHeight = list_height + "px";
-    T.fitHeaderColumns()
+    T._listview.fitHeaderColumns()
 })
 
 document.getElementById("settings-button").addEventListener('click', () => {
@@ -487,72 +490,72 @@ function refresh_sessions(x) {
     console.log("refresh_sessions", x)
 }
 
-async function display_all_songs() {
-    T.ignore_unavailable = false
-    T.model_order = false
-    T_controller.set_model("All Songs", MDB.tracks)
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-}
+// async function display_all_songs() {
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model("All Songs", MDB.tracks)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_current_session() {
-    T.ignore_unavailable = true
-    T.model_order = true
-    T_controller.set_model("Current Session", MDB.current_session)
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-}
+// async function display_current_session() {
+//     T.ignore_unavailable = true
+//     T.model_order = true
+//     T_controller.set_model("Current Session", MDB.current_session)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_suggestions() {
-    T.ignore_unavailable = false
-    T.model_order = false
-    T_controller.set_model("Suggested tracks", MDB.suggested)
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-}
+// async function display_suggestions() {
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model("Suggested tracks", MDB.suggested)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_short_list() {
-    T.ignore_unavailable = false
-    T.model_order = false
-    T_controller.set_model("Short list", MDB.shortlisted_tracks)
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-}
+// async function display_short_list() {
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model("Short list", MDB.shortlisted_tracks)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_unavailable() {
-    T.ignore_unavailable = true
-    T.model_order = false
-    T_controller.set_model("Unavailable tracks", MDB.unavailable_tracks)
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-}
+// async function display_unavailable() {
+//     T.ignore_unavailable = true
+//     T.model_order = false
+//     T_controller.set_model("Unavailable tracks", MDB.unavailable_tracks)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_played_tracks() {
-    T.ignore_unavailable = false
-    T.model_order = false
-    T_controller.set_model("Played songs", MDB.played_tracks)
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-}
+// async function display_played_tracks() {
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model("Played songs", MDB.played_tracks)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_never_played_tracks() {
-    T.ignore_unavailable = false
-    T.model_order = false
-    T_controller.set_model("Never Played songs", MDB.never_played_tracks)
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-}
+// async function display_never_played_tracks() {
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model("Never Played songs", MDB.never_played_tracks)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_session(id) {
-    let pl = await MDB.sessions.getObjectById(id)
-    let model = new TrackSetModel(MDB, MDB.sessions, id)
-    T.ignore_unavailable = false
-    T.model_order = true
-    T_controller.set_model(pl.event, model)
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-}
+// async function display_session(id) {
+//     let pl = await MDB.sessions.getObjectById(id)
+//     let model = new TrackSetModel(MDB, MDB.sessions, id)
+//     T.ignore_unavailable = false
+//     T.model_order = true
+//     T_controller.set_model(pl.event, model)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_playlist(id) {
-    let pl = await MDB.playlists.getObjectById(id)
-    let model = new TrackSetModel(MDB, MDB.playlists, id)
-    T.ignore_unavailable = false
-    T.model_order = false
-    T_controller.set_model(pl.name, model)
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-}
+// async function display_playlist(id) {
+//     let pl = await MDB.playlists.getObjectById(id)
+//     let model = new TrackSetModel(MDB, MDB.playlists, id)
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model(pl.name, model)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
 function checkTime(i) {
     return (i < 10) ? "0" + i : i;
@@ -575,4 +578,4 @@ function startTime() {
 startTime();
 
 
-display_all_songs()
+T.display_all_songs()
