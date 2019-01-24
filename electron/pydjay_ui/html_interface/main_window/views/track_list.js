@@ -1,4 +1,4 @@
-class TrackListView extends ClusteredListView {
+class TrackListView extends BaseTrackListView {
     constructor(dom_ids, queue_controller, shortlist_controller, unavailable_controller) {
         super(document.getElementById("main-list"), document.getElementById("main-track-list-scroller"))
 
@@ -28,7 +28,7 @@ class TrackListView extends ClusteredListView {
                         this.table_rows[track_id] = e
                     });
                     this.fitHeaderColumns()
-                    this.setDimmedRows(this._dimmed.getList())
+                    this.setDimmedRows(Object.keys(this._dimmed))
 
                     elements = document.querySelectorAll('.show-color-picker');
                     [].forEach.call(elements, (e) => {

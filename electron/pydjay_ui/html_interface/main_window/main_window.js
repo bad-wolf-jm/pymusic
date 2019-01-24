@@ -10,7 +10,7 @@ const { TrackSetModel } = require("musicdb/track_set.js")
 const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
 
-const { TrackListView } = require("app/views/detailed_track_list")
+const { DetailedTrackListView } = require("app/views/detailed_track_list")
 // const { ClusteredListView } = require('ui/listview/cluster')
 // const { EventDispatcher } = require("event_dispatcher")
 // const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
