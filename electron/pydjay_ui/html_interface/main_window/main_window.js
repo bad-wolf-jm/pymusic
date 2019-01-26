@@ -10,6 +10,7 @@ const { TrackSetModel } = require("musicdb/track_set.js")
 const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
 const { TrackListAreaController } = require('app/views/track_list_area')
+const { QueueAreaController } = require('app/views/queue_list_area')
 
 // const { ClusteredListView } = require('ui/listview/cluster')
 // const { EventDispatcher } = require("event_dispatcher")
@@ -151,24 +152,27 @@ var T = setInterval(async () => {
 Q_controller.set_model(MDB.queue)
 
 
-PE = new PlaylistEditView({
-    list:       'playlist-edit-elements-body',
-    num_tracks: "playlist-edit-number-of-tracks",
-    duration:   "playlist-edit-duration"
-})
-PE.set_controller(PE_controller)
+// PE = new PlaylistEditView({
+//     list:       'playlist-edit-elements-body',
+//     num_tracks: "playlist-edit-number-of-tracks",
+//     duration:   "playlist-edit-duration"
+// })
+// PE.set_controller(PE_controller)
 
-QL = new QueueView({
-    list:       'queue-elements-body',
-    num_tracks: "queue-number-of-tracks",
-    duration:   "queue-duration"
-})
-QL.set_controller(Q_controller)
+// QL = new QueueView({
+//     list:       'queue-elements-body',
+//     num_tracks: "queue-number-of-tracks",
+//     duration:   "queue-duration"
+// })
+// QL.set_controller(Q_controller)
 
 
-Q = new QueueAreaView(QL, PE)
+// Q = new QueueAreaView(QL, PE)
+
+
+Q = new QueueAreaController()
 Q.hide_playlist_editor()
-
+Q.queue_view.displayModel("QUEUE", MDB.queue)
 
 
 T = new TrackListAreaController(MDB)
