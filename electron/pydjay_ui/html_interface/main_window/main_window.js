@@ -170,7 +170,7 @@ Q_controller.set_model(MDB.queue)
 // Q = new QueueAreaView(QL, PE)
 
 
-Q = new QueueAreaController()
+Q = new QueueAreaController(MDB)
 Q.hide_playlist_editor()
 Q.queue_view.displayModel("QUEUE", MDB.queue)
 

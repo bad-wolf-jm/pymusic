@@ -11,10 +11,8 @@ class PlaylistsView extends EventDispatcher {
             let T = this.context_menu_element
             let p = await this.controller.get_playlist_by_id(T)
             let L = new TrackSetModel(MDB, MDB.playlists, T)
-            PE_controller.set_model(p, L)
+            Q.playlist_editor.displayModel(p.name, L)
             Q.show_playlist_editor()
-            //})
-
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Rename', click: () => {
