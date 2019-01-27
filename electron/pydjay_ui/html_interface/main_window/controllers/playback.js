@@ -82,7 +82,7 @@ class PlaybackController extends RemoteTrackPlayer {
 
     async start_queue() {
         if (!this.queue_playing) {
-            if (!(await this.queue_controller.is_empty())) {
+            if (!(await this.queue_controller.isEmpty())) {
                 this._do_play_next_track()
                 this.dispatch("queue-started")    
             }

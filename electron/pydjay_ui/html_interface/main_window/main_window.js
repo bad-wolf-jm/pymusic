@@ -48,8 +48,8 @@ view = new TrackEditorView()
 view.init()
 
 // T_controller  = new TrackListController()
-PE_controller = new PlaylistController() //un_model)
-Q_controller = new QueueController()
+// PE_controller = new PlaylistController() //un_model)
+// Q_controller = new QueueController()
 S_controller = undefined //new SessionController()
 PL_controller = new PlaylistsController()
 PL_controller.setModel(MDB.playlists)
@@ -87,8 +87,8 @@ SE_controller.setModel(MDB.sessions)
 // ipcRenderer.on("track-modified", (e, id) => {
 //     tracks_model.update(id)
 // })
-mpc = new PlaybackController(S_controller, Q_controller)
-pc  = new PrecueController(S_controller, Q_controller)
+mpc = new PlaybackController(undefined, MDB.queue)
+pc  = new PrecueController() //S_controller, Q_controller)
 // vc  = new VolumeController(mpc, pc)
 
 var available_outputs = {}
@@ -149,7 +149,7 @@ var T = setInterval(async () => {
 
 }, 1000)
 
-Q_controller.set_model(MDB.queue)
+// Q_controller.set_model(MDB.queue)
 
 
 // PE = new PlaylistEditView({
