@@ -93,6 +93,8 @@ class BaseTrackListView extends EventDispatcher {
     }
 
     compare_tracks(a, b) {
+        if (!a.metadata.title) { return -1 }
+        if (!b.metadata.title) { return 1 }
         let x = a.metadata.title.toLowerCase();
         let y = b.metadata.title.toLowerCase();
         if (x < y) {return -1;}

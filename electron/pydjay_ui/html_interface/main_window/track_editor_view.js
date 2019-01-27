@@ -107,12 +107,12 @@ class TrackEditorView extends EventDispatcher {
                 this.current_stream_position = null
             } else {
                 if (this.current_stream_position != null) {
-                    start = this.current_stream_position * this._track.track_length  / 1000000
+                    start = this.current_stream_position * this._track.track.duration
                 } else {
-                    start = this.stream_start / 1000000
+                    start = this.stream_start
                 }
                 if (this.stream_end == Infinity) {
-                    this.audio_player.play(this._waveform.backend.buffer, start, this._track.stream_end)
+                    this.audio_player.play(this._waveform.backend.buffer, start, this._track.track.stream_end)
                 } else {
                     this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end)
                 }
@@ -189,11 +189,16 @@ class TrackEditorView extends EventDispatcher {
         document.getElementById("track-editor-track-cover").src = cover_source
         this._track = track
         this._waveform.load(file_name)
+        console.log(this._track.track)
         this.stream_start = this._track.track.stream_start
         this.stream_end = this._track.track.stream_end
         this._position_tracker = this.audio_player.on("stream-position", (pos) => {
-            this.current_stream_position = pos*1000000
-            this._waveform.seekAndCenter(pos*1000000 / this._track.duration)
+            this.current_stream_position = pos
+            try {
+                this._waveform.seekAndCenter(pos / this._track.track.duration)
+            } catch (e) {
+
+            }
         })
 
         let related_tracks = Object.values(await MDB.tracks.getObjectsByIds(Object.keys(track.stats.relations)))
