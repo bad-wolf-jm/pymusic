@@ -393,6 +393,18 @@ document.getElementById("main-menu-audio-setup").addEventListener('click', async
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
+document.getElementById("main-menu-toggle-fullscreen").addEventListener('click', () => {
+    let window = electron.remote.getCurrentWindow();
+    window.setFullScreen(!(window.isFullScreen()));
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+document.getElementById("main-menu-toggle-devtools").addEventListener('click', () => {
+    // mpc.stop_queue_now()
+    let window = electron.remote.getCurrentWindow();
+    window.openDevTools();
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
 
 
 document.getElementById("main-menu-stop-queue-now").addEventListener('click', () => {
