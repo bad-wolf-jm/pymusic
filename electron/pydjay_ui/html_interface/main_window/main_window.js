@@ -3,7 +3,19 @@ WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
 
-const {Question} = require("ui/dialog/question.js")
+const { Question } = require("ui/dialog/question.js")
+const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
+const { MusicDatabase } = require("musicdb/model.js")
+const { TrackSetModel } = require("musicdb/track_set.js")
+const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
+const { AudioOutputDetector } = require('webaudio/detect')
+// const { EventDispatcher } = require("event_dispatcher")
+// const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
+// const { SessionModel } = require("musicdb/session.js")
+// const { Question } = require("ui/dialog/question.js")
+// const {PydjayAudioFilePlayer} = require('audio/audio_player_file.js')
+// const {PydjayAudioBufferPlayer} = require('audio/audio_player_buffer.js')
+
 
 SV = new AccordionView("sidebar")
 
@@ -22,45 +34,118 @@ SV.on("add-playlist", () => {
 })
 
 
-DB = new DataProvider()
+MDB = new MusicDatabase("pymusic")
+
+// MDB.queue.init()
+// MDB.current_session.init()
+// DB = undefined //new DataProvider()
 
 view = new TrackEditorView()
 view.init()
 
+T_controller  = new TrackListController()
+PE_controller = new PlaylistController() //un_model)
+Q_controller = new QueueController()
+S_controller = undefined //new SessionController()
+PL_controller = new PlaylistsController()
+PL_controller.setModel(MDB.playlists)
+SE_controller = new SessionsController()
+SE_controller.setModel(MDB.sessions)
 
-tracks_model              = new TrackListModel()
-unavailable_model         = new UnavailableModel(tracks_model)
-shortlist_model           = new ShortlistModel(tracks_model)
-suggested_model           = new SuggestedModel(tracks_model)
-played_tracks_model       = new PlayedTracksModel(tracks_model)
-never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
-current_session_model     = new CurrentSessionModel(tracks_model)
-queue_model               = new QueueModel(tracks_model, current_session_model)
+// tracks_model              = new TrackListModel()
+// unavailable_model         = new UnavailableModel(tracks_model)
+// shortlist_model           = new ShortlistModel(tracks_model)
+// suggested_model           = new SuggestedModel(tracks_model)
+// played_tracks_model       = new PlayedTracksModel(tracks_model)
+// never_played_tracks_model = new NeverPlayedTracksModel(tracks_model)
+// current_session_model     = new CurrentSessionModel(tracks_model)
+// queue_model               = new QueueModel(tracks_model, current_session_model)
 
 
-un_model = new UnionModel()
-un_model.addModel("queue", queue_model)
-un_model.addModel("current_session", current_session_model)
-un_model.addModel("unavailable", unavailable_model)
+// un_model = new UnionModel()
+// un_model.addModel("queue", queue_model)
+// un_model.addModel("current_session", current_session_model)
+// un_model.addModel("unavailable", unavailable_model)
 
-T_controller              = new TrackListController(un_model)
-PE_controller             = new PlaylistController(un_model)
-Q_controller              = new QueueController()
-S_controller              = new SessionController()
-PL_controller             = new PlaylistsController()
-SE_controller             = new SessionsController()
+// T_controller              = new TrackListController() //un_model)
+// PE_controller             = new PlaylistController() //un_model)
+// Q_controller              = new QueueController()
+// S_controller              = new SessionController()
+// PL_controller             = new PlaylistsController()
+// SE_controller             = new SessionsController()
 
-mpc                       = new PlaybackController(S_controller, Q_controller)
-pc                        = new PrecueController(S_controller, Q_controller)
-vc                        = new VolumeController(mpc, pc)
+// mpc                       = new PlaybackController( ) //S_controller, Q_controller)
+// pc                        = new PrecueController( S_controller, Q_controller)
 
-Q_controller.set_model(queue_model)
-S_controller.set_model(current_session_model)
+// Q_controller.set_model(MDB.queue) //queue_model)
+// S_controller.set_model(current_session_model)
 
-ipcRenderer.on("track-modified", (e, id) => {
-    //console.log(e, id)
-    tracks_model.update(id)
+// ipcRenderer.on("track-modified", (e, id) => {
+//     tracks_model.update(id)
+// })
+mpc = new PlaybackController(S_controller, Q_controller)
+pc  = new PrecueController(S_controller, Q_controller)
+// vc  = new VolumeController(mpc, pc)
+
+var available_outputs = {}
+
+async function getAudioOutputDevices() {
+    let output_dict = {}
+    let audio_outputs = await (new AudioOutputDetector().detectAutioOutputs())
+    audio_outputs.forEach((o) => {
+        output_dict[o.deviceId] = o.label
+    })
+    return output_dict
+}
+
+function setupAudioOutputs(audio_setup, available_devices) {
+    if (available_devices[audio_setup.main_master]) {
+        mpc.setMasterOutputDeviceId(audio_setup.main_master)
+    } else {
+        mpc.setMasterOutputDeviceId("null")
+    }
+
+    if (available_devices[audio_setup.main_headset]) {
+        mpc.setHeadsetOutputDeviceId(audio_setup.main_headset)
+    } else {
+        mpc.setHeadsetOutputDeviceId("null")
+    }
+
+    if (available_devices[audio_setup.prelisten]) {
+        pc.setOutputDeviceId(audio_setup.prelisten)
+        view.setOutputDeviceId(audio_setup.prelisten)
+    } else {
+        pc.setOutputDeviceId("null")
+        view.setOutputDeviceId("null")
+    }
+
+}
+
+MDB.getAudioDevices().then(async (devices) => {
+    let audio_outputs = await getAudioOutputDevices()
+    let audio_setup = await MDB.getAudioSetup()
+    setupAudioOutputs(audio_setup, audio_outputs)
 })
+
+var T = setInterval(async () => {
+    let audio_outputs = await getAudioOutputDevices()
+    let saved_audio_devices = await MDB.getAudioDevices()
+    let audio_setup = await MDB.getAudioSetup()
+    let update = false
+    Object.keys(audio_outputs).forEach((deviceId) => {
+        if (!(saved_audio_devices[deviceId])) {
+            saved_audio_devices[deviceId] = audio_outputs[deviceId]
+            update = true
+        }
+    })
+    update && (await MDB.state.d.update({_id: "settings"}, {$set: {
+        "audio_devices": saved_audio_devices
+    }}))
+    setupAudioOutputs(audio_setup, audio_outputs)
+
+}, 1000)
+
+Q_controller.set_model(MDB.queue)
 
 
 PE = new PlaylistEditView({
@@ -87,8 +172,18 @@ T = new TrackListView({
     num_tracks: "main-track-list-number-of-tracks",
     duration:   "main-track-list-duration",
     filter:      "filter-track-list"
-}, Q_controller, shortlist_model, unavailable_model)
+}, Q_controller, MDB.shortlisted_tracks, MDB.unavailable_tracks)
 T.set_controller(T_controller)
+MDB.queue.on("content-changed", async () => {
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+})
+MDB.current_session.on("content-changed", async () => {
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())    
+})
+MDB.unavailable_tracks.on("content-changed", async () => {
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())    
+})
+
 
 PL = new PlaylistsView({
     list: 'queue-elements-body'
@@ -100,13 +195,13 @@ SE = new SessionsView({
 })
 SE.set_controller(SE_controller)
 
-mpc.init_audio()
-pc.init_audio()
-M = new MainPlayerView(tracks_model)
+// pc.connectOutputs({headphones:{left:0, right:1}})
+
+M = new MainPlayerView(MDB.tracks)
 M.set_controller(mpc)
 M.init()
 
-P = new PrecuePlayerView(tracks_model)
+P = new PrecuePlayerView(MDB.tracks)
 P.set_controller(pc)
 
 mpc.on("queue-started",
@@ -136,83 +231,92 @@ mpc.on("queue-finished",
     }
 )
 
-mpc.on("track-started",
-    () => {
-    }
-)
-
-mpc.on("track-finished",
-    () => {
-    }
-)
-
-
-// ipcRenderer.on("headphone-playback-stopped", () => {
-//     pc.dispatch("playback-stopped")
-// })
-
-
-// ipcRenderer.on("headphone-playback-paused", () => {
-//     pc.dispatch("playback-paused")
-// })
-
-// ipcRenderer.on("headphone-playback-started", () => {
-//     pc.dispatch("playback-started")
-// })
-
-
-// ipcRenderer.on("headphone-stream-position", (event, pos) => {
-//     pc.dispatch("stream-position", pos)
-// })
-
-
-ipcRenderer.on("master-end-of-stream", () => {
-    mpc.dispatch("end-of-stream")
+mpc.on("track-started", async (log_data) => {
+    await MDB.state.d.update({_id:"settings"}, {
+        $set: {"current_track._id": log_data._id}
+    })
 })
 
-
-ipcRenderer.on("master-playback-stopped", () => {
-    mpc.dispatch("playback-stopped")
+mpc.on("track-finished", async (log_data) => {
+    await MDB.current_session.append(log_data.track_object, {
+        status: "FINISHED",
+        time_start: log_data.start_time, 
+        time_end: log_data.end_time
+    })
+    await MDB.tracks.setTrackMetadata(log_data.track_object, {
+        "stats.last_played": log_data.start_time,
+        "stats.play_count": log_data.track_object.stats.play_count + 1
+    })
 })
 
-ipcRenderer.on("master-playback-paused", () => {
-    mpc.dispatch("playback-paused")
+mpc.on("track-stopped", async (log_data) => {
+    await MDB.current_session.append(log_data.track_object, {
+        status: "STOPPED",
+        time_start: log_data.start_time, 
+        time_end: log_data.end_time
+    })
+    await MDB.tracks.setTrackMetadata(log_data.track_object, {
+        "stats.last_played": log_data.start_time,
+        "stats.play_count": log_data.track_object.stats.play_count + 1
+    })
 })
-
-ipcRenderer.on("master-playback-started", () => {
-    mpc.dispatch("playback-started")
-})
-
-
-ipcRenderer.on("master-stream-position", (event, pos) => {
-    mpc.dispatch("stream-position", pos)
-})
-
 
 pc.on('playback-started', () => {
-        //vc.mute_monitor()
+        mpc.muteHeadset()
         SV.open_panel(3)
     }
 )
 
+mpc.on("track-skipped", async (log_data) => {
+    await MDB.current_session.append(log_data.track_object, {
+        status: "SKIPPED",
+        time_start: log_data.start_time, 
+        time_end: log_data.end_time
+    })
+    await MDB.tracks.setTrackMetadata(log_data.track_object, {
+        "stats.last_played": log_data.start_time,
+        "stats.play_count": log_data.track_object.stats.play_count + 1
+    })
+})
 
-mpc.on("queue-stop-requested",
-    () => {
-        B = document.getElementById("queue-start-button")
-        B.innerHTML = "<i class=\"fa fa-close\"></i>"
-        B.style.backgroundColor = "#667700"
-    }
-)
+// ipcRenderer.on("master-end-of-stream", () => {
+//     mpc.dispatch("end-of-stream")
+// })
 
-mpc.on("queue-stop-request-cancelled",
-    () => {
-        let M = document.getElementById("queue-stop-message")
-        M.style.display="none"
-        B = document.getElementById("queue-start-button")
-        B.innerHTML = "<i class=\"fa fa-stop\"></i>"
-        B.style.backgroundColor = "#AA0000"
-    }
-)
+
+// ipcRenderer.on("master-playback-stopped", () => {
+//     mpc.dispatch("playback-stopped")
+// })
+
+
+// pc.on('playback-stopped', () => {
+//     mpc.unmuteHeadset()
+// }
+// )
+
+pc.on('playback-paused', () => {
+    mpc.unmuteHeadset()
+})
+
+
+
+// mpc.on("queue-stop-requested",
+//     () => {
+//         B = document.getElementById("queue-start-button")
+//         B.innerHTML = "<i class=\"fa fa-close\"></i>"
+//         B.style.backgroundColor = "#667700"
+//     }
+// )
+
+// mpc.on("queue-stop-request-cancelled",
+//     () => {
+//         let M = document.getElementById("queue-stop-message")
+//         M.style.display="none"
+//         B = document.getElementById("queue-start-button")
+//         B.innerHTML = "<i class=\"fa fa-stop\"></i>"
+//         B.style.backgroundColor = "#AA0000"
+//     }
+//)
 
 mpc.on("next-track-countdown", (time) => {
     let M = document.getElementById("main-player-track-title")
@@ -253,16 +357,43 @@ document.getElementById("settings-button").addEventListener('click', () => {
 document.getElementById("main-menu-add-track").addEventListener('click', () => {
     remote.dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] }, (files) => {
         if (files != undefined) {
-            let x = new TrackAdder(files)
+            let x = new TrackAdder(files, MDB)
         }
     })
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("main-menu-reset-audio").addEventListener('click', () => {
-    ipcRenderer.send("reset-audio-system", {})
+document.getElementById("main-menu-audio-setup").addEventListener('click', async () => {
+    let d = new AudioOutputSettings({
+        library: MDB,
+        mainPlayer: mpc,
+        prelistenPlayer: pc,
+        masterOutputChange: (deviceId) => {
+            mpc.setMasterOutputDeviceId(deviceId)
+            MDB.state.d.update({_id: "settings"}, {
+                $set: {'audio_setup.main_master': deviceId}
+            })
+        },
+        masterHeadphoneChange: (deviceId) => {
+            mpc.setHeadsetOutputDeviceId(deviceId)
+            MDB.state.d.update({_id: "settings"}, {
+                $set: {'audio_setup.main_headset': deviceId}
+            })
+        },
+        prelistenOutputChange: (deviceId) => {
+            pc.setOutputDeviceId(deviceId)
+            view.setOutputDeviceId(deviceId)
+            MDB.state.d.update({_id: "settings"}, {
+                $set: {'audio_setup.prelisten': deviceId}
+            })
+
+        }
+    })
+    d.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
+
+
 
 document.getElementById("main-menu-stop-queue-now").addEventListener('click', () => {
     mpc.stop_queue_now()
@@ -274,31 +405,41 @@ document.getElementById("main-menu-skip-current-track").addEventListener('click'
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("main-menu-save-session").addEventListener('click', () => {
-    document.getElementById("save-session-dialog").showModal();
+document.getElementById("main-menu-save-session").addEventListener('click', async () => {
+    let dialog = new SessionSaveDialog({
+        confirmAction: async () => {
+            let name = dialog.name_input.domElement.value
+            //let location = dialog.location_input.domElement.value
+            //let address = dialog.address_input.domElement.value
+        
+            if (name != "") {
+                await MDB.saveCurrentSession(name) //, location, address)
+            }
+    
+            dialog.close()
+        },
+        dismissAction: () => {
+            dialog.close()
+        }
+    })
+    dialog.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("session-save").addEventListener('click', () => {
-    let name = document.getElementById("session-name").value
-    let location = document.getElementById("session-location").value
-    let address = document.getElementById("session-address").value
+// document.getElementById("session-save").addEventListener('click', async () => {
+//     let name = document.getElementById("session-name").value
+//     let location = document.getElementById("session-location").value
+//     let address = document.getElementById("session-address").value
 
-    if (name != "") {
-        current_session_model.store_session(name, location, address, () => {
-            SE_controller.refresh(() => {})
-        })
-    }
-    document.getElementById("save-session-dialog").close();
-})
+//     if (name != "") {
+//         await MDB.saveCurrentSession(name, location, address)
+//     }
+//     document.getElementById("save-session-dialog").close();
+// })
 
-document.getElementById("session-save-cancel").addEventListener('click', () => {
-    document.getElementById("save-session-dialog").close();
-})
-
-
-
-
+// document.getElementById("session-save-cancel").addEventListener('click', () => {
+//     document.getElementById("save-session-dialog").close();
+// })
 
 document.getElementById("main-menu-discard-session").addEventListener('click', () => {
     let q = new Question({
@@ -307,9 +448,7 @@ document.getElementById("main-menu-discard-session").addEventListener('click', (
         confirmText: "yes",
         dismissText: 'no',
         confirmAction: () => {
-            current_session_model.discard_session(() => {
-                SE_controller.refresh(() => {})
-            })
+            MDB.discardCurrentSession()
             q.close()
         },
         dismissAction: () => {
@@ -319,32 +458,6 @@ document.getElementById("main-menu-discard-session").addEventListener('click', (
     q.open()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
-//document.getElementById("discard-session-dialog").showModal();
-// document.getElementById("session-discard").addEventListener('click', () => {
-//     current_session_model.discard_session(() => {
-//         SE_controller.refresh(() => {})
-//     })
-//     document.getElementById("discard-session-dialog").close();
-// })
-
-// document.getElementById("session-discard-cancel").addEventListener('click', () => {
-//     document.getElementById("discard-session-dialog").close();
-// })
-
-
-
-
-
-
-document.getElementById("main-menu-settings").addEventListener('click', () => {
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
-})
-
-// document.getElementById("main-menu-mixer").addEventListener('click', () => {
-//     ipcRenderer.send("show-mixer-window")
-//     document.getElementById("main-menu-dropdown").classList.toggle("show");
-// })
 
 
 document.getElementById("main-menu-quit").addEventListener('click', () => {
@@ -364,69 +477,72 @@ function refresh_sessions(x) {
     console.log("refresh_sessions", x)
 }
 
-function display_all_songs() {
+async function display_all_songs() {
     T.ignore_unavailable = false
-    T_controller.set_model("All Songs", tracks_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("All Songs", MDB.tracks)
 }
 
-function display_current_session() {
+async function display_current_session() {
     T.ignore_unavailable = true
-    T_controller.set_model("Current Session", current_session_model)
+    T.model_order = true
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Current Session", MDB.current_session)
 }
 
-function display_suggestions() {
+async function display_suggestions() {
     T.ignore_unavailable = false
-    T_controller.set_model("Suggested tracks", suggested_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Suggested tracks", MDB.suggested)
 }
 
-function display_short_list() {
+async function display_short_list() {
     T.ignore_unavailable = false
-    T_controller.set_model("Short list", shortlist_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Short list", MDB.shortlisted_tracks)
 }
 
-function display_unavailable() {
+async function display_unavailable() {
     T.ignore_unavailable = true
-    T_controller.set_model("Unavailable tracks", unavailable_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Unavailable tracks", MDB.unavailable_tracks)
 }
 
-function display_played_tracks() {
+async function display_played_tracks() {
     T.ignore_unavailable = false
-    T_controller.set_model("Played songs", played_tracks_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Played songs", MDB.played_tracks)
 }
 
-function display_never_played_tracks() {
+async function display_never_played_tracks() {
     T.ignore_unavailable = false
-    T_controller.set_model("Never Played songs", never_played_tracks_model)
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model("Never Played songs", MDB.never_played_tracks)
 }
 
-function display_session(id) {
-    DB.get_session_info(id,
-        (info) => {
-            let L = new SessionModel(info, tracks_model)
-            T.ignore_unavailable = false
-            T_controller.set_model(info.name, L)
-        }
-    )
+async function display_session(id) {
+    let pl = await MDB.sessions.getObjectById(id)
+    let model = new TrackSetModel(MDB, MDB.sessions, id)
+    T.ignore_unavailable = false
+    T.model_order = true
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model(pl.event, model)
 }
 
-function display_playlist(id) {
-    DB.get_group_info(id,
-        (info) => {
-            let L = new PlaylistModel(info, tracks_model)
-            T.ignore_unavailable = false
-            T_controller.set_model(info.name, L)
-            // PE_controller.set_model(info.name, L)
-        }
-    )
+async function display_playlist(id) {
+    let pl = await MDB.playlists.getObjectById(id)
+    let model = new TrackSetModel(MDB, MDB.playlists, id)
+    T.ignore_unavailable = false
+    T.model_order = false
+    T.setDimmedRows(await MDB.unavailable.getTrackIds())
+    T_controller.set_model(pl.name, model)
 }
-
-ipcRenderer.on('playback-started', (event, arg) => {
-    vc.mute_monitor()});
-
-
-ipcRenderer.on('playback-stopped', (event, arg) => {
-    vc.restore_monitor()});
-
 
 function checkTime(i) {
     return (i < 10) ? "0" + i : i;
@@ -442,8 +558,6 @@ function startTime() {
     Y = today.getFullYear()
     document.getElementById("footer-date").innerHTML = `${Y}-${M}-${d}`
     document.getElementById("footer-time").innerHTML = `${h}:${m}`
-    // $$('calendar').define('label', `<span style="color:rgb(200,200,200)">${Y}-${M}-${d}</span> | <b>${h}:${m}</b>`)
-    // $$('calendar').refresh()
     t = setTimeout(function () {
         startTime()
     }, 30000);

@@ -132,7 +132,7 @@ function parseFrameHeader(header) {
 }
 
 function round(duration) {
-  return Math.round(duration * 1000000000); 
+  return Math.round(duration * 1000); 
 }
 
 function mp3Duration(filename) {

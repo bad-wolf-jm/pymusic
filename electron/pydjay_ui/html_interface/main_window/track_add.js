@@ -2,22 +2,104 @@ var jsmediatags = require("jsmediatags");
 var fs = require('fs-extra');
 var path = require('path');
 const {spawn} = require ('child_process');
-var async = require('async');
+// var async = require('async');
 var Jimp = require("jimp");
+const { TrackImportProgressDialog } = require("iface/dialogs/track_add_progress")
+
+// function trackBSON(tr) {
+//     let track_object = {
+//         metadata: {
+//             title: tr.title,
+//             artist: tr.artist,
+//             album: tr.album,
+//             genre: tr.genre,
+//             year: tr.year,
+//             color: tr.color,
+//             tags: []
+//         },
+//         track: {
+//             duration: tr.track_length / 1000000,
+//             stream_start: tr.stream_start / 1000000,
+//             stream_end: tr.stream_end / 1000000,
+//             bpm: tr.bpm,
+//             bitrate: tr.bitrate,
+//             samplerate: tr.samplerate,
+//             size: tr.file_size,
+//             path: path.join(tr.music_root, tr.file_name)
+//         },
+//         stats: {
+//             loved: tr.favorite,
+//             rating: tr.rating,
+//             last_played: null,
+//             play_count: 0,
+//             relations: {}
+//         },
+//         createdAt: tr.date_added,
+//         updatedAt: tr.date_modified,
+//     }
+//     if (tr.cover_original != null) {
+//         track_object.metadata.cover = {
+//             original: path.join(tr.image_root, tr.cover_original),
+//             small: path.join(tr.image_root, tr.cover_small),
+//             medium: path.join(tr.image_root, tr.cover_medium),
+//             large: path.join(tr.image_root, tr.cover_large),
+//         }
+//     }
+//     return track_object
+// }
 
 
+function parse_tag(filename, tag) {
+
+    var p_tag = {
+        filename: filename,
+        title: tag.tags.title,
+        artist: tag.tags.artist,
+        album: tag.tags.album,
+        genre: tag.tags.genre,
+        year: tag.tags.year,
+        comment: tag.tags.comment.text,
+        picture: tag.tags.picture,
+        loved: 0,
+        rating: 0
+    }
+    if (tag.type == 'ID3') {
+        p_tag.bpm = (tag.tags.TBPM != undefined) ? tag.tags.TBPM.data : null;
+    }
+    let bit_info = mp3Duration(filename)
+    p_tag.duration = bit_info.duration
+    p_tag.file_size = bit_info.file_size
+    p_tag.bit_rate = bit_info.bit_rate
+    p_tag.samplerate = bit_info.samplerate
+    return p_tag;
+}
 
 
+function read_metadata(filename) {
+    return new Promise(function(resolve, reject) {
+      jsmediatags.read(filename, {
+        onSuccess: function(tag) {
+          resolve(parse_tag(filename, tag));
+        },
+        onError: function(error) {
+          reject(error);
+        }
+      });
+    });
+  }
 
 class TrackAdder extends EventDispatcher {
-    constructor(filenames) {
+    constructor(filenames, library) {
         super()
         this.filenames = filenames
+        this._library = library
         this._num = this.filenames.length
         this._progress = 0
         this.track_info_array = []
         this.track_info_editor = undefined
-        document.getElementById('track-add-progress-dialog').showModal()
+        this.progress_dialog = new TrackImportProgressDialog()
+        this.progress_dialog.open()
+        // document.getElementById('track-add-progress-dialog').showModal()
         this.add_all_tracks()
     }
 
@@ -25,9 +107,19 @@ class TrackAdder extends EventDispatcher {
         return f_name.slice((Math.max(0, f_name.lastIndexOf(".")) || Infinity) + 1);
     }
 
+    async add_all_tracks() {
+        for (let i=0; i<this.filenames.length; i++) {
+            this.progress_dialog.setProgress(i+1, this.filenames.length)
+            let added = await this._library.addFile(this.filenames[i])
+            this.progress_dialog.setCurrent(added)
+        }
+
+        this.progress_dialog.close()
+    }
+
 
     _perform_add(settings, image, data, continuation) {
-        console.log(data)
+        //console.log(data)
         fs.copy(data.filename, data.mp3_path).then( () => {
             if (image != null) {
                 image.write(`${path.join(settings.image_root, data.original_image_file)}`);
@@ -138,17 +230,17 @@ class TrackAdder extends EventDispatcher {
         })
     }
 
-    add_all_tracks() {
-        if (this.filenames.length > 0) {
-            this.add_single_track(this.filenames.pop(), () => {
-                this.add_all_tracks()
-            })
-        } else {
-            tracks_model.refresh()
-            document.getElementById('track-add-progress-dialog').close()
+    // add_all_tracks() {
+    //     if (this.filenames.length > 0) {
+    //         this.add_single_track(this.filenames.pop(), () => {
+    //             this.add_all_tracks()
+    //         })
+    //     } else {
+    //         tracks_model.refresh()
+    //         document.getElementById('track-add-progress-dialog').close()
 
-        }
-    }
+    //     }
+    // }
 
 
     parse_tag(filename, tag) {
