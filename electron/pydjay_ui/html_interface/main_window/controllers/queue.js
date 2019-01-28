@@ -49,7 +49,7 @@ class QueueController extends EventDispatcher {
     }
 
     async get_id(id) {
-        return this.model.getElementById(id)
+        return await this.model.getElementById(id)
     }
 
     pop() {

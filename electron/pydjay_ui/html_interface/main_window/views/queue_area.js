@@ -47,9 +47,9 @@ class QueueAreaView extends EventDispatcher {
     }
 
 
-    selected_element() {
+    async selected_element() {
         if (this.displayed != undefined) {
-            return this.displayed.selected_element()
+            return await this.displayed.selected_element()
         }
     }
 
