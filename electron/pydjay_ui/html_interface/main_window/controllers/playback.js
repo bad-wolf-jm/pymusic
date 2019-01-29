@@ -72,7 +72,7 @@ class PlaybackController extends RemoteTrackPlayer {
                     this.dispatch('next-track-countdown', 0)
                     this._do_play_next_track();
                 } else {
-                    this.dispatch('next-track-countdown', delay)
+                    this.dispatch('next-track-countdown', Math.round(delay / 1000))
                     delay = delay - 1000;
                 }
             }, 
