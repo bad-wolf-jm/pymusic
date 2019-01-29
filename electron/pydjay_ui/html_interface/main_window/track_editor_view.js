@@ -1,5 +1,7 @@
 const { ColorPicker } = require("ui/popup/colorpicker.js")
 const { PydjayAudioBufferPlayer } = require("webaudio/audio_player_buffer.js")
+const { remote } = require('electron')
+const { Menu, MenuItem } = remote
 
 function rgb2hex(rgb) {
     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);

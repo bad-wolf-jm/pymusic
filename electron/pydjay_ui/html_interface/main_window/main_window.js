@@ -9,6 +9,10 @@ const { MusicDatabase } = require("musicdb/model.js")
 const { TrackSetModel } = require("musicdb/track_set.js")
 const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
+const { TrackListAreaController } = require('app/views/track_list_area')
+const { QueueAreaController } = require('app/views/queue_list_area')
+
+// const { ClusteredListView } = require('ui/listview/cluster')
 // const { EventDispatcher } = require("event_dispatcher")
 // const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
 // const { SessionModel } = require("musicdb/session.js")
@@ -43,9 +47,9 @@ MDB = new MusicDatabase("pymusic")
 view = new TrackEditorView()
 view.init()
 
-T_controller  = new TrackListController()
-PE_controller = new PlaylistController() //un_model)
-Q_controller = new QueueController()
+// T_controller  = new TrackListController()
+// PE_controller = new PlaylistController() //un_model)
+// Q_controller = new QueueController()
 S_controller = undefined //new SessionController()
 PL_controller = new PlaylistsController()
 PL_controller.setModel(MDB.playlists)
@@ -83,8 +87,8 @@ SE_controller.setModel(MDB.sessions)
 // ipcRenderer.on("track-modified", (e, id) => {
 //     tracks_model.update(id)
 // })
-mpc = new PlaybackController(S_controller, Q_controller)
-pc  = new PrecueController(S_controller, Q_controller)
+mpc = new PlaybackController(undefined, MDB.queue)
+pc  = new PrecueController() //S_controller, Q_controller)
 // vc  = new VolumeController(mpc, pc)
 
 var available_outputs = {}
@@ -145,44 +149,50 @@ var T = setInterval(async () => {
 
 }, 1000)
 
-Q_controller.set_model(MDB.queue)
+// Q_controller.set_model(MDB.queue)
 
 
-PE = new PlaylistEditView({
-    list:       'playlist-edit-elements-body',
-    num_tracks: "playlist-edit-number-of-tracks",
-    duration:   "playlist-edit-duration"
-})
-PE.set_controller(PE_controller)
+// PE = new PlaylistEditView({
+//     list:       'playlist-edit-elements-body',
+//     num_tracks: "playlist-edit-number-of-tracks",
+//     duration:   "playlist-edit-duration"
+// })
+// PE.set_controller(PE_controller)
 
-QL = new QueueView({
-    list:       'queue-elements-body',
-    num_tracks: "queue-number-of-tracks",
-    duration:   "queue-duration"
-})
-QL.set_controller(Q_controller)
+// QL = new QueueView({
+//     list:       'queue-elements-body',
+//     num_tracks: "queue-number-of-tracks",
+//     duration:   "queue-duration"
+// })
+// QL.set_controller(Q_controller)
 
 
-Q = new QueueAreaView(QL, PE)
+// Q = new QueueAreaView(QL, PE)
+
+
+Q = new QueueAreaController(MDB)
 Q.hide_playlist_editor()
+Q.queue_view.displayModel("QUEUE", MDB.queue)
 
 
-T = new TrackListView({
-    name:       "main-track-list-name",
-    num_tracks: "main-track-list-number-of-tracks",
-    duration:   "main-track-list-duration",
-    filter:      "filter-track-list"
-}, Q_controller, MDB.shortlisted_tracks, MDB.unavailable_tracks)
-T.set_controller(T_controller)
-MDB.queue.on("content-changed", async () => {
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-})
-MDB.current_session.on("content-changed", async () => {
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())    
-})
-MDB.unavailable_tracks.on("content-changed", async () => {
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())    
-})
+T = new TrackListAreaController(MDB)
+
+// T = new TrackListView({
+//     name:       "main-track-list-name",
+//     num_tracks: "main-track-list-number-of-tracks",
+//     duration:   "main-track-list-duration",
+//     filter:      "filter-track-list"
+// }, Q_controller, MDB.shortlisted_tracks, MDB.unavailable_tracks)
+// T.set_controller(T_controller)
+// MDB.queue.on("content-changed", async () => {
+//     T.setDimmedRows(await MDB.unavailable.getTrackIds())
+// })
+// MDB.current_session.on("content-changed", async () => {
+//     T.setDimmedRows(await MDB.unavailable.getTrackIds())    
+// })
+// MDB.unavailable_tracks.on("content-changed", async () => {
+//     T.setDimmedRows(await MDB.unavailable.getTrackIds())    
+// })
 
 
 PL = new PlaylistsView({
@@ -337,7 +347,7 @@ window.addEventListener("load", (event) => {
     let tl = document.getElementById("main-track-list")
     list_height = (tl.clientHeight - h.clientHeight) - 5
     ta.style.maxHeight = list_height + "px";
-    T.fitHeaderColumns()
+    T._listview.fitHeaderColumns()
 })
 
 
@@ -347,7 +357,7 @@ window.addEventListener("resize", (event) => {
     let tl = document.getElementById("main-track-list")
     list_height = (tl.clientHeight - h.clientHeight) - 5
     ta.style.maxHeight = list_height + "px";
-    T.fitHeaderColumns()
+    T._listview.fitHeaderColumns()
 })
 
 document.getElementById("settings-button").addEventListener('click', () => {
@@ -465,11 +475,11 @@ document.getElementById("main-menu-quit").addEventListener('click', () => {
     ipcRenderer.send("quit-pymusic")
 })
 
-document.getElementById("filter-track-list").addEventListener("keyup", (e) => {
-    if ((e.key == "Escape") || (e.key == "Enter")) {
-        document.getElementById("filter-track-list").blur()
-    }
-});
+// document.getElementById("filter-track-list").addEventListener("keyup", (e) => {
+//     if ((e.key == "Escape") || (e.key == "Enter")) {
+//         document.getElementById("filter-track-list").blur()
+//     }
+// });
 
 ///////////////////////////////////////////////
 
@@ -477,72 +487,72 @@ function refresh_sessions(x) {
     console.log("refresh_sessions", x)
 }
 
-async function display_all_songs() {
-    T.ignore_unavailable = false
-    T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-    T_controller.set_model("All Songs", MDB.tracks)
-}
+// async function display_all_songs() {
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model("All Songs", MDB.tracks)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_current_session() {
-    T.ignore_unavailable = true
-    T.model_order = true
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-    T_controller.set_model("Current Session", MDB.current_session)
-}
+// async function display_current_session() {
+//     T.ignore_unavailable = true
+//     T.model_order = true
+//     T_controller.set_model("Current Session", MDB.current_session)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_suggestions() {
-    T.ignore_unavailable = false
-    T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-    T_controller.set_model("Suggested tracks", MDB.suggested)
-}
+// async function display_suggestions() {
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model("Suggested tracks", MDB.suggested)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_short_list() {
-    T.ignore_unavailable = false
-    T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-    T_controller.set_model("Short list", MDB.shortlisted_tracks)
-}
+// async function display_short_list() {
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model("Short list", MDB.shortlisted_tracks)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_unavailable() {
-    T.ignore_unavailable = true
-    T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-    T_controller.set_model("Unavailable tracks", MDB.unavailable_tracks)
-}
+// async function display_unavailable() {
+//     T.ignore_unavailable = true
+//     T.model_order = false
+//     T_controller.set_model("Unavailable tracks", MDB.unavailable_tracks)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_played_tracks() {
-    T.ignore_unavailable = false
-    T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-    T_controller.set_model("Played songs", MDB.played_tracks)
-}
+// async function display_played_tracks() {
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model("Played songs", MDB.played_tracks)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_never_played_tracks() {
-    T.ignore_unavailable = false
-    T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-    T_controller.set_model("Never Played songs", MDB.never_played_tracks)
-}
+// async function display_never_played_tracks() {
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model("Never Played songs", MDB.never_played_tracks)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_session(id) {
-    let pl = await MDB.sessions.getObjectById(id)
-    let model = new TrackSetModel(MDB, MDB.sessions, id)
-    T.ignore_unavailable = false
-    T.model_order = true
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-    T_controller.set_model(pl.event, model)
-}
+// async function display_session(id) {
+//     let pl = await MDB.sessions.getObjectById(id)
+//     let model = new TrackSetModel(MDB, MDB.sessions, id)
+//     T.ignore_unavailable = false
+//     T.model_order = true
+//     T_controller.set_model(pl.event, model)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
-async function display_playlist(id) {
-    let pl = await MDB.playlists.getObjectById(id)
-    let model = new TrackSetModel(MDB, MDB.playlists, id)
-    T.ignore_unavailable = false
-    T.model_order = false
-    T.setDimmedRows(await MDB.unavailable.getTrackIds())
-    T_controller.set_model(pl.name, model)
-}
+// async function display_playlist(id) {
+//     let pl = await MDB.playlists.getObjectById(id)
+//     let model = new TrackSetModel(MDB, MDB.playlists, id)
+//     T.ignore_unavailable = false
+//     T.model_order = false
+//     T_controller.set_model(pl.name, model)
+//     T._listview.setDimmedRows(await MDB.unavailable.getTrackIds())
+// }
 
 function checkTime(i) {
     return (i < 10) ? "0" + i : i;
@@ -565,4 +575,4 @@ function startTime() {
 startTime();
 
 
-display_all_songs()
+T.display_all_songs()

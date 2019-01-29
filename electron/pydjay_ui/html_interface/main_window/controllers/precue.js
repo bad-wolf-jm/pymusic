@@ -9,7 +9,6 @@ class PrecueController extends AudioTrackPlayer {
     }
 
     setOutputDeviceId(deviceId) {
-        // console.log(deviceId)
         (deviceId != this.getOutputDeviceId()) && super.setOutputDeviceId("main", deviceId)
     }
 
@@ -18,7 +17,6 @@ class PrecueController extends AudioTrackPlayer {
     }
 
     play_last_10_seconds(track) {
-        console.log(track)
         this.track = track
         if (track != undefined) {
             this.play(track, -10000)
@@ -30,7 +28,6 @@ class PrecueController extends AudioTrackPlayer {
     }
 
     play_last_30_seconds(track) {
-        console.log(track)
         if (track != undefined) {
             this.play(track, -30000)
         } else if (this.track != undefined) {
