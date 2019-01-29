@@ -19,7 +19,6 @@ class SessionsController extends EventDispatcher {
     setModel(model) {
         this.model = model
         this.model.on("content-changed", (x) => {
-            console.log(x)
             this.dispatch("content-changed", x)
         })
         this.refresh()
