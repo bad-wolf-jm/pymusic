@@ -11,7 +11,7 @@ const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
 const { TrackListAreaController } = require('app/views/track_list_area')
 const { QueueAreaController } = require('app/views/queue_list_area')
-
+const { SessionsListView } = require('app/views/sidebar_sessions_list')
 // const { ClusteredListView } = require('ui/listview/cluster')
 // const { EventDispatcher } = require("event_dispatcher")
 // const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
@@ -53,8 +53,8 @@ view.init()
 S_controller = undefined //new SessionController()
 PL_controller = new PlaylistsController()
 PL_controller.setModel(MDB.playlists)
-SE_controller = new SessionsController()
-SE_controller.setModel(MDB.sessions)
+// SE_controller = new SessionsController()
+// SE_controller.setModel(MDB.sessions)
 
 // tracks_model              = new TrackListModel()
 // unavailable_model         = new UnavailableModel(tracks_model)
@@ -200,10 +200,14 @@ PL = new PlaylistsView({
 })
 PL.set_controller(PL_controller)
 
-SE = new SessionsView({
+SE = new SessionsListView({
     list: 'queue-elements-body'
 })
-SE.set_controller(SE_controller)
+SE.displayModel(MDB.sessions)
+SE.on("row-click", (sessionId) => {
+    T.display_session(sessionId)
+})
+// SE.set_controller(SE_controller)
 
 // pc.connectOutputs({headphones:{left:0, right:1}})
 
