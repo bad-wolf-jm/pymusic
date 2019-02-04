@@ -7,13 +7,13 @@ class PrecuePlayerView extends EventDispatcher {
         document.getElementById("precue-options").addEventListener('click', this.show_options.bind(this))
 
         document.getElementById("precue-play-full-track").addEventListener('click', () => {
-            this.controller.play(this.controller.track)
+            this.controller._current_track && this.controller.play(this.controller._current_track.track_object)
         })
         document.getElementById("precue-play-last-30-seconds").addEventListener('click', () => {
-            this.controller.play_last_30_seconds(this.controller.track)
+            this.controller._current_track && this.controller.play_last_30_seconds(this.controller._current_track.track_object)
         })
         document.getElementById("precue-play-last-10-seconds").addEventListener('click', () => {
-            this.controller.play_last_10_seconds(this.controller.track)
+            this.controller._current_track && this.controller.play_last_10_seconds(this.controller._current_track.track_object)
         })
         document.getElementById("precue-play-stop").addEventListener('click', () => {
             this.controller.stop()
@@ -45,7 +45,7 @@ class PrecuePlayerView extends EventDispatcher {
     set_controller(controller) {
         this.controller = controller
         this.controller.on("stream-position", (pos) => {
-            let percent = (pos*100 / (this.controller.source.duration*1000))
+            let percent = (pos.position*100 / (pos.duration*1000))
             if (isFinite(percent)) {
                 document.getElementById("precue-player-track-progress").value = percent;
             }
