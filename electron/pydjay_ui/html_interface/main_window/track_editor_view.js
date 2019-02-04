@@ -1,5 +1,5 @@
 const { ColorPicker } = require("ui/popup/colorpicker.js")
-const { PydjayAudioBufferPlayer } = require("webaudio/audio_player_buffer.js")
+// const { PydjayAudioBufferPlayer } = require("webaudio/audio_player_buffer.js")
 const { remote } = require('electron')
 const { Menu, MenuItem } = remote
 
@@ -29,9 +29,10 @@ class TrackEditorView extends EventDispatcher {
         this.cover_image = undefined
         this.original_cover_image = null
 
-        this.audio_player = new PydjayAudioBufferPlayer()
+        this.audio_player = new RemoteTrackPlayer()
         this.audio_player.addOutput("headphones")
         this.setOutputDeviceId("null")
+        this.audio_player.initialize()
         // this.audio_player.connectOutputs({headphones:{left:0, right:1}})
 
         this.menu = new Menu()
@@ -112,9 +113,11 @@ class TrackEditorView extends EventDispatcher {
                     start = this.stream_start
                 }
                 if (this.stream_end == Infinity) {
-                    this.audio_player.play(this._waveform.backend.buffer, start, this._track.track.stream_end)
+                    this.audio_player.play(this.track, start, this._track.track.stream_end)
+                    // this.audio_player.play(this._waveform.backend.buffer, start, this._track.track.stream_end)
                 } else {
-                    this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end)
+                    this.audio_player.play(this.track, start, this.stream_end)
+                    // this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end)
                 }
             }
         })
@@ -130,19 +133,6 @@ class TrackEditorView extends EventDispatcher {
         document.getElementById("track-editor-cancel").addEventListener("click", (ev) => {
             this.close()
         })
-
-
-        // this.audio_player.on("playback-started", () => {
-        //     ipcRenderer.send("playback-started")
-        // })
-
-        // this.audio_player.on("playback-paused", () => {
-        //     ipcRenderer.send("playback-stopped")
-        // })
-
-        // this.audio_player.on("playback-stopped", () => {
-        //     ipcRenderer.send("playback-stopped")
-        // })
     }
 
     setOutputDeviceId(deviceId) {
@@ -189,13 +179,13 @@ class TrackEditorView extends EventDispatcher {
         document.getElementById("track-editor-track-cover").src = cover_source
         this._track = track
         this._waveform.load(file_name)
-        console.log(this._track.track)
+        // console.log(this._track.track)
         this.stream_start = this._track.track.stream_start
         this.stream_end = this._track.track.stream_end
         this._position_tracker = this.audio_player.on("stream-position", (pos) => {
-            this.current_stream_position = pos
+            this.current_stream_position = pos.position
             try {
-                this._waveform.seekAndCenter(pos / this._track.track.duration)
+                this._waveform.seekAndCenter(pos.position / this._track.track.duration)
             } catch (e) {
 
             }
