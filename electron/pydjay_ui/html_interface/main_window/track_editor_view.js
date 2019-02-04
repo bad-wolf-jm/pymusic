@@ -33,7 +33,6 @@ class TrackEditorView extends EventDispatcher {
         this.audio_player.addOutput("headphones")
         this.setOutputDeviceId("null")
         this.audio_player.initialize()
-        // this.audio_player.connectOutputs({headphones:{left:0, right:1}})
 
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Change', click: () => {
@@ -114,10 +113,8 @@ class TrackEditorView extends EventDispatcher {
                 }
                 if (this.stream_end == Infinity) {
                     this.audio_player.play(this.track, start, this._track.track.stream_end)
-                    // this.audio_player.play(this._waveform.backend.buffer, start, this._track.track.stream_end)
                 } else {
                     this.audio_player.play(this.track, start, this.stream_end)
-                    // this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end)
                 }
             }
         })
@@ -144,9 +141,8 @@ class TrackEditorView extends EventDispatcher {
     }
 
     async set_track(track) {
-        // console.log(track)
         this.track = track
-        let file_name = track.track.path //path.join(track.music_root, track.file_name);
+        let file_name = track.track.path
         let stream_length = (track.track.stream_end-track.track.stream_start);
         document.getElementById("track-editor-track-title").value = track.metadata.title
         document.getElementById("track-editor-track-album").value = track.metadata.album
