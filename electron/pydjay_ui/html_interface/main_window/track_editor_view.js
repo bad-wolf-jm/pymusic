@@ -1,5 +1,7 @@
 const { ColorPicker } = require("ui/popup/colorpicker.js")
-const { PydjayAudioBufferPlayer } = require("webaudio/audio_player_buffer.js")
+// const { PydjayAudioBufferPlayer } = require("webaudio/audio_player_buffer.js")
+const { remote } = require('electron')
+const { Menu, MenuItem } = remote
 
 function rgb2hex(rgb) {
     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
@@ -27,10 +29,10 @@ class TrackEditorView extends EventDispatcher {
         this.cover_image = undefined
         this.original_cover_image = null
 
-        this.audio_player = new PydjayAudioBufferPlayer()
+        this.audio_player = new RemoteTrackPlayer()
         this.audio_player.addOutput("headphones")
         this.setOutputDeviceId("null")
-        // this.audio_player.connectOutputs({headphones:{left:0, right:1}})
+        this.audio_player.initialize()
 
         this.menu = new Menu()
         this.menu.append(new MenuItem({label: 'Change', click: () => {
@@ -105,14 +107,14 @@ class TrackEditorView extends EventDispatcher {
                 this.current_stream_position = null
             } else {
                 if (this.current_stream_position != null) {
-                    start = this.current_stream_position * this._track.track_length  / 1000000
+                    start = this.current_stream_position * this._track.track.duration
                 } else {
-                    start = this.stream_start / 1000000
+                    start = this.stream_start
                 }
                 if (this.stream_end == Infinity) {
-                    this.audio_player.play(this._waveform.backend.buffer, start, this._track.stream_end)
+                    this.audio_player.play(this.track, start, this._track.track.stream_end)
                 } else {
-                    this.audio_player.play(this._waveform.backend.buffer, start, this.stream_end)
+                    this.audio_player.play(this.track, start, this.stream_end)
                 }
             }
         })
@@ -128,19 +130,6 @@ class TrackEditorView extends EventDispatcher {
         document.getElementById("track-editor-cancel").addEventListener("click", (ev) => {
             this.close()
         })
-
-
-        // this.audio_player.on("playback-started", () => {
-        //     ipcRenderer.send("playback-started")
-        // })
-
-        // this.audio_player.on("playback-paused", () => {
-        //     ipcRenderer.send("playback-stopped")
-        // })
-
-        // this.audio_player.on("playback-stopped", () => {
-        //     ipcRenderer.send("playback-stopped")
-        // })
     }
 
     setOutputDeviceId(deviceId) {
@@ -152,9 +141,8 @@ class TrackEditorView extends EventDispatcher {
     }
 
     async set_track(track) {
-        // console.log(track)
         this.track = track
-        let file_name = track.track.path //path.join(track.music_root, track.file_name);
+        let file_name = track.track.path
         let stream_length = (track.track.stream_end-track.track.stream_start);
         document.getElementById("track-editor-track-title").value = track.metadata.title
         document.getElementById("track-editor-track-album").value = track.metadata.album
@@ -187,11 +175,16 @@ class TrackEditorView extends EventDispatcher {
         document.getElementById("track-editor-track-cover").src = cover_source
         this._track = track
         this._waveform.load(file_name)
+        // console.log(this._track.track)
         this.stream_start = this._track.track.stream_start
         this.stream_end = this._track.track.stream_end
         this._position_tracker = this.audio_player.on("stream-position", (pos) => {
-            this.current_stream_position = pos*1000000
-            this._waveform.seekAndCenter(pos*1000000 / this._track.duration)
+            this.current_stream_position = pos.position
+            try {
+                this._waveform.seekAndCenter(pos.position / this._track.track.duration)
+            } catch (e) {
+
+            }
         })
 
         let related_tracks = Object.values(await MDB.tracks.getObjectsByIds(Object.keys(track.stats.relations)))

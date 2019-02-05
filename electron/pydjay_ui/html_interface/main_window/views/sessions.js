@@ -17,7 +17,7 @@ class SessionsView extends EventDispatcher {
     set_list(list) {
         this.view_list_order = []
         let list_rows = []
-        list.sort((a, b) => {return (a.date_start - b.date_end)})
+        list.sort((a, b) => {return (b.date_start - a.date_start)})
 
         for(let i=0; i<list.length; i++) {
             let element = {

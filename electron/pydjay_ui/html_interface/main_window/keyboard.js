@@ -207,16 +207,16 @@ Mousetrap.bind("enter", async (e) => {
     }
 })
 
-Mousetrap.bind("shift+enter", (e) => {
+Mousetrap.bind("shift+enter", async (e) => {
     if (focus_list != undefined) {
-        pc.play_last_30_seconds(focus_list.selected_element())
+        pc.play_last_30_seconds(await focus_list.selected_element())
         e.preventDefault()
     }
 })
 
-Mousetrap.bind("ctrl+shift+enter", (e) => {
+Mousetrap.bind("ctrl+shift+enter", async (e) => {
     if (focus_list != undefined) {
-        pc.play_last_10_seconds(focus_list.selected_element())
+        pc.play_last_10_seconds(await focus_list.selected_element())
         e.preventDefault()
     }
 })

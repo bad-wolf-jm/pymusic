@@ -1,15 +1,16 @@
-const {AudioTrackPlayer} = require("track_playback/track_player.js")
+//const {AudioTrackPlayer} = require("track_playback/track_player.js")
+// const { RemoteTrackPlayer } = require("track_playback/remote_player/remote_player.js")
 
-class PrecueController extends AudioTrackPlayer {
+class PrecueController extends RemoteTrackPlayer {
 
     constructor() {
         super()
         this.addOutput("main")
         super.setOutputDeviceId('main', 'null')
+        this.initialize()
     }
 
     setOutputDeviceId(deviceId) {
-        // console.log(deviceId)
         (deviceId != this.getOutputDeviceId()) && super.setOutputDeviceId("main", deviceId)
     }
 

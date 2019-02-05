@@ -72,7 +72,7 @@ class PlaybackController extends RemoteTrackPlayer {
                     this.dispatch('next-track-countdown', 0)
                     this._do_play_next_track();
                 } else {
-                    this.dispatch('next-track-countdown', delay)
+                    this.dispatch('next-track-countdown', Math.round(delay / 1000))
                     delay = delay - 1000;
                 }
             }, 
@@ -82,7 +82,7 @@ class PlaybackController extends RemoteTrackPlayer {
 
     async start_queue() {
         if (!this.queue_playing) {
-            if (!(await this.queue_controller.is_empty())) {
+            if (!(await this.queue_controller.isEmpty())) {
                 this._do_play_next_track()
                 this.dispatch("queue-started")    
             }

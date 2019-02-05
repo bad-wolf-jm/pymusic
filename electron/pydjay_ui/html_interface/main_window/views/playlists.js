@@ -11,10 +11,8 @@ class PlaylistsView extends EventDispatcher {
             let T = this.context_menu_element
             let p = await this.controller.get_playlist_by_id(T)
             let L = new TrackSetModel(MDB, MDB.playlists, T)
-            PE_controller.set_model(p, L)
+            Q.playlist_editor.displayModel(p.name, L)
             Q.show_playlist_editor()
-            //})
-
         }}))
         this.menu.append(new MenuItem({type: 'separator'}))
         this.menu.append(new MenuItem({label: 'Rename', click: () => {
@@ -162,7 +160,7 @@ class PlaylistsView extends EventDispatcher {
                     col.addEventListener('click', (e) => {
                         let x = e.target.closest(".track-drop-target")
                         let playlist_id = (x.attributes["data-playlist-id"].value)
-                        display_playlist(playlist_id)
+                        T.display_playlist(playlist_id)
                     }, false);
         
                     col.addEventListener('contextmenu', (e) => {
