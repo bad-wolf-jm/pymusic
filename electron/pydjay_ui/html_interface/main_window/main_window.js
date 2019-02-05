@@ -11,6 +11,7 @@ const { AudioOutputDetector } = require('webaudio/detect')
 const { TrackListAreaController } = require('app/views/track_list_area')
 const { QueueAreaController } = require('app/views/queue_list_area')
 const { SessionsListView } = require('app/views/sidebar_sessions_list')
+const { PlaylistListView } = require('app/views/sidebar_playlist_list')
 // const { TrackSetModel } = require("musicdb/track_set.js")
 // const { ClusteredListView } = require('ui/listview/cluster')
 // const { EventDispatcher } = require("event_dispatcher")
@@ -195,10 +196,16 @@ T = new TrackListAreaController(MDB)
 // })
 
 
-PL = new PlaylistsView({
+PL = new PlaylistListView({
     list: 'queue-elements-body'
 })
-PL.set_controller(PL_controller)
+// PL.set_controller(PL_controller)
+PL.displayModel(MDB.playlists)
+PL.on("row-click", (playlistId) => {
+    T.display_playlist(playlistId)
+})
+
+
 
 SE = new SessionsListView({
     list: 'queue-elements-body'
