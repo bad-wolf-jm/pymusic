@@ -5,7 +5,7 @@ const {spawn} = require ('child_process');
 // var async = require('async');
 var Jimp = require("jimp");
 const { TrackImportProgressDialog } = require("iface/dialogs/track_add_progress")
-
+const { mp3Duration } = require("fileinfo/mp3_fileinfo")
 // function trackBSON(tr) {
 //     let track_object = {
 //         metadata: {

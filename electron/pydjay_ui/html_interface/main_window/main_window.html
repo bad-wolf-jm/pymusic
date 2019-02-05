@@ -41,8 +41,8 @@
 <script src="controllers/playback.js"></script>
 <!-- <script src="controllers/track_list.js"></script> -->
 <!-- <script src="controllers/playlist.js"></script> -->
-<script src="controllers/playlists.js"></script>
-<script src="controllers/sessions.js"></script>
+<!-- <script src="controllers/playlists.js"></script> -->
+<!-- <script src="controllers/sessions.js"></script> -->
 <script src="controllers/precue.js"></script>
 <script src="controllers/volume.js"></script>
 
@@ -52,8 +52,8 @@
 <!-- <script src="views/queue_area.js"></script> -->
 <script src="views/main_player.js"></script>
 <!-- <script src="views/track_list.js"></script> -->
-<script src="views/playlists.js"></script>
-<script src="views/sessions.js"></script>
+<!-- <script src="views/playlists.js"></script> -->
+<!-- <script src="views/sessions.js"></script> -->
 <script src="views/precue_player.js"></script>
 <script src="views/accordion.js"></script>
 
@@ -334,11 +334,11 @@
                 </div>
             </button>
             <div class="panel">
-                <div style="overflow-y:auto; max-height:100%">
+                <div id="playlist-list-scroller" style="overflow-y:auto; max-height:100%">
                     <table id="playlist-list-elements" style="border-collapse:collapse; height:100%">
                         <tbody></tbody>
                     </table>
-                    <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
+                    <!-- <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
                         <! if(_id == null) { !>
                             <tr id="new-playlist" class="choice" style="height:20px; margin-left:10px; display:none">
                                 <td style="width:30px"></td>
@@ -353,7 +353,7 @@
                                 <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
                             </tr>
                         <! } !>
-                    </script>
+                    </script> -->
 
                 </div>
             </div>
@@ -364,11 +364,11 @@
                 </div>
                 </button>
             <div class="panel">
-                <div style="overflow-y:auto; max-height:100%">
+                <div id="sessions-list-scroller" style="overflow-y:auto; max-height:100%">
                     <table id="session-list-elements" style="border-collapse:collapse">
                         <tbody></tbody>
                     </table>
-                    <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
+                    <!-- <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
                         <tr class="choice" style="height:20px; margin-left:10px" onclick="T.display_session('<!= id !>')">
                             <td style="width:30px"></td>
                             <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
@@ -376,7 +376,7 @@
                             <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
                             <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
                         </tr>
-                    </script>
+                    </script> -->
                 </div>
             </div>
             <button class="accordion open-on-drag-over">Preview Player</button>
@@ -589,7 +589,7 @@
 <script src="track_editor_view.js"></script>
 <script src="main_window.js"></script>
 <script src="keyboard.js"></script>
-<script src="bpm.js"></script>
+<!-- <script src="bpm.js"></script> -->
 <script src="track_add.js"></script>
-<script src="mp3_fileinfo.js"></script>
+<!-- <script src="mp3_fileinfo.js"></script> -->
 </body>

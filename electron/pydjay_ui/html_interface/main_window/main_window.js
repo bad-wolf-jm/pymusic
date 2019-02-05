@@ -7,12 +7,13 @@ const { ipcRenderer } = electron
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
 const { MusicDatabase } = require("musicdb/model.js")
-const { TrackSetModel } = require("musicdb/track_set.js")
 const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
 const { TrackListAreaController } = require('app/views/track_list_area')
 const { QueueAreaController } = require('app/views/queue_list_area')
-
+const { SessionsListView } = require('app/views/sidebar_sessions_list')
+const { PlaylistListView } = require('app/views/sidebar_playlist_list')
+// const { TrackSetModel } = require("musicdb/track_set.js")
 // const { ClusteredListView } = require('ui/listview/cluster')
 // const { EventDispatcher } = require("event_dispatcher")
 // const { PlaylistModel, PlaylistViewModel } = require("musicdb/playlist.js")
@@ -25,17 +26,16 @@ const { QueueAreaController } = require('app/views/queue_list_area')
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
-    SE_controller.refresh(() => {})
+    // SE_controller.refresh(() => {})
 })
 
 
 SV.on("refresh-playlists", () => {
-    PL_controller.refresh(() => {})
+    // PL_controller.refresh(() => {})
 })
 
 SV.on("add-playlist", () => {
     PL.begin_add()
-
 })
 
 
@@ -51,11 +51,11 @@ view.init()
 // T_controller  = new TrackListController()
 // PE_controller = new PlaylistController() //un_model)
 // Q_controller = new QueueController()
-S_controller = undefined //new SessionController()
-PL_controller = new PlaylistsController()
-PL_controller.setModel(MDB.playlists)
-SE_controller = new SessionsController()
-SE_controller.setModel(MDB.sessions)
+// S_controller = undefined //new SessionController()
+// PL_controller = new PlaylistsController()
+// PL_controller.setModel(MDB.playlists)
+// SE_controller = new SessionsController()
+// SE_controller.setModel(MDB.sessions)
 
 // tracks_model              = new TrackListModel()
 // unavailable_model         = new UnavailableModel(tracks_model)
@@ -196,15 +196,25 @@ T = new TrackListAreaController(MDB)
 // })
 
 
-PL = new PlaylistsView({
+PL = new PlaylistListView({
     list: 'queue-elements-body'
 })
-PL.set_controller(PL_controller)
+// PL.set_controller(PL_controller)
+PL.displayModel(MDB.playlists)
+PL.on("row-click", (playlistId) => {
+    T.display_playlist(playlistId)
+})
 
-SE = new SessionsView({
+
+
+SE = new SessionsListView({
     list: 'queue-elements-body'
 })
-SE.set_controller(SE_controller)
+SE.displayModel(MDB.sessions)
+SE.on("row-click", (sessionId) => {
+    T.display_session(sessionId)
+})
+// SE.set_controller(SE_controller)
 
 // pc.connectOutputs({headphones:{left:0, right:1}})
 
