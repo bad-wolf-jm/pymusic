@@ -25,17 +25,16 @@ const { PlaylistListView } = require('app/views/sidebar_playlist_list')
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
-    SE_controller.refresh(() => {})
+    // SE_controller.refresh(() => {})
 })
 
 
 SV.on("refresh-playlists", () => {
-    PL_controller.refresh(() => {})
+    // PL_controller.refresh(() => {})
 })
 
 SV.on("add-playlist", () => {
     PL.begin_add()
-
 })
 
 
@@ -51,9 +50,9 @@ view.init()
 // T_controller  = new TrackListController()
 // PE_controller = new PlaylistController() //un_model)
 // Q_controller = new QueueController()
-S_controller = undefined //new SessionController()
-PL_controller = new PlaylistsController()
-PL_controller.setModel(MDB.playlists)
+// S_controller = undefined //new SessionController()
+// PL_controller = new PlaylistsController()
+// PL_controller.setModel(MDB.playlists)
 // SE_controller = new SessionsController()
 // SE_controller.setModel(MDB.sessions)
 
