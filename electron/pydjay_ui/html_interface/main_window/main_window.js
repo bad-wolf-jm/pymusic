@@ -2,7 +2,8 @@ Sortable              = require("../../../lib/Sortable.js")
 WaveSurfer            = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 var path              = require('path');
-
+const electron = require('electron')
+const { ipcRenderer } = electron
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
 const { MusicDatabase } = require("musicdb/model.js")
@@ -413,6 +414,18 @@ document.getElementById("main-menu-audio-setup").addEventListener('click', async
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
+document.getElementById("main-menu-toggle-fullscreen").addEventListener('click', () => {
+    let window = electron.remote.getCurrentWindow();
+    window.setFullScreen(!(window.isFullScreen()));
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
+
+document.getElementById("main-menu-toggle-devtools").addEventListener('click', () => {
+    // mpc.stop_queue_now()
+    let window = electron.remote.getCurrentWindow();
+    window.openDevTools();
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+})
 
 
 document.getElementById("main-menu-stop-queue-now").addEventListener('click', () => {
