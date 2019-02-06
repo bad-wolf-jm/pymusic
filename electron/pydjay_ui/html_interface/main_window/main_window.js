@@ -1,13 +1,15 @@
-Sortable              = require("../../../lib/Sortable.js")
-WaveSurfer            = require("wavesurfer.js")
+Sortable  = require("../../../lib/Sortable.js")
+WaveSurfer = require("wavesurfer.js")
 var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
-var path              = require('path');
+var path = require('path');
 const electron = require('electron')
+
 const { ipcRenderer } = electron
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
 const { MusicDatabase } = require("musicdb/model.js")
 const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
+const { TagEditDialog } = require('iface/dialogs/tag_edit_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
 const { TrackListAreaController } = require('app/views/track_list_area')
 const { QueueAreaController } = require('app/views/queue_list_area')
@@ -383,6 +385,13 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
     })
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
+
+document.getElementById("main-menu-tag-edit").addEventListener('click', () => {
+    let d = new TagEditDialog()
+    document.getElementById("main-menu-dropdown").classList.toggle("show");
+    d.open()
+})
+
 
 document.getElementById("main-menu-audio-setup").addEventListener('click', async () => {
     let d = new AudioOutputSettings({
