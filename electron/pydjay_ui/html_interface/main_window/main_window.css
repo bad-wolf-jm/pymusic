@@ -160,6 +160,19 @@ button {
     /* background-color:rgb(116, 116, 240); */
 }
 
+.color-chooser {
+    cursor: pointer;
+    width:12px;
+    height:12px;
+    border:none;
+    border-radius:6px;
+    outline:none;
+    /* border: 1px solid rgb(200,200,200); */
+    /* border-color:rgb(155,155,155); */
+    /* background-color:rgb(116, 116, 240); */
+}
+
+
 
 .queue_list {
     margin: 0px;
