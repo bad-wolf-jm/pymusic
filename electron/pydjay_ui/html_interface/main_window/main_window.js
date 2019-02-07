@@ -386,10 +386,11 @@ document.getElementById("main-menu-add-track").addEventListener('click', () => {
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
-document.getElementById("main-menu-tag-edit").addEventListener('click', () => {
+document.getElementById("main-menu-tag-edit").addEventListener('click', async () => {
     let d = new TagEditDialog()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
     d.open()
+    await d.init()
 })
 
 
