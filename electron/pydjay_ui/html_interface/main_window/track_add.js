@@ -1,10 +1,4 @@
-var jsmediatags = require("jsmediatags");
-var fs = require('fs-extra');
-var path = require('path');
-const {spawn} = require ('child_process');
-var Jimp = require("jimp");
 const { TrackImportProgressDialog } = require("iface/dialogs/track_add_progress")
-const { mp3Duration } = require("fileinfo/mp3_fileinfo")
 
 class TrackAdder extends EventDispatcher {
     constructor(filenames, library) {
