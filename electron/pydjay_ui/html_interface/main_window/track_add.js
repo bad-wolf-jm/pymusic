@@ -1,4 +1,4 @@
-const { TrackImportProgressDialog } = require("iface/dialogs/track_add_progress")
+const { TrackImportProgressDialog } = require("app/dialogs/track_add_progress")
 
 class TrackAdder extends EventDispatcher {
     constructor(filenames, library) {

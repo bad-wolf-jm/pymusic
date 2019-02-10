@@ -6,10 +6,10 @@ const electron = require('electron')
 
 const { ipcRenderer } = electron
 const { Question } = require("ui/dialog/question.js")
-const { AudioOutputSettings } = require("iface/dialogs/audio_setup")
+const { AudioOutputSettings } = require("app/dialogs/audio_setup")
 const { MusicDatabase } = require("musicdb/model.js")
-const { SessionSaveDialog } = require('iface/dialogs/session_save_dialog')
-const { TagEditDialog } = require('iface/dialogs/tag_edit_dialog')
+const { SessionSaveDialog } = require('app/dialogs/session_save_dialog')
+const { TagEditDialog } = require('app/dialogs/tag_edit_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
 const { TrackListAreaController } = require('app/views/track_list_area')
 const { QueueAreaController } = require('app/views/queue_list_area')
