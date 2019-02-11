@@ -15,7 +15,7 @@ const { TrackListAreaController } = require('app/views/track_list_area')
 const { QueueAreaController } = require('app/views/queue_list_area')
 const { SessionsListView } = require('app/views/sidebar_sessions_list')
 const { PlaylistListView } = require('app/views/sidebar_playlist_list')
-
+const { PymusicAppController } = require('app/controller')
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
@@ -32,12 +32,14 @@ SV.on("add-playlist", () => {
 })
 
 
-MDB = new MusicDatabase("pymusic")
+const AppController = new PymusicAppController()
+
+MDB = AppController.library //new MusicDatabase("pymusic")
 view = new TrackEditorView()
 view.init()
 
-mpc = new PlaybackController(undefined, MDB.queue)
-pc  = new PrecueController() 
+// mpc = new PlaybackController(undefined, MDB.queue)
+// pc  = new PrecueController() 
 
 var available_outputs = {}
 
@@ -52,25 +54,24 @@ async function getAudioOutputDevices() {
 
 function setupAudioOutputs(audio_setup, available_devices) {
     if (available_devices[audio_setup.main_master]) {
-        mpc.setMasterOutputDeviceId(audio_setup.main_master)
+        AppController.setMasterOutputDeviceId(audio_setup.main_master)
     } else {
-        mpc.setMasterOutputDeviceId("null")
+        AppController.setMasterOutputDeviceId("null")
     }
 
     if (available_devices[audio_setup.main_headset]) {
-        mpc.setHeadsetOutputDeviceId(audio_setup.main_headset)
+        AppController.setHeadsetOutputDeviceId(audio_setup.main_headset)
     } else {
-        mpc.setHeadsetOutputDeviceId("null")
+        AppController.setHeadsetOutputDeviceId("null")
     }
 
     if (available_devices[audio_setup.prelisten]) {
-        pc.setOutputDeviceId(audio_setup.prelisten)
+        AppController.setPrelistenOutputDeviceId(audio_setup.prelisten)
         view.setOutputDeviceId(audio_setup.prelisten)
     } else {
-        pc.setOutputDeviceId("null")
+        AppController.setPrelistenOutputDeviceId("null")
         view.setOutputDeviceId("null")
     }
-
 }
 
 MDB.getAudioDevices().then(async (devices) => {
@@ -123,13 +124,13 @@ SE.on("row-click", (sessionId) => {
 })
 
 M = new MainPlayerView(MDB.tracks)
-M.set_controller(mpc)
+M.set_controller(AppController)
 M.init()
 
 P = new PrecuePlayerView(MDB.tracks)
-P.set_controller(pc)
+P.set_controller(AppController)
 
-mpc.on("queue-started",
+AppController.on("main:queue-started",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-stop\"></i>"
@@ -138,7 +139,7 @@ mpc.on("queue-started",
     }
 )
 
-mpc.on("queue-stopped",
+AppController.on("main:queue-stopped",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
@@ -147,7 +148,7 @@ mpc.on("queue-stopped",
     }
 )
 
-mpc.on("queue-finished",
+AppController.on("main:queue-finished",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
@@ -156,13 +157,13 @@ mpc.on("queue-finished",
     }
 )
 
-mpc.on("track-started", async (log_data) => {
+AppController.on("main:track-started", async (log_data) => {
     await MDB.state.d.update({_id:"settings"}, {
         $set: {"current_track._id": log_data._id}
     })
 })
 
-mpc.on("track-finished", async (log_data) => {
+AppController.on("main:track-finished", async (log_data) => {
     await MDB.current_session.append(log_data.track_object, {
         status: "FINISHED",
         time_start: log_data.start_time, 
@@ -174,7 +175,7 @@ mpc.on("track-finished", async (log_data) => {
     })
 })
 
-mpc.on("track-stopped", async (log_data) => {
+AppController.on("main:track-stopped", async (log_data) => {
     await MDB.current_session.append(log_data.track_object, {
         status: "STOPPED",
         time_start: log_data.start_time, 
@@ -186,13 +187,8 @@ mpc.on("track-stopped", async (log_data) => {
     })
 })
 
-pc.on('playback-started', () => {
-        mpc.muteHeadset()
-        SV.open_panel(3)
-    }
-)
 
-mpc.on("track-skipped", async (log_data) => {
+AppController.on("main:track-skipped", async (log_data) => {
     await MDB.current_session.append(log_data.track_object, {
         status: "SKIPPED",
         time_start: log_data.start_time, 
@@ -204,11 +200,16 @@ mpc.on("track-skipped", async (log_data) => {
     })
 })
 
-pc.on('playback-paused', () => {
-    mpc.unmuteHeadset()
+AppController.on('prelisten:playback-started', () => {
+    // mpc.muteHeadset()
+    SV.open_panel(3)
 })
 
-mpc.on("next-track-countdown", (time) => {
+// pc.on('playback-paused', () => {
+//     mpc.unmuteHeadset()
+// })
+
+AppController.on("main:next-track-countdown", (time) => {
     let M = document.getElementById("main-player-track-title")
     if (time > 1) {
         M.innerHTML = `Next track will start in ${time} seconds`
