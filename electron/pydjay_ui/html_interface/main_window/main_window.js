@@ -1,13 +1,12 @@
 Sortable  = require("../../../lib/Sortable.js")
 WaveSurfer = require("wavesurfer.js")
-var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
-var path = require('path');
+// var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
+// var path = require('path');
 const electron = require('electron')
 
 const { ipcRenderer } = electron
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("app/dialogs/audio_setup")
-// const { MusicDatabase } = require("musicdb/model.js")
 const { SessionSaveDialog } = require('app/dialogs/session_save_dialog')
 const { TagEditDialog } = require('app/dialogs/tag_edit_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
@@ -16,6 +15,9 @@ const { QueueAreaController } = require('app/views/queue_list_area')
 const { SessionsListView } = require('app/views/sidebar_sessions_list')
 const { PlaylistListView } = require('app/views/sidebar_playlist_list')
 const { PymusicAppController } = require('app/controller')
+const { TrackAdder } = require("app/dialogs/track_add_dialog")
+const { TrackEditorView } = require("app/dialogs/track_editor_dialog")
+
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
