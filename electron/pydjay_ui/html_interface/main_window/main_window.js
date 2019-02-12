@@ -7,7 +7,7 @@ const electron = require('electron')
 const { ipcRenderer } = electron
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("app/dialogs/audio_setup")
-const { MusicDatabase } = require("musicdb/model.js")
+// const { MusicDatabase } = require("musicdb/model.js")
 const { SessionSaveDialog } = require('app/dialogs/session_save_dialog')
 const { TagEditDialog } = require('app/dialogs/tag_edit_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
@@ -157,49 +157,6 @@ AppController.on("main:queue-finished",
     }
 )
 
-AppController.on("main:track-started", async (log_data) => {
-    await MDB.state.d.update({_id:"settings"}, {
-        $set: {"current_track._id": log_data._id}
-    })
-})
-
-AppController.on("main:track-finished", async (log_data) => {
-    await MDB.current_session.append(log_data.track_object, {
-        status: "FINISHED",
-        time_start: log_data.start_time, 
-        time_end: log_data.end_time
-    })
-    await MDB.tracks.setTrackMetadata(log_data.track_object, {
-        "stats.last_played": log_data.start_time,
-        "stats.play_count": log_data.track_object.stats.play_count + 1
-    })
-})
-
-AppController.on("main:track-stopped", async (log_data) => {
-    await MDB.current_session.append(log_data.track_object, {
-        status: "STOPPED",
-        time_start: log_data.start_time, 
-        time_end: log_data.end_time
-    })
-    await MDB.tracks.setTrackMetadata(log_data.track_object, {
-        "stats.last_played": log_data.start_time,
-        "stats.play_count": log_data.track_object.stats.play_count + 1
-    })
-})
-
-
-AppController.on("main:track-skipped", async (log_data) => {
-    await MDB.current_session.append(log_data.track_object, {
-        status: "SKIPPED",
-        time_start: log_data.start_time, 
-        time_end: log_data.end_time
-    })
-    await MDB.tracks.setTrackMetadata(log_data.track_object, {
-        "stats.last_played": log_data.start_time,
-        "stats.play_count": log_data.track_object.stats.play_count + 1
-    })
-})
-
 AppController.on('prelisten:playback-started', () => {
     // mpc.muteHeadset()
     SV.open_panel(3)
@@ -263,22 +220,23 @@ document.getElementById("main-menu-tag-edit").addEventListener('click', async ()
 document.getElementById("main-menu-audio-setup").addEventListener('click', async () => {
     let d = new AudioOutputSettings({
         library: MDB,
-        mainPlayer: mpc,
-        prelistenPlayer: pc,
+        appController: AppController,
+        // mainPlayer: mpc,
+        // prelistenPlayer: pc,
         masterOutputChange: (deviceId) => {
-            mpc.setMasterOutputDeviceId(deviceId)
+            AppController.setMasterOutputDeviceId(deviceId)
             MDB.state.d.update({_id: "settings"}, {
                 $set: {'audio_setup.main_master': deviceId}
             })
         },
         masterHeadphoneChange: (deviceId) => {
-            mpc.setHeadsetOutputDeviceId(deviceId)
+            AppController.setHeadsetOutputDeviceId(deviceId)
             MDB.state.d.update({_id: "settings"}, {
                 $set: {'audio_setup.main_headset': deviceId}
             })
         },
         prelistenOutputChange: (deviceId) => {
-            pc.setOutputDeviceId(deviceId)
+            AppController.setOutputDeviceId(deviceId)
             view.setOutputDeviceId(deviceId)
             MDB.state.d.update({_id: "settings"}, {
                 $set: {'audio_setup.prelisten': deviceId}
@@ -304,12 +262,12 @@ document.getElementById("main-menu-toggle-devtools").addEventListener('click', (
 
 
 document.getElementById("main-menu-stop-queue-now").addEventListener('click', () => {
-    mpc.stop_queue_now()
+    AppController.stopQueue()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
 document.getElementById("main-menu-skip-current-track").addEventListener('click', () => {
-    mpc.skip_to_next_track()
+    AppController.skipToNextTrack() //mpc.skip_to_next_track()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 

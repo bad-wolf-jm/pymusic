@@ -23,18 +23,18 @@ class MainPlayerView extends EventDispatcher {
 
     set_controller(controller) {
         this.controller = controller
-        this.controller.on("stream-position", (pos) => {
+        this.controller.on("main:stream-position", (pos) => {
             let remaining = Math.abs(pos.duration*1000 - pos.position)
             document.getElementById("main-player-time-remaining").innerHTML = `-${format_nanoseconds(remaining)}`
         })
-        this.controller.on("queue-stopped",                this.set_queue.bind(this))
-        this.controller.on("track-finished",                this.set_queue.bind(this))
-        this.controller.on("track-started",                this.set_track.bind(this))
-        this.controller.on("queue-finished",                this.set_queue.bind(this))
-        this.controller.on("queue-stopped",                this.set_queue.bind(this))
-        this.controller.on("queue-stop-requested",         this.set_queue.bind(this))
-        this.controller.on("queue-stop-request-cancelled", this.set_queue.bind(this))
-        this.controller.on("next-track-countdown",         this.set_queue.bind(this))
+        this.controller.on("main:queue-stopped",                this.set_queue.bind(this))
+        this.controller.on("main:track-finished",                this.set_queue.bind(this))
+        this.controller.on("main:track-start-request",                this.set_track.bind(this))
+        this.controller.on("main:queue-finished",                this.set_queue.bind(this))
+        // this.controller.on("main:queue-stopped",                this.set_queue.bind(this))
+        // this.controller.on("main:queue-stop-requested",         this.set_queue.bind(this))
+        // this.controller.on("main:queue-stop-request-cancelled", this.set_queue.bind(this))
+        this.controller.on("main:next-track-countdown",         this.set_queue.bind(this))
     }
 
     set_queue() {
@@ -82,7 +82,7 @@ class MainPlayerView extends EventDispatcher {
                 })
             ]
         });
-        this._position_tracker = this.controller.on("stream-position",
+        this._position_tracker = this.controller.on("main:stream-position",
             (pos) => {
                 let p = pos.position / this._track.track.duration
                 p = Math.max(p,0.0)
@@ -93,7 +93,7 @@ class MainPlayerView extends EventDispatcher {
         this._waveform.on(
             "ready", () => {
                 this._waveform.zoom(0)
-                this.controller._do_start_playback(this._track)
+                this.controller.startMainPlayback(this._track)
             }
         )
     }

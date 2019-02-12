@@ -1,4 +1,6 @@
 const { ColorPicker } = require("ui/popup/colorpicker.js")
+const { RemoteTrackPlayer } = require("track_playback/remote_player/remote_player.js")
+
 // const { PydjayAudioBufferPlayer } = require("webaudio/audio_player_buffer.js")
 const { remote } = require('electron')
 const { Menu, MenuItem } = remote
