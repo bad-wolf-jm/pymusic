@@ -38,13 +38,13 @@
 
 <!-- <script src="controllers/queue.js"></script> -->
 <!-- <script src="controllers/session.js"></script> -->
-<script src="controllers/playback.js"></script>
+<!-- <script src="controllers/playback.js"></script> -->
 <!-- <script src="controllers/track_list.js"></script> -->
 <!-- <script src="controllers/playlist.js"></script> -->
 <!-- <script src="controllers/playlists.js"></script> -->
 <!-- <script src="controllers/sessions.js"></script> -->
-<script src="controllers/precue.js"></script>
-<script src="controllers/volume.js"></script>
+<!-- <script src="controllers/precue.js"></script> -->
+<!-- <script src="controllers/volume.js"></script> -->
 
 <!-- <script src="views/base_track_list_view.js"></script> -->
 <!-- <script src="views/playlist_edit.js"></script> -->
@@ -247,7 +247,7 @@
 
     <div class="main_player" style="position:fixed">
         <div class="overlay" id="main-player-overlay">
-            <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()">START</button>
+            <button id="queue-start-button" class="queue-management-button" onclick="AppController.startQueue()">START</button>
         </div>
         <img id="main-player-track-cover" class="cover" src="" height="150" width="150"></img>
         <div style="float:left; display:block; width:calc(100% - 150px)">

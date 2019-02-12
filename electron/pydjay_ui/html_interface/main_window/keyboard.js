@@ -201,7 +201,6 @@ Mousetrap.bind("shift+space", (e) => {
 
 Mousetrap.bind("enter", async (e) => {
     if (focus_list != undefined) {
-        //console.log(focus_list)
         AppController.prelistenTrack(await focus_list.selected_element())
         e.preventDefault()
     }
