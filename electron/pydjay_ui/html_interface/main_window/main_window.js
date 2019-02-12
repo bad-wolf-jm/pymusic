@@ -1,5 +1,5 @@
-Sortable  = require("../../../lib/Sortable.js")
-WaveSurfer = require("wavesurfer.js")
+// Sortable  = require("../../../lib/Sortable.js")
+// WaveSurfer = require("wavesurfer.js")
 // var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
 // var path = require('path');
 const electron = require('electron')
@@ -17,6 +17,8 @@ const { PlaylistListView } = require('app/views/sidebar_playlist_list')
 const { PymusicAppController } = require('app/controller')
 const { TrackAdder } = require("app/dialogs/track_add_dialog")
 const { TrackEditorView } = require("app/dialogs/track_editor_dialog")
+const { MainPlayerView } = require("app/views/main_player_view")
+const { PrecuePlayerView } = require("app/views/precue_player_view")
 
 SV = new AccordionView("sidebar")
 
