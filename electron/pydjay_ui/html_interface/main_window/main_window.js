@@ -1,7 +1,3 @@
-// Sortable  = require("../../../lib/Sortable.js")
-// WaveSurfer = require("wavesurfer.js")
-// var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
-// var path = require('path');
 const electron = require('electron')
 
 const { ipcRenderer } = electron
@@ -38,12 +34,9 @@ SV.on("add-playlist", () => {
 
 const AppController = new PymusicAppController()
 
-MDB = AppController.library //new MusicDatabase("pymusic")
+MDB = AppController.library
 view = new TrackEditorView()
 view.init()
-
-// mpc = new PlaybackController(undefined, MDB.queue)
-// pc  = new PrecueController() 
 
 var available_outputs = {}
 
@@ -225,8 +218,6 @@ document.getElementById("main-menu-audio-setup").addEventListener('click', async
     let d = new AudioOutputSettings({
         library: MDB,
         appController: AppController,
-        // mainPlayer: mpc,
-        // prelistenPlayer: pc,
         masterOutputChange: (deviceId) => {
             AppController.setMasterOutputDeviceId(deviceId)
             MDB.state.d.update({_id: "settings"}, {
@@ -271,7 +262,7 @@ document.getElementById("main-menu-stop-queue-now").addEventListener('click', ()
 })
 
 document.getElementById("main-menu-skip-current-track").addEventListener('click', () => {
-    AppController.skipToNextTrack() //mpc.skip_to_next_track()
+    AppController.skipToNextTrack()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
@@ -281,7 +272,7 @@ document.getElementById("main-menu-save-session").addEventListener('click', asyn
             let name = dialog.name_input.domElement.value
         
             if (name != "") {
-                await MDB.saveCurrentSession(name) //, location, address)
+                await MDB.saveCurrentSession(name)
             }
             dialog.close()
         },
