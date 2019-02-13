@@ -1,6 +1,7 @@
 const electron = require('electron')
 
 const { ipcRenderer } = electron
+const { AccordionView } = require("ui/dom/accordion")
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("app/dialogs/audio_setup")
 const { SessionSaveDialog } = require('app/dialogs/session_save_dialog')
