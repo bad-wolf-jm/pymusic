@@ -111,8 +111,6 @@ PL.on("row-click", (playlistId) => {
     T.display_playlist(playlistId)
 })
 
-
-
 SE = new SessionsListView({
     list: 'queue-elements-body'
 })
