@@ -230,7 +230,7 @@ document.getElementById("main-menu-audio-setup").addEventListener('click', async
             })
         },
         prelistenOutputChange: (deviceId) => {
-            AppController.setOutputDeviceId(deviceId)
+            AppController.setPrelistenOutputDeviceId(deviceId)
             view.setOutputDeviceId(deviceId)
             MDB.state.d.update({_id: "settings"}, {
                 $set: {'audio_setup.prelisten': deviceId}
