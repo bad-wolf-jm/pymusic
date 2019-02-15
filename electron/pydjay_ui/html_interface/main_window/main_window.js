@@ -20,16 +20,16 @@ const { PrecuePlayerView } = require("app/views/precue_player_view")
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
-    // SE_controller.refresh(() => {})
+    SE.displayModel(MDB.sessions)
 })
 
 
 SV.on("refresh-playlists", () => {
-    // PL_controller.refresh(() => {})
+    PL.displayModel(MDB.playlists)
 })
 
 SV.on("add-playlist", () => {
-    PL.begin_add()
+    PL.beginAdd()
 })
 
 
