@@ -229,21 +229,21 @@ Mousetrap.bind("shift+left", (e) => {
 
 Mousetrap.bind("shift+right", (e) => {
     if (focus_list != undefined) {
-        AppController.prelistenSskip(1)
+        AppController.prelistenSkip(1)
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("ctrl+shift+left", (e) => {
     if (focus_list != undefined) {
-        AppController.prelistenSskip(-5)
+        AppController.prelistenSkip(-5)
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("ctrl+shift+right", (e) => {
     if (focus_list != undefined) {
-        AppController.prelistenSskip(5)
+        AppController.prelistenSkip(5)
         e.preventDefault()
     }
 })
