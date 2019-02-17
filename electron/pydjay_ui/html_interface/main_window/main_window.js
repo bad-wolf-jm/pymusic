@@ -1,13 +1,9 @@
-Sortable  = require("../../../lib/Sortable.js")
-WaveSurfer = require("wavesurfer.js")
-var WaveSurferRegions = require('wavesurfer.js/dist/plugin/wavesurfer.regions.min.js');
-var path = require('path');
 const electron = require('electron')
 
 const { ipcRenderer } = electron
+const { AccordionView } = require("ui/dom/accordion")
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("app/dialogs/audio_setup")
-const { MusicDatabase } = require("musicdb/model.js")
 const { SessionSaveDialog } = require('app/dialogs/session_save_dialog')
 const { TagEditDialog } = require('app/dialogs/tag_edit_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
@@ -15,29 +11,33 @@ const { TrackListAreaController } = require('app/views/track_list_area')
 const { QueueAreaController } = require('app/views/queue_list_area')
 const { SessionsListView } = require('app/views/sidebar_sessions_list')
 const { PlaylistListView } = require('app/views/sidebar_playlist_list')
+const { PymusicAppController } = require('app/controller')
+const { TrackAdder } = require("app/dialogs/track_add_dialog")
+const { TrackEditorView } = require("app/dialogs/track_editor_dialog")
+const { MainPlayerView } = require("app/views/main_player_view")
+const { PrecuePlayerView } = require("app/views/precue_player_view")
 
 SV = new AccordionView("sidebar")
 
 SV.on("refresh-sessions", () => {
-    // SE_controller.refresh(() => {})
+    SE.displayModel(MDB.sessions)
 })
 
 
 SV.on("refresh-playlists", () => {
-    // PL_controller.refresh(() => {})
+    PL.displayModel(MDB.playlists)
 })
 
 SV.on("add-playlist", () => {
-    PL.begin_add()
+    PL.beginAdd()
 })
 
 
-MDB = new MusicDatabase("pymusic")
+const AppController = new PymusicAppController()
+
+MDB = AppController.library
 view = new TrackEditorView()
 view.init()
-
-mpc = new PlaybackController(undefined, MDB.queue)
-pc  = new PrecueController() 
 
 var available_outputs = {}
 
@@ -52,25 +52,24 @@ async function getAudioOutputDevices() {
 
 function setupAudioOutputs(audio_setup, available_devices) {
     if (available_devices[audio_setup.main_master]) {
-        mpc.setMasterOutputDeviceId(audio_setup.main_master)
+        AppController.setMasterOutputDeviceId(audio_setup.main_master)
     } else {
-        mpc.setMasterOutputDeviceId("null")
+        AppController.setMasterOutputDeviceId("null")
     }
 
     if (available_devices[audio_setup.main_headset]) {
-        mpc.setHeadsetOutputDeviceId(audio_setup.main_headset)
+        AppController.setHeadsetOutputDeviceId(audio_setup.main_headset)
     } else {
-        mpc.setHeadsetOutputDeviceId("null")
+        AppController.setHeadsetOutputDeviceId("null")
     }
 
     if (available_devices[audio_setup.prelisten]) {
-        pc.setOutputDeviceId(audio_setup.prelisten)
+        AppController.setPrelistenOutputDeviceId(audio_setup.prelisten)
         view.setOutputDeviceId(audio_setup.prelisten)
     } else {
-        pc.setOutputDeviceId("null")
+        AppController.setPrelistenOutputDeviceId("null")
         view.setOutputDeviceId("null")
     }
-
 }
 
 MDB.getAudioDevices().then(async (devices) => {
@@ -112,8 +111,6 @@ PL.on("row-click", (playlistId) => {
     T.display_playlist(playlistId)
 })
 
-
-
 SE = new SessionsListView({
     list: 'queue-elements-body'
 })
@@ -123,13 +120,13 @@ SE.on("row-click", (sessionId) => {
 })
 
 M = new MainPlayerView(MDB.tracks)
-M.set_controller(mpc)
+M.set_controller(AppController)
 M.init()
 
 P = new PrecuePlayerView(MDB.tracks)
-P.set_controller(pc)
+P.set_controller(AppController)
 
-mpc.on("queue-started",
+AppController.on("main:queue-started",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-stop\"></i>"
@@ -138,7 +135,7 @@ mpc.on("queue-started",
     }
 )
 
-mpc.on("queue-stopped",
+AppController.on("main:queue-stopped",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
@@ -147,7 +144,7 @@ mpc.on("queue-stopped",
     }
 )
 
-mpc.on("queue-finished",
+AppController.on("main:queue-finished",
     () => {
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
@@ -156,59 +153,16 @@ mpc.on("queue-finished",
     }
 )
 
-mpc.on("track-started", async (log_data) => {
-    await MDB.state.d.update({_id:"settings"}, {
-        $set: {"current_track._id": log_data._id}
-    })
+AppController.on('prelisten:playback-started', () => {
+    // mpc.muteHeadset()
+    SV.open_panel(3)
 })
 
-mpc.on("track-finished", async (log_data) => {
-    await MDB.current_session.append(log_data.track_object, {
-        status: "FINISHED",
-        time_start: log_data.start_time, 
-        time_end: log_data.end_time
-    })
-    await MDB.tracks.setTrackMetadata(log_data.track_object, {
-        "stats.last_played": log_data.start_time,
-        "stats.play_count": log_data.track_object.stats.play_count + 1
-    })
-})
+// pc.on('playback-paused', () => {
+//     mpc.unmuteHeadset()
+// })
 
-mpc.on("track-stopped", async (log_data) => {
-    await MDB.current_session.append(log_data.track_object, {
-        status: "STOPPED",
-        time_start: log_data.start_time, 
-        time_end: log_data.end_time
-    })
-    await MDB.tracks.setTrackMetadata(log_data.track_object, {
-        "stats.last_played": log_data.start_time,
-        "stats.play_count": log_data.track_object.stats.play_count + 1
-    })
-})
-
-pc.on('playback-started', () => {
-        mpc.muteHeadset()
-        SV.open_panel(3)
-    }
-)
-
-mpc.on("track-skipped", async (log_data) => {
-    await MDB.current_session.append(log_data.track_object, {
-        status: "SKIPPED",
-        time_start: log_data.start_time, 
-        time_end: log_data.end_time
-    })
-    await MDB.tracks.setTrackMetadata(log_data.track_object, {
-        "stats.last_played": log_data.start_time,
-        "stats.play_count": log_data.track_object.stats.play_count + 1
-    })
-})
-
-pc.on('playback-paused', () => {
-    mpc.unmuteHeadset()
-})
-
-mpc.on("next-track-countdown", (time) => {
+AppController.on("main:next-track-countdown", (time) => {
     let M = document.getElementById("main-player-track-title")
     if (time > 1) {
         M.innerHTML = `Next track will start in ${time} seconds`
@@ -262,22 +216,21 @@ document.getElementById("main-menu-tag-edit").addEventListener('click', async ()
 document.getElementById("main-menu-audio-setup").addEventListener('click', async () => {
     let d = new AudioOutputSettings({
         library: MDB,
-        mainPlayer: mpc,
-        prelistenPlayer: pc,
+        appController: AppController,
         masterOutputChange: (deviceId) => {
-            mpc.setMasterOutputDeviceId(deviceId)
+            AppController.setMasterOutputDeviceId(deviceId)
             MDB.state.d.update({_id: "settings"}, {
                 $set: {'audio_setup.main_master': deviceId}
             })
         },
         masterHeadphoneChange: (deviceId) => {
-            mpc.setHeadsetOutputDeviceId(deviceId)
+            AppController.setHeadsetOutputDeviceId(deviceId)
             MDB.state.d.update({_id: "settings"}, {
                 $set: {'audio_setup.main_headset': deviceId}
             })
         },
         prelistenOutputChange: (deviceId) => {
-            pc.setOutputDeviceId(deviceId)
+            AppController.setPrelistenOutputDeviceId(deviceId)
             view.setOutputDeviceId(deviceId)
             MDB.state.d.update({_id: "settings"}, {
                 $set: {'audio_setup.prelisten': deviceId}
@@ -303,12 +256,12 @@ document.getElementById("main-menu-toggle-devtools").addEventListener('click', (
 
 
 document.getElementById("main-menu-stop-queue-now").addEventListener('click', () => {
-    mpc.stop_queue_now()
+    AppController.stopQueue()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
 document.getElementById("main-menu-skip-current-track").addEventListener('click', () => {
-    mpc.skip_to_next_track()
+    AppController.skipToNextTrack()
     document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
 
@@ -318,9 +271,8 @@ document.getElementById("main-menu-save-session").addEventListener('click', asyn
             let name = dialog.name_input.domElement.value
         
             if (name != "") {
-                await MDB.saveCurrentSession(name) //, location, address)
+                await MDB.saveCurrentSession(name)
             }
-    
             dialog.close()
         },
         dismissAction: () => {

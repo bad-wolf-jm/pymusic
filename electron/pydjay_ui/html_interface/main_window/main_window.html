@@ -16,46 +16,7 @@
 <script src="../../../lib/clusterize.js"></script>
 
 <script src="../../utils.js"></script>
-<!-- <script src="../../data.js"></script> -->
-
-
-<!-- <script src="../../models/base/object_model.js"></script>
-<script src="../../models/base/subset_model.js"></script>
-<script src="../../models/base/ordered_subset_model.js"></script>
-<script src="../../models/track.js"></script> -->
-<!-- <script src="../../models/playlist.js"></script> -->
-<!-- <script src="../../models/session.js"></script> -->
-<!-- <script src="../../models/unavailable.js"></script>
-<script src="../../models/shortlist.js"></script>
-<script src="../../models/suggested.js"></script>
-<script src="../../models/played_tracks.js"></script>
-<script src="../../models/never_played_tracks.js"></script>
-<script src="../../models/queue.js"></script>
-<script src="../../models/current_session.js"></script>
-<script src="../../models/union.js"></script> -->
-<!-- <script src="../../node_modules/ui/listview/cluster.js"></script> -->
-
-
-<!-- <script src="controllers/queue.js"></script> -->
-<!-- <script src="controllers/session.js"></script> -->
-<script src="controllers/playback.js"></script>
-<!-- <script src="controllers/track_list.js"></script> -->
-<!-- <script src="controllers/playlist.js"></script> -->
-<!-- <script src="controllers/playlists.js"></script> -->
-<!-- <script src="controllers/sessions.js"></script> -->
-<script src="controllers/precue.js"></script>
-<script src="controllers/volume.js"></script>
-
-<!-- <script src="views/base_track_list_view.js"></script> -->
-<!-- <script src="views/playlist_edit.js"></script> -->
-<!-- <script src="views/queue.js"></script> -->
-<!-- <script src="views/queue_area.js"></script> -->
-<script src="views/main_player.js"></script>
-<!-- <script src="views/track_list.js"></script> -->
-<!-- <script src="views/playlists.js"></script> -->
-<!-- <script src="views/sessions.js"></script> -->
-<script src="views/precue_player.js"></script>
-<script src="views/accordion.js"></script>
+<!-- <script src="views/accordion.js"></script> -->
 
 <body class="jui" style="margin: 0px; padding:0px; height:100%">
     <dialog id="track-edit-dialog" style="width:75%; height:75%; z-index:1000; padding:0; background-color:rgb(200,200,200); border:2px solid grey">
@@ -190,24 +151,6 @@
         </div>
     </dialog>
 
-    <!-- <dialog id="save-session-dialog" style="z-index:1000; padding:0; background-color:rgb(100,100,100)">
-        <h1 style="background-color:rgb(30,30,30); text-align:center; font-size:11pt; margin:0px; color:rgb(200,200,200); height:30px; line-height:30px">Save current session</h1>
-        <div style="margin:10px">
-            <input id="session-name" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Name...">
-            <input id="session-location" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Location...">
-            <input id="session-address" type="text" style="width:calc(100% - 40px); margin:2px; padding-left:10px; padding-right:10px; height:20px" placeholder="Address...">
-        </div>
-        <menu>
-            <button id="session-save">SAVE</button>
-            <button id="session-save-cancel">CANCEL</button>
-        </menu>
-    </dialog> -->
-
-    <!-- <dialog id="track-add-progress-dialog" style="z-index:1000; padding:0; background-color:rgb(100,100,100); width:300px; height:200px">
-        <h1 id="track-add-progress" style="background-color:rgb(30,30,30); text-align:center; font-size:12pt; margin:0px; color:rgb(200,200,200); height:30px; line-height:30px"></h1>
-        <p id="track-add-info" style="margin:20px"></p>
-    </dialog> -->
-
     <div class="header">
         <div class="item">
             <div class="dropdown">
@@ -216,10 +159,8 @@
                     <a id="main-menu-add-track"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add tracks</a>
                     <p></p>
                     <a id="main-menu-audio-setup"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Audio setup</a>
-                    <!-- <a id="main-menu-settings"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a> -->
                     <p></p>
                     <a id="main-menu-tag-edit"><i class="fa fa-tags"></i>&nbsp;&nbsp;Edit tags</a>
-                    <!-- <a id="main-menu-settings"><i class="fa fa-cog"></i>&nbsp;&nbsp;Settings</a> -->
                     <p></p>
                     <a id="main-menu-stop-queue-now"><i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now</a>
                     <a id="main-menu-skip-current-track"><i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track</a>
@@ -230,7 +171,6 @@
                     <a id="main-menu-toggle-fullscreen"><i class="fa fa-desktop"></i>&nbsp;&nbsp;Toggle fullscreen</a>
                     <a id="main-menu-toggle-devtools"><i class="fa fa-bug"></i>&nbsp;&nbsp;Open Developper Tools</a>
                     <p></p>
-                    <!-- <a id="main-menu-reset-audio"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Reset audio system</a> -->
                     <a id="main-menu-quit"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Quit</a>
                 </div>
             </div>
@@ -245,9 +185,17 @@
         </div>
     </div>
 
+
+
+
+    
+    
+    
+    
+    
     <div class="main_player" style="position:fixed">
         <div class="overlay" id="main-player-overlay">
-            <button id="queue-start-button" class="queue-management-button" onclick="mpc.start_queue()">START</button>
+            <button id="queue-start-button" class="queue-management-button" onclick="AppController.startQueue()">START</button>
         </div>
         <img id="main-player-track-cover" class="cover" src="" height="150" width="150"></img>
         <div style="float:left; display:block; width:calc(100% - 150px)">
@@ -285,6 +233,12 @@
             <div id="main-player-waveform" class="waveform"></div>
         </div>
     </div>
+
+
+
+
+
+
     <div class="main_space">
 
         <div id="sidebar" class="side_bar">
@@ -341,23 +295,6 @@
                     <table id="playlist-list-elements" style="border-collapse:collapse; height:100%">
                         <tbody></tbody>
                     </table>
-                    <!-- <script data-jui="#playlist-list-elements" data-tpl="row" type="text/template">
-                        <! if(_id == null) { !>
-                            <tr id="new-playlist" class="choice" style="height:20px; margin-left:10px; display:none">
-                                <td style="width:30px"></td>
-                                <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
-                                <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input id="new-playlist-name" type="text" class="new-playlist"></td>
-                            </tr>
-                        <! } else { !>
-                            <tr class="choice track-drop-target" style="height:20px;" data-playlist-id=<!= _id !>>
-                                <td style="width:30px"></td>
-                                <td style="width:25px"><i class="fa fa-circle-o  arrow-icon"></i></td>
-                                <td id="playlist-element-<!= _id !>" style="width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
-                                <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
-                            </tr>
-                        <! } !>
-                    </script> -->
-
                 </div>
             </div>
             <button class="accordion" style="margin-right:0">
@@ -371,18 +308,13 @@
                     <table id="session-list-elements" style="border-collapse:collapse">
                         <tbody></tbody>
                     </table>
-                    <!-- <script data-jui="#session-list-elements" data-tpl="row" type="text/template">
-                        <tr class="choice" style="height:20px; margin-left:10px" onclick="T.display_session('<!= id !>')">
-                            <td style="width:30px"></td>
-                            <td style="width:25px"><i class="fa fa-circle-o arrow-icon"></i></td>
-                            <td style="width:200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><!= name !></td>
-                            <td style="width:100px; color:rgb(128,128,128)"><!= date !></td>
-                            <td style="width:25px"><i class="fa fa-angle-right arrow-icon"></i></td>
-                        </tr>
-                    </script> -->
                 </div>
             </div>
             <button class="accordion open-on-drag-over">Preview Player</button>
+
+
+
+
             <div class="panel" data-fixed-height="320">
                 <div id="preview-player-surface" class="preview-player" style="position:relative">
 
@@ -452,6 +384,10 @@
                     </table>
                 </div>
             </div>
+
+
+
+            
         </div>
         <div id="main-list" class="main_list">
             <div class="main-list-header">
@@ -505,28 +441,8 @@
                         <tr style="width:100%"></tr></thead>
                         <tbody id="playlist-edit-elements-body" class="list-group" style="width:100%;"></tbody>
                     </table>
-                    <!-- <script data-jui="#playlist-edit-elements" data-tpl="row" type="text/template">
-                        <tr class="list-group-item" style="margin:0; padding:0; height:50px" data-track-id=<!= id !>>
-                            <td style="width:100%; margin:0; padding:0">
-                                <div class="playlist-track element" contextmenu="mymenu" data-track-id=<!= id !>>
-                                    <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
-                                    <div style="margin:0px; padding:0px; float:left;  width:calc(100% - 170px)">
-                                        <div class="queue_element_title"><b><!= title !></b></div>
-                                        <div class="queue_element_artist"><i><!= artist !></i></div>
-                                    </div>
-                                    <div style="float:right; width:65px; margin-right:10px; transform: translateY(30%);">
-                                        <div class="queue_element_bpm"><!= bpm !> BPM</div>
-                                        <div class="queue_element_duration">
-                                            <b><!= duration !></b>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </script> -->
                 </div>
                 <div style="display:block; position:absolute; padding-left:10px; padding-right:10px; padding-top:10px; width:100%; height:75px">
-                    <!-- <button id="edit-playlist-save" class="playlist-edit-save-button">SAVE</button>      -->
                     <button id="edit-playlist-cancel" class="playlist-edit-cancel-button">CLOSE</button>
                 </div>
             </div>
@@ -547,35 +463,6 @@
                         <tr style="width:100%"></tr></thead>
                         <tbody id="queue-elements-body" class="list-group" style="width:100%;"></tbody>
                     </table>
-                    <!-- <script data-jui="#queue-list-elements" data-tpl="row" type="text/template">
-                        <! if (_id != null ) { !>
-                            <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= _id !>>
-                                <td style="width:100%; margin:0; padding:0">
-                                    <div class="queued-track element" contextmenu="mymenu" data-track-id=<!= _id !>>
-                                        <img class="cover-image" src="<!= cover !>" height='50' width='50' draggable=false></img>
-                                        <div style="margin:0px; padding:0px; float:left; width:225px;">
-                                            <div class="queue_element_title"><b><!= title !></b></div>
-                                            <div class="queue_element_artist"><i><!= artist !></i></div>
-                                        </div>
-                                        <div style="float:right; width:65px; margin-right:10px; transform: translateY(30%);">
-                                            <div class="queue_element_bpm"><!= bpm !> BPM</div>
-                                            <div class="queue_element_duration">
-                                                <b><!= duration !></b>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        <! } else { !>
-                            <tr class="list-group-item" style="width:100%; margin:0; padding:0; height:50px" data-track-id=<!= _id !>>
-                                <td style="width:100%; margin:0; padding:0">
-                                    <div class="queued-track element" style="background-color:rgb(153,50,204); line-height:50px; vertical-align:middle; text-align:center" data-track-id=<!= _id !>>
-                                        <b>END OF QUEUE</b>
-                                    </div>
-                                </td>
-                            </tr>
-                        <! } !>
-                    </script> -->
                 </div>
             </div>
         </div>
@@ -589,10 +476,6 @@
         </div>
     </div>
 <script src="drag_and_drop.js"></script>
-<script src="track_editor_view.js"></script>
 <script src="main_window.js"></script>
 <script src="keyboard.js"></script>
-<!-- <script src="bpm.js"></script> -->
-<script src="track_add.js"></script>
-<!-- <script src="mp3_fileinfo.js"></script> -->
 </body>

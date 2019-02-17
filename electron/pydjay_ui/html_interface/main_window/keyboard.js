@@ -183,68 +183,67 @@ Mousetrap.bind('shift+end', (e) => {
 
 
 Mousetrap.bind("space", (e) => {
-    if ((pc.state == "PAUSED") || (pc.state == "PLAYING")) {
-        pc.togglePause()
+    if ((AppController.getPrelistenState() == "PAUSED") || (AppController.getPrelistenState() == "PLAYING")) {
+        AppController.togglePrelistenPause()
     } else {
-        if (pc.track != undefined) {
-            pc.play(pc.track)
+        if (AppController.getPrelistenTrack() != undefined) {
+            AppController.prelistenTrack(AppController.getPrelistenTrack())
         }
     }
     e.preventDefault()
 })
 
 Mousetrap.bind("shift+space", (e) => {
-    pc.stop()
+    AppController.stopPrelisten()
     e.preventDefault()
 })
 
 
 Mousetrap.bind("enter", async (e) => {
     if (focus_list != undefined) {
-        //console.log(focus_list)
-        pc.play(await focus_list.selected_element())
+        AppController.prelistenTrack(await focus_list.selected_element())
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("shift+enter", async (e) => {
     if (focus_list != undefined) {
-        pc.play_last_30_seconds(await focus_list.selected_element())
+        AppController.prelistenLast30Seconds(await focus_list.selected_element())
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("ctrl+shift+enter", async (e) => {
     if (focus_list != undefined) {
-        pc.play_last_10_seconds(await focus_list.selected_element())
+        AppController.prelistenLast10Seconds(await focus_list.selected_element())
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("shift+left", (e) => {
     if (focus_list != undefined) {
-        pc.skip(-1)
+        AppController.prelistenSkip(-1)
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("shift+right", (e) => {
     if (focus_list != undefined) {
-        pc.skip(1)
+        AppController.prelistenSkip(1)
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("ctrl+shift+left", (e) => {
     if (focus_list != undefined) {
-        pc.skip(-5)
+        AppController.prelistenSkip(-5)
         e.preventDefault()
     }
 })
 
 Mousetrap.bind("ctrl+shift+right", (e) => {
     if (focus_list != undefined) {
-        pc.skip(5)
+        AppController.prelistenSkip(5)
         e.preventDefault()
     }
 })
