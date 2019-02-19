@@ -412,7 +412,7 @@ input.main-track-search[type=text] {
     border: none;
     float:right;
     height:30px;
-    width:calc(100% - 55px)
+    width:calc(100% - 110px)
 }
 
 input.new-playlist[type=text] {
