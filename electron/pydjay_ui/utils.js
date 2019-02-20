@@ -1,14 +1,22 @@
+const { EventDispatcher } = require("notify/event_dispatcher.js")
+
 function format_nanoseconds (ts) {
-    var sec_num = Math.round(ts / 1000000000);
+    var sec_num = Math.round(ts / 1000);
     var hours   = Math.floor(sec_num / 3600);
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
     var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
-    if (hours   < 10) {hours   = "0"+hours;}
-    if (minutes < 10) {minutes = "0"+minutes;}
-    if (seconds < 10) {seconds = "0"+seconds;}
+    if ((hours > 0) && (hours < 10)) {
+        hours   = "0"+hours;
+    }
+    if ((minutes > 0) && (minutes < 10)) {
+        minutes = "0"+minutes;
+    }
+    if ((seconds > 0) && (seconds < 10)) {
+        seconds = "0"+seconds;
+    }
 
-    if (hours == 0){
+    if (hours == 0) {
         return minutes+':'+seconds;
     }
     return hours+':'+minutes+':'+seconds;
@@ -38,7 +46,7 @@ function format_seconds(t_seconds, units, pluralize=true)
     var s_f, m_f, h_f, d_f;
 
     if (t_seconds < 60) {
-      return `${t_seconds}</span><span style="font-size:15px; margin:2px">${units.seconds}</span>`;
+      return `${t_seconds} ${units.seconds}`;
     }
 
     duration = parse_seconds_to_time(t_seconds);
@@ -71,18 +79,23 @@ function format_seconds(t_seconds, units, pluralize=true)
 }
 
 function format_seconds_long(seconds){
-  return format_seconds(seconds, {seconds:'second',
-                                  minutes:'minute',
-                                  hours:'hour',
-                                  days:'day'}, true)
+  return format_seconds(seconds, 
+    {
+        seconds:'second',
+        minutes:'minute',
+        hours:'hour',
+        days:'day'
+    }, true)
 }
 
 function format_seconds_short(seconds)
 {
-    return format_seconds(seconds, {seconds:'s',
-                                    minutes:'m',
-                                    hours:'h',
-                                    days:'d'}, false)
+    return format_seconds(seconds, {
+        seconds:'s',
+        minutes:'m',
+        hours:'h',
+        days:'d'
+    }, false)
 }
 
 function humanFileSize(bytes) {
