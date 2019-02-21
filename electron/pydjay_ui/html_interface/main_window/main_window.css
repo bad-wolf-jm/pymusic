@@ -879,8 +879,8 @@ input.new-playlist[type=text] {
 }
 
 .duplicate {
-    /* background-color: rgb(135, 2, 7) !important; */
-    opacity: 0.15
+    background-color: rgb(125, 2, 7) !important;
+    /* opacity: 0.15 */
 }
 
 
