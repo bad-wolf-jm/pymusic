@@ -878,6 +878,11 @@ input.new-playlist[type=text] {
     opacity: 0.15
 }
 
+.duplicate {
+    background-color: rgb(125, 2, 7) !important;
+    /* opacity: 0.15 */
+}
+
 
 .main-track-list-area .main-track-list-table .header-row .sticky-header {
     position: sticky;
