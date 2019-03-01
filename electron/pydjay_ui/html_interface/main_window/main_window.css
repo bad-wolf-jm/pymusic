@@ -412,7 +412,7 @@ input.main-track-search[type=text] {
     border: none;
     float:right;
     height:30px;
-    width:calc(100% - 55px)
+    width:calc(100% - 110px)
 }
 
 input.new-playlist[type=text] {
@@ -876,6 +876,11 @@ input.new-playlist[type=text] {
 .unavailable {
     /* background-color: rgb(135, 2, 7) !important; */
     opacity: 0.15
+}
+
+.duplicate {
+    background-color: rgb(125, 2, 7) !important;
+    /* opacity: 0.15 */
 }
 
 
