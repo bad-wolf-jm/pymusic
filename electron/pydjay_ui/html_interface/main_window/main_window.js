@@ -154,13 +154,8 @@ AppController.on("main:queue-finished",
 )
 
 AppController.on('prelisten:playback-started', () => {
-    // mpc.muteHeadset()
     SV.open_panel(3)
 })
-
-// pc.on('playback-paused', () => {
-//     mpc.unmuteHeadset()
-// })
 
 AppController.on("main:next-track-countdown", (time) => {
     let M = document.getElementById("main-player-track-title")
@@ -211,7 +206,6 @@ document.getElementById("main-menu-tag-edit").addEventListener('click', async ()
     d.open()
     await d.init()
 })
-
 
 document.getElementById("main-menu-audio-setup").addEventListener('click', async () => {
     let d = new AudioOutputSettings({
