@@ -13,7 +13,6 @@ const { SessionsListView } = require('app/views/sidebar_sessions_list')
 const { PlaylistListView } = require('app/views/sidebar_playlist_list')
 const { PymusicAppController } = require('app/controller')
 const { TrackAdder } = require("app/dialogs/track_add_dialog")
-const { TrackEditorView } = require("app/dialogs/track_editor_dialog")
 const { MainPlayerView } = require("app/views/main_player_view")
 const { PrecuePlayerView } = require("app/views/precue_player_view")
 
@@ -36,8 +35,8 @@ SV.on("add-playlist", () => {
 const AppController = new PymusicAppController()
 
 MDB = AppController.library
-view = new TrackEditorView()
-view.init()
+// view = new TrackEditorView()
+// view.init()
 
 var available_outputs = {}
 
@@ -65,10 +64,10 @@ function setupAudioOutputs(audio_setup, available_devices) {
 
     if (available_devices[audio_setup.prelisten]) {
         AppController.setPrelistenOutputDeviceId(audio_setup.prelisten)
-        view.setOutputDeviceId(audio_setup.prelisten)
+        // view.setOutputDeviceId(audio_setup.prelisten)
     } else {
         AppController.setPrelistenOutputDeviceId("null")
-        view.setOutputDeviceId("null")
+        // view.setOutputDeviceId("null")
     }
 }
 
@@ -225,7 +224,7 @@ document.getElementById("main-menu-audio-setup").addEventListener('click', async
         },
         prelistenOutputChange: (deviceId) => {
             AppController.setPrelistenOutputDeviceId(deviceId)
-            view.setOutputDeviceId(deviceId)
+            // view.setOutputDeviceId(deviceId)
             MDB.state.d.update({_id: "settings"}, {
                 $set: {'audio_setup.prelisten': deviceId}
             })
