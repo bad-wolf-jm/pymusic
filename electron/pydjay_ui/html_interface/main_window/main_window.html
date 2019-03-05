@@ -24,26 +24,7 @@
 
     <div class="header">
         <div class="item">
-            <div class="dropdown">
-                <button id="settings-button" class="settings-button"><i class="fa fa-ellipsis-h"></i></button>
-                <div id="main-menu-dropdown" class="dropdown-content" style="left:0 !important; top:30px; min-width:210px">
-                    <a id="main-menu-add-track"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add tracks</a>
-                    <p></p>
-                    <a id="main-menu-audio-setup"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Audio setup</a>
-                    <p></p>
-                    <a id="main-menu-tag-edit"><i class="fa fa-tags"></i>&nbsp;&nbsp;Edit tags</a>
-                    <p></p>
-                    <a id="main-menu-stop-queue-now"><i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now</a>
-                    <a id="main-menu-skip-current-track"><i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track</a>
-                    <p></p>
-                    <a id="main-menu-save-session"><i class="fa fa-save"></i>&nbsp;&nbsp;Save current session</a>
-                    <a id="main-menu-discard-session"><i class="fa fa-minus"></i>&nbsp;&nbsp;Discard current session</a>
-                    <p></p>
-                    <a id="main-menu-toggle-fullscreen"><i class="fa fa-desktop"></i>&nbsp;&nbsp;Toggle fullscreen</a>
-                    <a id="main-menu-toggle-devtools"><i class="fa fa-bug"></i>&nbsp;&nbsp;Open Developper Tools</a>
-                    <p></p>
-                    <a id="main-menu-quit"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Quit</a>
-                </div>
+            <div id="settings-menu" class="dropdown">
             </div>
         </div>
 
@@ -194,14 +175,7 @@
                     <div style="padding:20px; height:50px; width:calc(100% - 115px); display:inline-block">
                         <button id="precue-player-play-button" class="precue-management-button" style="float:left"><i class="fa fa-play"></i></button>
                         <progress id="precue-player-track-progress" value="10" max="100" class="precue-player-progress"></progress>
-                        <div class="dropdown" style="float:right">
-                            <button id="precue-options" class="precue-management-button"><i class="fa fa-ellipsis-h"></i></button>
-                            <div id="precue-dropdown" class="dropdown-content">
-                                <a id="precue-play-full-track">Play full track</a>
-                                <a id="precue-play-last-30-seconds">Play last 30 seconds</a>
-                                <a id="precue-play-last-10-seconds">Play last 10 seconds</a>
-                                <a id="precue-play-stop">Stop</a>
-                            </div>
+                        <div id="dd-menu" class="dropdown" style="float:right">
                         </div>
                     </div>
                     <div style="float:left; display:block; width:calc(100% - 00px)">
