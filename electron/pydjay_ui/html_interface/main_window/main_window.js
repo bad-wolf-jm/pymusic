@@ -15,7 +15,7 @@ const { PlaylistListView } = require('app/views/sidebar_playlist_list')
 const { PymusicAppController } = require('app/controller')
 const { TrackAdder } = require("app/dialogs/track_add_dialog")
 const { MainPlayerView } = require("app/views/main_player_view")
-const { PrecuePlayerView } = require("app/views/precue_player_view")
+const { PrecuePlayerView } = require("app/views/sidebar_precue_player")
 
 SV = new AccordionView("sidebar")
 
