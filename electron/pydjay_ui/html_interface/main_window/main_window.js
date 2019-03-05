@@ -230,7 +230,6 @@ settingsMenu.addItem(`<i class="fa fa-tags"></i>&nbsp;&nbsp;Edit tags`, async ()
     let d = new TagEditDialog(MDB)
     d.open()
     await d.init()
-
 })
 settingsMenu.addSeparator()
 settingsMenu.addItem(`<i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now`, () => {
