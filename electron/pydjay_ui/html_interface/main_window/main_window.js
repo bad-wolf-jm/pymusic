@@ -10,6 +10,7 @@ const { TagEditDialog } = require('app/dialogs/tag_edit_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
 const { TrackListAreaController } = require('app/views/track_list_area')
 const { QueueAreaController } = require('app/views/queue_list_area')
+const { LinksList } = require('app/views/sidebar_library_links')
 const { SessionsListView } = require('app/views/sidebar_sessions_list')
 const { PlaylistListView } = require('app/views/sidebar_playlist_list')
 const { PymusicAppController } = require('app/controller')
@@ -102,6 +103,11 @@ Q.queue_view.displayModel("QUEUE", MDB.queue)
 
 
 T = new TrackListAreaController(MDB)
+
+linkList = new LinksList(T)
+X = document.getElementById("links")
+X.appendChild(linkList.domElement)
+
 
 PL = new PlaylistListView({
     list: 'queue-elements-body'
