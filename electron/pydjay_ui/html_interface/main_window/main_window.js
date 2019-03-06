@@ -15,7 +15,8 @@ const { SessionsListView } = require('app/views/sidebar_sessions_list')
 const { PlaylistListView } = require('app/views/sidebar_playlist_list')
 const { PymusicAppController } = require('app/controller')
 const { TrackAdder } = require("app/dialogs/track_add_dialog")
-const { MainPlayerView } = require("app/views/main_player_view")
+const { MainPlayerView } = require("app/views/header_main_player")
+// const { MainPlayerView } = require("app/views/main_player_view")
 const { PrecuePlayerView } = require("app/views/sidebar_precue_player")
 
 SV = new AccordionView("sidebar")
@@ -137,7 +138,7 @@ AppController.on("main:queue-started",
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-stop\"></i>"
         B.style.backgroundColor = "#660000"
-        document.getElementById("main-player-overlay").style.display="none"
+        //document.getElementById("main-player-overlay").style.display="none"
     }
 )
 
@@ -146,7 +147,7 @@ AppController.on("main:queue-stopped",
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
         B.style.backgroundColor = "rgb(25,25,25)"
-        document.getElementById("main-player-overlay").style.display="block"
+        //document.getElementById("main-player-overlay").style.display="block"
     }
 )
 
@@ -155,7 +156,7 @@ AppController.on("main:queue-finished",
         B = document.getElementById("queue-start-button")
         B.innerHTML = "<i class=\"fa fa-play\"></i>"
         B.style.backgroundColor = "rgb(25,25,25)"
-        document.getElementById("main-player-overlay").style.display="block"
+        //document.getElementById("main-player-overlay").style.display="block"
     }
 )
 
