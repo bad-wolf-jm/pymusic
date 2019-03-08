@@ -164,17 +164,17 @@ AppController.on('prelisten:playback-started', () => {
     SV.open_panel(3)
 })
 
-AppController.on("main:next-track-countdown", (time) => {
-    let M = document.getElementById("main-player-track-title")
-    if (time > 1) {
-        M.innerHTML = `Next track will start in ${time} seconds`
-    } else if (time == 1) {
-        M.innerHTML = `Next track will start in 1 second`
-    } else {
-        M.innerHTML = `Next track will start now`
+// AppController.on("main:next-track-countdown", (time) => {
+//     let M = document.getElementById("main-player-track-title")
+//     if (time > 1) {
+//         M.innerHTML = `Next track will start in ${time} seconds`
+//     } else if (time == 1) {
+//         M.innerHTML = `Next track will start in 1 second`
+//     } else {
+//         M.innerHTML = `Next track will start now`
 
-    }
-})
+//     }
+// })
 
 window.addEventListener("load", (event) => {
     let h = document.getElementById("track-list-elements-header")
