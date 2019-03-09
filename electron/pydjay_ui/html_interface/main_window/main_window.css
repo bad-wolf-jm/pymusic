@@ -806,6 +806,7 @@ input.new-playlist[type=text] {
 
 .preview-player .metadata .tag-name{
     width:75px !important;
+    max-width:75px !important;
     white-space: nowrap;
 }
 
@@ -813,7 +814,7 @@ input.new-playlist[type=text] {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width:200px;
+    max-width:150px;
 
 }
 
