@@ -24,26 +24,7 @@
 
     <div class="header">
         <div class="item">
-            <div class="dropdown">
-                <button id="settings-button" class="settings-button"><i class="fa fa-ellipsis-h"></i></button>
-                <div id="main-menu-dropdown" class="dropdown-content" style="left:0 !important; top:30px; min-width:210px">
-                    <a id="main-menu-add-track"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add tracks</a>
-                    <p></p>
-                    <a id="main-menu-audio-setup"><i class="fa fa-refresh"></i>&nbsp;&nbsp;Audio setup</a>
-                    <p></p>
-                    <a id="main-menu-tag-edit"><i class="fa fa-tags"></i>&nbsp;&nbsp;Edit tags</a>
-                    <p></p>
-                    <a id="main-menu-stop-queue-now"><i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now</a>
-                    <a id="main-menu-skip-current-track"><i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track</a>
-                    <p></p>
-                    <a id="main-menu-save-session"><i class="fa fa-save"></i>&nbsp;&nbsp;Save current session</a>
-                    <a id="main-menu-discard-session"><i class="fa fa-minus"></i>&nbsp;&nbsp;Discard current session</a>
-                    <p></p>
-                    <a id="main-menu-toggle-fullscreen"><i class="fa fa-desktop"></i>&nbsp;&nbsp;Toggle fullscreen</a>
-                    <a id="main-menu-toggle-devtools"><i class="fa fa-bug"></i>&nbsp;&nbsp;Open Developper Tools</a>
-                    <p></p>
-                    <a id="main-menu-quit"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Quit</a>
-                </div>
+            <div id="settings-menu" class="dropdown">
             </div>
         </div>
 
@@ -115,44 +96,8 @@
         <!-- SIDEBAR *********************************************************************************************-->
         <div id="sidebar" class="side_bar">
             <button class="accordion">Library</button>
-            <div class="panel" data-fixed-height="180">
-                <ul class="sidebar-library">
-                    <li class="sidebar-library-item" onclick="T.display_all_songs()">
-                        <i class="fa fa-database list-icon"></i>
-                        All songs
-                        <i class="fa fa-angle-right arrow-icon"></i>
-                    </li>
-                    <li class="sidebar-library-item" onclick="T.display_current_session()">
-                        <i class="fa fa-calendar list-icon"></i>
-                        Current Session
-                        <i class="fa fa-angle-right arrow-icon"></i>
-                    </li>
-                    <li class="sidebar-library-item" onclick="T.display_suggestions()">
-                        <i class="fa fa-smile-o list-icon"></i>
-                        Suggestions
-                        <i class="fa fa-angle-right arrow-icon"></i>
-                    </li>
-                    <li class="sidebar-library-item" onclick="T.display_short_list()">
-                        <i class="fa fa-circle-o list-icon"></i>
-                        Short list
-                        <i class="fa fa-angle-right arrow-icon"></i>
-                    </li>
-                    <li class="sidebar-library-item" onclick="T.display_played_tracks()">
-                        <i class="fa fa-circle-o list-icon"></i>
-                        Played songs
-                        <i class="fa fa-angle-right arrow-icon"></i>
-                    </li>
-                    <li class="sidebar-library-item" onclick="T.display_never_played_tracks()">
-                        <i class="fa fa-circle-o list-icon"></i>
-                        Never played
-                        <i class="fa fa-angle-right arrow-icon"></i>
-                    </li>
-                    <li class="sidebar-library-item" onclick="T.display_unavailable()">
-                        <i class="fa fa-circle-o list-icon"></i>
-                        Unavailable
-                        <i class="fa fa-angle-right arrow-icon"></i>
-                    </li>
-                </ul>
+            <div id="links" class="panel" data-fixed-height="145">
+
             </div>
 
             <button class="accordion open-on-drag-over">
@@ -185,73 +130,7 @@
 
             <button class="accordion open-on-drag-over">Preview Player</button>
             <div class="panel" data-fixed-height="320">
-                <div id="preview-player-surface" class="preview-player" style="position:relative">
-
-                    <div id="no-preview-track" class="overlay">
-                        No track to preview
-                    </div>
-                    <img id="precue-player-cover" class="cover" src="" height="75" width="75"></img>
-                    <div style="padding:20px; height:50px; width:calc(100% - 115px); display:inline-block">
-                        <button id="precue-player-play-button" class="precue-management-button" style="float:left"><i class="fa fa-play"></i></button>
-                        <progress id="precue-player-track-progress" value="10" max="100" class="precue-player-progress"></progress>
-                        <div class="dropdown" style="float:right">
-                            <button id="precue-options" class="precue-management-button"><i class="fa fa-ellipsis-h"></i></button>
-                            <div id="precue-dropdown" class="dropdown-content">
-                                <a id="precue-play-full-track">Play full track</a>
-                                <a id="precue-play-last-30-seconds">Play last 30 seconds</a>
-                                <a id="precue-play-last-10-seconds">Play last 10 seconds</a>
-                                <a id="precue-play-stop">Stop</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="float:left; display:block; width:calc(100% - 00px)">
-                        <div style="padding-left:5px; float:left; width:100%; display:block; height:70px">
-                            <div style="display:inline-block; width:100%">
-                                <div style="height:20px">
-                                    <h1 id="precue-player-title" class="title">Arkansas Blues</h1>
-                                </div>
-                                <div style="height:20px">
-                                    <h2 id="precue-player-artist" class="artist">Norbert Susemihl, Jason Marsalis, Kerry Lewis</h2>
-                                </div>
-                            </div>
-                            <div style="display:inline-block; height:20px; width:100%">
-                                <div id="precue-player-loved" style="float:left"></div>
-                                <div style="float:left; width:25px">&nbsp;</div>
-                                <div id="precue-player-rating" style="float:left"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <table style="padding:3px; width:330px">
-                        <tr class="metadata">
-                            <td class="tag-name"><b>Album:</b></td>
-                            <td id="precue-player-album" class="tag-value">NORBERT SUSEMIHL - NIGHT ON FRENCHMAN STREET</td>
-                        </tr>
-                        <tr class="metadata">
-                            <td class="tag-name"><b>Genre:</b></td>
-                            <td id="precue-player-genre" class="tag-value">Jazz</td>
-                        </tr>
-                        <tr class="metadata">
-                            <td class="tag-name"><b>Year:</b></td>
-                            <td id="precue-player-year" class="tag-value">2012</td>
-                        </tr>
-                        <tr class="metadata">
-                            <td class="tag-name"><b>Length:</b></td>
-                            <td id="precue-player-duration" class="tag-value">3:45</td>
-                        </tr>
-                        <tr class="metadata">
-                            <td class="tag-name"><b>BPM:</b></td>
-                            <td id="precue-player-bpm" class="tag-value">100</td>
-                        </tr>
-                        <tr class="metadata">
-                            <td class="tag-name"><b>Last played:</b></td>
-                            <td id="precue-player-last-played" class="tag-value">2018-03-04</td>
-                        </tr>
-                        <tr class="metadata">
-                            <td class="tag-name"><b>Play count:</b></td>
-                            <td id="precue-player-play-count" class="tag-value">12</td>
-                        </tr>
-                    </table>
-                </div>
+                <div id="preview-player-surface" class="preview-player" style="position:relative"></div>
             </div>    
         </div>
         <!-- SIDEBAR *********************************************************************************************-->

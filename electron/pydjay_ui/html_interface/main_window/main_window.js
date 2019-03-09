@@ -1,6 +1,7 @@
 const electron = require('electron')
-
+const { remote } = electron
 const { ipcRenderer } = electron
+const { DropdownMenu } = require("app/components/dropdownmenu")
 const { AccordionView } = require("ui/dom/accordion")
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("app/dialogs/audio_setup")
@@ -9,12 +10,13 @@ const { TagEditDialog } = require('app/dialogs/tag_edit_dialog')
 const { AudioOutputDetector } = require('webaudio/detect')
 const { TrackListAreaController } = require('app/views/track_list_area')
 const { QueueAreaController } = require('app/views/queue_list_area')
+const { LinksList } = require('app/views/sidebar_library_links')
 const { SessionsListView } = require('app/views/sidebar_sessions_list')
 const { PlaylistListView } = require('app/views/sidebar_playlist_list')
 const { PymusicAppController } = require('app/controller')
 const { TrackAdder } = require("app/dialogs/track_add_dialog")
 const { MainPlayerView } = require("app/views/main_player_view")
-const { PrecuePlayerView } = require("app/views/precue_player_view")
+const { PrecuePlayerView } = require("app/views/sidebar_precue_player")
 
 SV = new AccordionView("sidebar")
 
@@ -102,6 +104,11 @@ Q.queue_view.displayModel("QUEUE", MDB.queue)
 
 T = new TrackListAreaController(MDB)
 
+linkList = new LinksList(T)
+X = document.getElementById("links")
+X.appendChild(linkList.domElement)
+
+
 PL = new PlaylistListView({
     list: 'queue-elements-body'
 })
@@ -186,27 +193,19 @@ window.addEventListener("resize", (event) => {
     T._listview.fitHeaderColumns()
 })
 
-document.getElementById("settings-button").addEventListener('click', () => {
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
-})
+var settingsMenuDOM = document.getElementById("settings-menu")
+var settingsMenu = new DropdownMenu()
+settingsMenuDOM.appendChild(settingsMenu.domElement)
 
-document.getElementById("main-menu-add-track").addEventListener('click', () => {
+settingsMenu.addItem(`<i class="fa fa-plus"></i>&nbsp;&nbsp;Add tracks`, () => {
     remote.dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] }, (files) => {
         if (files != undefined) {
             let x = new TrackAdder(files, MDB)
         }
     })
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
-document.getElementById("main-menu-tag-edit").addEventListener('click', async () => {
-    let d = new TagEditDialog(MDB)
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
-    d.open()
-    await d.init()
-})
-
-document.getElementById("main-menu-audio-setup").addEventListener('click', async () => {
+settingsMenu.addSeparator()
+settingsMenu.addItem(`<i class="fa fa-refresh"></i>&nbsp;&nbsp;Audio setup`, () => {
     let d = new AudioOutputSettings({
         library: MDB,
         appController: AppController,
@@ -224,7 +223,6 @@ document.getElementById("main-menu-audio-setup").addEventListener('click', async
         },
         prelistenOutputChange: (deviceId) => {
             AppController.setPrelistenOutputDeviceId(deviceId)
-            // view.setOutputDeviceId(deviceId)
             MDB.state.d.update({_id: "settings"}, {
                 $set: {'audio_setup.prelisten': deviceId}
             })
@@ -232,33 +230,22 @@ document.getElementById("main-menu-audio-setup").addEventListener('click', async
         }
     })
     d.open()
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
-document.getElementById("main-menu-toggle-fullscreen").addEventListener('click', () => {
-    let window = electron.remote.getCurrentWindow();
-    window.setFullScreen(!(window.isFullScreen()));
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
+settingsMenu.addSeparator()
+settingsMenu.addItem(`<i class="fa fa-tags"></i>&nbsp;&nbsp;Edit tags`, async () => {
+    let d = new TagEditDialog(MDB)
+    d.open()
+    await d.init()
 })
-
-document.getElementById("main-menu-toggle-devtools").addEventListener('click', () => {
-    let window = electron.remote.getCurrentWindow();
-    window.openDevTools();
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
-})
-
-
-document.getElementById("main-menu-stop-queue-now").addEventListener('click', () => {
+settingsMenu.addSeparator()
+settingsMenu.addItem(`<i class="fa fa-stop"></i>&nbsp;&nbsp;Stop queue now`, () => {
     AppController.stopQueue()
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
-document.getElementById("main-menu-skip-current-track").addEventListener('click', () => {
+settingsMenu.addItem(`<i class="fa fa-ellipsis-h"></i>&nbsp;&nbsp;Skip current track`, () => {
     AppController.skipToNextTrack()
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
-document.getElementById("main-menu-save-session").addEventListener('click', async () => {
+settingsMenu.addSeparator()
+settingsMenu.addItem(`<i class="fa fa-save"></i>&nbsp;&nbsp;Save current session`, () => {
     let dialog = new SessionSaveDialog({
         confirmAction: async () => {
             let name = dialog.name_input.domElement.value
@@ -273,10 +260,8 @@ document.getElementById("main-menu-save-session").addEventListener('click', asyn
         }
     })
     dialog.open()
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
-document.getElementById("main-menu-discard-session").addEventListener('click', () => {
+settingsMenu.addItem(`<i class="fa fa-minus"></i>&nbsp;&nbsp;Discard current session`, () => {
     let q = new Question({
         title: "Discard current session",
         question: "Discard the current session? this operation cannot be undone",
@@ -291,12 +276,18 @@ document.getElementById("main-menu-discard-session").addEventListener('click', (
         },
     })
     q.open()
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
 })
-
-
-document.getElementById("main-menu-quit").addEventListener('click', () => {
-    document.getElementById("main-menu-dropdown").classList.toggle("show");
+settingsMenu.addSeparator()
+settingsMenu.addItem(`<i class="fa fa-desktop"></i>&nbsp;&nbsp;Toggle fullscreen`, () => {
+    let window = electron.remote.getCurrentWindow();
+    window.setFullScreen(!(window.isFullScreen()));
+})
+settingsMenu.addItem(`<i class="fa fa-bug"></i>&nbsp;&nbsp;Open developper tools`, () => {
+    let window = electron.remote.getCurrentWindow();
+    window.openDevTools();
+})
+settingsMenu.addSeparator()
+settingsMenu.addItem(`<i class="fa fa-power-off"></i>&nbsp;&nbsp;Quit`, () => {
     ipcRenderer.send("quit-pymusic")
 })
 
