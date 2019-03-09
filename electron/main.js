@@ -15,8 +15,8 @@ var mixerWindow = null;
 
 app.on('ready', async () => {
     mainWindow = new BrowserWindow({
-      width: 1728,
-      height: 1152,
+      width: 1920,
+      height: 1080,
     });
 
     if (!(existsSync(path.join(homedir(), ".pymusic-library", "pymusic")))) {
