@@ -133,21 +133,21 @@ AppController.on('prelisten:playback-started', () => {
 })
 
 window.addEventListener("load", (event) => {
-    let h = document.getElementById("track-list-elements-header")
-    let ta = document.getElementById("main-track-list-scroller")
-    let tl = document.getElementById("main-track-list")
-    list_height = (tl.clientHeight - h.clientHeight) - 5
-    ta.style.maxHeight = list_height + "px";
-    T._listview.fitHeaderColumns()
+    // let h = document.getElementById("track-list-elements-header")
+    // let ta = document.getElementById("main-track-list-scroller")
+    // let tl = document.getElementById("main-track-list")
+    // list_height = (tl.clientHeight - h.clientHeight) - 5
+    // ta.style.maxHeight = list_height + "px";
+    // T._listview.fitHeaderColumns()
 })
 
 window.addEventListener("resize", (event) => {
-    let h = document.getElementById("track-list-elements-header")
-    let ta = document.getElementById("main-track-list-scroller")
-    let tl = document.getElementById("main-track-list")
-    list_height = (tl.clientHeight - h.clientHeight) - 5
-    ta.style.maxHeight = list_height + "px";
-    T._listview.fitHeaderColumns()
+    // let h = document.getElementById("track-list-elements-header")
+    // let ta = document.getElementById("main-track-list-scroller")
+    // let tl = document.getElementById("main-track-list")
+    // list_height = (tl.clientHeight - h.clientHeight) - 5
+    // ta.style.maxHeight = list_height + "px";
+    // T._listview.fitHeaderColumns()
 })
 
 
