@@ -138,7 +138,7 @@ window.addEventListener("load", (event) => {
     // let tl = document.getElementById("main-track-list")
     // list_height = (tl.clientHeight - h.clientHeight) - 5
     // ta.style.maxHeight = list_height + "px";
-    // T._listview.fitHeaderColumns()
+    T._listview.fitHeaderColumns()
 })
 
 window.addEventListener("resize", (event) => {
@@ -147,7 +147,7 @@ window.addEventListener("resize", (event) => {
     // let tl = document.getElementById("main-track-list")
     // list_height = (tl.clientHeight - h.clientHeight) - 5
     // ta.style.maxHeight = list_height + "px";
-    // T._listview.fitHeaderColumns()
+    T._listview.fitHeaderColumns()
 })
 
 
