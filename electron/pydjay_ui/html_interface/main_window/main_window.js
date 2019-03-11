@@ -15,23 +15,24 @@ const { SessionsListView } = require('app/views/sidebar_sessions_list')
 const { PlaylistListView } = require('app/views/sidebar_playlist_list')
 const { PymusicAppController } = require('app/controller')
 const { TrackAdder } = require("app/dialogs/track_add_dialog")
+const { Sidebar } = require("app/views/sidebar")
 const { MainPlayerView } = require("app/views/header_main_player")
 const { PrecuePlayerView } = require("app/views/sidebar_precue_player")
 
-SV = new AccordionView("sidebar")
+// SV = new AccordionView("sidebar")
 
-SV.on("refresh-sessions", () => {
-    SE.displayModel(MDB.sessions)
-})
+// SV.on("refresh-sessions", () => {
+//     SE.displayModel(MDB.sessions)
+// })
 
 
-SV.on("refresh-playlists", () => {
-    PL.displayModel(MDB.playlists)
-})
+// SV.on("refresh-playlists", () => {
+//     PL.displayModel(MDB.playlists)
+// })
 
-SV.on("add-playlist", () => {
-    PL.beginAdd()
-})
+// SV.on("add-playlist", () => {
+//     PL.beginAdd()
+// })
 
 
 const AppController = new PymusicAppController()
@@ -100,36 +101,39 @@ Q.queue_view.displayModel("QUEUE", MDB.queue)
 
 T = new TrackListAreaController(MDB)
 
-linkList = new LinksList(T)
-X = document.getElementById("links")
-X.appendChild(linkList.domElement)
+// linkList = new LinksList(T)
+// X = document.getElementById("links")
+// // X.appendChild(linkList.domElement)
 
 
-PL = new PlaylistListView({
-    list: 'queue-elements-body'
-})
-PL.displayModel(MDB.playlists)
-PL.on("row-click", (playlistId) => {
-    T.display_playlist(playlistId)
-})
+// PL = new PlaylistListView({
+//     list: 'queue-elements-body'
+// })
+// PL.displayModel(MDB.playlists)
+// PL.on("row-click", (playlistId) => {
+//     T.display_playlist(playlistId)
+// })
 
-SE = new SessionsListView({
-    list: 'queue-elements-body'
-})
-SE.displayModel(MDB.sessions)
-SE.on("row-click", (sessionId) => {
-    T.display_session(sessionId)
-})
+// SE = new SessionsListView({
+//     list: 'queue-elements-body'
+// })
+// SE.displayModel(MDB.sessions)
+// SE.on("row-click", (sessionId) => {
+//     T.display_session(sessionId)
+// })
 
-M = new MainPlayerView(MDB.tracks)
-M.set_controller(AppController)
-M.init()
+// M = new MainPlayerView(MDB.tracks)
+// M.set_controller(AppController)
+// M.init()
 
-P = new PrecuePlayerView(MDB.tracks)
-P.set_controller(AppController)
+// P = new PrecuePlayerView(MDB.tracks)
+// P.set_controller(AppController)
+
+sidebar = new Sidebar(MDB)
+document.getElementById("sidebar").appendChild(sidebar.domElement)
 
 AppController.on('prelisten:playback-started', () => {
-    SV.open_panel(3)
+    // SV.open_panel(3)
 })
 
 window.addEventListener("load", (event) => {
