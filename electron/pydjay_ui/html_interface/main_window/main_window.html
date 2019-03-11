@@ -24,54 +24,8 @@
     </div>
 
     <div class="main_space">
-
-        <!-- SIDEBAR *********************************************************************************************-->
-        <div id="sidebar" class="side_bar">
-            <button class="accordion">Library</button>
-            <div id="links" class="panel" data-fixed-height="145">
-
-            </div>
-
-
-
-
-
-
-            <button class="accordion open-on-drag-over">
-                Playlists
-                <div class="action-button-group">
-                    <i id="add-playlist" class="fa fa-plus action-icon" action="add-playlist"></i>
-                    <i id="refresh-playlists" class="fa fa-refresh action-icon" action="refresh-playlists"></i>
-                </div>
-            </button>
-            <div class="panel">
-                <div id="playlist-list-scroller" style="overflow-y:auto; max-height:100%">
-                    <table id="playlist-list-elements" style="border-collapse:collapse; height:100%">
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-            <button class="accordion" style="margin-right:0">
-                Sessions
-                <div class="action-button-group">
-                    <i class="fa fa-refresh action-icon" action="refresh-sessions"></i>
-                </div>
-                </button>
-            <div class="panel">
-                <div id="sessions-list-scroller" style="overflow-y:auto; max-height:100%">
-                    <table id="session-list-elements" style="border-collapse:collapse">
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <button class="accordion open-on-drag-over">Preview Player</button>
-            <div class="panel" data-fixed-height="320">
-                <div id="preview-player-surface" class="preview-player" style="position:relative"></div>
-            </div>    
-        </div>
-        <!-- SIDEBAR *********************************************************************************************-->
-
+        <div id="sidebar" class="side_bar"></div>
+        <div id="main-list" class="main_list"></div>
         <div id="main-list" class="main_list"></div>
         <div id="queue-list" class="queue_list"></div>
         
