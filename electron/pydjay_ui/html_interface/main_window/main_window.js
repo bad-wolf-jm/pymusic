@@ -1,7 +1,7 @@
 const electron = require('electron')
 const { remote } = electron
 const { ipcRenderer } = electron
-const { DropdownMenu } = require("app/components/dropdownmenu")
+const { DropdownMenu } = require("ui/dom/dropdownmenu")
 // const { AccordionView } = require("ui/dom/accordion")
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("app/dialogs/audio_setup")
