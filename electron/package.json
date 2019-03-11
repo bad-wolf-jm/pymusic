@@ -2,7 +2,6 @@
   "name": "pymusic_ui",
   "version": "0.0.1",
   "main": "./main.js",
-  "main_2": "./web-audio/main.js",
   "scripts": {
     "start": "electron ."
   },
@@ -12,25 +11,15 @@
     "electron-rebuild": "^1.7.3"
   },
   "dependencies": {
-    "async": "^2.6.1",
-    "async-mysql": "^1.0.1",
-    "av": "^0.4.9",
     "clusterize.js": "^0.18.1",
     "fs-extra": "^6.0.1",
-    "huebee": "^2.0.0",
     "jimp": "^0.4.0",
     "jquery": "^3.3.1",
     "jsmediatags": "^3.8.1",
-    "jui": "^2.0.3",
-    "jui-core": "^2.0.4",
-    "jui-grid": "^2.0.2",
     "mediainfo.js": "0.0.2",
     "moment": "^2.24.0",
-    "mongodb": "^3.1.10",
     "mp3.js": "^0.2.0",
-    "mysql": "^2.15.0",
     "nedb-async-await": "^0.1.2",
-    "wavesurfer.js": "^2.0.6",
-    "webix": "^5.3.0"
+    "wavesurfer.js": "^2.0.6"
   }
 }
