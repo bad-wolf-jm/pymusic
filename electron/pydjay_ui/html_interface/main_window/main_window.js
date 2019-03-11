@@ -122,9 +122,9 @@ T = new TrackListAreaController(MDB)
 //     T.display_session(sessionId)
 // })
 
-// M = new MainPlayerView(MDB.tracks)
-// M.set_controller(AppController)
-// M.init()
+M = new MainPlayerView(MDB.tracks)
+M.set_controller(AppController)
+M.init()
 
 // P = new PrecuePlayerView(MDB.tracks)
 // P.set_controller(AppController)
@@ -143,6 +143,7 @@ window.addEventListener("load", (event) => {
     list_height = (tl.clientHeight - h.clientHeight) - 5
     ta.style.maxHeight = list_height + "px";
     T._listview.fitHeaderColumns()
+    sidebar.adjustHeights()
 })
 
 window.addEventListener("resize", (event) => {
