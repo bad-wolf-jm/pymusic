@@ -103,7 +103,7 @@ window.addEventListener("resize", (event) => {
 
 
 function refresh_sessions(x) {
-    console.log("refresh_sessions", x)
+
 }
 
 function checkTime(i) {
