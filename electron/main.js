@@ -40,7 +40,7 @@ app.on('ready', async () => {
            e.preventDefault();
          }
       });
-    // mainWindow.setMenu(null)
+    mainWindow.setMenu(null)
 });
 
 ipcMain.on('quit-pymusic', (event, message) => {

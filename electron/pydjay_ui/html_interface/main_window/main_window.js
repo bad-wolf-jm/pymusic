@@ -1,8 +1,7 @@
 const electron = require('electron')
 const { remote } = electron
 const { ipcRenderer } = electron
-const { DropdownMenu } = require("app/components/dropdownmenu")
-// const { AccordionView } = require("ui/dom/accordion")
+const { DropdownMenu } = require("ui/dom/dropdownmenu")
 const { Question } = require("ui/dialog/question.js")
 const { AudioOutputSettings } = require("app/dialogs/audio_setup")
 const { SessionSaveDialog } = require('app/dialogs/session_save_dialog')
@@ -18,22 +17,6 @@ const { TrackAdder } = require("app/dialogs/track_add_dialog")
 const { Sidebar } = require("app/views/sidebar")
 const { MainPlayerView } = require("app/views/header_main_player")
 const { PrecuePlayerView } = require("app/views/sidebar_precue_player")
-
-// SV = new AccordionView("sidebar")
-
-// SV.on("refresh-sessions", () => {
-//     SE.displayModel(MDB.sessions)
-// })
-
-
-// SV.on("refresh-playlists", () => {
-//     PL.displayModel(MDB.playlists)
-// })
-
-// SV.on("add-playlist", () => {
-//     PL.beginAdd()
-// })
-
 
 const AppController = new PymusicAppController()
 
@@ -101,63 +84,26 @@ Q.queue_view.displayModel("QUEUE", MDB.queue)
 
 T = new TrackListAreaController(MDB)
 
-// linkList = new LinksList(T)
-// X = document.getElementById("links")
-// // X.appendChild(linkList.domElement)
-
-
-// PL = new PlaylistListView({
-//     list: 'queue-elements-body'
-// })
-// PL.displayModel(MDB.playlists)
-// PL.on("row-click", (playlistId) => {
-//     T.display_playlist(playlistId)
-// })
-
-// SE = new SessionsListView({
-//     list: 'queue-elements-body'
-// })
-// SE.displayModel(MDB.sessions)
-// SE.on("row-click", (sessionId) => {
-//     T.display_session(sessionId)
-// })
-
 M = new MainPlayerView(MDB.tracks)
 M.set_controller(AppController)
 M.init()
 
-// P = new PrecuePlayerView(MDB.tracks)
-// P.set_controller(AppController)
-
 sidebar = new Sidebar(MDB)
 document.getElementById("sidebar").appendChild(sidebar.domElement)
 
-AppController.on('prelisten:playback-started', () => {
-    // SV.open_panel(3)
-})
-
 window.addEventListener("load", (event) => {
-    // let h = document.getElementById("track-list-elements-header")
-    // let ta = document.getElementById("main-track-list-scroller")
-    // let tl = document.getElementById("main-track-list")
-    // list_height = (tl.clientHeight - h.clientHeight) - 5
-    // ta.style.maxHeight = list_height + "px";
     T._listview.fitHeaderColumns()
     sidebar.adjustHeights()
 })
 
 window.addEventListener("resize", (event) => {
-    // let h = document.getElementById("track-list-elements-header")
-    // let ta = document.getElementById("main-track-list-scroller")
-    // let tl = document.getElementById("main-track-list")
-    // list_height = (tl.clientHeight - h.clientHeight) - 5
-    // ta.style.maxHeight = list_height + "px";
     T._listview.fitHeaderColumns()
+    sidebar.adjustHeights()
 })
 
 
 function refresh_sessions(x) {
-    console.log("refresh_sessions", x)
+
 }
 
 function checkTime(i) {
