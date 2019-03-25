@@ -1414,3 +1414,9 @@ input.artist[type=text] {
     background: #ccc;
     background: rgb(80, 80, 80);
 }
+
+
+.disabled {
+    background: rgb(80, 80, 80) !important;
+    opacity: .60
+}
