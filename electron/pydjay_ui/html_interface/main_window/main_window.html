@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<title>PYMUSIC DJ App</title>
+
+<link rel="stylesheet" href="../../../lib/clusterize.css">
+<link rel="stylesheet" href="main_window.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script src="../../../lib/jui/core/lib/jquery-1.8.0.min.js"></script>
+<script src="../../../lib/jui/core/dist/core.min.js"></script>
+<script src="../../../lib/jui/ui/dist/ui.min.js"></script>
+<script src="../../../lib/jui/grid/dist/grid.min.js"></script>
+<script src="../../../lib/mousetrap.js"></script>
+
+<script src="../../../lib/moment.min.js"></script>
+<script src="../../../lib/Sortable.js"></script>
+<script src="../../../lib/clusterize.js"></script>
+
+<script src="../../utils.js"></script>
+<!-- <script src="views/accordion.js"></script> -->
+
+<body class="jui" style="margin: 0px; padding:0px; height:100%">
+
+    <div id="main-player" class="main_player" style="position:fixed">
+    </div>
+
+    <div class="main_space">
+        <div id="sidebar" class="side_bar"></div>
+        <div id="main-list" class="main_list"></div>
+        <div id="queue-list" class="queue_list"></div>
+        
+    </div>
+    <div class="footer">
+        <div class="content">
+            <div  class="item">
+                <span id="footer-date" style="font-size:10pt; color:rgb(200,200,200)"> </span>
+                <span style="font-size:10pt; color:rgb(225,225,225)"></span>| <b id="footer-time" style="width:100px"></b></span>
+            </div>
+        </div>
+    </div>
+<script src="main_window.js"></script>
+<script src="keyboard.js"></script>
+</body>
