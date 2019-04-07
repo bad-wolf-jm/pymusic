@@ -12,7 +12,7 @@ function focusWindow(w) {
 }
 
 
-var lists = [T, Q]
+var lists = [win.mainListSpace, win.queueListSpace]
 
 
 Mousetrap.bind(["shift+delete", "shift+backspace"], (e) => {
