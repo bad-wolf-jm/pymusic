@@ -2,6 +2,12 @@
 <body style="margin: 0px; padding:0px; height:100%">
 <script>
     const { DJApplicationWindow } = require("app/view")
+    const { PymusicAppController } = require('app/controller')
+
+    const AppController = new PymusicAppController()
+    MDB = AppController.library
+
+
     const win = new DJApplicationWindow()
 </script>
 </body>

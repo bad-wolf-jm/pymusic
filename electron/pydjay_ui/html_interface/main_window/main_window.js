@@ -74,19 +74,19 @@ var T = setInterval(async () => {
 
 }, 1000)
 
-Q = new QueueAreaController(MDB)
-Q.hide_playlist_editor()
-Q.queue_view.displayModel("QUEUE", MDB.queue)
+// Q = new QueueAreaController(MDB)
+// Q.hide_playlist_editor()
+// Q.queue_view.displayModel("QUEUE", MDB.queue)
 
 
-T = new TrackListAreaController(MDB)
+// T = new TrackListAreaController(MDB)
 
-M = new MainPlayerView(MDB.tracks)
-M.set_controller(AppController)
-M.init()
+// M = new MainPlayerView(MDB.tracks)
+// M.set_controller(AppController)
+// M.init()
 
-sidebar = new Sidebar(MDB)
-document.getElementById("sidebar").appendChild(sidebar.domElement)
+// sidebar = new Sidebar(MDB)
+// document.getElementById("sidebar").appendChild(sidebar.domElement)
 
 window.addEventListener("load", (event) => {
     T._listview.fitHeaderColumns()
