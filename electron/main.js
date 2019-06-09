@@ -25,7 +25,8 @@ app.on('ready', async () => {
       library = undefined
     }
 
-    mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/html_interface/main_window/main_window.html');
+    // mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/html_interface/main_window/main_window.html');
+    mainWindow.loadURL('file://' + __dirname + '/pydjay_ui/html_interface/main_window/main_layout.html');
 
     mainWindow.on('close', function(e) {
       var choice = electron.dialog.showMessageBox(this,

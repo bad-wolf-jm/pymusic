@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<body style="margin: 0px; padding:0px; height:100vh; width:100vw; overflow:hidden">
+<script src="../../../lib/mousetrap.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script>
+    const { DJApplicationWindow } = require("app/view")
+    const { PymusicAppController } = require('app/controller')
+    const { AudioOutputDetector } = require('webaudio/detect')
+    const AppController = new PymusicAppController()
+    MDB = AppController.library
+    var win = new DJApplicationWindow()
+</script>
+</body>
