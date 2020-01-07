@@ -15,7 +15,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^6.0.1",
     "jimp": "^0.4.0",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.0",
     "jsmediatags": "^3.8.1",
     "mediainfo.js": "0.0.2",
     "moment": "^2.24.0",
