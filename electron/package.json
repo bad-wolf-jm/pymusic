@@ -18,7 +18,7 @@
     "jquery": "^3.3.1",
     "jsmediatags": "^3.8.1",
     "mediainfo.js": "0.0.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "mp3.js": "^0.2.0",
     "nedb-async-await": "^0.1.2",
     "wavesurfer.js": "^2.0.6",
